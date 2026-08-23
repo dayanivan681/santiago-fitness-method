@@ -35,6 +35,9 @@ switch (command) {
   case 'claim':
     claim()
     break
+  case 'adopt':
+    adopt()
+    break
   case 'publish':
     publish()
     break
@@ -240,6 +243,37 @@ function claim() {
   commitAndPush(`chore(handoff): claim ${agent}`)
 }
 
+function adopt() {
+  assertMain()
+  assertNoClientChanges()
+  if (options.confirm !== true) {
+    fail('Adoptar cambios existentes requiere --confirm después de revisar git diff.')
+  }
+  const files = dirtyPaths()
+  if (!files.length) fail('No hay cambios sin commit para adoptar.')
+  const agent = validateAgent(requireOption('agent'))
+  const task = requireOption('task')
+  const current = state(readHandoff())
+  if (current.owner !== 'none' && current.owner !== 'unassigned') {
+    fail(`El turno ya está reclamado por ${current.owner} (${current.status}).`)
+  }
+  git(['fetch', 'origin', 'main'], { stdio: 'inherit' })
+  const counts = remoteCounts()
+  if (counts.behind > 0) {
+    fail('Hay commits nuevos en origin/main. No adoptaré cambios sucios hasta resolver esa diferencia.')
+  }
+  let content = updateState(readHandoff(), agent, 'active')
+  content = appendEntry(content, `${agent} | ADOPT`, [
+    ['Estado', 'active'],
+    ['Tarea', task],
+    ['Cambios adoptados', files.join(', ')],
+    ['Verificación', 'Cambios revisados por el agente; docs/cliente permanece sin modificaciones.'],
+    ['Siguiente', 'Continuar la tarea y publicar las comprobaciones al terminar.'],
+  ])
+  writeHandoff(content)
+  commitAndPush(`chore(handoff): adopt work for ${agent}`)
+}
+
 function publish() {
   assertMain()
   assertNoClientChanges()
@@ -278,9 +312,10 @@ function help() {
   npm run handoff:status
   npm run handoff:sync
   npm run handoff:claim -- --agent <codex|claude-code> --task "..."
+  npm run handoff:adopt -- --confirm --agent <agente> --task "..."
   npm run handoff:publish -- --agent <agente> --status <complete|blocked> --summary "..." --checks "..." --next "..."
 
 sync solo hace fast-forward desde origin/main con el árbol limpio.
-claim y publish actualizan docs/HANDOFF.md, hacen commit y hacen push.
+claim, adopt y publish actualizan docs/HANDOFF.md, hacen commit y hacen push.
 `)
 }

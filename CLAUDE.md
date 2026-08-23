@@ -27,6 +27,16 @@ Si `handoff:sync` o `handoff:claim` detectan cambios sin commit, detente. No hag
 ni borres esos cambios: revisa `git status` y `docs/HANDOFF.md`, identifica al dueño y
 resuelve el trabajo pendiente antes de reclamar otro turno.
 
+Si el handoff muestra cambios preexistentes y, después de revisar `git diff`, confirmas
+que son tu responsabilidad, adóptalos explícitamente:
+
+```bash
+npm run handoff:adopt -- --confirm --agent claude-code --task "Adoptar y continuar la tarea revisada"
+```
+
+Este comando crea un commit de adopción y lo publica. No lo ejecutes sin revisar antes
+los archivos que va a incluir.
+
 ## Durante el turno
 
 - Inspecciona primero la implementación y los requisitos de los PDFs.

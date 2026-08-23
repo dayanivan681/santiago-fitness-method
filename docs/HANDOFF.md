@@ -33,6 +33,11 @@ resultado. No se deben borrar ni sobrescribir para liberar el turno.
 5. Ejecutar pruebas, lint y build.
 6. Publicar: `npm run handoff:publish -- --agent <agente> --status <complete|blocked> --summary "..." --checks "..." --next "..."`.
 
+Si el árbol ya estaba sucio antes del handoff, revisar primero el diff y adoptar esos
+cambios de forma intencional con `npm run handoff:adopt -- --confirm --agent <agente> --task "..."`.
+Ese comando crea un commit de adopción; nunca se deben borrar esos cambios para liberar
+el turno.
+
 Los comandos de claim y publish hacen commit y push automáticamente. Se detienen si
 hay cambios remotos, cambios sin dueño o cualquier modificación dentro de
 `docs/cliente`.

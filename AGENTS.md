@@ -12,6 +12,12 @@ npm run handoff:sync
 npm run handoff:claim -- --agent codex --task "Describe la tarea concreta"
 ```
 
+Si hay cambios preexistentes, revísalos primero y adóptalos solo de forma explícita:
+
+```bash
+npm run handoff:adopt -- --confirm --agent codex --task "Adoptar y continuar la tarea revisada"
+```
+
 Al terminar, ejecuta las pruebas y publica con:
 
 ```bash

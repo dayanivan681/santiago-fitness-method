@@ -14,6 +14,7 @@
     "handoff:status": "node scripts/handoff-sync.mjs status",
     "handoff:sync": "node scripts/handoff-sync.mjs sync",
     "handoff:claim": "node scripts/handoff-sync.mjs claim",
+    "handoff:adopt": "node scripts/handoff-sync.mjs adopt",
     "handoff:publish": "node scripts/handoff-sync.mjs publish"
   },
   "dependencies": {
