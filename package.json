@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "handoff:status": "node scripts/handoff-sync.mjs status",
+    "handoff:sync": "node scripts/handoff-sync.mjs sync",
+    "handoff:claim": "node scripts/handoff-sync.mjs claim",
+    "handoff:publish": "node scripts/handoff-sync.mjs publish"
   },
   "dependencies": {
     "dexie": "^4.4.5",
