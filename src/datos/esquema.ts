@@ -1,0 +1,72 @@
+/**
+ * Base de datos local.
+ * Guía del proyecto §26: por ahora guardado local en el dispositivo; más adelante
+ * base de datos en la nube. Todo el acceso pasa por `Repositorio` para que ese
+ * cambio quede contenido en una sola capa.
+ */
+
+import Dexie, { type EntityTable } from 'dexie'
+import type {
+  Ejercicio,
+  Participante,
+  PlantillaDia,
+  SerieRegistrada,
+  Sesion,
+  Sustitucion,
+} from '../dominio/tipos'
+
+export class BaseDatosSantiago extends Dexie {
+  participantes!: EntityTable<Participante, 'id'>
+  ejercicios!: EntityTable<Ejercicio, 'id'>
+  plantillas!: EntityTable<PlantillaDia, 'id'>
+  sesiones!: EntityTable<Sesion, 'id'>
+  series!: EntityTable<SerieRegistrada, 'id'>
+  sustituciones!: EntityTable<Sustitucion, 'id'>
+
+  constructor(nombre = 'santiago-fitness-method') {
+    super(nombre)
+    this.version(1).stores({
+      participantes: 'id',
+      ejercicios: 'id, musculoPrimario',
+      plantillas: 'id, nombre',
+      sesiones: 'id, participanteId, fecha, plantillaDiaId',
+      // §16: el índice por ejercicioId es lo que mantiene separado el historial
+      // de cada variante.
+      series: 'id, sesionId, ejercicioId',
+    })
+
+    // v2: `orden` explícito en las plantillas. Se rellena en vez de recrear las
+    // filas porque §19 prohíbe perder lo ya registrado.
+    this.version(2)
+      .stores({ plantillas: 'id, nombre, orden' })
+      .upgrade((tx) =>
+        // `modify` escribe sobre la fila almacenada: la mutación vive aquí, en
+        // el borde con IndexedDB, y no se escapa al dominio.
+        tx
+          .table<Editable<PlantillaDia>>('plantillas')
+          .toCollection()
+          .modify((plantilla) => {
+            plantilla.orden = ORDEN_INICIAL_DIAS[plantilla.id] ?? ORDEN_DESCONOCIDO
+          }),
+      )
+
+    // v3: los cambios de variante que valen sólo para un día. Tabla aparte y no
+    // un campo en la plantilla: la plantilla es lo permanente, esto caduca.
+    this.version(3).stores({ sustituciones: 'id, fecha' })
+  }
+}
+
+type Editable<T> = { -readonly [K in keyof T]: T[K] }
+
+/** §28: Upper A · Lower A · Upper B · Lower B. */
+const ORDEN_INICIAL_DIAS: Readonly<Record<string, number>> = {
+  'upper-a': 1,
+  'lower-a': 2,
+  'upper-b': 3,
+  'lower-b': 4,
+}
+
+/** Las plantillas que el coach cree después van al final hasta que las ordene. */
+const ORDEN_DESCONOCIDO = 99
+
+export const db = new BaseDatosSantiago()

@@ -1,0 +1,1437 @@
+/*
+ * Santiago Fitness Method — sistema de diseño.
+ * Tomado de `Santiago Fitness Method.dc.html` (Claude Design).
+ *
+ * Monocromo con un solo acento rojo. Barlow Condensed en mayúsculas con
+ * tracking amplio para titulares y etiquetas; Barlow para el cuerpo.
+ *
+ * §24: los ejercicios del día caben en una pantalla.
+ * §25: lo importante primero; nada de gráficas mientras se entrena.
+ */
+
+@import './estilos/fuentes.css';
+
+:root {
+  /* Superficies */
+  --fondo: #0b0c0d;
+  --superficie: #131417;
+  --hundido: #0e1012;
+  --tarjeta: #111214;
+
+  /* Texto */
+  --texto: #f2f2f0;
+  --texto-60: rgba(242, 242, 240, 0.6);
+  --texto-50: rgba(242, 242, 240, 0.5);
+  --texto-42: rgba(242, 242, 240, 0.42);
+  --texto-35: rgba(242, 242, 240, 0.35);
+
+  /* Trazos */
+  --borde: rgba(255, 255, 255, 0.08);
+  --borde-tenue: rgba(255, 255, 255, 0.06);
+  --borde-fuerte: rgba(255, 255, 255, 0.18);
+
+  /* Rellenos */
+  --relleno: rgba(255, 255, 255, 0.05);
+  --relleno-alto: rgba(255, 255, 255, 0.07);
+
+  /*
+   * El blanco es el color positivo del sistema: progreso, activo, acción.
+   * El rojo es el único acento cromático — fuerza y "bajo referencia".
+   */
+  --positivo: #ffffff;
+  --neutro: rgba(242, 242, 240, 0.5);
+  --rojo: #e5352b;
+
+  --radio: 16px;
+  --radio-chico: 12px;
+
+  color-scheme: dark;
+  font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  /* Sin el destello azul de Android al tocar. */
+  -webkit-tap-highlight-color: transparent;
+  /* Evita que el tirón hacia abajo recargue la app en mitad de una sesión. */
+  overscroll-behavior-y: contain;
+}
+
+/*
+ * Controles: sin zoom por doble toque, sin selección de texto al pulsar rápido
+ * y sin menú contextual al mantener pulsado. Entre series se toca mucho y
+ * deprisa, a veces con las manos húmedas.
+ */
+button,
+.filtro,
+.dia,
+.variante,
+.ejercicio__resumen {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@keyframes latido {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- Primitivas tipográficas ---------- */
+
+/* Barlow Condensed en mayúsculas: kickers, etiquetas y titulares. */
+.condensada {
+  font-family: 'Barlow Condensed', 'Barlow', sans-serif;
+  text-transform: uppercase;
+}
+
+.kicker {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--texto-42);
+}
+
+.etiqueta-campo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 240, 0.4);
+}
+
+.nota {
+  padding: 12px 14px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  font: 500 12px/1.45 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.38);
+  text-wrap: pretty;
+}
+
+.aviso {
+  padding: 2rem 1rem;
+  color: var(--texto-42);
+  text-align: center;
+}
+
+/* ---------- Armazón ---------- */
+
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(18px + env(safe-area-inset-top)) 18px 12px;
+  background: var(--fondo);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.cabecera__titulo {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  /* 29px es el tamaño del diseño; se encoge en pantallas estrechas para que
+     "Entrenamiento de hoy" no parta en dos líneas y descoloque el dato. */
+  font-size: clamp(21px, 7vw, 29px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: nowrap;
+}
+
+.cabecera__meta {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--positivo);
+  padding-bottom: 3px;
+  white-space: nowrap;
+}
+
+.contenido {
+  flex: 1;
+  padding: 14px 14px calc(120px + env(safe-area-inset-bottom));
+}
+
+.pila {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- Barra de pestañas ---------- */
+
+.pestanas {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  gap: 4px;
+  padding: 10px 10px calc(14px + env(safe-area-inset-bottom));
+  background: rgba(11, 12, 13, 0.92);
+  border-top: 1px solid var(--borde);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.pestanas__boton {
+  flex: 1;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 240, 0.38);
+}
+
+.pestanas__marca {
+  width: 18px;
+  height: 3px;
+  border-radius: 99px;
+  background: transparent;
+}
+
+.pestanas__boton--activo {
+  color: var(--texto);
+}
+
+.pestanas__boton--activo .pestanas__marca {
+  background: var(--positivo);
+}
+
+/* ---------- Portada del día ---------- */
+
+.portada {
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: var(--hundido);
+  border: 1px solid var(--borde);
+}
+
+.portada__imagen {
+  display: block;
+  width: 100%;
+  height: 112px;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.022) 0 10px,
+    transparent 10px 20px
+  );
+}
+
+.portada__pie {
+  padding: 12px 14px 14px;
+  background: var(--fondo);
+}
+
+.portada__dia {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--texto-50);
+}
+
+.portada__lema {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--texto);
+}
+
+/* ---------- Tarjeta de ejercicio ---------- */
+
+.ejercicio {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+
+.ejercicio__resumen {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.miniatura {
+  width: 58px;
+  height: 58px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: var(--radio-chico);
+  background: var(--hundido);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.miniatura__iniciales {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.miniatura__equipo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 7.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 240, 0.35);
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* El estímulo tiñe iniciales y etiqueta, no sólo el punto. */
+.tinta--fuerza {
+  color: var(--rojo);
+}
+.tinta--hipertrofia {
+  color: var(--positivo);
+}
+.tinta--resistencia {
+  color: rgba(242, 242, 240, 0.45);
+}
+
+.ejercicio__identidad {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ejercicio__tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 240, 0.55);
+}
+
+.ejercicio__punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  flex: none;
+}
+
+/* Píldora de estímulo del editor de coach. */
+.etiqueta {
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.07);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.etiqueta--fuerza {
+  background: rgba(229, 53, 43, 0.16);
+  color: var(--rojo);
+}
+.etiqueta--hipertrofia {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--positivo);
+}
+.etiqueta--resistencia {
+  color: var(--texto-60);
+}
+
+/* §4: el estímulo se lee de un vistazo por el color del punto. */
+.punto--fuerza {
+  background: var(--rojo);
+}
+.punto--hipertrofia {
+  background: var(--positivo);
+}
+.punto--resistencia {
+  background: rgba(242, 242, 240, 0.4);
+}
+
+.ejercicio__nombre {
+  margin: 0;
+  font: 600 15px/1.15 'Barlow', sans-serif;
+  text-wrap: pretty;
+}
+
+.ejercicio__plan {
+  font: 500 12px/1 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.45);
+}
+
+.ejercicio__estado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex: none;
+}
+
+.ejercicio__marca {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neutro);
+}
+
+.ejercicio__marca--completo {
+  color: var(--positivo);
+}
+
+.ejercicio__cuenta {
+  font: 600 11px/1 'Barlow', sans-serif;
+  color: var(--texto-35);
+}
+
+.ejercicio__detalle {
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ---------- Referencias (§7, §9) ---------- */
+
+.referencias {
+  display: flex;
+  gap: 8px;
+}
+
+.referencia {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* §9: la mejor referencia es un dato distinto y se destaca. */
+.referencia--mejor {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--borde-fuerte);
+}
+
+.referencia__valor {
+  font: 600 13px/1 'Barlow', sans-serif;
+}
+
+.referencia--mejor .referencia__valor {
+  color: var(--positivo);
+}
+
+.detalle-carga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+}
+
+.detalle-carga__texto {
+  font: 500 11px/1 'Barlow', sans-serif;
+  color: var(--texto-35);
+}
+
+.enlace {
+  border: none;
+  background: none;
+  /* El texto es pequeño por diseño; el área de toque no puede serlo. */
+  padding: 14px 2px;
+  margin: -14px -2px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--positivo);
+}
+
+/* ---------- Serie (§5) ---------- */
+
+.serie {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--borde-tenue);
+  border-radius: var(--radio-chico);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.serie--hecha {
+  background: var(--relleno);
+  border-color: var(--borde-fuerte);
+}
+
+.serie__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.serie__titulo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.serie__veredicto {
+  font: 500 11px/1 'Barlow', sans-serif;
+}
+
+/* §8: las cinco reglas, con el rojo reservado a caer por debajo. */
+.veredicto--progresoClaro,
+.veredicto--progreso {
+  color: var(--positivo);
+}
+.veredicto--mantuvo,
+.veredicto--cambioDeCarga {
+  color: var(--neutro);
+}
+.veredicto--debajo {
+  color: var(--rojo);
+}
+
+.serie__campos {
+  display: flex;
+  gap: 6px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.campo--peso {
+  flex: 1.35;
+}
+.campo--reps {
+  flex: 1;
+}
+.campo--rir {
+  flex: 0.9;
+}
+
+.paso {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.paso__boton {
+  width: 34px;
+  height: 44px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--texto-60);
+  font: 600 16px/1 'Barlow', sans-serif;
+  cursor: pointer;
+}
+
+.paso__boton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Recuadro relleno con el número; el ± queda fuera. */
+.valor {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* min-height y no height: dentro de .campo (columna) el flex-basis de
+     `flex: 1` gana a height y la caja colapsaría a la altura del texto. */
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 4px;
+  border: none;
+  border-radius: 9px;
+  background: var(--relleno);
+  color: var(--texto);
+  font: 700 15px/1 'Barlow', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.valor--tocable {
+  width: 100%;
+  cursor: pointer;
+}
+
+.valor small {
+  font-weight: 500;
+  color: var(--texto-35);
+}
+
+.serie__pie {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.serie__anterior {
+  flex: 1;
+  font: 500 11px/1.2 'Barlow', sans-serif;
+  color: var(--texto-35);
+}
+
+.boton-guardar {
+  flex: none;
+  padding: 0 16px;
+  height: 40px;
+  border: none;
+  border-radius: 9px;
+  background: var(--positivo);
+  color: var(--fondo);
+  display: flex;
+  align-items: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.boton-guardar--secundario {
+  background: var(--relleno-alto);
+  color: var(--texto);
+}
+
+/* ---------- Cronómetro de descanso (§5, §12) ---------- */
+
+.descanso {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: calc(104px + env(safe-area-inset-bottom));
+  z-index: 30;
+  max-width: 492px;
+  margin: 0 auto;
+  background: #ffffff;
+  color: var(--fondo);
+  border-radius: 14px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.descanso__rotulo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  animation: latido 1.6s ease-in-out infinite;
+}
+
+.descanso__tiempo {
+  flex: 1;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.descanso__boton {
+  min-height: 40px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(11, 12, 13, 0.12);
+  color: inherit;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.descanso__boton--fuerte {
+  background: var(--fondo);
+  color: #ffffff;
+}
+
+/* ---------- Hoja inferior ---------- */
+
+.hoja {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(6, 7, 8, 0.72);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.hoja__fondo {
+  flex: 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.hoja__panel {
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--superficie);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px 22px 0 0;
+  padding: 18px 16px calc(30px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 78dvh;
+  overflow: auto;
+}
+
+.hoja__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.hoja__titulo {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hoja__cerrar {
+  border: none;
+  background: none;
+  padding: 12px 4px;
+  margin: -12px -4px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 240, 0.45);
+}
+
+.hoja__texto {
+  margin: 0;
+  font: 500 12px/1.4 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.4);
+  text-wrap: pretty;
+}
+
+.variante {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 56px;
+  padding: 11px 12px;
+  border-radius: var(--radio-chico);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--borde-tenue);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.variante--activa {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.variante__nombre {
+  font: 600 14px/1.15 'Barlow', sans-serif;
+}
+
+.variante__meta {
+  font: 500 11px/1 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.4);
+}
+
+.variante__ref {
+  flex: none;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  font: 600 12px/1 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.55);
+}
+
+.variante--activa .variante__ref {
+  color: var(--positivo);
+}
+
+/* ---------- Biblioteca (§15) ---------- */
+
+.filtros {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.filtros::-webkit-scrollbar {
+  display: none;
+}
+
+.filtro {
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--texto-60);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.filtro--activo {
+  background: var(--positivo);
+  border-color: var(--positivo);
+  color: var(--fondo);
+}
+
+.rejilla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ficha {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.ficha__imagen {
+  display: block;
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  background: var(--hundido);
+}
+
+.ficha__cuerpo {
+  padding: 9px 10px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ficha__nombre {
+  margin: 0;
+  font: 600 13px/1.2 'Barlow', sans-serif;
+  text-wrap: pretty;
+}
+
+.ficha__equipo {
+  font: 500 11px/1 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.42);
+}
+
+.ficha__pista {
+  margin: 0;
+  font: 400 11px/1.35 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.32);
+  text-wrap: pretty;
+}
+
+/* ---------- Historial (§18) ---------- */
+
+.resumen {
+  display: flex;
+  gap: 10px;
+}
+
+.resumen__tarjeta {
+  flex: 1;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.resumen__tarjeta--mejor {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--borde-fuerte);
+}
+
+.resumen__valor {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.resumen__tarjeta--mejor .resumen__valor {
+  color: var(--positivo);
+}
+
+.resumen__pie {
+  font: 500 11px/1 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.42);
+}
+
+.sesiones {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.sesion:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sesion {
+  padding: 11px 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sesion:last-child {
+  border-bottom: none;
+}
+
+.sesion__fecha {
+  width: 52px;
+  flex: none;
+  font: 600 11px/1.2 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.45);
+}
+
+.sesion__cuerpo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sesion__series {
+  font: 600 13px/1.25 'Barlow', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.sesion__detalle {
+  font: 500 11px/1 'Barlow', sans-serif;
+  color: var(--texto-35);
+}
+
+.sesion__veredicto {
+  flex: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------- Perfil (§2) ---------- */
+
+.panel {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel__titulo {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.panel__nota {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-35);
+}
+
+.rejilla-datos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.campo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.campo-texto input,
+.campo-texto select,
+.campo-texto textarea {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--borde-tenue);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--texto);
+  font: 600 14px/1.2 'Barlow', sans-serif;
+  /* 16px en móvil evita el zoom automático de iOS al enfocar. */
+}
+
+.campo-texto textarea {
+  font-weight: 500;
+  resize: vertical;
+}
+
+.campo-texto input:focus,
+.campo-texto select:focus,
+.campo-texto textarea:focus {
+  border-color: var(--borde-fuerte);
+  outline: none;
+}
+
+@media (max-width: 480px) {
+  .campo-texto input,
+  .campo-texto select,
+  .campo-texto textarea {
+    font-size: 16px;
+  }
+}
+
+/* §2: la limitación es lo único que se avisa en rojo — importa al entrenar. */
+.limitacion {
+  background: rgba(229, 53, 43, 0.1);
+  border: 1px solid rgba(229, 53, 43, 0.35);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: 500 12px/1.35 'Barlow', sans-serif;
+  color: #ff8a80;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Las equivalentes se tocan con el pulgar, como el resto de controles (§27). */
+.limitacion__alternativas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.limitacion__nota {
+  color: rgba(242, 242, 240, 0.45);
+}
+
+/* ---------- Volumen (§20) ---------- */
+
+.volumen {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.volumen__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.volumen__musculo {
+  font: 600 12px/1 'Barlow', sans-serif;
+}
+
+.volumen__cuenta {
+  font: 500 11px/1 'Barlow', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.volumen__barra {
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.volumen__relleno {
+  height: 6px;
+  border-radius: 99px;
+  transition: width 0.25s ease;
+}
+
+.tono--falta {
+  color: var(--neutro);
+}
+.tono--dentro,
+.tono--cumplido {
+  color: var(--positivo);
+}
+.tono--revisarRecuperacion {
+  color: var(--rojo);
+}
+.tono--sinObjetivo {
+  color: var(--texto-35);
+}
+
+.relleno--falta {
+  background: var(--neutro);
+}
+.relleno--dentro,
+.relleno--cumplido {
+  background: var(--positivo);
+}
+.relleno--revisarRecuperacion {
+  background: var(--rojo);
+}
+.relleno--sinObjetivo {
+  background: var(--texto-35);
+}
+
+.volumen__estado {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.volumen__indirectas {
+  font: 500 10px/1 'Barlow', sans-serif;
+  color: var(--texto-35);
+}
+
+/* ---------- Filas de día (§28) ---------- */
+
+.dia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.dia__nombre {
+  font: 600 13px/1 'Barlow', sans-serif;
+}
+
+.dia__nota {
+  font: 500 11px/1 'Barlow', sans-serif;
+  color: rgba(242, 242, 240, 0.4);
+}
+
+/* ---------- Ficha de datos en modo lectura (§2) ---------- */
+
+.dato {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.dato__valor {
+  font: 600 14px/1.2 'Barlow', sans-serif;
+  text-wrap: pretty;
+}
+
+/* La cabecera encoge el titular antes que empujar el dato fuera de pantalla. */
+.cabecera__identidad {
+  flex: 1;
+  min-width: 0;
+}
+
+.cabecera__titulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.portada__imagen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portada__marcador {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 240, 0.22);
+}
+
+/*
+ * Pantallas estrechas (iPhone SE y similares, 320 px).
+ * Los tres campos con sus ± no caben en una fila sin comerse el área de toque,
+ * así que el peso pasa a su propia línea. Antes que encoger los botones.
+ */
+@media (max-width: 360px) {
+  .serie__campos {
+    flex-wrap: wrap;
+  }
+
+  .campo--peso {
+    flex: 1 1 100%;
+  }
+
+  .campo--reps,
+  .campo--rir {
+    flex: 1 1 0;
+  }
+}
+
+/* ---------- Objetivo de hoy y recomendación ---------- */
+
+.objetivo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.objetivo__bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.objetivo__valor {
+  font: 600 13px/1 'Barlow', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Las cuatro salidas que pidió el cliente. El rojo se reserva a reducir. */
+.recomendacion {
+  padding: 5px 10px;
+  border-radius: 99px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.recomendacion--subirCarga,
+.recomendacion--subirReps {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--positivo);
+}
+
+.recomendacion--mantener,
+.recomendacion--sinReferencia {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--texto-60);
+}
+
+.recomendacion--revisarReducir {
+  background: rgba(229, 53, 43, 0.16);
+  color: var(--rojo);
+}
+
+/* ---------- Marcas de serie: técnica y calentamiento ---------- */
+
+.serie__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/*
+ * Sólo aparecen cuando dicen algo: con técnica buena y sin calentamiento, la
+ * fila queda como estaba. El cliente pidió que esto se mantuviera simple.
+ */
+.marca {
+  padding: 4px 8px;
+  border: 1px solid var(--borde-tenue);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--texto-35);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.marca--tocable {
+  cursor: pointer;
+  /* El texto es diminuto por diseño; el área de toque no puede serlo. */
+  padding: 10px 8px;
+  margin: -6px 0;
+}
+
+.marca--excelente {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--positivo);
+}
+
+.marca--aceptable {
+  border-color: rgba(242, 242, 240, 0.2);
+  color: var(--texto-60);
+}
+
+.marca--deficiente {
+  border-color: rgba(229, 53, 43, 0.4);
+  color: var(--rojo);
+}
+
+.marca--calentamiento {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--texto-60);
+}
+
+.serie__titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Cierre de sesión ---------- */
+
+.boton-terminar {
+  width: 100%;
+  height: 48px;
+  justify-content: center;
+}
+
+.nota--hecho {
+  border-style: solid;
+  border-color: var(--borde-fuerte);
+  color: var(--texto-60);
+  text-align: center;
+}
