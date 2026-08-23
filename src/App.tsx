@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { repositorio } from './aplicacion/repositorio'
 import { sembrar } from './datos/semilla'
+import { AltaParticipante } from './pantallas/Alta/AltaParticipante'
 import { EntrenamientoHoy } from './pantallas/EntrenamientoHoy/EntrenamientoHoy'
 import { Biblioteca } from './pantallas/Biblioteca/Biblioteca'
 import { Historial } from './pantallas/Historial/Historial'
@@ -29,10 +31,26 @@ export function App() {
     sembrar(repositorio).then(() => setListo(true))
   }, [])
 
+  // `undefined` es "todavía cargando" y `null` es "no hay nadie dado de alta":
+  // sin distinguirlos, la pantalla de alta parpadearía en cada arranque.
+  const participante = useLiveQuery(
+    () => repositorio.participanteActual().then((encontrado) => encontrado ?? null),
+    [],
+  )
+
   const cerrarCoach = useCallback(() => setCoachAbierto(false), [])
   const volverDeCoach = useCapa(coachAbierto, cerrarCoach)
 
-  if (!listo) return <p className="aviso">Preparando…</p>
+  if (!listo || participante === undefined) return <p className="aviso">Preparando…</p>
+
+  // Instalación nueva: no hay a quién entrenar hasta que el coach lo dé de alta.
+  if (participante === null) {
+    return (
+      <div className="app">
+        <AltaParticipante />
+      </div>
+    )
+  }
 
   if (coachAbierto) {
     return (

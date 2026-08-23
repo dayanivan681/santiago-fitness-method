@@ -5,12 +5,16 @@ import userEvent from '@testing-library/user-event'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
 import { BaseDatosSantiago } from '../../datos/esquema'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
-import { sembrar, ID_PARTICIPANTE_PILOTO } from '../../datos/semilla'
+import { sembrar } from '../../datos/semilla'
+import { sembrarParticipante } from '../../pruebas/participante'
 import { fechaDeHoy } from '../../datos/repositorio'
 import { evitar } from '../../logica/limitaciones'
+import { actualizarSlot, anadirSlot, MAX_EJERCICIOS_POR_DIA } from '../../logica/plantilla'
+import type { PlantillaDia } from '../../dominio/tipos'
 import { PRESS_BANCA_15_SMITH } from '../../datos/semilla/biblioteca'
 
 let repositorio: RepositorioLocal
+let participanteId: string
 
 const PRESS = 'Press banca 15° Smith'
 
@@ -18,7 +22,7 @@ const PRESS = 'Press banca 15° Smith'
 async function sembrarSesionAnterior(fecha = '2026-01-05') {
   await repositorio.crearSesion({
     id: 'sesion-anterior',
-    participanteId: ID_PARTICIPANTE_PILOTO,
+    participanteId,
     plantillaDiaId: 'upper-a',
     fecha,
   })
@@ -44,6 +48,7 @@ beforeEach(async () => {
   const db = new BaseDatosSantiago(`prueba-ui-${crypto.randomUUID()}`)
   repositorio = new RepositorioLocal(db)
   await sembrar(repositorio)
+  participanteId = (await sembrarParticipante(repositorio)).id
 })
 
 describe('el entrenamiento ya viene cargado (§3)', () => {
@@ -165,8 +170,13 @@ describe('cambiar la variante asignada (§16, §23)', () => {
     await userEvent.click(screen.getAllByRole('button', { name: 'Cambiar variante' })[0])
     await userEvent.click(await screen.findByText('Press banca plano con barra'))
 
-    // Assert: hoy se entrena la otra, la plantilla sigue con la suya
-    expect(await screen.findByText('Sólo hoy')).toBeInTheDocument()
+    // Assert: hoy se entrena la otra, la plantilla sigue con la suya.
+    // Se comprueba con la hoja ya cerrada: dentro también hay un "Sólo hoy",
+    // que es el selector de alcance.
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(screen.getByText('Sólo hoy')).toBeInTheDocument()
+    })
     const plantilla = await repositorio.obtenerPlantilla('upper-a')
     expect(plantilla!.slots[0].ejercicioId).toBe(PRESS_BANCA_15_SMITH.id)
   })
@@ -199,7 +209,10 @@ describe('cambiar la variante asignada (§16, §23)', () => {
     await abrirUpperA()
     await userEvent.click(screen.getAllByRole('button', { name: 'Cambiar variante' })[0])
     await userEvent.click(await screen.findByText('Press banca plano con barra'))
-    await screen.findByText('Sólo hoy')
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(screen.getByText('Sólo hoy')).toBeInTheDocument()
+    })
 
     // Act: se vuelve a la que tiene asignada
     await userEvent.click(screen.getAllByRole('button', { name: 'Cambiar variante' })[0])
@@ -229,13 +242,14 @@ describe('corregir deja rastro (§19)', () => {
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await waitFor(async () => {
-      expect(await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
-    })
+    // La serie guardada deja de ser editable en el sitio: aparece "Editar".
+    // Esperar a ese botón, y no sólo al dato en la base, es lo que garantiza
+    // que la tarjeta ya se repintó.
+    const editar = await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
     const [original] = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
 
     // Act: se corrige subiendo una repetición
-    await userEvent.click(screen.getByLabelText(`Editar la serie 1 de ${PRESS}`))
+    await userEvent.click(editar)
     await userEvent.click(await screen.findByLabelText(`Subir reps de la serie 1 de ${PRESS}`))
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
 
@@ -255,7 +269,7 @@ describe('corregir deja rastro (§19)', () => {
 describe('limitaciones del perfil al cambiar de variante (punto G)', () => {
   test('marca la variante que el perfil dice evitar', async () => {
     // Arrange: el perfil prohíbe el press con barra
-    const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
+    const participante = await repositorio.participanteActual()
     await repositorio.guardarParticipante(evitar(participante!, 'press-banca-barra'))
     await abrirUpperA()
 
@@ -264,5 +278,82 @@ describe('limitaciones del perfil al cambiar de variante (punto G)', () => {
 
     // Assert: sigue estando —avisar no es bloquear—, pero marcada
     expect(await screen.findByText(/El perfil dice evitarlo/)).toBeInTheDocument()
+  })
+})
+
+describe('un día de ocho ejercicios (criterios 2 y 10)', () => {
+  test('la pantalla los muestra todos, sin cambiar código', async () => {
+    // Arrange: el coach arma un día de ocho desde la propia app
+    const ocho = (await repositorio.listarEjercicios()).slice(0, MAX_EJERCICIOS_POR_DIA)
+    const vacia: PlantillaDia = { id: 'lower-a', nombre: 'Lower A', orden: 2, slots: [] }
+    const lleno = ocho.reduce<PlantillaDia>(
+      (plantilla, ejercicio) => anadirSlot(plantilla, ejercicio.id),
+      vacia,
+    )
+    await repositorio.guardarPlantilla(lleno)
+
+    // Act
+    render(<EntrenamientoHoy repositorio={repositorio} />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Lower A' }))
+
+    // Assert: los ocho, cada uno con su plan a la vista
+    for (const ejercicio of ocho) {
+      expect(await screen.findByText(ejercicio.nombre), ejercicio.nombre).toBeInTheDocument()
+    }
+    expect(lleno.slots).toHaveLength(MAX_EJERCICIOS_POR_DIA)
+  })
+})
+
+describe('temporizador manual (criterio 5)', () => {
+  /** Los campos de la serie son <output>, que también tienen rol de estado. */
+  const cronometro = () =>
+    screen.queryByRole('status', { name: 'Temporizador de descanso' })
+
+  test('guardar una serie no arranca el cronómetro', async () => {
+    // El cliente lo pide manual: antes saltaba solo al guardar. Ojo, esto no es
+    // el descanso *medido* de §5, que se sigue derivando de las marcas de tiempo.
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    // Assert
+    expect(cronometro()).not.toBeInTheDocument()
+  })
+
+  test('lo activa y lo desactiva el participante', async () => {
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getAllByRole('button', { name: 'Descanso' })[0])
+
+    // Assert
+    expect(
+      await screen.findByRole('status', { name: 'Temporizador de descanso' }),
+    ).toHaveTextContent('Descanso')
+
+    // Y se apaga cuando él quiere, sin esperar a que termine
+    await userEvent.click(screen.getByRole('button', { name: 'Listo' }))
+    await waitFor(() => expect(cronometro()).not.toBeInTheDocument())
+  })
+})
+
+describe('la recomendación que fijó el coach (V1)', () => {
+  test('manda sobre la que calcularía la app, y se ve de quién es', async () => {
+    // Arrange: con 45 lb × 5 la app propondría subir reps; el coach dice mantener
+    await sembrarSesionAnterior()
+    const plantilla = (await repositorio.obtenerPlantilla('upper-a'))!
+    await repositorio.guardarPlantilla(
+      actualizarSlot(plantilla, 1, { progresionFijada: 'mantener' }),
+    )
+
+    // Act
+    await abrirUpperA()
+
+    // Assert
+    expect(await screen.findByText(/Mantener · del coach/)).toBeInTheDocument()
   })
 })

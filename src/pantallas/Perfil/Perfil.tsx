@@ -10,6 +10,7 @@ import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositor
 import { Cabecera } from '../../componentes/Cabecera'
 import { FichaParticipante } from './FichaParticipante'
 import { PanelLimitaciones } from './PanelLimitaciones'
+import { PanelProgreso } from './PanelProgreso'
 import { PanelVolumen } from './PanelVolumen'
 import type { Repositorio } from '../../datos/repositorio'
 
@@ -36,6 +37,9 @@ export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Pr
       <div className="contenido">
         <div className="pila">
           <FichaParticipante participante={participante} onGuardar={guardar} />
+
+          {/* Datos del cuerpo juntos: la ficha y cómo va cambiando. */}
+          <PanelProgreso participante={participante} repositorio={repositorio} />
 
           {/* Punto G: la limitación del perfil se conecta con la programación. */}
           <PanelLimitaciones

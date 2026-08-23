@@ -801,6 +801,37 @@ button,
   color: rgba(242, 242, 240, 0.45);
 }
 
+/* Ordenar el día: se toca con el pulgar, como todo lo demás (§27). */
+.orden-slot {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.orden-slot__boton {
+  width: 40px;
+  height: 40px;
+  margin: -8px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--texto-60);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.orden-slot__boton:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
 .hoja__texto {
   margin: 0;
   font: 500 12px/1.4 'Barlow', sans-serif;
@@ -1118,6 +1149,30 @@ button,
   }
 }
 
+/* El selector de archivo nativo desentona: se le da el aspecto de la app y un
+   botón que se pueda tocar con el pulgar (§27). */
+.campo-texto input[type='file'] {
+  padding: 6px 8px;
+  font: 500 12px/1.4 'Barlow', sans-serif;
+  color: var(--texto-60);
+}
+
+.campo-texto input[type='file']::file-selector-button {
+  margin-right: 10px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
 /* §2: la limitación es lo único que se avisa en rojo — importa al entrenar. */
 .limitacion {
   background: rgba(229, 53, 43, 0.1);
@@ -1141,6 +1196,40 @@ button,
 
 .limitacion__nota {
   color: rgba(242, 242, 240, 0.45);
+}
+
+/* ---------- Progreso físico (medidas y fotos) ---------- */
+
+.medicion {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 11px 12px;
+  border-radius: var(--radio-chico);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--borde-tenue);
+}
+
+.medicion__fecha {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.medicion__variacion {
+  font: 600 11px/1 'Barlow', sans-serif;
+  color: var(--texto-60);
+}
+
+.medicion__foto {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: var(--radio-chico);
+  display: block;
 }
 
 /* ---------- Volumen (§20) ---------- */

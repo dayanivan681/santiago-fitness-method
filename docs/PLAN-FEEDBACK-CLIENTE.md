@@ -6,6 +6,12 @@ sección por sección, y **responde todas sus preguntas** en vez de devolvérsel
 **Punto de partida:** 140 tests en verde, la app funciona sin conexión y se
 instala en el móvil.
 
+**Estado al 22 de agosto de 2026:** 245 tests en verde; la lógica del método,
+que es donde viven sus reglas, cubierta al 99%. **Su especificación V1 está
+completa y sus diez criterios de aceptación se cumplen.** Lo único que queda
+abierto es el vídeo corto de la biblioteca (su punto H), que espera a que elija
+entre las dos opciones de `docs/OPCION-VIDEO.md`.
+
 ---
 
 ## Su sección 1 — "Lo que ya está bien resuelto"
@@ -23,15 +29,15 @@ y números grandes.
 
 | | Qué pide | Qué hacemos |
 |---|---|---|
-| **A** | Sesiones de 5 a 8 | **Cambio.** Tope a 8; la estructura por estímulo pasa de límite a plantilla sugerida. Posiciones 6–8 entran como hipertrofia, editables. `src/logica/plantilla.ts`, `src/dominio/estimulo.ts` |
+| **A** | Sesiones de 5 a 8 | ✅ **Hecho.** Tope a 8; la estructura por estímulo pasa de límite a plantilla sugerida. Posiciones 6–8 entran como hipertrofia, editables. `src/logica/plantilla.ts`, `src/dominio/estimulo.ts` |
 | **B** | Definir quién usa la app | **Ya está de facto.** Ver respuesta en la sección 3. |
-| **C** | Tarjeta más útil | **Cambio.** Última y mejor ya están; falta el **objetivo de hoy** y la **recomendación**, que está construida (`siguienteObjetivo`) pero dejó de mostrarse al aplicar el `Design.pdf`. Se devuelve con sus cuatro etiquetas. |
-| **D** | Progresión con reglas completas | **Cambio.** El veredicto pasa a considerar RIR, técnica, rango y series completadas, no sólo peso y reps. |
-| **E** | Temporizador manual | **Cambio.** Hoy arranca solo al guardar. Se quita y se pone un botón visible. |
-| **F** | Volumen más visual | **Cambio.** Sus cuatro estados: Dentro del objetivo · Falta volumen · Objetivo cumplido · Revisar recuperación. Hoy hay tres. |
-| **G** | Limitaciones conectadas | **Añadir.** Que avise al asignar un ejercicio prohibido. **Las alternativas salen gratis**: el campo `movimiento` ya agrupa las equivalentes. |
-| **H** | Biblioteca útil en gimnasio | **Casi hecho.** Falta el vídeo corto — plan en `docs/OPCION-VIDEO.md`. |
-| **I** | Guardado robusto | **Parcial.** Autosave y edición ya están; falta **auditoría**: hoy corregir sobrescribe y el valor erróneo desaparece. |
+| **C** | Tarjeta más útil | ✅ **Hecho.** Última y mejor ya están; falta el **objetivo de hoy** y la **recomendación**, que está construida (`siguienteObjetivo`) pero dejó de mostrarse al aplicar el `Design.pdf`. Se devuelve con sus cuatro etiquetas. |
+| **D** | Progresión con reglas completas | ✅ **Hecho.** El veredicto pasa a considerar RIR, técnica, rango y series completadas, no sólo peso y reps. |
+| **E** | Temporizador manual | ✅ **Hecho.** Hoy arranca solo al guardar. Se quita y se pone un botón visible. |
+| **F** | Volumen más visual | ✅ **Hecho.** Sus cuatro estados: Dentro del objetivo · Falta volumen · Objetivo cumplido · Revisar recuperación. Hoy hay tres. |
+| **G** | Limitaciones conectadas | ✅ **Hecho.** El perfil lleva una lista de ejercicios a evitar; al asignar uno, el coach recibe el aviso con las equivalentes y las cambia de un toque. Avisa, no bloquea. |
+| **H** | Biblioteca útil en gimnasio | ⏳ **Pendiente el vídeo corto** — plan y costes en `docs/OPCION-VIDEO.md`, a la espera de que elija opción. |
+| **I** | Guardado robusto | ✅ **Hecho.** Autosave, edición y ahora **auditoría**: al corregir, el valor anterior se apila con su hora en vez de desaparecer. |
 | **J** | Separar MVP de futuras | **Ya se respeta.** Sin pagos, chat, nutrición, redes ni wearables. |
 
 ### Sobre E — no confundir dos cosas
@@ -65,10 +71,11 @@ anterior en vez de sobrescribirlo.
 | **Finalización de sesión** | **La cierra el participante a mano**, nunca automáticamente. Se guarda lo que se hizo aunque falten ejercicios o series: §19 dice que lo registrado es lo que pasó, y una sesión a medias es un dato válido. |
 | **Offline** | **Ya resuelto.** Guarda en el dispositivo y se instala como app; el gimnasio sin cobertura está cubierto. |
 
-> **Aviso sobre sustituciones.** Hoy cambiar de variante reescribe la plantilla
-> para siempre. Pero el caso más común es puntual —"la máquina está ocupada"—,
-> así que el comportamiento actual es probablemente el equivocado. Conviene
-> invertirlo: por defecto sólo hoy.
+> **Sustituciones: ya está invertido.** Antes, cambiar de variante reescribía la
+> plantilla para siempre. Ahora al cambiar se elige entre **Sólo hoy** (por
+> defecto) y **Fijar en la plantilla**. La tarjeta del día queda marcada "Sólo
+> hoy" y mañana vuelve la variante asignada. **Es un cambio de comportamiento
+> que conviene que confirme.**
 
 ---
 
@@ -102,19 +109,19 @@ acordada, salta antes de llegar al gimnasio.
 
 | Punto | Estado |
 |---|---|
-| 1 participante real, arquitectura para más, sin panel ficticio | ✅ Tal cual |
-| Perfil: foto, datos, objetivo, frecuencia, limitaciones, notas | ⚠️ Faltan **foto** y **notas** |
-| Día con 5–8 ejercicios editables y **ordenables** | ❌ Tope de 5, y no se pueden reordenar |
-| Registro por serie: carga, reps, RIR, descanso; técnica si es simple | ⚠️ Falta **técnica** |
-| Última + mejor + **objetivo de hoy** dentro del ejercicio | ⚠️ Falta el objetivo |
-| Temporizador manual | ❌ Arranca solo |
+| 1 participante real, arquitectura para más, sin panel ficticio | ✅ La app ya no siembra a nadie: el coach lo da de alta al abrirla |
+| Perfil: foto, datos, objetivo, frecuencia, limitaciones, notas | ✅ Notas del coach y fotos de progreso; las limitaciones ya son estructuradas |
+| Día con 5–8 ejercicios editables y **ordenables** | ✅ Se ordenan con flechas, y el ejercicio se lleva su programación |
+| Registro por serie: carga, reps, RIR, descanso; técnica si es simple | ✅ Técnica incluida, con "Buena" por defecto |
+| Última + mejor + **objetivo de hoy** dentro del ejercicio | ✅ |
+| Temporizador manual | ✅ Lo arranca el participante |
 | Historial por variante sin sobrescribir | ✅ |
 | Biblioteca visual con ejercicios reales | ✅ 33 ejercicios con foto |
-| Sustitución conservando historiales | ✅ |
-| Progresión: Mantener / Subir reps / Subir carga mínima / Revisar-reducir, editable | ⚠️ El motor existe; falta mostrarlo y que el coach pueda fijarlo |
-| Volumen directo por grupo con estado simple | ⚠️ Faltan sus cuatro estados |
-| Fotos de progreso y medidas con fecha | ❌ No existe |
-| Autosave y corregir errores | ⚠️ Falta la auditoría |
+| Sustitución conservando historiales | ✅ Y ahora distingue sólo hoy de permanente |
+| Progresión: Mantener / Subir reps / Subir carga mínima / Revisar-reducir, editable | ✅ El coach la fija por ejercicio; el objetivo se sigue calculando |
+| Volumen directo por grupo con estado simple | ✅ Sus cuatro estados |
+| Fotos de progreso y medidas con fecha | ✅ En el dispositivo, con peso, cintura, pecho, brazo y muslo |
+| Autosave y corregir errores | ✅ Con auditoría del valor anterior |
 
 ---
 
@@ -122,19 +129,29 @@ acordada, salta antes de llegar al gimnasio.
 
 | # | Criterio | Hoy |
 |---|---|---|
-| 1 | Crear un participante real en menos de 2 min | ⚠️ Sólo se edita el existente |
-| 2 | Sesión de 5–8 ejercicios sin cambiar código | ❌ |
+| 1 | Crear un participante real en menos de 2 min | ✅ Un formulario con estimados; sólo hay que escribir el nombre |
+| 2 | Sesión de 5–8 ejercicios sin cambiar código | ✅ |
 | 3 | Registrar una serie en segundos con una mano | ✅ |
 | 4 | Ver la referencia sin salir del ejercicio | ✅ |
-| 5 | Temporizador manual | ❌ |
+| 5 | Temporizador manual | ✅ Con test de que no arranca al guardar |
 | 6 | Cerrar y reabrir sin perder la serie | ✅ |
 | 7 | Sustituir conservando ambos historiales | ✅ |
 | 8 | Editar un dato mal ingresado | ✅ |
-| 9 | Completar una sesión y verla en historial | ⚠️ "Completar" no existe |
-| 10 | Clara con 8 ejercicios | ❌ Depende del 2 |
+| 9 | Completar una sesión y verla en historial | ✅ La cierra el participante |
+| 10 | Clara con 8 ejercicios | ✅ Test de los ocho en pantalla; el visto bueno visual es suyo |
 
-**Cinco de diez ya se cumplen.** Estos diez criterios se convierten en tests
-automáticos, para que "dar por buena la V1" deje de ser una opinión.
+**Los diez se cumplen.** Ocho son tests automáticos, así que "dar por buena la
+V1" deja de ser una opinión. Los otros dos —registrar con una mano y que la
+pantalla siga clara con ocho ejercicios— los cubre un test hasta donde puede
+llegar (que el registro funcione, que los ocho aparezcan); la ergonomía la juzga
+usted con el móvil en la mano.
+
+Sobre el nº1: su especificación pide *"sin panel ficticio de clientes"*, así que
+la app dejó de sembrar un participante inventado. Una instalación nueva abre
+directamente en el alta, con todos los campos ya rellenos con estimados —sexo,
+edad, estatura, peso, objetivo y frecuencia— y sólo hay que escribir el nombre.
+Al crearlo, entra en el entrenamiento del día. Quien ya tenía datos no pierde
+nada: sigue con su participante y su historial.
 
 ---
 
@@ -142,15 +159,20 @@ automáticos, para que "dar por buena la V1" deje de ser una opinión.
 
 Agrupado por dependencia técnica, no por su orden sugerido.
 
-**Cambios sobre lo existente**
-5–8 ejercicios · temporizador manual · recomendación visible con las cuatro
-etiquetas y editable por el coach · veredicto con RIR y técnica · cuatro estados
-de volumen · sustitución por defecto sólo del día · auditoría al corregir.
+**Hecho**
+Alta del participante real · 5–8 ejercicios · temporizador manual ·
+recomendación visible con sus cuatro etiquetas · veredicto con RIR y técnica ·
+cuatro estados de volumen · sustitución sólo del día con opción de fijarla ·
+auditoría al corregir · técnica por serie · marca de calentamiento · sesión
+completada · limitaciones estructuradas conectadas con la asignación.
 
-**Añadidos al modelo**
-Técnica por serie · marca de calentamiento · sesión completada · notas y foto de
-perfil · medidas y fotos de progreso con fecha · reordenar ejercicios ·
-limitaciones estructuradas conectadas con la asignación.
+**Hecho después**
+Alta del participante · reordenar ejercicios · notas del coach · medidas y fotos
+de progreso con fecha · recomendación fijable por el coach.
+
+**Pendiente**
+Sólo el vídeo corto en la biblioteca, a la espera de que elija opción
+(`docs/OPCION-VIDEO.md`).
 
 ---
 

@@ -9,7 +9,8 @@
 
 import { useEffect, useState, type FormEvent } from 'react'
 import { INCREMENTO_IDEAL_LB } from '../../dominio/carga'
-import { aCentimetros, aPiesYPulgadas, formatearEstatura } from '../../dominio/estatura'
+import { formatearEstatura } from '../../dominio/estatura'
+import { CamposParticipante } from './CamposParticipante'
 import type { Participante } from '../../dominio/tipos'
 
 const SEXO: Readonly<Record<Participante['sexo'], string>> = {
@@ -27,12 +28,6 @@ export function FichaParticipante({ participante, onGuardar }: Props) {
   const [borrador, setBorrador] = useState(participante)
 
   useEffect(() => setBorrador(participante), [participante])
-
-  // El dato se guarda en centímetros; pies y pulgadas son sólo la forma de verlo.
-  const estatura = aPiesYPulgadas(borrador.estaturaCm)
-
-  const cambiar = <C extends keyof Participante>(campo: C, valor: Participante[C]) =>
-    setBorrador({ ...borrador, [campo]: valor })
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault()
@@ -73,6 +68,11 @@ export function FichaParticipante({ participante, onGuardar }: Props) {
         {participante.limitaciones.trim() !== '' && (
           <p className="limitacion">Limitación: {participante.limitaciones}</p>
         )}
+
+        {/* Las notas no condicionan nada: se leen, no gritan. */}
+        {(participante.notas ?? '').trim() !== '' && (
+          <p className="nota">{participante.notas}</p>
+        )}
       </section>
     )
   }
@@ -84,108 +84,10 @@ export function FichaParticipante({ participante, onGuardar }: Props) {
         <span className="panel__nota">Editable por el coach</span>
       </div>
 
-      <div className="rejilla-datos">
-        <label className="campo-texto" style={{ gridColumn: '1 / -1' }}>
-          <span className="etiqueta-campo">Nombre</span>
-          <input
-            type="text"
-            value={borrador.nombre}
-            onChange={(e) => cambiar('nombre', e.target.value)}
-          />
-        </label>
-
-        <label className="campo-texto">
-          <span className="etiqueta-campo">Sexo</span>
-          <select
-            value={borrador.sexo}
-            onChange={(e) => cambiar('sexo', e.target.value as Participante['sexo'])}
-          >
-            <option value="femenino">Femenino</option>
-            <option value="masculino">Masculino</option>
-          </select>
-        </label>
-
-        <label className="campo-texto">
-          <span className="etiqueta-campo">Edad</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min="0"
-            value={borrador.edad}
-            onChange={(e) => cambiar('edad', Number(e.target.value))}
-          />
-        </label>
-
-        <label className="campo-texto">
-          <span className="etiqueta-campo">Estatura (pies)</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min="0"
-            value={estatura.pies}
-            onChange={(e) =>
-              cambiar('estaturaCm', aCentimetros({ ...estatura, pies: Number(e.target.value) }))
-            }
-          />
-        </label>
-
-        <label className="campo-texto">
-          <span className="etiqueta-campo">Estatura (pulgadas)</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min="0"
-            max="11"
-            value={estatura.pulgadas}
-            onChange={(e) =>
-              cambiar('estaturaCm', aCentimetros({ ...estatura, pulgadas: Number(e.target.value) }))
-            }
-          />
-        </label>
-
-        <label className="campo-texto">
-          <span className="etiqueta-campo">Peso (lb)</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            step="any"
-            min="0"
-            value={borrador.pesoCorporalLb}
-            onChange={(e) => cambiar('pesoCorporalLb', Number(e.target.value))}
-          />
-        </label>
-
-        <label className="campo-texto">
-          <span className="etiqueta-campo">Entrenos/semana</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min="1"
-            max="7"
-            value={borrador.frecuenciaEntrenamiento}
-            onChange={(e) => cambiar('frecuenciaEntrenamiento', Number(e.target.value))}
-          />
-        </label>
-
-        <label className="campo-texto" style={{ gridColumn: '1 / -1' }}>
-          <span className="etiqueta-campo">Objetivo</span>
-          <input
-            type="text"
-            value={borrador.objetivo}
-            onChange={(e) => cambiar('objetivo', e.target.value)}
-          />
-        </label>
-
-        <label className="campo-texto" style={{ gridColumn: '1 / -1' }}>
-          <span className="etiqueta-campo">Lesiones o limitaciones</span>
-          <textarea
-            rows={2}
-            value={borrador.limitaciones}
-            onChange={(e) => cambiar('limitaciones', e.target.value)}
-            placeholder="Ninguna"
-          />
-        </label>
-      </div>
+      <CamposParticipante
+        valores={borrador}
+        onCambiar={(cambios) => setBorrador({ ...borrador, ...cambios })}
+      />
 
       <div style={{ display: 'flex', gap: 8 }}>
         <button type="submit" className="boton-guardar" style={{ flex: 1, height: 38, justifyContent: 'center' }}>

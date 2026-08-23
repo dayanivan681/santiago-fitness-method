@@ -9,7 +9,7 @@ import { sembrar } from '../../datos/semilla'
 import { crearSlot } from '../../logica/plantilla'
 import { LAT_PULLDOWN, PRESS_INCLINADO_CONVERGENTE } from '../../datos/semilla/biblioteca'
 import { evitar } from '../../logica/limitaciones'
-import { ID_PARTICIPANTE_PILOTO } from '../../datos/semilla'
+import { sembrarParticipante } from '../../pruebas/participante'
 
 let repositorio: RepositorioLocal
 
@@ -17,6 +17,7 @@ beforeEach(async () => {
   const db = new BaseDatosSantiago(`prueba-coach-${crypto.randomUUID()}`)
   repositorio = new RepositorioLocal(db)
   await sembrar(repositorio)
+  await sembrarParticipante(repositorio)
 })
 
 async function abrirUpperA() {
@@ -148,7 +149,7 @@ describe('limitaciones conectadas con la programación (punto G)', () => {
 
   /** El perfil pasa a decir que este ejercicio hay que evitarlo. */
   async function prohibir(ejercicioId: string) {
-    const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
+    const participante = await repositorio.participanteActual()
     await repositorio.guardarParticipante(evitar(participante!, ejercicioId))
   }
 
@@ -219,5 +220,97 @@ describe('limitaciones conectadas con la programación (punto G)', () => {
     await abrirUpperA()
 
     expect(screen.queryByText(/El perfil dice evitar/)).not.toBeInTheDocument()
+  })
+})
+
+describe('ordenar el día', () => {
+  test('el coach sube un ejercicio y el día se guarda en el orden nuevo', async () => {
+    // Su especificación V1 pide los días editables y ordenables.
+    // Arrange
+    await abrirUpperA()
+    const antes = (await repositorio.obtenerPlantilla('upper-a'))!.slots
+
+    // Act
+    await userEvent.click(screen.getByRole('button', { name: 'Subir el ejercicio 2' }))
+
+    // Assert: el segundo pasa a primero y las posiciones siguen sin huecos
+    await waitFor(async () => {
+      const despues = (await repositorio.obtenerPlantilla('upper-a'))!.slots
+      expect(despues[0].ejercicioId).toBe(antes[1].ejercicioId)
+      expect(despues[1].ejercicioId).toBe(antes[0].ejercicioId)
+      expect(despues.map((slot) => slot.orden)).toEqual([1, 2, 3, 4, 5])
+    })
+  })
+
+  test('el ejercicio se lleva su programación al cambiar de sitio (§23)', async () => {
+    // Arrange: la posición 1 es de fuerza, 4 series, 1–5 reps
+    await abrirUpperA()
+    const primero = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+
+    // Act
+    await userEvent.click(screen.getByRole('button', { name: 'Bajar el ejercicio 1' }))
+
+    // Assert
+    await waitFor(async () => {
+      const despues = (await repositorio.obtenerPlantilla('upper-a'))!.slots[1]
+      expect(despues.ejercicioId).toBe(primero.ejercicioId)
+      expect(despues.estimulo).toBe(primero.estimulo)
+      expect(despues.seriesObjetivo).toBe(primero.seriesObjetivo)
+      expect(despues.descansoSegundos).toBe(primero.descansoSegundos)
+    })
+  })
+
+  test('el primero no puede subir ni el último bajar', async () => {
+    await abrirUpperA()
+
+    expect(screen.getByRole('button', { name: 'Subir el ejercicio 1' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Bajar el ejercicio 5' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Bajar el ejercicio 1' })).toBeEnabled()
+  })
+})
+
+describe('la progresión la puede fijar el coach (V1)', () => {
+  test('por defecto la decide la app', async () => {
+    await abrirUpperA()
+
+    expect(screen.getByLabelText('Progresión del ejercicio 1')).toHaveValue('')
+  })
+
+  test('fijarla queda guardada en el día', async () => {
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.selectOptions(
+      screen.getByLabelText('Progresión del ejercicio 1'),
+      'mantener',
+    )
+
+    // Assert: se guarda sin tocar el resto de la programación
+    await waitFor(async () => {
+      const slot = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+      expect(slot.progresionFijada).toBe('mantener')
+      expect(slot.seriesObjetivo).toBe(4)
+    })
+  })
+
+  test('se puede devolver a automática', async () => {
+    await abrirUpperA()
+    await userEvent.selectOptions(
+      screen.getByLabelText('Progresión del ejercicio 1'),
+      'mantener',
+    )
+    await waitFor(async () => {
+      expect((await repositorio.obtenerPlantilla('upper-a'))!.slots[0].progresionFijada).toBe(
+        'mantener',
+      )
+    })
+
+    await userEvent.selectOptions(screen.getByLabelText('Progresión del ejercicio 1'), '')
+
+    await waitFor(async () => {
+      const slot = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+      expect(slot.progresionFijada).toBeUndefined()
+    })
   })
 })

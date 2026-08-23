@@ -8,7 +8,6 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
 import type { Repositorio } from '../datos/repositorio'
-import { ID_PARTICIPANTE_PILOTO } from '../datos/semilla'
 import { rangoDeEjercicio } from '../logica/plantilla'
 import type { Ejercicio, ReferenciasEjercicio } from '../dominio/tipos'
 
@@ -48,7 +47,8 @@ export function useHistorial(repositorio: Repositorio) {
 
     const historial = await repositorio.historialDeEjercicio(ejercicio.id)
     const rango = rangoDeEjercicio(plantillas, ejercicio.id)
-    const sesiones = await repositorio.listarSesiones(ID_PARTICIPANTE_PILOTO)
+    const participante = await repositorio.participanteActual()
+    const sesiones = participante ? await repositorio.listarSesiones(participante.id) : []
     const cerradas = new Set(
       sesiones.filter((s) => s.completadaEn).map((s) => s.fecha),
     )

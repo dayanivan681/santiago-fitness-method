@@ -5,6 +5,7 @@
 
 import type { Estimulo } from './estimulo'
 import type { PerfilCarga } from './carga'
+import type { TipoDeProgresion } from './progresion'
 
 export type Sexo = 'femenino' | 'masculino'
 
@@ -21,6 +22,14 @@ export interface Participante {
   readonly frecuenciaEntrenamiento: number
   /** Lesiones o limitaciones importantes, en palabras del coach. */
   readonly limitaciones: string
+  /**
+   * Notas del coach sobre este participante.
+   *
+   * Su especificación V1 las pide junto a los datos de §2. No son las
+   * limitaciones —eso condiciona el entrenamiento y va aparte—, sino el
+   * contexto que no cabe en un campo: horarios, historial, lo que sea.
+   */
+  readonly notas?: string
   /**
    * Ejercicios que este participante no debe hacer.
    *
@@ -97,6 +106,14 @@ export interface SlotPlantilla {
   readonly repMin: number
   readonly repMax: number
   readonly descansoSegundos: number
+  /**
+   * Recomendación fijada por el coach para este ejercicio.
+   *
+   * Su especificación V1 quiere la progresión *"siempre editable por el
+   * coach"*. Sin fijar, la calcula la app. Opcional: los días programados antes
+   * de que existiera este campo no lo tienen.
+   */
+  readonly progresionFijada?: TipoDeProgresion
 }
 
 /** §28: Upper A · Lower A · Upper B · Lower B. */
@@ -241,4 +258,35 @@ export interface Sustitucion {
   /** Posición dentro del día, no el ejercicio: es el hueco lo que se rellena. */
   readonly orden: number
   readonly ejercicioId: string
+}
+
+/**
+ * Medidas corporales de un día. Todas opcionales: se apunta lo que se midió.
+ *
+ * En pulgadas, como el resto de la app trabaja en libras y pies: el método es
+ * imperial y convertir mentalmente en el gimnasio es una fuente de errores.
+ */
+export interface Medidas {
+  readonly pesoCorporalLb?: number
+  readonly cinturaPulgadas?: number
+  readonly pechoPulgadas?: number
+  readonly brazoPulgadas?: number
+  readonly musloPulgadas?: number
+}
+
+/**
+ * Un punto de control del progreso físico: medidas y foto, con su fecha.
+ *
+ * La foto se guarda **en el dispositivo y no se sube a ningún sitio**. Mientras
+ * no haya cuentas, esa decisión resuelve por construcción el consentimiento y
+ * los permisos que el cliente pregunta en su análisis.
+ */
+export interface RegistroDeProgreso {
+  readonly id: string
+  readonly participanteId: string
+  /** Fecha ISO (YYYY-MM-DD). */
+  readonly fecha: string
+  readonly medidas: Medidas
+  /** Si tiene foto, se guarda aparte para no cargarla al leer la lista. */
+  readonly tieneFoto: boolean
 }

@@ -6,6 +6,9 @@
 
 import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
 import { alternativasEquivalentes, debeEvitarse } from '../../logica/limitaciones'
+import { ETIQUETA_SUGERENCIA } from '../../logica/sugerencia'
+import { PROGRESIONES, type TipoDeProgresion } from '../../dominio/progresion'
+import type { Direccion } from '../../logica/plantilla'
 import type { Ejercicio, Participante, SlotPlantilla } from '../../dominio/tipos'
 import type { Estimulo } from '../../dominio/estimulo'
 
@@ -23,6 +26,10 @@ interface Props {
   readonly onReemplazar: (ejercicioId: string) => void
   readonly onAjustar: (cambios: Partial<Omit<SlotPlantilla, 'orden'>>) => void
   readonly onQuitar: () => void
+  /** Ordenar el día es parte de programarlo: §4 lo ordena por exigencia. */
+  readonly onMover: (direccion: Direccion) => void
+  readonly esElPrimero: boolean
+  readonly esElUltimo: boolean
 }
 
 export function EditorSlot({
@@ -32,6 +39,9 @@ export function EditorSlot({
   onReemplazar,
   onAjustar,
   onQuitar,
+  onMover,
+  esElPrimero,
+  esElUltimo,
 }: Props) {
   const etiqueta = `ejercicio ${slot.orden}`
   const asignado = ejercicios.find((ejercicio) => ejercicio.id === slot.ejercicioId)
@@ -43,9 +53,29 @@ export function EditorSlot({
         <span className={`etiqueta etiqueta--${slot.estimulo}`}>
           {slot.orden}. {ETIQUETA_ESTIMULO[slot.estimulo]}
         </span>
-        <button type="button" className="hoja__cerrar" onClick={onQuitar}>
-          Quitar
-        </button>
+        <span className="orden-slot">
+          <button
+            type="button"
+            className="orden-slot__boton"
+            aria-label={`Subir el ${etiqueta}`}
+            disabled={esElPrimero}
+            onClick={() => onMover('arriba')}
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            className="orden-slot__boton"
+            aria-label={`Bajar el ${etiqueta}`}
+            disabled={esElUltimo}
+            onClick={() => onMover('abajo')}
+          >
+            ↓
+          </button>
+          <button type="button" className="hoja__cerrar" onClick={onQuitar}>
+            Quitar
+          </button>
+        </span>
       </header>
 
       <label className="campo-texto">
@@ -111,6 +141,27 @@ export function EditorSlot({
             onChange={(e) => onAjustar({ repMax: Number(e.target.value) })}
             aria-label={`Repeticiones máximas del ${etiqueta}`}
           />
+        </label>
+
+        {/* Su V1 pide la progresión "siempre editable por el coach". */}
+        <label className="campo-texto">
+          <span className="etiqueta-campo">Progresión</span>
+          <select
+            value={slot.progresionFijada ?? ''}
+            onChange={(e) =>
+              onAjustar({
+                progresionFijada: (e.target.value || undefined) as TipoDeProgresion | undefined,
+              })
+            }
+            aria-label={`Progresión del ${etiqueta}`}
+          >
+            <option value="">Automática</option>
+            {PROGRESIONES.map((tipo) => (
+              <option key={tipo} value={tipo}>
+                {ETIQUETA_SUGERENCIA[tipo]}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className="campo-texto">

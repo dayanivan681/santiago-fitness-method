@@ -7,7 +7,6 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { derivarReferencias } from '../datos/referencias'
 import { fechaDeHoy, nuevoId, type Repositorio } from '../datos/repositorio'
-import { ID_PARTICIPANTE_PILOTO } from '../datos/semilla'
 import { diaSugerido } from '../logica/rotacion'
 import { reemplazarEjercicio } from '../logica/plantilla'
 import { aplicarSustituciones, idSustitucion } from '../logica/sustitucion'
@@ -86,7 +85,7 @@ export function useEntrenamiento(repositorio: Repositorio) {
     if (!datos) return
 
     const fecha = fechaDeHoy()
-    const sesiones = await repositorio.listarSesiones(ID_PARTICIPANTE_PILOTO)
+    const sesiones = await repositorio.listarSesiones(datos.participante.id)
     const existente = sesiones.find(
       (sesion) => sesion.fecha === fecha && sesion.plantillaDiaId === datos.plantilla.id,
     )
@@ -95,7 +94,7 @@ export function useEntrenamiento(repositorio: Repositorio) {
     if (!existente) {
       await repositorio.crearSesion({
         id: sesionId,
-        participanteId: ID_PARTICIPANTE_PILOTO,
+        participanteId: datos.participante.id,
         plantillaDiaId: datos.plantilla.id,
         fecha,
       })
@@ -209,15 +208,17 @@ async function cargarEntrenamiento(
   plantillaIdElegida: string | null,
 ): Promise<DatosEntrenamiento | null> {
   const fecha = fechaDeHoy()
-  const [participante, plantillas, sesiones, ejercicios, sustituciones] = await Promise.all([
-    repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO),
+  const participante = await repositorio.participanteActual()
+  if (!participante) return null
+
+  const [plantillas, sesiones, ejercicios, sustituciones] = await Promise.all([
     repositorio.listarPlantillas(),
-    repositorio.listarSesiones(ID_PARTICIPANTE_PILOTO),
+    repositorio.listarSesiones(participante.id),
     repositorio.listarEjercicios(),
     repositorio.listarSustituciones(fecha),
   ])
 
-  if (!participante || plantillas.length === 0) return null
+  if (plantillas.length === 0) return null
 
   // Si ya se empezó a registrar hoy, ese es el día que se está entrenando. Sin
   // esta regla la rotación avanzaría en cuanto se guarda la primera serie y la
@@ -290,6 +291,7 @@ async function cargarEjercicio(
       perfil: ejercicio,
       estimulo: slot.estimulo,
       seriesObjetivo: slot.seriesObjetivo,
+      fijada: slot.progresionFijada,
     }),
     seriesDeHoy: seriesDeHoy.filter((serie) => serie.ejercicioId === ejercicio.id),
     variantes: biblioteca.filter((e) => e.movimiento === ejercicio.movimiento),

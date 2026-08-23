@@ -131,6 +131,8 @@ export function TarjetaEjercicio({
             </span>
             <span className={`recomendacion recomendacion--${sugerencia.tipo}`}>
               {ETIQUETA_SUGERENCIA[sugerencia.tipo]}
+              {/* Si la fijó el coach, que no parezca un cálculo de la app. */}
+              {slot.progresionFijada && ' · del coach'}
             </span>
           </div>
 

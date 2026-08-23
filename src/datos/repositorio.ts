@@ -9,6 +9,7 @@ import type {
   Ejercicio,
   Participante,
   PlantillaDia,
+  RegistroDeProgreso,
   SerieRegistrada,
   Sesion,
   Sustitucion,
@@ -18,6 +19,16 @@ import type { SerieConFecha } from './referencias'
 export interface Repositorio {
   obtenerParticipante(id: string): Promise<Participante | undefined>
   guardarParticipante(participante: Participante): Promise<void>
+
+  /**
+   * El participante del piloto, o nada si todavía no se ha dado de alta.
+   *
+   * Su especificación V1 pide uno solo y sin panel ficticio, así que la app no
+   * elige entre varios: entrena el que está. El día que haya más, esto pasa a
+   * ser "el seleccionado" y nada más cambia, porque las sesiones ya se guardan
+   * por participante.
+   */
+  participanteActual(): Promise<Participante | undefined>
 
   listarEjercicios(): Promise<Ejercicio[]>
   obtenerEjercicio(id: string): Promise<Ejercicio | undefined>
@@ -73,6 +84,19 @@ export interface Repositorio {
 
   /** Ids de los ejercicios que ya se han entrenado alguna vez (§18). */
   idsDeEjerciciosConHistorial(): Promise<string[]>
+
+  /**
+   * Progreso físico: medidas y fotos con fecha.
+   *
+   * La foto va y viene por separado porque pesa: listar las medidas de un año
+   * no puede arrastrar todas las imágenes. Y no sale del dispositivo — mientras
+   * no haya cuentas, eso resuelve consentimiento y permisos por construcción.
+   */
+  listarProgreso(participanteId: string): Promise<RegistroDeProgreso[]>
+  guardarProgreso(registro: RegistroDeProgreso, foto?: Blob): Promise<void>
+  obtenerFotoDeProgreso(registroId: string): Promise<Blob | undefined>
+  /** Borra el registro y su foto. Lo pide quien se equivocó de día o de foto. */
+  borrarProgreso(registroId: string): Promise<void>
 
   /**
    * Series registradas entre dos fechas, con la suya. Es lo que necesita el

@@ -119,8 +119,47 @@ export function rangoDeEjercicio(
 export function quitarSlot(plantilla: PlantillaDia, orden: number): PlantillaDia {
   return {
     ...plantilla,
-    slots: plantilla.slots
-      .filter((slot) => slot.orden !== orden)
-      .map((slot, indice) => ({ ...slot, orden: indice + 1 })),
+    slots: renumerar(plantilla.slots.filter((slot) => slot.orden !== orden)),
   }
+}
+
+/** Hacia dónde se mueve un ejercicio dentro del día. */
+export type Direccion = 'arriba' | 'abajo'
+
+/**
+ * Cambia un ejercicio de sitio dentro del día.
+ *
+ * Su especificación V1 pide días *"editables y ordenables"*, y el orden no es
+ * decorativo: §4 ordena la sesión de más exigente a menos, así que moverlo es
+ * parte de programar.
+ *
+ * Se mueve el slot entero — series, rango, estímulo y descanso viajan con el
+ * ejercicio (§23) —; la posición sólo dice cuándo se entrena.
+ */
+export function moverSlot(
+  plantilla: PlantillaDia,
+  orden: number,
+  direccion: Direccion,
+): PlantillaDia {
+  const ordenados = [...plantilla.slots].sort((a, b) => a.orden - b.orden)
+  const indice = ordenados.findIndex((slot) => slot.orden === orden)
+  if (indice === -1) {
+    throw new Error(`La posición ${orden} no existe en ${plantilla.nombre}`)
+  }
+
+  const destino = direccion === 'arriba' ? indice - 1 : indice + 1
+  // En los extremos no hay nada que hacer; devolver la misma plantilla evita un
+  // guardado que no cambia nada.
+  if (destino < 0 || destino >= ordenados.length) return plantilla
+
+  const intercambiados = [...ordenados]
+  intercambiados[indice] = ordenados[destino]
+  intercambiados[destino] = ordenados[indice]
+
+  return { ...plantilla, slots: renumerar(intercambiados) }
+}
+
+/** Posiciones consecutivas desde 1: sin huecos y sin repetidas. */
+function renumerar(slots: readonly SlotPlantilla[]): readonly SlotPlantilla[] {
+  return slots.map((slot, indice) => ({ ...slot, orden: indice + 1 }))
 }

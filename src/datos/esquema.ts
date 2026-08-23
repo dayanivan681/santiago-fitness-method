@@ -11,6 +11,7 @@ import type {
   Participante,
   PlantillaDia,
   SerieRegistrada,
+  RegistroDeProgreso,
   Sesion,
   Sustitucion,
 } from '../dominio/tipos'
@@ -22,6 +23,9 @@ export class BaseDatosSantiago extends Dexie {
   sesiones!: EntityTable<Sesion, 'id'>
   series!: EntityTable<SerieRegistrada, 'id'>
   sustituciones!: EntityTable<Sustitucion, 'id'>
+  progreso!: EntityTable<RegistroDeProgreso, 'id'>
+  /** Las fotos, aparte: una lista de medidas no debe arrastrar megas de imagen. */
+  fotos!: EntityTable<{ id: string; imagen: Blob }, 'id'>
 
   constructor(nombre = 'santiago-fitness-method') {
     super(nombre)
@@ -53,6 +57,13 @@ export class BaseDatosSantiago extends Dexie {
     // v3: los cambios de variante que valen sólo para un día. Tabla aparte y no
     // un campo en la plantilla: la plantilla es lo permanente, esto caduca.
     this.version(3).stores({ sustituciones: 'id, fecha' })
+
+    // v4: progreso físico. La imagen vive en su propia tabla, con el id del
+    // registro como clave, para poder leer las medidas sin cargar las fotos.
+    this.version(4).stores({
+      progreso: 'id, participanteId, fecha',
+      fotos: 'id',
+    })
   }
 }
 

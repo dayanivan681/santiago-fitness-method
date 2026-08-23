@@ -21,7 +21,7 @@ interface Props {
 }
 
 export function Coach({ repositorio = repositorioPorDefecto, onVolver }: Props = {}) {
-  const { datos, cargando, elegirPlantilla, reemplazar, ajustar, anadir, quitar } =
+  const { datos, cargando, elegirPlantilla, reemplazar, ajustar, anadir, quitar, mover } =
     useCoach(repositorio)
   const [ejercicioAAnadir, setEjercicioAAnadir] = useState('')
 
@@ -57,7 +57,7 @@ export function Coach({ repositorio = repositorioPorDefecto, onVolver }: Props =
         </p>
 
         <div className="pila" style={{ marginTop: 10 }}>
-          {slots.map((slot) => (
+          {slots.map((slot, indice) => (
             <EditorSlot
               key={slot.orden}
               slot={slot}
@@ -66,6 +66,9 @@ export function Coach({ repositorio = repositorioPorDefecto, onVolver }: Props =
               onReemplazar={(ejercicioId) => reemplazar(slot.orden, ejercicioId)}
               onAjustar={(cambios) => ajustar(slot.orden, cambios)}
               onQuitar={() => quitar(slot.orden)}
+              onMover={(direccion) => mover(slot.orden, direccion)}
+              esElPrimero={indice === 0}
+              esElUltimo={indice === slots.length - 1}
             />
           ))}
         </div>

@@ -151,8 +151,10 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
         )}
       </div>
 
+      {/* El nombre importa: los campos de la serie son <output>, que también
+          anuncian estado, y sin él no se distinguiría cuál es el cronómetro. */}
       {descanso > 0 && (
-        <div className="descanso" role="status">
+        <div className="descanso" role="status" aria-label="Temporizador de descanso">
           <span className="descanso__rotulo">Descanso</span>
           <span className="descanso__tiempo">{formatearSegundos(descanso)}</span>
           <button

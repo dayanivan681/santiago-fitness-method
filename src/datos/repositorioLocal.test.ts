@@ -6,6 +6,7 @@ import { derivarReferencias } from './referencias'
 import { RANGO_POR_ESTIMULO } from '../dominio/estimulo'
 import { crearSlot } from '../logica/plantilla'
 import { idSustitucion } from '../logica/sustitucion'
+import { ALTA_POR_DEFECTO, crearParticipante } from '../logica/participante'
 import { PRESS_BANCA_15_SMITH, PRESS_INCLINADO_CONVERGENTE } from './semilla/biblioteca'
 import type { SerieRegistrada, Sesion } from '../dominio/tipos'
 
@@ -40,6 +41,24 @@ const serie = (
   pesoRegistradoLb,
   repsRealizadas,
   rir: 2,
+})
+
+describe('el participante del piloto', () => {
+  test('sin alta todavía, no hay ninguno', async () => {
+    // La app arranca vacía: el coach da de alta al participante real (criterio 1).
+    expect(await repositorio.participanteActual()).toBeUndefined()
+  })
+
+  test('después del alta, es el que devuelve', async () => {
+    // Arrange
+    const participante = crearParticipante({ ...ALTA_POR_DEFECTO, nombre: 'Santiago' })
+
+    // Act
+    await repositorio.guardarParticipante(participante)
+
+    // Assert
+    expect((await repositorio.participanteActual())?.nombre).toBe('Santiago')
+  })
 })
 
 describe('historial append-only (§19)', () => {

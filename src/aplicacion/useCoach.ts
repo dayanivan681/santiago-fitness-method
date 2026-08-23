@@ -6,12 +6,13 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import type { Repositorio } from '../datos/repositorio'
-import { ID_PARTICIPANTE_PILOTO } from '../datos/semilla'
 import {
   actualizarSlot,
   anadirSlot,
+  moverSlot,
   quitarSlot,
   reemplazarEjercicio,
+  type Direccion,
 } from '../logica/plantilla'
 import type {
   Ejercicio,
@@ -35,7 +36,7 @@ export function useCoach(repositorio: Repositorio) {
     const [plantillas, ejercicios, participante] = await Promise.all([
       repositorio.listarPlantillas(),
       repositorio.listarEjercicios(),
-      repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO),
+      repositorio.participanteActual(),
     ])
     if (plantillas.length === 0 || !participante) return null
 
@@ -61,5 +62,7 @@ export function useCoach(repositorio: Repositorio) {
       editar((p) => actualizarSlot(p, orden, cambios))(),
     anadir: (ejercicioId: string) => editar((p) => anadirSlot(p, ejercicioId))(),
     quitar: (orden: number) => editar((p) => quitarSlot(p, orden))(),
+    mover: (orden: number, direccion: Direccion) =>
+      editar((p) => moverSlot(p, orden, direccion))(),
   }
 }

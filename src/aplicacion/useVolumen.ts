@@ -5,7 +5,6 @@
 
 import { useLiveQuery } from 'dexie-react-hooks'
 import { fechaDeHoy, fechaHaceDias, type Repositorio } from '../datos/repositorio'
-import { ID_PARTICIPANTE_PILOTO } from '../datos/semilla'
 import {
   estadoVolumen,
   objetivoSemanal,
@@ -73,7 +72,7 @@ export function useVolumen(repositorio: Repositorio) {
     const hasta = fechaDeHoy()
 
     const [participante, ejercicios, series] = await Promise.all([
-      repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO),
+      repositorio.participanteActual(),
       repositorio.listarEjercicios(),
       repositorio.seriesEntreFechas(desde, hasta),
     ])

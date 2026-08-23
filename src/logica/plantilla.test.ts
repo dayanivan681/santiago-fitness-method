@@ -5,6 +5,7 @@ import {
   actualizarSlot,
   anadirSlot,
   quitarSlot,
+  moverSlot,
   rangoDeEjercicio,
   MAX_EJERCICIOS_POR_DIA,
 } from './plantilla'
@@ -203,5 +204,66 @@ describe('quitarSlot (§23)', () => {
     quitarSlot(UPPER_A, 2)
 
     expect(UPPER_A.slots).toHaveLength(3)
+  })
+})
+
+describe('moverSlot — el coach ordena el día', () => {
+  test('subir un ejercicio lo intercambia con el anterior', () => {
+    // Arrange + Act: el jalón pasa por delante del press inclinado
+    const movida = moverSlot(UPPER_A, 3, 'arriba')
+
+    // Assert
+    expect(movida.slots.map((slot) => slot.ejercicioId)).toEqual([
+      'press-banca-15-smith',
+      'lat-pulldown-maquina',
+      'press-inclinado-convergente',
+    ])
+  })
+
+  test('bajar hace lo contrario', () => {
+    const movida = moverSlot(UPPER_A, 1, 'abajo')
+
+    expect(movida.slots.map((slot) => slot.ejercicioId)).toEqual([
+      'press-inclinado-convergente',
+      'press-banca-15-smith',
+      'lat-pulldown-maquina',
+    ])
+  })
+
+  test('las posiciones quedan numeradas 1, 2, 3…', () => {
+    // Sin renumerar, la posición dejaría de decir en qué orden se entrena.
+    const movida = moverSlot(UPPER_A, 3, 'arriba')
+
+    expect(movida.slots.map((slot) => slot.orden)).toEqual([1, 2, 3])
+  })
+
+  test('el ejercicio se lleva su configuración, no se queda en la posición', () => {
+    // §23: mover no puede cambiar lo que el coach programó. El press de fuerza
+    // sigue siendo de fuerza aunque ahora vaya segundo.
+    const movida = moverSlot(UPPER_A, 1, 'abajo')
+    const press = movida.slots.find((slot) => slot.ejercicioId === 'press-banca-15-smith')!
+
+    expect(press.estimulo).toBe('fuerza')
+    expect(press.seriesObjetivo).toBe(4)
+    expect(press.repMin).toBe(1)
+    expect(press.repMax).toBe(5)
+    expect(press.descansoSegundos).toBe(180)
+    expect(press.orden).toBe(2)
+  })
+
+  test('el primero no sube y el último no baja', () => {
+    // Devolver la misma plantilla evita un guardado que no cambia nada.
+    expect(moverSlot(UPPER_A, 1, 'arriba')).toBe(UPPER_A)
+    expect(moverSlot(UPPER_A, 3, 'abajo')).toBe(UPPER_A)
+  })
+
+  test('no muta la plantilla original', () => {
+    moverSlot(UPPER_A, 3, 'arriba')
+
+    expect(UPPER_A.slots[2].ejercicioId).toBe('lat-pulldown-maquina')
+  })
+
+  test('una posición que no existe es un error de quien llama', () => {
+    expect(() => moverSlot(UPPER_A, 9, 'arriba')).toThrow()
   })
 })

@@ -1,30 +1,18 @@
 /**
  * Carga inicial de datos.
- * Guía del proyecto §27: el piloto arranca con el Participante 001.
+ *
+ * Siembra lo que trae la app —biblioteca y estructura de días—, nunca personas.
+ * Su especificación V1 pide *"sin panel ficticio de clientes"*, así que el
+ * participante no se inventa: lo da de alta el coach en pantalla (§2, §27).
  */
 
-import type { Ejercicio, Participante } from '../../dominio/tipos'
+import type { Ejercicio } from '../../dominio/tipos'
 import type { Repositorio } from '../repositorio'
 import { BIBLIOTECA_INICIAL } from './biblioteca'
 import { PLANTILLAS_INICIALES } from './plantillas'
 
-export const ID_PARTICIPANTE_PILOTO = '001'
-
-/** §2 y §27: perfil de arranque del piloto, editable por el coach. */
-const PARTICIPANTE_PILOTO: Participante = {
-  id: ID_PARTICIPANTE_PILOTO,
-  nombre: 'Participante 001',
-  sexo: 'masculino',
-  edad: 30,
-  estaturaCm: 175,
-  pesoCorporalLb: 175,
-  objetivo: 'Ganar fuerza y masa muscular',
-  frecuenciaEntrenamiento: 4,
-  limitaciones: '',
-}
-
 /**
- * Siembra la biblioteca, las plantillas y el participante si aún no existen.
+ * Siembra la biblioteca y las plantillas si aún no existen.
  * Es idempotente: no pisa datos ya registrados, porque §19 prohíbe perder
  * historial y el coach puede haber editado ya las plantillas (§23).
  */
@@ -36,11 +24,6 @@ export async function sembrar(repositorio: Repositorio): Promise<void> {
     for (const plantilla of PLANTILLAS_INICIALES) {
       await repositorio.guardarPlantilla(plantilla)
     }
-  }
-
-  const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
-  if (!participante) {
-    await repositorio.guardarParticipante(PARTICIPANTE_PILOTO)
   }
 }
 

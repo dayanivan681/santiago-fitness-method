@@ -5,7 +5,8 @@ import userEvent from '@testing-library/user-event'
 import { Perfil } from './Perfil'
 import { BaseDatosSantiago } from '../../datos/esquema'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
-import { sembrar, ID_PARTICIPANTE_PILOTO } from '../../datos/semilla'
+import { sembrar } from '../../datos/semilla'
+import { sembrarParticipante } from '../../pruebas/participante'
 
 let repositorio: RepositorioLocal
 
@@ -13,6 +14,7 @@ beforeEach(async () => {
   const db = new BaseDatosSantiago(`prueba-perfil-${crypto.randomUUID()}`)
   repositorio = new RepositorioLocal(db)
   await sembrar(repositorio)
+  await sembrarParticipante(repositorio, { nombre: 'Participante 001' })
 })
 
 async function abrir() {
@@ -67,9 +69,30 @@ describe('ficha del participante (§2)', () => {
       'Peso (lb)',
       'Objetivo',
       'Lesiones o limitaciones',
+      'Notas del coach',
     ]) {
       expect(screen.getByLabelText(campo), `falta ${campo}`).toBeInTheDocument()
     }
+  })
+
+  test('guarda las notas del coach y las deja a la vista', async () => {
+    // Su V1 pide notas en el perfil, aparte de las limitaciones.
+    // Arrange
+    await abrirEdicion()
+
+    // Act
+    await userEvent.type(
+      screen.getByLabelText('Notas del coach'),
+      'Entrena de noche; viaja una semana al mes.',
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Guardar' }))
+
+    // Assert
+    expect(
+      await screen.findByText('Entrena de noche; viaja una semana al mes.'),
+    ).toBeInTheDocument()
+    const participante = await repositorio.participanteActual()
+    expect(participante?.notas).toBe('Entrena de noche; viaja una semana al mes.')
   })
 })
 
@@ -87,7 +110,7 @@ describe('editar el perfil (§2)', () => {
 
     // Assert
     await waitFor(async () => {
-      const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
+      const participante = await repositorio.participanteActual()
       expect(participante?.nombre).toBe('Santiago')
       expect(participante?.limitaciones).toBe('Hombro derecho')
     })
@@ -104,7 +127,7 @@ describe('editar el perfil (§2)', () => {
     await userEvent.type(nombre, 'Otro nombre')
     await userEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
 
-    const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
+    const participante = await repositorio.participanteActual()
     expect(participante?.nombre).toBe('Participante 001')
   })
 
@@ -117,7 +140,7 @@ describe('editar el perfil (§2)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Guardar' }))
 
     await waitFor(async () => {
-      const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
+      const participante = await repositorio.participanteActual()
       expect(participante?.sexo).toBe('femenino')
     })
   })
@@ -141,12 +164,12 @@ describe('ejercicios a evitar (punto G)', () => {
     )
     await userEvent.click(screen.getByRole('button', { name: 'Evitar' }))
 
-    // Assert
-    await waitFor(async () => {
-      const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
-      expect(participante?.ejerciciosEvitados).toEqual(['dominadas'])
-    })
-    expect(await screen.findByText('Dominadas')).toBeInTheDocument()
+    // Assert: queda en la lista de restringidos, a la vista
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Quitar Dominadas' })).toBeInTheDocument(),
+    )
+    const participante = await repositorio.participanteActual()
+    expect(participante?.ejerciciosEvitados).toEqual(['dominadas'])
   })
 
   test('se puede quitar cuando la lesión pasa', async () => {
@@ -154,14 +177,14 @@ describe('ejercicios a evitar (punto G)', () => {
     await abrirConBiblioteca()
     await userEvent.selectOptions(screen.getByLabelText('Ejercicio a evitar'), 'dominadas')
     await userEvent.click(screen.getByRole('button', { name: 'Evitar' }))
-    await screen.findByText('Dominadas')
+    const quitar = await screen.findByRole('button', { name: 'Quitar Dominadas' })
 
     // Act
-    await userEvent.click(screen.getByRole('button', { name: 'Quitar Dominadas' }))
+    await userEvent.click(quitar)
 
     // Assert
     await waitFor(async () => {
-      const participante = await repositorio.obtenerParticipante(ID_PARTICIPANTE_PILOTO)
+      const participante = await repositorio.participanteActual()
       expect(participante?.ejerciciosEvitados).toEqual([])
     })
   })

@@ -1,0 +1,102 @@
+import 'fake-indexeddb/auto'
+import { describe, test, expect, beforeEach } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { AltaParticipante } from './AltaParticipante'
+import { BaseDatosSantiago } from '../../datos/esquema'
+import { RepositorioLocal } from '../../datos/repositorioLocal'
+
+let repositorio: RepositorioLocal
+
+beforeEach(() => {
+  repositorio = new RepositorioLocal(new BaseDatosSantiago(`prueba-alta-${crypto.randomUUID()}`))
+})
+
+function abrir() {
+  render(<AltaParticipante repositorio={repositorio} />)
+}
+
+describe('alta del participante (criterio 1)', () => {
+  test('con escribir el nombre basta: el resto son estimados', async () => {
+    // Su criterio pide darlo de alta en menos de dos minutos.
+    // Arrange
+    abrir()
+
+    // Act
+    await userEvent.type(screen.getByLabelText('Nombre'), 'Santiago')
+    await userEvent.click(screen.getByRole('button', { name: 'Crear participante' }))
+
+    // Assert
+    await waitFor(async () => {
+      const participante = await repositorio.participanteActual()
+      expect(participante?.nombre).toBe('Santiago')
+      expect(participante?.frecuenciaEntrenamiento).toBe(4)
+    })
+  })
+
+  test('el coach ajusta los estimados en el mismo formulario', async () => {
+    // Arrange
+    abrir()
+
+    // Act
+    await userEvent.type(screen.getByLabelText('Nombre'), 'Ana')
+    await userEvent.selectOptions(screen.getByLabelText('Sexo'), 'femenino')
+    const peso = screen.getByLabelText('Peso (lb)')
+    await userEvent.clear(peso)
+    await userEvent.type(peso, '140')
+    await userEvent.click(screen.getByRole('button', { name: 'Crear participante' }))
+
+    // Assert
+    await waitFor(async () => {
+      const participante = await repositorio.participanteActual()
+      expect(participante?.sexo).toBe('femenino')
+      expect(participante?.pesoCorporalLb).toBe(140)
+    })
+  })
+
+  test('sin nombre no crea nada y dice por qué', async () => {
+    // Arrange
+    abrir()
+
+    // Act
+    await userEvent.click(screen.getByRole('button', { name: 'Crear participante' }))
+
+    // Assert: el aviso está y la base sigue vacía
+    expect(
+      await screen.findByText('Escribe el nombre del participante.'),
+    ).toBeInTheDocument()
+    expect(await repositorio.participanteActual()).toBeUndefined()
+  })
+
+  test('avisa de todo lo que falta a la vez', async () => {
+    // Corregir de uno en uno sería una pérdida de tiempo en el móvil.
+    abrir()
+
+    const edad = screen.getByLabelText('Edad')
+    await userEvent.clear(edad)
+    await userEvent.type(edad, '0')
+    await userEvent.click(screen.getByRole('button', { name: 'Crear participante' }))
+
+    expect(await screen.findByText('Escribe el nombre del participante.')).toBeInTheDocument()
+    expect(screen.getByText(/La edad debe estar entre/)).toBeInTheDocument()
+  })
+
+  test('los ocho datos de §2 están en el alta', async () => {
+    abrir()
+
+    for (const campo of [
+      'Nombre',
+      'Sexo',
+      'Edad',
+      'Entrenos/semana',
+      'Estatura (pies)',
+      'Estatura (pulgadas)',
+      'Peso (lb)',
+      'Objetivo',
+      'Lesiones o limitaciones',
+      'Notas del coach',
+    ]) {
+      expect(screen.getByLabelText(campo), `falta ${campo}`).toBeInTheDocument()
+    }
+  })
+})

@@ -134,3 +134,38 @@ describe('subir carga mínima — dominó el rango', () => {
     expect(siguienteObjetivo(ultima, contexto({ seriesObjetivo: 4 })).tipo).toBe('mantener')
   })
 })
+
+describe('el coach fija la recomendación', () => {
+  // Su V1 la pide "siempre editable por el coach": la app propone, él decide.
+  const ultima = [serie(100, 12), serie(100, 11), serie(100, 10)]
+
+  test('sin fijar nada, decide la app', () => {
+    expect(siguienteObjetivo(ultima, contexto()).tipo).toBe('subirReps')
+  })
+
+  test('lo que fija el coach manda sobre lo que calcula la app', () => {
+    expect(siguienteObjetivo(ultima, contexto({ fijada: 'mantener' })).tipo).toBe('mantener')
+  })
+
+  test('fijar subir carga trae el peso calculado, no sólo la etiqueta', () => {
+    // Si sólo mostrara el rótulo, el participante se quedaría sin saber cuánto.
+    expect(siguienteObjetivo(ultima, contexto({ fijada: 'subirCarga' }))).toEqual({
+      tipo: 'subirCarga',
+      incrementoRegistradoLb: 2.5,
+      pesoRegistradoSugeridoLb: 102.5,
+      repsObjetivo: 6,
+    })
+  })
+
+  test('fijar subir reps propone una más que la mejor de la última vez', () => {
+    expect(siguienteObjetivo(ultima, contexto({ fijada: 'subirReps' }))).toEqual({
+      tipo: 'subirReps',
+      repsObjetivo: 13,
+    })
+  })
+
+  test('sin referencia sigue siendo la primera vez, aunque el coach fije algo', () => {
+    // No hay de dónde sacar el peso ni las reps: fingir un objetivo sería peor.
+    expect(siguienteObjetivo([], contexto({ fijada: 'subirCarga' })).tipo).toBe('sinReferencia')
+  })
+})

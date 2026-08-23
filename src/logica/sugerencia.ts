@@ -19,6 +19,7 @@ import {
   type PerfilCarga,
 } from '../dominio/carga'
 import type { Estimulo, RangoReps } from '../dominio/estimulo'
+import type { TipoDeProgresion } from '../dominio/progresion'
 import type { SerieComparable } from '../dominio/tipos'
 import { mejorSerie } from './comparar'
 
@@ -26,6 +27,7 @@ import { mejorSerie } from './comparar'
 const RIR_DOMINADO = 1
 
 export type Sugerencia =
+  /** Todavía no hay con qué comparar; no es una decisión. */
   | { readonly tipo: 'sinReferencia' }
   /** La carga pudo con él: no llegó ni al mínimo del rango. */
   | { readonly tipo: 'revisarReducir' }
@@ -46,6 +48,14 @@ export interface ContextoSugerencia {
   readonly estimulo: Estimulo
   /** Series que pedía el plan ese día: sin esto no se sabe si dominó la carga. */
   readonly seriesObjetivo: number
+  /**
+   * Recomendación fijada por el coach.
+   *
+   * Su especificación V1 la quiere *"siempre editable por el coach"*: la app
+   * calcula, él decide. Los números —peso objetivo, repeticiones— se siguen
+   * calculando, así que fijarla cambia la decisión, no la deja sin objetivo.
+   */
+  readonly fijada?: TipoDeProgresion
 }
 
 /**
@@ -55,18 +65,47 @@ export interface ContextoSugerencia {
  */
 export function siguienteObjetivo(
   ultimaSesion: readonly SerieComparable[],
-  { rango, perfil, estimulo, seriesObjetivo }: ContextoSugerencia,
+  contexto: ContextoSugerencia,
 ): Sugerencia {
-  const efectivas = ultimaSesion
-  if (efectivas.length === 0) return { tipo: 'sinReferencia' }
+  // Sin nada con qué comparar no hay recomendación posible, ni siquiera fijada:
+  // no habría de dónde sacar el peso ni las repeticiones.
+  if (ultimaSesion.length === 0) return { tipo: 'sinReferencia' }
 
+  return conNumeros(contexto.fijada ?? decidir(ultimaSesion, contexto), ultimaSesion, contexto)
+}
+
+/** Qué toca según los datos, cuando el coach no ha fijado nada. */
+function decidir(
+  efectivas: readonly SerieComparable[],
+  { rango, seriesObjetivo }: ContextoSugerencia,
+): TipoDeProgresion {
   // Si alguna serie no alcanzó el mínimo del rango, la carga fue excesiva.
-  if (efectivas.some((serie) => serie.reps < rango.min)) {
-    return { tipo: 'revisarReducir' }
-  }
+  if (efectivas.some((serie) => serie.reps < rango.min)) return 'revisarReducir'
 
-  if (domina(efectivas, rango, seriesObjetivo)) {
-    const referencia = mejorSerie(efectivas, rango)!
+  if (domina(efectivas, rango, seriesObjetivo)) return 'subirCarga'
+
+  const referencia = mejorSerie(efectivas, rango)!
+  // Llegó al tope pero sin dominarlo: la carga se sostiene otra sesión.
+  if (referencia.reps >= rango.max) return 'mantener'
+
+  return 'subirReps'
+}
+
+/**
+ * Pone los números a la decisión.
+ *
+ * Va aparte de `decidir` para que fijar la recomendación no cueste el objetivo:
+ * el coach elige qué toca y la app calcula igualmente el peso y las
+ * repeticiones. Un rótulo sin cifras dejaría al participante sin saber cuánto.
+ */
+function conNumeros(
+  tipo: TipoDeProgresion,
+  efectivas: readonly SerieComparable[],
+  { rango, perfil, estimulo }: ContextoSugerencia,
+): Sugerencia {
+  const referencia = mejorSerie(efectivas, rango)!
+
+  if (tipo === 'subirCarga') {
     const nuevaCargaTotalLb = referencia.cargaTotalLb + incrementoTotalLb(perfil)
     return {
       tipo: 'subirCarga',
@@ -76,11 +115,11 @@ export function siguienteObjetivo(
     }
   }
 
-  const referencia = mejorSerie(efectivas, rango)!
-  // Llegó al tope pero sin dominarlo: la carga se sostiene otra sesión.
-  if (referencia.reps >= rango.max) return { tipo: 'mantener' }
+  if (tipo === 'subirReps') {
+    return { tipo: 'subirReps', repsObjetivo: referencia.reps + 1 }
+  }
 
-  return { tipo: 'subirReps', repsObjetivo: referencia.reps + 1 }
+  return { tipo }
 }
 
 /**

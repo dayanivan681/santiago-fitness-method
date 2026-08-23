@@ -10,6 +10,7 @@ import type {
   Ejercicio,
   Participante,
   PlantillaDia,
+  RegistroDeProgreso,
   SerieRegistrada,
   Sesion,
   Sustitucion,
@@ -28,6 +29,11 @@ export class RepositorioLocal implements Repositorio {
 
   async guardarParticipante(participante: Participante): Promise<void> {
     await this.db.participantes.put(participante)
+  }
+
+  /** El primero que haya: durante el piloto hay uno y sólo uno (§27). */
+  async participanteActual(): Promise<Participante | undefined> {
+    return this.db.participantes.toCollection().first()
   }
 
   listarEjercicios(): Promise<Ejercicio[]> {
@@ -115,6 +121,32 @@ export class RepositorioLocal implements Repositorio {
   async idsDeEjerciciosConHistorial(): Promise<string[]> {
     const claves = await this.db.series.orderBy('ejercicioId').uniqueKeys()
     return claves.map(String)
+  }
+
+  listarProgreso(participanteId: string): Promise<RegistroDeProgreso[]> {
+    return this.db.progreso.where('participanteId').equals(participanteId).toArray()
+  }
+
+  /**
+   * Guarda el registro y, si la hay, su foto. Sin foto no borra la que hubiera:
+   * corregir una medida no puede llevarse por delante la imagen de ese día.
+   */
+  async guardarProgreso(registro: RegistroDeProgreso, foto?: Blob): Promise<void> {
+    await this.db.progreso.put(registro)
+    if (foto) {
+      await this.db.fotos.put({ id: registro.id, imagen: foto })
+    }
+  }
+
+  async obtenerFotoDeProgreso(registroId: string): Promise<Blob | undefined> {
+    const guardada = await this.db.fotos.get(registroId)
+    return guardada?.imagen
+  }
+
+  /** La foto se va con el registro: dejarla suelta ocuparía sitio para siempre. */
+  async borrarProgreso(registroId: string): Promise<void> {
+    await this.db.progreso.delete(registroId)
+    await this.db.fotos.delete(registroId)
   }
 
   async seriesEntreFechas(desde: string, hasta: string): Promise<SerieConFecha[]> {
