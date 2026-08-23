@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-23T04:33:59.477Z
+- **Última sincronización:** 2026-08-23T04:44:53.111Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -54,9 +54,73 @@ hay cambios remotos, cambios sin dueño o cualquier modificación dentro de
 - Historial después de completar una sesión.
 - Perfil, limitaciones y volumen semanal.
 
+## Detalle del turno de claude-code (brechas prioritarias de QA)
+
+Este turno se compone de dos commits: uno de adopción (`92688d5`), que recogió trabajo
+previo sin commitear, y el de publicación, con el trabajo nuevo.
+
+### Qué se implementó
+
+**1. Participantes**
+- Alta real desde la interfaz (`src/pantallas/Alta/AltaParticipante.tsx`). Una instalación
+  nueva abre directamente en el alta.
+- Todos los campos de §2 llegan con estimados; sólo hay que escribir el nombre, que es lo
+  que hace viable el criterio de "menos de 2 minutos".
+- Cada participante recibe identificador propio (`nuevoId()`), no la constante `'001'`.
+- **Se eliminó `ID_PARTICIPANTE_PILOTO` de todo el código de aplicación.** Los cinco hooks
+  ahora resuelven al participante con `repositorio.participanteActual()`.
+- `sembrar()` ya no crea personas: siembra biblioteca y plantillas. Esto cumple el
+  *"sin panel ficticio de clientes"* de la especificación V1.
+- Quien ya tenía `Participante 001` lo conserva con su historial: el alta sólo aparece si
+  la base está vacía. Verificado en el navegador sobre la base existente.
+
+**2. Plantillas del coach**
+- Reordenar con flechas ↑↓ (`moverSlot` en `src/logica/plantilla.ts`).
+- El ejercicio **se lleva su programación** al moverse: estímulo, series, rango y descanso
+  viajan con él. La posición sólo dice cuándo se entrena.
+- Las posiciones se renumeran sin huecos; el primero no sube y el último no baja.
+- Sustituciones e historial por variante intactos.
+
+**3. Recomendaciones**
+- `SlotPlantilla.progresionFijada` permite al coach sobrescribir la recomendación.
+- `siguienteObjetivo` se dividió en `decidir` (qué toca) y `conNumeros` (con qué cifras):
+  **fijar la recomendación no cuesta el objetivo**, la app sigue calculando peso y reps.
+- La tarjeta muestra `Mantener · del coach` para distinguir manual de automática.
+
+**4. Registro rápido**
+- Tocar el valor de peso o reps abre un campo para **escribirlo directo**. Sin esto,
+  llegar a 135 lb desde 0 con pasos de 2.5 lb son 54 toques.
+- Los steppers ± siguen ahí para el ajuste fino.
+- Peso, reps, RIR, técnica, calentamiento y corrección se mantienen sin cambios.
+- **RIR 5+**: `src/dominio/rir.ts` centraliza la escala. §14 dice "escala 0–5+", y el tope
+  no es un cinco exacto sino "cinco o más en reserva". Antes se mostraba `5` a secas en los
+  cinco sitios donde aparece; ahora se muestra `5+`. Los valores guardados no cambian, sólo
+  su representación.
+
+### Riesgos y observaciones pendientes
+
+- `src/datos/imagen.ts` (reducción de fotos) tiene el camino de canvas al 45% de cobertura:
+  jsdom no ejecuta canvas. Se verificó **manualmente en el navegador**: 5946 KB → 271 KB,
+  3000×2000 → 1080×720.
+- `npm run lint` mantiene los mismos tres warnings de React de la línea base. No se
+  introdujeron nuevos.
+- Al sustituir una variante "sólo hoy", el contador de la sesión refleja el ejercicio nuevo
+  (0 series) y no el original. Es coherente con el historial por variante, pero conviene
+  confirmarlo con el cliente.
+- La sustitución por defecto pasó de permanente a "sólo hoy". **Es un cambio de
+  comportamiento que el cliente aún no ha confirmado.**
+
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-23T04:44:53.112Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Brechas prioritarias de QA del piloto: alta real de participantes con id propio (se eliminó ID_PARTICIPANTE_PILOTO del código de aplicación y sembrar() ya no crea personas); reordenar ejercicios en Coach llevándose estímulo, series, rango y descanso; override manual de la recomendación por ejercicio, distinguida como 'del coach' y con las cifras aún calculadas; registro rápido con escritura directa de peso y reps además de los steppers; y RIR representado como 5+ en los cinco puntos donde se muestra, centralizado en src/dominio/rir.ts
+- **Verificación:** npm test (257/257 en verde, tres corridas seguidas); npm run lint (0 errores, los mismos 3 warnings de React de la línea base); npm run build (OK); verificación manual en navegador sobre base limpia: crear participante, registrar serie 135 lb x 8, cambiar variante conservando historial, reordenar desde Coach, fijar progresión, completar sesión y confirmar historial tras recargar
+- **Siguiente:** Confirmar con el cliente dos cambios de comportamiento: la sustitución de variante ahora es 'sólo hoy' por defecto en vez de permanente, y el contador de la sesión refleja la variante sustituida (0 series) y no la original. Después, decidir la opción de video de docs/OPCION-VIDEO.md, que es lo único que queda de su punto H
+
 
 ### 2026-08-23T04:33:59.478Z | claude-code | ADOPT
 - **Estado:** active

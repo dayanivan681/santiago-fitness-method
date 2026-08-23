@@ -278,3 +278,31 @@ describe('referencias sobre datos persistidos (§7, §9)', () => {
     expect(referencias.mejor).toEqual({ cargaTotalLb: 140, reps: 15, rir: 2, tecnica: 'buena' })
   })
 })
+
+describe('persistencia tras cerrar y reabrir la app', () => {
+  test('lo guardado sigue estando en una instancia nueva de la base', async () => {
+    // Recargar la página crea una instancia nueva de Dexie sobre el mismo
+    // nombre; esto reproduce justo eso, en vez de reusar el objeto en memoria.
+    const nombre = `prueba-reapertura-${crypto.randomUUID()}`
+
+    // Arrange: "antes de cerrar la app"
+    const antesDeCerrar = new RepositorioLocal(new BaseDatosSantiago(nombre))
+    const participante = crearParticipante({ ...ALTA_POR_DEFECTO, nombre: 'Santiago' })
+    await antesDeCerrar.guardarParticipante(participante)
+    // La sesión va con el id real del participante, no con el '001' del helper:
+    // desde el alta manual cada participante tiene identificador propio.
+    await antesDeCerrar.crearSesion({
+      ...sesion('s1', '2026-08-20'),
+      participanteId: participante.id,
+    })
+    await antesDeCerrar.registrarSerie(serie('a', 's1', PRESS_BANCA_15_SMITH.id, 45, 10))
+
+    // Act: "se reabre la app" — instancia nueva, mismo nombre de base
+    const despuesDeReabrir = new RepositorioLocal(new BaseDatosSantiago(nombre))
+
+    // Assert
+    expect((await despuesDeReabrir.participanteActual())?.nombre).toBe('Santiago')
+    expect(await despuesDeReabrir.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
+    expect((await despuesDeReabrir.listarSesiones(participante.id))[0].fecha).toBe('2026-08-20')
+  })
+})

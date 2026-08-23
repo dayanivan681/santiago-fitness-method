@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { describe, test, expect, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
 import { BaseDatosSantiago } from '../../datos/esquema'
@@ -355,5 +355,93 @@ describe('la recomendación que fijó el coach (V1)', () => {
 
     // Assert
     expect(await screen.findByText(/Mantener · del coach/)).toBeInTheDocument()
+  })
+})
+
+describe('entrada rápida — tocar el valor para escribirlo directo (reduce pulsaciones)', () => {
+  test('tocar el peso lo abre para escribirlo, en vez de sumar de a poco', async () => {
+    // Sin referencia el peso arranca en 0: subir hasta 135 lb a golpes de ±2.5
+    // serían 54 toques. Escribirlo directo es el atajo real.
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
+    const campo = await screen.findByLabelText(`Peso de la serie 1 de ${PRESS}`)
+    await userEvent.clear(campo)
+    await userEvent.type(campo, '135')
+    await userEvent.tab()
+
+    // Assert: el valor escrito queda y se guarda tal cual
+    await waitFor(() =>
+      expect(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)).toHaveTextContent('135'),
+    )
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await waitFor(async () => {
+      const [serie] = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
+      expect(serie.pesoRegistradoLb).toBe(135)
+    })
+  })
+
+  test('tocar las reps también las abre para escribirlas directo', async () => {
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Reps de la serie 1 de ${PRESS}`))
+    const campo = await screen.findByLabelText(`Reps de la serie 1 de ${PRESS}`)
+    await userEvent.clear(campo)
+    await userEvent.type(campo, '8')
+    await userEvent.tab()
+
+    // Assert
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await waitFor(async () => {
+      const [serie] = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
+      expect(serie.repsRealizadas).toBe(8)
+    })
+  })
+
+  test('las series ya guardadas no se abren al tocarlas: se editan con el botón Editar', async () => {
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
+
+    // Assert: sigue siendo texto fijo, no aparece un campo de escritura
+    expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument()
+  })
+
+  test('escribir un peso negativo se recorta a cero', async () => {
+    await abrirUpperA()
+
+    await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
+    const campo = await screen.findByLabelText(`Peso de la serie 1 de ${PRESS}`)
+    // fireEvent.change en vez de userEvent.type: tipear el "-" carácter a
+    // carácter en un <input type="number"> deja el valor vacío a medio camino
+    // y userEvent se queda esperando un estado que nunca llega.
+    fireEvent.change(campo, { target: { value: '-20' } })
+    await userEvent.tab()
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)).toHaveTextContent('0'),
+    )
+  })
+})
+
+describe('RIR — el tope de la escala se ve como "5+" (§14)', () => {
+  test('ciclar hasta el tope lo muestra con el signo más', async () => {
+    // Arrange
+    await abrirUpperA()
+    const rir = screen.getByLabelText(`RIR de la serie 1 de ${PRESS}`)
+
+    // Act: parte de 2, seis toques la llevan al tope (2→3→4→5→0→1→2→3→4→5)
+    for (let i = 0; i < 3; i++) await userEvent.click(rir)
+
+    // Assert
+    expect(rir).toHaveTextContent('5+')
   })
 })

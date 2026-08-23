@@ -639,6 +639,20 @@ button,
   cursor: pointer;
 }
 
+/* El campo de escritura directa ocupa el mismo hueco que el botón que sustituye,
+   para que abrirlo no mueva el resto de la fila. */
+.valor--edicion {
+  width: 100%;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.valor--edicion::-webkit-outer-spin-button,
+.valor--edicion::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .valor small {
   font-weight: 500;
   color: var(--texto-35);

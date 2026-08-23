@@ -159,6 +159,18 @@ describe('anadirSlot (§4, §28)', () => {
     ])
   })
 
+  test('el día crece de 5 a 8 ejercicios, uno a la vez, sin tocar código', () => {
+    // El cliente pide sesiones de 5 a 8: se comprueba cada tamaño intermedio,
+    // no sólo el punto de partida y el tope.
+    let plantilla = VACIA
+    for (const [ejercicioId, tamano] of [
+      ['a', 1], ['b', 2], ['c', 3], ['d', 4], ['e', 5], ['f', 6], ['g', 7], ['h', 8],
+    ] as const) {
+      plantilla = anadirSlot(plantilla, ejercicioId)
+      expect(plantilla.slots, `con ${tamano} ejercicios`).toHaveLength(tamano)
+    }
+  })
+
   test('no deja pasar de 8 ejercicios', () => {
     const lleno = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].reduce(
       (plantilla, id) => anadirSlot(plantilla, id),

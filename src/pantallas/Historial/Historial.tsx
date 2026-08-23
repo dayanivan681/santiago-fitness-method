@@ -8,6 +8,7 @@ import { useHistorial } from '../../aplicacion/useHistorial'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { aPesoRegistradoLb } from '../../dominio/carga'
 import { aComparable } from '../../dominio/serie'
+import { formatearRir } from '../../dominio/rir'
 import { calcularDescansos, formatearSegundos } from '../../logica/descanso'
 import { evaluarSerie, ETIQUETA_PROGRESO_CORTA } from '../../logica/progreso'
 import { Cabecera } from '../../componentes/Cabecera'
@@ -66,7 +67,7 @@ export function Historial({ repositorio = repositorioPorDefecto }: Props = {}) {
               {referencias?.mejor ? describir(referencias.mejor, ejercicio) : '—'}
             </span>
             <span className="resumen__pie">
-              {referencias?.mejor ? `RIR ${referencias.mejor.rir}` : 'Sin marca'}
+              {referencias?.mejor ? `RIR ${formatearRir(referencias.mejor.rir)}` : 'Sin marca'}
             </span>
           </div>
           <div className="resumen__tarjeta">
@@ -149,10 +150,10 @@ function resumirDetalle(series: readonly SerieConFecha[]): string {
   const rir = Math.min(...series.map((serie) => serie.rir))
   const descansos = calcularDescansos(series)
   const valores = [...descansos.values()]
-  if (valores.length === 0) return `RIR ${rir}`
+  if (valores.length === 0) return `RIR ${formatearRir(rir)}`
 
   const medio = Math.round(valores.reduce((a, b) => a + b, 0) / valores.length)
-  return `RIR ${rir} · descanso ${formatearSegundos(medio)}`
+  return `RIR ${formatearRir(rir)} · descanso ${formatearSegundos(medio)}`
 }
 
 

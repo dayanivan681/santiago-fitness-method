@@ -5,6 +5,7 @@
  */
 
 import { aPesoRegistradoLb } from '../../dominio/carga'
+import { formatearRir } from '../../dominio/rir'
 import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
 import { Miniatura } from '../../componentes/Miniatura'
 import { FilaSerie } from './FilaSerie'
@@ -176,5 +177,5 @@ export function TarjetaEjercicio({
 function describir(serie: SerieComparable, ejercicio: Ejercicio): string {
   const peso = Math.round(aPesoRegistradoLb(serie.cargaTotalLb, ejercicio) * 100) / 100
   const porLado = ejercicio.tipoCarga === 'porLado' ? '/lado' : ''
-  return `${peso}${porLado} lb × ${serie.reps} · RIR ${serie.rir}`
+  return `${peso}${porLado} lb × ${serie.reps} · RIR ${formatearRir(serie.rir)}`
 }

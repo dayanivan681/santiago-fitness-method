@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { aPesoRegistradoLb, incrementoRegistradoLb } from '../../dominio/carga'
 import { aComparable } from '../../dominio/serie'
 import { ETIQUETA_PROGRESO, evaluarSerie } from '../../logica/progreso'
+import { formatearRir, siguienteRir } from '../../dominio/rir'
 import {
   TECNICAS,
   TECNICA_POR_DEFECTO,
@@ -20,9 +21,6 @@ import {
   type Tecnica,
 } from '../../dominio/tipos'
 import type { NuevaSerie } from '../../aplicacion/useEntrenamiento'
-
-/** §14: la escala llega hasta 5+; el toque cicla 0–5. */
-const RIR_MAXIMO = 5
 
 interface Props {
   readonly numeroSerie: number
@@ -60,6 +58,7 @@ export function FilaSerie({
   // empezar en el mínimo obligaría a pulsar cuatro veces cada serie.
   const [reps, setReps] = useState(registrada?.repsRealizadas ?? referencia?.reps ?? repMin)
   const [rir, setRir] = useState(registrada?.rir ?? 2)
+
   // Técnica y calentamiento se marcan sólo cuando se salen de lo normal: por
   // defecto no ocupan sitio, que es lo que pide el cliente al quererlo simple.
   const [tecnica, setTecnica] = useState<Tecnica>(registrada?.tecnica ?? TECNICA_POR_DEFECTO)
@@ -67,6 +66,10 @@ export function FilaSerie({
     registrada?.esCalentamiento ?? false,
   )
   const [guardando, setGuardando] = useState(false)
+  // Tocar el valor lo abre para escribirlo directo. Sin esto, arrancar de 0
+  // hasta un peso real serían decenas de toques del stepper.
+  const [editandoPeso, setEditandoPeso] = useState(false)
+  const [editandoReps, setEditandoReps] = useState(false)
 
   // Registrada y sin editar: los valores se muestran en firme.
   const hecha = registrada !== undefined && !editando
@@ -160,6 +163,23 @@ export function FilaSerie({
             <output className="valor" aria-label={`Peso de la ${etiqueta}`}>
               {registrada.pesoRegistradoLb}
             </output>
+          ) : editandoPeso ? (
+            <input
+              type="number"
+              inputMode="decimal"
+              step="any"
+              min="0"
+              className="valor valor--edicion"
+              aria-label={`Peso de la ${etiqueta}`}
+              autoFocus
+              value={peso}
+              onChange={(e) => setPeso(Number(e.target.value))}
+              onBlur={() => {
+                setPeso((p) => Math.max(0, redondear(p)))
+                setEditandoPeso(false)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
+            />
           ) : (
             <div className="paso">
               <button
@@ -171,9 +191,14 @@ export function FilaSerie({
               >
                 –
               </button>
-              <output className="valor" aria-label={`Peso de la ${etiqueta}`}>
+              <button
+                type="button"
+                className="valor valor--tocable"
+                aria-label={`Peso de la ${etiqueta}`}
+                onClick={() => setEditandoPeso(true)}
+              >
                 {peso}
-              </output>
+              </button>
               <button
                 type="button"
                 className="paso__boton"
@@ -192,6 +217,22 @@ export function FilaSerie({
             <output className="valor" aria-label={`Reps de la ${etiqueta}`}>
               {registrada.repsRealizadas}
             </output>
+          ) : editandoReps ? (
+            <input
+              type="number"
+              inputMode="numeric"
+              min="1"
+              className="valor valor--edicion"
+              aria-label={`Reps de la ${etiqueta}`}
+              autoFocus
+              value={reps}
+              onChange={(e) => setReps(Number(e.target.value))}
+              onBlur={() => {
+                setReps((r) => Math.max(1, Math.round(r)))
+                setEditandoReps(false)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
+            />
           ) : (
             <div className="paso">
               <button
@@ -203,9 +244,14 @@ export function FilaSerie({
               >
                 –
               </button>
-              <output className="valor" aria-label={`Reps de la ${etiqueta}`}>
+              <button
+                type="button"
+                className="valor valor--tocable"
+                aria-label={`Reps de la ${etiqueta}`}
+                onClick={() => setEditandoReps(true)}
+              >
                 {reps}
-              </output>
+              </button>
               <button
                 type="button"
                 className="paso__boton"
@@ -222,16 +268,16 @@ export function FilaSerie({
           {conEtiquetas && <span className="etiqueta-campo">RIR</span>}
           {hecha ? (
             <output className="valor" aria-label={`RIR de la ${etiqueta}`}>
-              {registrada.rir}
+              {formatearRir(registrada.rir)}
             </output>
           ) : (
             <button
               type="button"
               className="valor valor--tocable"
-              onClick={() => setRir((valor) => (valor + 1) % (RIR_MAXIMO + 1))}
+              onClick={() => setRir(siguienteRir)}
               aria-label={`RIR de la ${etiqueta}`}
             >
-              {rir}
+              {formatearRir(rir)}
             </button>
           )}
         </div>
@@ -240,7 +286,7 @@ export function FilaSerie({
       <div className="serie__pie">
         <span className="serie__anterior">
           {referencia
-            ? `Anterior: ${pesoDeReferencia}${porLado ? '/lado' : ''} lb × ${referencia.reps} · RIR ${referencia.rir}`
+            ? `Anterior: ${pesoDeReferencia}${porLado ? '/lado' : ''} lb × ${referencia.reps} · RIR ${formatearRir(referencia.rir)}`
             : 'Primera vez con este ejercicio'}
         </span>
         {hecha ? (
