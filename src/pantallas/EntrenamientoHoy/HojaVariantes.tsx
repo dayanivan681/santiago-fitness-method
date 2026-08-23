@@ -7,6 +7,7 @@
 
 import { useState } from 'react'
 import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
+import { ETIQUETA_CARGA } from '../../dominio/etiquetas'
 import { useReferenciasDeVariantes } from '../../aplicacion/useReferenciasDeVariantes'
 import { useCapa } from '../../aplicacion/useCapa'
 import { debeEvitarse } from '../../logica/limitaciones'
@@ -15,13 +16,6 @@ import type { AlcanceDelCambio } from '../../aplicacion/useEntrenamiento'
 import type { Repositorio } from '../../datos/repositorio'
 import type { RangoReps } from '../../dominio/estimulo'
 import type { Ejercicio, Participante } from '../../dominio/tipos'
-
-const ETIQUETA_CARGA = {
-  total: 'Carga total',
-  porLado: 'Carga por lado',
-  discosAnadidos: 'Discos añadidos',
-  pesoMaquina: 'Peso de máquina',
-} as const
 
 const ALCANCES = [
   ['soloHoy', 'Sólo hoy'],
@@ -52,7 +46,12 @@ export function HojaVariantes({
   onElegir,
   onCerrar,
 }: Props) {
-  const referencias = useReferenciasDeVariantes(repositorio, variantes, rango)
+  const referencias = useReferenciasDeVariantes(
+    repositorio,
+    participante.id,
+    variantes,
+    rango,
+  )
   const cerrar = useCapa(true, onCerrar)
 
   // El caso corriente —la máquina está ocupada— es de un día, así que ése es

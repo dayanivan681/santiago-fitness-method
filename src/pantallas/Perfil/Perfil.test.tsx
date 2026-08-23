@@ -1,17 +1,26 @@
 import 'fake-indexeddb/auto'
-import { describe, test, expect, beforeEach } from 'vitest'
+import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Perfil } from './Perfil'
-import { BaseDatosSantiago } from '../../datos/esquema'
+import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 import { sembrar } from '../../datos/semilla'
 import { sembrarParticipante } from '../../pruebas/participante'
 
 let repositorio: RepositorioLocal
 
+// jsdom no tiene URLs de objeto y la vista previa de la foto las necesita.
+beforeEach(() => {
+  vi.stubGlobal('URL', {
+    ...URL,
+    createObjectURL: () => 'blob:prueba',
+    revokeObjectURL: () => {},
+  })
+})
+
 beforeEach(async () => {
-  const db = new BaseDatosSantiago(`prueba-perfil-${crypto.randomUUID()}`)
+  const db = baseDePrueba(`prueba-perfil-${crypto.randomUUID()}`)
   repositorio = new RepositorioLocal(db)
   await sembrar(repositorio)
   await sembrarParticipante(repositorio, { nombre: 'Participante 001' })
@@ -195,5 +204,56 @@ describe('ejercicios a evitar (punto G)', () => {
     expect(
       await screen.findByText('Sin ejercicios restringidos.'),
     ).toBeInTheDocument()
+  })
+})
+
+describe('foto de perfil (V1)', () => {
+  const retrato = () => new File(['imagen'], 'retrato.jpg', { type: 'image/jpeg' })
+
+  test('sin foto muestra las iniciales, no un hueco vacío', async () => {
+    // La foto es opcional: lo normal al empezar es no tenerla.
+    await abrir()
+
+    expect(await screen.findByText('P0')).toBeInTheDocument()
+    expect(screen.getByLabelText('Foto de perfil')).toBeInTheDocument()
+  })
+
+  test('el coach la añade y queda guardada en el dispositivo', async () => {
+    // Arrange
+    await abrir()
+
+    // Act
+    await userEvent.upload(screen.getByLabelText('Foto de perfil'), retrato())
+
+    // Assert
+    await waitFor(async () => {
+      const participante = await repositorio.participanteActual()
+      expect(await repositorio.obtenerFotoDePerfil(participante!.id)).toBeDefined()
+    })
+  })
+
+  test('se puede quitar', async () => {
+    // Arrange
+    await abrir()
+    await userEvent.upload(screen.getByLabelText('Foto de perfil'), retrato())
+    const quitar = await screen.findByRole('button', { name: 'Quitar' })
+
+    // Act
+    await userEvent.click(quitar)
+
+    // Assert
+    await waitFor(async () => {
+      const participante = await repositorio.participanteActual()
+      expect(await repositorio.obtenerFotoDePerfil(participante!.id)).toBeUndefined()
+    })
+  })
+
+  test('es distinta de las fotos de progreso: no aparece como medición', async () => {
+    // Son dos cosas: ésta identifica, aquéllas documentan la evolución.
+    await abrir()
+
+    await userEvent.upload(screen.getByLabelText('Foto de perfil'), retrato())
+
+    expect(await screen.findByText('Todavía no hay mediciones.')).toBeInTheDocument()
   })
 })

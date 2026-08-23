@@ -3,7 +3,7 @@ import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PanelProgreso } from './PanelProgreso'
-import { BaseDatosSantiago } from '../../datos/esquema'
+import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 import { sembrarParticipante } from '../../pruebas/participante'
 import type { Participante } from '../../dominio/tipos'
@@ -19,7 +19,7 @@ beforeEach(async () => {
     revokeObjectURL: () => {},
   })
   repositorio = new RepositorioLocal(
-    new BaseDatosSantiago(`prueba-progreso-${crypto.randomUUID()}`),
+    baseDePrueba(`prueba-progreso-${crypto.randomUUID()}`),
   )
   participante = await sembrarParticipante(repositorio)
 })

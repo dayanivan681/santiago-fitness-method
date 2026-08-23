@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test, expect, beforeEach } from 'vitest'
-import { BaseDatosSantiago } from '../esquema'
+import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../repositorioLocal'
 import { sembrar } from './index'
 import { BIBLIOTECA_INICIAL, PRESS_BANCA_15_SMITH, SENTADILLA_BARRA } from './biblioteca'
@@ -10,7 +10,7 @@ import { BIBLIOTECA_INICIAL, PRESS_BANCA_15_SMITH, SENTADILLA_BARRA } from './bi
 let repositorio: RepositorioLocal
 
 beforeEach(() => {
-  const db = new BaseDatosSantiago(`prueba-semilla-${crypto.randomUUID()}`)
+  const db = baseDePrueba(`prueba-semilla-${crypto.randomUUID()}`)
   repositorio = new RepositorioLocal(db)
 })
 

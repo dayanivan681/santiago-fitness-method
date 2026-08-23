@@ -7,7 +7,7 @@
  * de peso no es arbitrario: usa el incremento real de la máquina (§13, §17).
  */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react'
 import { aPesoRegistradoLb, incrementoRegistradoLb } from '../../dominio/carga'
 import { aComparable } from '../../dominio/serie'
 import { ETIQUETA_PROGRESO, evaluarSerie } from '../../logica/progreso'
@@ -20,6 +20,9 @@ import {
   type SerieRegistrada,
   type Tecnica,
 } from '../../dominio/tipos'
+import { idBorrador, type ClaveDeBorrador } from '../../logica/borrador'
+import { puedeDeshacerse } from '../../logica/correccion'
+import type { Repositorio } from '../../datos/repositorio'
 import type { NuevaSerie } from '../../aplicacion/useEntrenamiento'
 
 interface Props {
@@ -29,8 +32,12 @@ interface Props {
   readonly registrada?: SerieRegistrada
   readonly referencia?: SerieComparable
   readonly conEtiquetas: boolean
+  /** Sin ella no hay autosave: es lo que identifica el hueco que se teclea. */
+  readonly claveDeBorrador?: Omit<ClaveDeBorrador, 'numeroSerie'>
+  readonly repositorio?: Repositorio
   readonly onGuardar: (valores: NuevaSerie) => Promise<void>
   readonly onCorregir: (serie: SerieRegistrada, valores: NuevaSerie) => Promise<void>
+  readonly onDeshacer?: (serie: SerieRegistrada) => Promise<void>
 }
 
 export function FilaSerie({
@@ -40,8 +47,11 @@ export function FilaSerie({
   registrada,
   referencia,
   conEtiquetas,
+  claveDeBorrador,
+  repositorio,
   onGuardar,
   onCorregir,
+  onDeshacer,
 }: Props) {
   const paso = incrementoRegistradoLb(ejercicio)
   const porLado = ejercicio.tipoCarga === 'porLado'
@@ -71,6 +81,52 @@ export function FilaSerie({
   const [editandoPeso, setEditandoPeso] = useState(false)
   const [editandoReps, setEditandoReps] = useState(false)
 
+  const idDelBorrador =
+    claveDeBorrador && repositorio
+      ? idBorrador({ ...claveDeBorrador, numeroSerie })
+      : undefined
+
+  // Sólo se guarda borrador de lo que el participante tocó. Guardarlo siempre
+  // dejaría copias de valores que nadie escribió, y esas copias acabarían
+  // pisando la referencia del día siguiente.
+  const [tocado, setTocado] = useState(false)
+  const marcar =
+    <T,>(aplicar: Dispatch<SetStateAction<T>>) =>
+    (valor: SetStateAction<T>) => {
+      setTocado(true)
+      aplicar(valor)
+    }
+  const cambiarPeso = marcar(setPeso)
+  const cambiarReps = marcar(setReps)
+  const cambiarRir = marcar(setRir)
+  const cambiarTecnica = marcar(setTecnica)
+  const cambiarCalentamiento = marcar(setEsCalentamiento)
+
+  // Se recupera lo que quedó a medias antes de cerrar la app. Sólo mientras la
+  // serie no esté registrada: después manda lo guardado, no el borrador.
+  const recuperado = useRef(false)
+  useEffect(() => {
+    if (!idDelBorrador || !repositorio || registrada || recuperado.current) return
+
+    let vigente = true
+    repositorio.obtenerBorrador(idDelBorrador).then((borrador) => {
+      if (!vigente) return
+      // Marca el intento aunque no hubiera nada: sin esto, el autosave no
+      // llegaría a activarse nunca en una serie estrenada.
+      recuperado.current = true
+      if (!borrador) return
+      setPeso(borrador.pesoRegistradoLb)
+      setReps(borrador.repsRealizadas)
+      setRir(borrador.rir)
+      setTecnica(borrador.tecnica ?? TECNICA_POR_DEFECTO)
+      setEsCalentamiento(borrador.esCalentamiento ?? false)
+    })
+
+    return () => {
+      vigente = false
+    }
+  }, [idDelBorrador, repositorio, registrada])
+
   // Registrada y sin editar: los valores se muestran en firme.
   const hecha = registrada !== undefined && !editando
   // El veredicto sólo tiene sentido sobre lo guardado: mientras se corrige, el
@@ -96,11 +152,46 @@ export function FilaSerie({
         setEditando(false)
       } else {
         await onGuardar(valores)
+        // Sólo después de registrarla de verdad: si se borrara antes y el
+        // guardado fallara, se perdería justo lo que el borrador protege.
+        if (idDelBorrador && repositorio) await repositorio.borrarBorrador(idDelBorrador)
       }
     } finally {
       setGuardando(false)
     }
   }
+
+  // Autosave: cada ajuste se guarda sin esperar a Guardar. El borrador vive
+  // aparte del historial, así que esto no registra nada en §19 antes de tiempo.
+  useEffect(() => {
+    if (!idDelBorrador || !repositorio || !claveDeBorrador || registrada) return
+    // No guardar antes de haber intentado recuperar, ni si nadie tocó nada.
+    if (!recuperado.current || !tocado) return
+
+    repositorio.guardarBorrador({
+      id: idDelBorrador,
+      ...claveDeBorrador,
+      numeroSerie,
+      pesoRegistradoLb: peso,
+      repsRealizadas: reps,
+      rir,
+      tecnica,
+      esCalentamiento,
+      guardadoEn: new Date().toISOString(),
+    })
+  }, [
+    idDelBorrador,
+    repositorio,
+    claveDeBorrador,
+    registrada,
+    numeroSerie,
+    tocado,
+    peso,
+    reps,
+    rir,
+    tecnica,
+    esCalentamiento,
+  ])
 
   const etiqueta = `serie ${numeroSerie} de ${ejercicio.nombre}`
 
@@ -132,7 +223,7 @@ export function FilaSerie({
             <button
               type="button"
               className={`marca marca--${tecnica} marca--tocable`}
-              onClick={() => setTecnica(siguienteTecnica)}
+              onClick={() => cambiarTecnica(siguienteTecnica)}
               aria-label={`Técnica de la ${etiqueta}`}
             >
               {ETIQUETA_TECNICA[tecnica]}
@@ -145,7 +236,7 @@ export function FilaSerie({
                   : 'marca marca--tocable'
               }
               aria-pressed={esCalentamiento}
-              onClick={() => setEsCalentamiento((valor) => !valor)}
+              onClick={() => cambiarCalentamiento((valor) => !valor)}
               aria-label={`Marcar la ${etiqueta} como calentamiento`}
             >
               Calent.
@@ -173,9 +264,9 @@ export function FilaSerie({
               aria-label={`Peso de la ${etiqueta}`}
               autoFocus
               value={peso}
-              onChange={(e) => setPeso(Number(e.target.value))}
+              onChange={(e) => cambiarPeso(Number(e.target.value))}
               onBlur={() => {
-                setPeso((p) => Math.max(0, redondear(p)))
+                cambiarPeso((p) => Math.max(0, redondear(p)))
                 setEditandoPeso(false)
               }}
               onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
@@ -186,7 +277,7 @@ export function FilaSerie({
                 type="button"
                 className="paso__boton"
                 disabled={peso <= 0}
-                onClick={() => setPeso((p) => redondear(Math.max(0, p - paso)))}
+                onClick={() => cambiarPeso((p) => redondear(Math.max(0, p - paso)))}
                 aria-label={`Bajar peso de la ${etiqueta}`}
               >
                 –
@@ -202,7 +293,7 @@ export function FilaSerie({
               <button
                 type="button"
                 className="paso__boton"
-                onClick={() => setPeso((p) => redondear(p + paso))}
+                onClick={() => cambiarPeso((p) => redondear(p + paso))}
                 aria-label={`Subir peso de la ${etiqueta}`}
               >
                 +
@@ -226,9 +317,9 @@ export function FilaSerie({
               aria-label={`Reps de la ${etiqueta}`}
               autoFocus
               value={reps}
-              onChange={(e) => setReps(Number(e.target.value))}
+              onChange={(e) => cambiarReps(Number(e.target.value))}
               onBlur={() => {
-                setReps((r) => Math.max(1, Math.round(r)))
+                cambiarReps((r) => Math.max(1, Math.round(r)))
                 setEditandoReps(false)
               }}
               onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
@@ -239,7 +330,7 @@ export function FilaSerie({
                 type="button"
                 className="paso__boton"
                 disabled={reps <= 1}
-                onClick={() => setReps((r) => Math.max(1, r - 1))}
+                onClick={() => cambiarReps((r) => Math.max(1, r - 1))}
                 aria-label={`Bajar reps de la ${etiqueta}`}
               >
                 –
@@ -255,7 +346,7 @@ export function FilaSerie({
               <button
                 type="button"
                 className="paso__boton"
-                onClick={() => setReps((r) => r + 1)}
+                onClick={() => cambiarReps((r) => r + 1)}
                 aria-label={`Subir reps de la ${etiqueta}`}
               >
                 +
@@ -274,7 +365,7 @@ export function FilaSerie({
             <button
               type="button"
               className="valor valor--tocable"
-              onClick={() => setRir(siguienteRir)}
+              onClick={() => cambiarRir(siguienteRir)}
               aria-label={`RIR de la ${etiqueta}`}
             >
               {formatearRir(rir)}
@@ -290,14 +381,27 @@ export function FilaSerie({
             : 'Primera vez con este ejercicio'}
         </span>
         {hecha ? (
-          <button
-            type="button"
-            className="boton-guardar boton-guardar--secundario"
-            onClick={() => setEditando(true)}
-            aria-label={`Editar la ${etiqueta}`}
-          >
-            Editar
-          </button>
+          <span style={{ display: 'flex', gap: 8 }}>
+            {/* Deshacer no borra el rastro: apila una reversión (§19). */}
+            {onDeshacer && puedeDeshacerse(registrada) && (
+              <button
+                type="button"
+                className="boton-guardar boton-guardar--secundario"
+                onClick={() => onDeshacer(registrada)}
+                aria-label={`Deshacer la corrección de la ${etiqueta}`}
+              >
+                Deshacer
+              </button>
+            )}
+            <button
+              type="button"
+              className="boton-guardar boton-guardar--secundario"
+              onClick={() => setEditando(true)}
+              aria-label={`Editar la ${etiqueta}`}
+            >
+              Editar
+            </button>
+          </span>
         ) : (
           <button
             type="button"

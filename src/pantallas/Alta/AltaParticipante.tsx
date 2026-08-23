@@ -12,6 +12,7 @@
 import { useState, type FormEvent } from 'react'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { Cabecera } from '../../componentes/Cabecera'
+import { crearDiasIniciales } from '../../datos/semilla'
 import { CamposParticipante } from '../Perfil/CamposParticipante'
 import {
   ALTA_POR_DEFECTO,
@@ -38,7 +39,10 @@ export function AltaParticipante({ repositorio = repositorioPorDefecto }: Props 
     setErrores(problemas)
     if (problemas.length > 0) return
 
-    await repositorio.guardarParticipante(crearParticipante(datos))
+    const participante = crearParticipante(datos)
+    await repositorio.guardarParticipante(participante)
+    // Su estructura de 4 días nace con él: es suya, no un catálogo compartido.
+    await crearDiasIniciales(repositorio, participante.id)
   }
 
   return (

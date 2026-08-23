@@ -15,19 +15,20 @@ import type { Ejercicio } from '../dominio/tipos'
 
 export function useReferenciasDeVariantes(
   repositorio: Repositorio,
+  participanteId: string,
   variantes: readonly Ejercicio[],
   rango: RangoReps,
 ): ReadonlyMap<string, string> {
   const referencias = useLiveQuery(async () => {
     const pares = await Promise.all(
       variantes.map(async (variante) => {
-        const historial = await repositorio.historialDeEjercicio(variante.id)
+        const historial = await repositorio.historialDeEjercicio(participanteId, variante.id)
         const { ultimaSesion } = derivarReferencias(variante.id, historial, variante, rango)
         return [variante.id, describir(ultimaSesion[0], variante)] as const
       }),
     )
     return new Map(pares)
-  }, [repositorio, variantes.map((v) => v.id).join(), rango.min, rango.max])
+  }, [repositorio, participanteId, variantes.map((v) => v.id).join(), rango.min, rango.max])
 
   return referencias ?? new Map()
 }

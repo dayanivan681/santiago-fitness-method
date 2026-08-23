@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest'
 import { derivarReferencias, type SerieConFecha } from './referencias'
 import { RANGO_POR_ESTIMULO } from '../dominio/estimulo'
+import { siguienteObjetivo } from '../logica/sugerencia'
 import type { PerfilCarga } from '../dominio/carga'
 
 const HIPERTROFIA = RANGO_POR_ESTIMULO.hipertrofia
@@ -139,5 +140,51 @@ describe('el calentamiento no es referencia de nada (§7, §9)', () => {
       rir: 2,
       tecnica: 'buena',
     })
+  })
+})
+
+describe('el calentamiento tampoco mueve la recomendación', () => {
+  test('una serie floja marcada como calentamiento no manda a "revisar / reducir"', () => {
+    // Sin el filtro, un calentamiento de 2 reps quedaría por debajo del mínimo
+    // del rango y la app diría que la carga fue excesiva, justo al revés.
+    // Arrange
+    const historial = [
+      { ...serie('2026-08-17', 1, 20, 2), esCalentamiento: true },
+      serie('2026-08-17', 2, 100, 12),
+      serie('2026-08-17', 3, 100, 11),
+    ]
+
+    // Act
+    const referencias = derivarReferencias('press-inclinado-smith', historial, total, HIPERTROFIA)
+    const sugerencia = siguienteObjetivo(referencias.ultimaSesion, {
+      rango: HIPERTROFIA,
+      perfil: total,
+      estimulo: 'hipertrofia',
+      seriesObjetivo: 2,
+    })
+
+    // Assert
+    expect(sugerencia).toEqual({ tipo: 'subirReps', repsObjetivo: 13 })
+  })
+
+  test('un calentamiento no completa las series que exige dominar la carga', () => {
+    // Tres series en el tope, pero una era de aproximación: sólo cuentan dos,
+    // así que con un plan de tres no hay subida.
+    const historial = [
+      { ...serie('2026-08-17', 1, 100, 15, 1), esCalentamiento: true },
+      serie('2026-08-17', 2, 100, 15, 1),
+      serie('2026-08-17', 3, 100, 15, 1),
+    ]
+
+    const referencias = derivarReferencias('press-inclinado-smith', historial, total, HIPERTROFIA)
+
+    expect(
+      siguienteObjetivo(referencias.ultimaSesion, {
+        rango: HIPERTROFIA,
+        perfil: total,
+        estimulo: 'hipertrofia',
+        seriesObjetivo: 3,
+      }).tipo,
+    ).toBe('mantener')
   })
 })

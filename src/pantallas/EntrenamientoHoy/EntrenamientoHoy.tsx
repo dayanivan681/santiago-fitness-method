@@ -10,7 +10,7 @@ import { Cabecera } from '../../componentes/Cabecera'
 import { formatearSegundos } from '../../logica/descanso'
 import { TarjetaEjercicio } from './TarjetaEjercicio'
 import { HojaVariantes } from './HojaVariantes'
-import type { Repositorio } from '../../datos/repositorio'
+import { fechaDeHoy, type Repositorio } from '../../datos/repositorio'
 
 /** §12: el descanso se puede alargar sin pelearse con el cronómetro. */
 const PRORROGA_SEGUNDOS = 30
@@ -25,6 +25,7 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
     elegirPlantilla,
     registrarSerie,
     corregirSerie,
+    deshacerUltimaCorreccion,
     terminarSesion,
     cambiarVariante,
     cargando,
@@ -123,6 +124,14 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
                 onDescansar={() => arrancarDescanso(ejercicioDelDia.slot.descansoSegundos)}
                 onGuardarSerie={registrarSerie}
                 onCorregirSerie={corregirSerie}
+                onDeshacerCorreccion={deshacerUltimaCorreccion}
+                repositorio={repositorio}
+                claveDeBorrador={{
+                  participanteId: participante.id,
+                  fecha: fechaDeHoy(),
+                  plantillaDiaId: plantilla.id,
+                  orden: ejercicioDelDia.slot.orden,
+                }}
               />
             ))}
 

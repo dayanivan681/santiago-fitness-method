@@ -5,11 +5,16 @@
 
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { derivarReferencias } from '../datos/referencias'
+import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
 import { fechaDeHoy, nuevoId, type Repositorio } from '../datos/repositorio'
 import { diaSugerido } from '../logica/rotacion'
 import { reemplazarEjercicio } from '../logica/plantilla'
 import { aplicarSustituciones, idSustitucion } from '../logica/sustitucion'
+import {
+  aplicarCorreccion,
+  deshacerCorreccion,
+  puedeDeshacerse,
+} from '../logica/correccion'
 import { siguienteObjetivo, type Sugerencia } from '../logica/sugerencia'
 import type { RangoReps } from '../dominio/estimulo'
 import type {
@@ -21,7 +26,6 @@ import type {
   Sesion,
   SlotPlantilla,
   Tecnica,
-  ValoresDeSerie,
 } from '../dominio/tipos'
 
 export interface EjercicioDelDia {
@@ -122,13 +126,13 @@ export function useEntrenamiento(repositorio: Repositorio) {
     serie: SerieRegistrada,
     valores: NuevaSerie,
   ): Promise<void> {
-    await repositorio.corregirSerie({
-      ...serie,
-      ...valores,
-      // El cliente pide corregir "sin perder auditoría": lo equivocado se apila,
-      // no desaparece.
-      correcciones: [...(serie.correcciones ?? []), valoresAnteriores(serie)],
-    })
+    await repositorio.corregirSerie(aplicarCorreccion(serie, valores))
+  }
+
+  /** Devuelve la serie a como estaba, sin borrar el rastro de la corrección. */
+  async function deshacerUltimaCorreccion(serie: SerieRegistrada): Promise<void> {
+    if (!puedeDeshacerse(serie)) return
+    await repositorio.corregirSerie(deshacerCorreccion(serie))
   }
 
   /** Cierra la sesión de hoy. La cierra el participante, nunca la app. */
@@ -152,7 +156,12 @@ export function useEntrenamiento(repositorio: Repositorio) {
   ): Promise<void> {
     if (!datos) return
 
-    const id = idSustitucion(fechaDeHoy(), datos.plantilla.id, orden)
+    const id = idSustitucion(
+      datos.participante.id,
+      fechaDeHoy(),
+      datos.plantilla.id,
+      orden,
+    )
 
     if (alcance === 'fijar') {
       await repositorio.guardarPlantilla(
@@ -173,6 +182,7 @@ export function useEntrenamiento(repositorio: Repositorio) {
 
     await repositorio.guardarSustitucion({
       id,
+      participanteId: datos.participante.id,
       fecha: fechaDeHoy(),
       plantillaDiaId: datos.plantilla.id,
       orden,
@@ -185,21 +195,10 @@ export function useEntrenamiento(repositorio: Repositorio) {
     elegirPlantilla,
     registrarSerie,
     corregirSerie,
+    deshacerUltimaCorreccion,
     terminarSesion,
     cambiarVariante,
     cargando: datos === undefined,
-  }
-}
-
-/** Foto de los valores que se sustituyen, para el rastro de auditoría. */
-function valoresAnteriores(serie: SerieRegistrada): ValoresDeSerie {
-  return {
-    pesoRegistradoLb: serie.pesoRegistradoLb,
-    repsRealizadas: serie.repsRealizadas,
-    rir: serie.rir,
-    tecnica: serie.tecnica,
-    esCalentamiento: serie.esCalentamiento,
-    corregidaEn: new Date().toISOString(),
   }
 }
 
@@ -212,10 +211,10 @@ async function cargarEntrenamiento(
   if (!participante) return null
 
   const [plantillas, sesiones, ejercicios, sustituciones] = await Promise.all([
-    repositorio.listarPlantillas(),
+    repositorio.listarPlantillas(participante.id),
     repositorio.listarSesiones(participante.id),
     repositorio.listarEjercicios(),
-    repositorio.listarSustituciones(fecha),
+    repositorio.listarSustituciones(participante.id, fecha),
   ])
 
   if (plantillas.length === 0) return null
@@ -242,9 +241,22 @@ async function cargarEntrenamiento(
   // hoy, con los cambios puntuales aplicados encima.
   const plantillaDeHoy = aplicarSustituciones(plantilla, sustituciones)
   const slots = [...plantillaDeHoy.slots].sort((a, b) => a.orden - b.orden)
+  // De una vez, no ejercicio por ejercicio: así no se releen las sesiones del
+  // participante una vez por cada uno de los ocho huecos del día.
+  const historiales = await repositorio.historialDeEjercicios(
+    participante.id,
+    slots.map((slot) => slot.ejercicioId),
+  )
   const cargados = await Promise.all(
     slots.map((slot) =>
-      cargarEjercicio(repositorio, slot, plantilla, fecha, seriesDeHoy, ejercicios),
+      cargarEjercicio(
+        historiales.get(slot.ejercicioId) ?? [],
+        slot,
+        plantilla,
+        fecha,
+        seriesDeHoy,
+        ejercicios,
+      ),
     ),
   )
   const ejerciciosDelDia = cargados.filter((e): e is EjercicioDelDia => e !== null)
@@ -261,7 +273,7 @@ async function cargarEntrenamiento(
 }
 
 async function cargarEjercicio(
-  repositorio: Repositorio,
+  historial: readonly SerieConFecha[],
   slot: SlotPlantilla,
   plantillaGuardada: PlantillaDia,
   fecha: string,
@@ -271,7 +283,6 @@ async function cargarEjercicio(
   const ejercicio = biblioteca.find((e) => e.id === slot.ejercicioId)
   if (!ejercicio) return null
 
-  const historial = await repositorio.historialDeEjercicio(ejercicio.id)
   const rango = { min: slot.repMin, max: slot.repMax }
   const asignadaId = plantillaGuardada.slots.find((s) => s.orden === slot.orden)?.ejercicioId
 

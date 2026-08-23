@@ -4,7 +4,9 @@
  * referencia y última sesión), §9 (son dos datos diferentes) y §25.
  */
 
+import { useState } from 'react'
 import { useHistorial } from '../../aplicacion/useHistorial'
+import { FilaSerie } from '../EntrenamientoHoy/FilaSerie'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { aPesoRegistradoLb } from '../../dominio/carga'
 import { aComparable } from '../../dominio/serie'
@@ -21,7 +23,10 @@ interface Props {
 }
 
 export function Historial({ repositorio = repositorioPorDefecto }: Props = {}) {
-  const { datos, cargando, elegirEjercicio } = useHistorial(repositorio)
+  const { datos, cargando, elegirEjercicio, corregirSerie, deshacerUltimaCorreccion } =
+    useHistorial(repositorio)
+  // Una sola sesión abierta a la vez: corregir es puntual, no se navega así.
+  const [abierta, setAbierta] = useState<string | null>(null)
 
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!datos || datos.entrenados.length === 0) {
@@ -87,16 +92,47 @@ export function Historial({ repositorio = repositorioPorDefecto }: Props = {}) {
 
         <div className="sesiones" style={{ marginTop: 12 }}>
           {sesiones.map((sesion) => (
-            <div key={sesion.fecha} className="sesion">
-              <span className="sesion__fecha">{formatearFecha(sesion.fecha)}</span>
-              <span className="sesion__cuerpo">
-                <span className="sesion__series">{resumirSeries(sesion.series, ejercicio)}</span>
-                <span className="sesion__detalle">
-                  {resumirDetalle(sesion.series)}
-                  {sesion.sinTerminar && ' · sin terminar'}
+            <div key={sesion.fecha}>
+              {/* Un número mal apuntado se descubre días después: la sesión se
+                  abre para corregirlo sin salir del historial. */}
+              <button
+                type="button"
+                className="sesion"
+                aria-expanded={abierta === sesion.fecha}
+                onClick={() =>
+                  setAbierta((actual) => (actual === sesion.fecha ? null : sesion.fecha))
+                }
+              >
+                <span className="sesion__fecha">{formatearFecha(sesion.fecha)}</span>
+                <span className="sesion__cuerpo">
+                  <span className="sesion__series">{resumirSeries(sesion.series, ejercicio)}</span>
+                  <span className="sesion__detalle">
+                    {resumirDetalle(sesion.series)}
+                    {sesion.sinTerminar && ' · sin terminar'}
+                  </span>
                 </span>
-              </span>
-              <Veredicto series={sesion.series} ejercicio={ejercicio} referencias={referencias} />
+                <Veredicto series={sesion.series} ejercicio={ejercicio} referencias={referencias} />
+              </button>
+
+              {abierta === sesion.fecha && (
+                <div className="sesion__correccion">
+                  {sesion.series.map((serie) => (
+                    <FilaSerie
+                      key={serie.id}
+                      numeroSerie={serie.numeroSerie}
+                      ejercicio={ejercicio}
+                      repMin={serie.repsRealizadas}
+                      registrada={serie}
+                      conEtiquetas={serie.numeroSerie === sesion.series[0].numeroSerie}
+                      // Sin autosave: un borrador aquí no tiene sentido, esto
+                      // ya está registrado.
+                      onGuardar={async () => {}}
+                      onCorregir={corregirSerie}
+                      onDeshacer={deshacerUltimaCorreccion}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

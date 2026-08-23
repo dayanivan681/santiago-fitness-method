@@ -119,6 +119,14 @@ export interface SlotPlantilla {
 /** §28: Upper A · Lower A · Upper B · Lower B. */
 export interface PlantillaDia {
   readonly id: string
+  /**
+   * De quién es este día.
+   *
+   * El coach ajusta la estructura para cada persona (§23), así que editar el
+   * Upper A de uno no puede cambiar el del otro. La interfaz sigue siendo de un
+   * solo participante; esto es lo que evita que se mezclen cuando haya más.
+   */
+  readonly participanteId: string
   readonly nombre: string
   /**
    * Posición en la rotación semanal. Explícito porque el almacenamiento no
@@ -208,6 +216,41 @@ export interface ValoresDeSerie {
   readonly esCalentamiento?: boolean
   /** Cuándo se sustituyeron estos valores. */
   readonly corregidaEn: string
+  /**
+   * Por qué se sustituyeron.
+   *
+   * Deshacer una corrección **no borra el rastro**: apila otra entrada más, con
+   * este motivo, para que el historial siga contando que hubo una corrección y
+   * después una vuelta atrás. Ausente significa `correccion`, que es lo que
+   * había antes de existir este campo.
+   */
+  readonly motivo?: 'correccion' | 'reversion'
+}
+
+/**
+ * Borrador de una serie que se está tecleando y todavía no se ha guardado.
+ *
+ * §19 pide que no se pierda nada de lo registrado, y el cliente pide autosave y
+ * recuperación si la app se cierra. Entre que el participante ajusta el peso y
+ * toca Guardar puede pasar de todo —una llamada, que el móvil mate la pestaña—,
+ * y sin esto ese ajuste se perdería.
+ */
+export interface BorradorDeSerie {
+  /** Derivado de participante, fecha, día, posición y número de serie. */
+  readonly id: string
+  readonly participanteId: string
+  /** Fecha ISO (YYYY-MM-DD). */
+  readonly fecha: string
+  readonly plantillaDiaId: string
+  /** Posición del ejercicio dentro del día. */
+  readonly orden: number
+  readonly numeroSerie: number
+  readonly pesoRegistradoLb: number
+  readonly repsRealizadas: number
+  readonly rir: number
+  readonly tecnica?: Tecnica
+  readonly esCalentamiento?: boolean
+  readonly guardadoEn: string
 }
 
 /** Serie efectiva: la que cuenta. Excluye el calentamiento. */
@@ -250,8 +293,9 @@ export interface ReferenciasEjercicio {
  * estructura del entrenamiento).
  */
 export interface Sustitucion {
-  /** Derivado de fecha, día y posición: una posición sólo se sustituye una vez al día. */
+  /** Derivado de participante, fecha, día y posición: una por hueco y día. */
   readonly id: string
+  readonly participanteId: string
   /** Fecha ISO (YYYY-MM-DD) en la que aplica. */
   readonly fecha: string
   readonly plantillaDiaId: string

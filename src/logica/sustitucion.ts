@@ -11,13 +11,21 @@
 import type { PlantillaDia, Sustitucion } from '../dominio/tipos'
 
 /**
- * Identidad de una sustitución: fecha + día + posición.
+ * Identidad de una sustitución: participante + fecha + día + posición.
  *
  * No entra el ejercicio elegido a propósito. Así, cambiar de opinión dos veces
  * en la misma sesión pisa la sustitución anterior en vez de acumular dos.
+ *
+ * El participante sí entra: sin él, dos personas entrenando el mismo día
+ * compartirían el cambio de máquina.
  */
-export function idSustitucion(fecha: string, plantillaDiaId: string, orden: number): string {
-  return `${fecha}|${plantillaDiaId}|${orden}`
+export function idSustitucion(
+  participanteId: string,
+  fecha: string,
+  plantillaDiaId: string,
+  orden: number,
+): string {
+  return `${participanteId}|${fecha}|${plantillaDiaId}|${orden}`
 }
 
 /** La plantilla tal y como se entrena hoy. No modifica la guardada. */

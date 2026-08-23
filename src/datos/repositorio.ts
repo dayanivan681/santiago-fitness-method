@@ -9,6 +9,7 @@ import type {
   Ejercicio,
   Participante,
   PlantillaDia,
+  BorradorDeSerie,
   RegistroDeProgreso,
   SerieRegistrada,
   Sesion,
@@ -19,6 +20,17 @@ import type { SerieConFecha } from './referencias'
 export interface Repositorio {
   obtenerParticipante(id: string): Promise<Participante | undefined>
   guardarParticipante(participante: Participante): Promise<void>
+
+  /**
+   * Foto de perfil del participante. Opcional, y **nunca sale del dispositivo**:
+   * mientras no haya cuentas, eso resuelve consentimiento y permisos.
+   *
+   * Va aparte del `Participante` para no arrastrar la imagen cada vez que se
+   * lee la ficha o se lista.
+   */
+  obtenerFotoDePerfil(participanteId: string): Promise<Blob | undefined>
+  guardarFotoDePerfil(participanteId: string, imagen: Blob): Promise<void>
+  borrarFotoDePerfil(participanteId: string): Promise<void>
 
   /**
    * El participante del piloto, o nada si todavía no se ha dado de alta.
@@ -34,7 +46,8 @@ export interface Repositorio {
   obtenerEjercicio(id: string): Promise<Ejercicio | undefined>
   guardarEjercicio(ejercicio: Ejercicio): Promise<void>
 
-  listarPlantillas(): Promise<PlantillaDia[]>
+  /** Los días de un participante concreto (§23, §28). */
+  listarPlantillas(participanteId: string): Promise<PlantillaDia[]>
   obtenerPlantilla(id: string): Promise<PlantillaDia | undefined>
   guardarPlantilla(plantilla: PlantillaDia): Promise<void>
 
@@ -53,7 +66,7 @@ export interface Repositorio {
    * Viven fuera de la plantilla a propósito: cambiar de máquina un martes no
    * puede reescribir el entrenamiento del participante para siempre.
    */
-  listarSustituciones(fecha: string): Promise<Sustitucion[]>
+  listarSustituciones(participanteId: string, fecha: string): Promise<Sustitucion[]>
   guardarSustitucion(sustitucion: Sustitucion): Promise<void>
   /** Deshace el cambio del día y devuelve la posición a la variante asignada. */
   quitarSustitucion(id: string): Promise<void>
@@ -76,14 +89,46 @@ export interface Repositorio {
   listarSeriesDeSesion(sesionId: string): Promise<SerieRegistrada[]>
 
   /**
-   * §16: el historial de una variante concreta, jamás mezclado con el de otra.
+   * Borradores de serie: lo tecleado que aún no se ha guardado.
+   *
+   * Se leen al abrir el ejercicio para recuperar lo que quedó a medias, y se
+   * borran en cuanto la serie se registra de verdad — no antes, o una app que
+   * se cierre entre medias perdería justo lo que esto protege.
+   */
+  obtenerBorrador(id: string): Promise<BorradorDeSerie | undefined>
+  guardarBorrador(borrador: BorradorDeSerie): Promise<void>
+  borrarBorrador(id: string): Promise<void>
+
+  /**
+   * §16: el historial de una variante concreta, jamás mezclado con el de otra
+   * —ni con el de otro participante—.
+   *
+   * La interfaz es de un solo participante y lo seguirá siendo mientras el
+   * cliente quiera un piloto, pero las consultas ya filtran: el día que haya un
+   * segundo, sus datos no aparecerán mezclados con los del primero.
+   *
    * Devuelve cada serie con la fecha de su sesión para poder derivar las
    * referencias de §7 y §9.
    */
-  historialDeEjercicio(ejercicioId: string): Promise<SerieConFecha[]>
+  historialDeEjercicio(
+    participanteId: string,
+    ejercicioId: string,
+  ): Promise<SerieConFecha[]>
 
-  /** Ids de los ejercicios que ya se han entrenado alguna vez (§18). */
-  idsDeEjerciciosConHistorial(): Promise<string[]>
+  /**
+   * El historial de varios ejercicios de una vez.
+   *
+   * La pantalla de entrenamiento necesita el de los cinco a ocho ejercicios del
+   * día. Pedirlos uno a uno relee las sesiones del participante otras tantas
+   * veces; así son dos consultas en total.
+   */
+  historialDeEjercicios(
+    participanteId: string,
+    ejercicioIds: readonly string[],
+  ): Promise<ReadonlyMap<string, SerieConFecha[]>>
+
+  /** Ids de los ejercicios que ese participante ya ha entrenado (§18). */
+  idsDeEjerciciosConHistorial(participanteId: string): Promise<string[]>
 
   /**
    * Progreso físico: medidas y fotos con fecha.
@@ -102,7 +147,11 @@ export interface Repositorio {
    * Series registradas entre dos fechas, con la suya. Es lo que necesita el
    * volumen semanal de §20 sin tener que recorrer sesión por sesión.
    */
-  seriesEntreFechas(desde: string, hasta: string): Promise<SerieConFecha[]>
+  seriesEntreFechas(
+    participanteId: string,
+    desde: string,
+    hasta: string,
+  ): Promise<SerieConFecha[]>
 }
 
 /**

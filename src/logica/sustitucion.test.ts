@@ -5,6 +5,7 @@ import type { PlantillaDia, Sustitucion } from '../dominio/tipos'
 
 const UPPER_A: PlantillaDia = {
   id: 'upper-a',
+  participanteId: '001',
   nombre: 'Upper A',
   orden: 1,
   slots: [
@@ -14,7 +15,8 @@ const UPPER_A: PlantillaDia = {
 }
 
 const sustitucion = (parcial: Partial<Sustitucion> = {}): Sustitucion => ({
-  id: idSustitucion('2026-08-22', 'upper-a', 1),
+  id: idSustitucion('001', '2026-08-22', 'upper-a', 1),
+  participanteId: '001',
   fecha: '2026-08-22',
   plantillaDiaId: 'upper-a',
   orden: 1,
@@ -65,11 +67,11 @@ describe('identidad de la sustitución', () => {
   test('una posición sólo puede tener una sustitución por día', () => {
     // Al cambiar dos veces de opinión, la segunda pisa a la primera en vez de
     // acumularse: el id no depende del ejercicio elegido.
-    expect(idSustitucion('2026-08-22', 'upper-a', 1)).toBe(
-      idSustitucion('2026-08-22', 'upper-a', 1),
+    expect(idSustitucion('001', '2026-08-22', 'upper-a', 1)).toBe(
+      idSustitucion('001', '2026-08-22', 'upper-a', 1),
     )
-    expect(idSustitucion('2026-08-23', 'upper-a', 1)).not.toBe(
-      idSustitucion('2026-08-22', 'upper-a', 1),
+    expect(idSustitucion('001', '2026-08-23', 'upper-a', 1)).not.toBe(
+      idSustitucion('001', '2026-08-22', 'upper-a', 1),
     )
   })
 })

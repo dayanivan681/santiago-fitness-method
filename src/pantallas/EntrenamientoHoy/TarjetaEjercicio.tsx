@@ -7,9 +7,12 @@
 import { aPesoRegistradoLb } from '../../dominio/carga'
 import { formatearRir } from '../../dominio/rir'
 import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
+import { ETIQUETA_CARGA } from '../../dominio/etiquetas'
 import { Miniatura } from '../../componentes/Miniatura'
 import { FilaSerie } from './FilaSerie'
-import { ETIQUETA_SUGERENCIA } from '../../logica/sugerencia'
+import { ETIQUETA_SUGERENCIA, type Sugerencia } from '../../logica/sugerencia'
+import type { ClaveDeBorrador } from '../../logica/borrador'
+import type { Repositorio } from '../../datos/repositorio'
 import type { EjercicioDelDia, NuevaSerie } from '../../aplicacion/useEntrenamiento'
 import type { Ejercicio, SerieComparable, SerieRegistrada } from '../../dominio/tipos'
 
@@ -17,13 +20,6 @@ const ETIQUETA_ESTIMULO = {
   fuerza: 'Fuerza',
   hipertrofia: 'Hipertrofia',
   resistencia: 'Resistencia',
-} as const
-
-const ETIQUETA_CARGA = {
-  total: 'Carga total',
-  porLado: 'Carga por lado',
-  discosAnadidos: 'Discos añadidos',
-  pesoMaquina: 'Peso de máquina',
 } as const
 
 interface Props {
@@ -39,6 +35,10 @@ interface Props {
     valores: NuevaSerie,
   ) => Promise<void>
   readonly onCorregirSerie: (serie: SerieRegistrada, valores: NuevaSerie) => Promise<void>
+  readonly onDeshacerCorreccion?: (serie: SerieRegistrada) => Promise<void>
+  /** Identifica el hueco que se teclea, para el autosave del borrador. */
+  readonly claveDeBorrador?: Omit<ClaveDeBorrador, 'numeroSerie'>
+  readonly repositorio?: Repositorio
 }
 
 export function TarjetaEjercicio({
@@ -49,6 +49,9 @@ export function TarjetaEjercicio({
   onDescansar,
   onGuardarSerie,
   onCorregirSerie,
+  onDeshacerCorreccion,
+  claveDeBorrador,
+  repositorio,
 }: Props) {
   const { slot, ejercicio, referencias, seriesDeHoy, sugerencia } = item
 
@@ -137,6 +140,14 @@ export function TarjetaEjercicio({
             </span>
           </div>
 
+          {/* La recomendación ya calculaba estas cifras y no se veían: sin ellas
+              el rótulo dice qué hacer pero no cuánto. */}
+          {detalleDeSugerencia(sugerencia, ejercicio) && (
+            <p className="recomendacion__detalle">
+              {detalleDeSugerencia(sugerencia, ejercicio)}
+            </p>
+          )}
+
           <div className="detalle-carga">
             <span className="detalle-carga__texto">
               {ETIQUETA_CARGA[ejercicio.tipoCarga]} · {etiquetaEquipo(ejercicio.equipo)}
@@ -164,14 +175,41 @@ export function TarjetaEjercicio({
               // Las etiquetas PESO / REPS / RIR se ponen sólo en la primera
               // serie: repetirlas en las cuatro es ruido (§25).
               conEtiquetas={numeroSerie === 1}
+              claveDeBorrador={claveDeBorrador}
+              repositorio={repositorio}
               onGuardar={(valores) => onGuardarSerie(ejercicio.id, numeroSerie, valores)}
               onCorregir={onCorregirSerie}
+              onDeshacer={onDeshacerCorreccion}
             />
           ))}
         </div>
       )}
     </article>
   )
+}
+
+/**
+ * Las cifras de la recomendación, en palabras.
+ *
+ * Sólo cuando existen: sin referencia previa no hay peso ni repeticiones que
+ * proponer, y enseñar un número inventado sería peor que no enseñar ninguno.
+ */
+function detalleDeSugerencia(sugerencia: Sugerencia, ejercicio: Ejercicio): string {
+  const porLado = ejercicio.tipoCarga === 'porLado' ? '/lado' : ''
+
+  if (sugerencia.tipo === 'subirReps') {
+    return `Objetivo: ${sugerencia.repsObjetivo} reps con el mismo peso.`
+  }
+
+  if (sugerencia.tipo === 'subirCarga') {
+    const carga = `${sugerencia.pesoRegistradoSugeridoLb}${porLado} lb (+${sugerencia.incrementoRegistradoLb}${porLado})`
+    // §11: en hipertrofia se reinicia en el rango bajo al subir el peso.
+    return sugerencia.repsObjetivo === undefined
+      ? `Objetivo: ${carga}.`
+      : `Objetivo: ${carga}, reiniciando en ${sugerencia.repsObjetivo} reps.`
+  }
+
+  return ''
 }
 
 function describir(serie: SerieComparable, ejercicio: Ejercicio): string {

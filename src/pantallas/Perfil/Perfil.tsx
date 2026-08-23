@@ -21,7 +21,13 @@ interface Props {
 
 export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Props = {}) {
   const { participante, cargando, guardar } = usePerfil(repositorio)
-  const plantillas = useLiveQuery(() => repositorio.listarPlantillas(), [repositorio])
+  const plantillas = useLiveQuery(
+    async () => {
+      const actual = await repositorio.participanteActual()
+      return actual ? repositorio.listarPlantillas(actual.id) : []
+    },
+    [repositorio],
+  )
 
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!participante) return <p className="aviso">No hay participante configurado.</p>
@@ -36,7 +42,11 @@ export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Pr
 
       <div className="contenido">
         <div className="pila">
-          <FichaParticipante participante={participante} onGuardar={guardar} />
+          <FichaParticipante
+            participante={participante}
+            repositorio={repositorio}
+            onGuardar={guardar}
+          />
 
           {/* Datos del cuerpo juntos: la ficha y cómo va cambiando. */}
           <PanelProgreso participante={participante} repositorio={repositorio} />

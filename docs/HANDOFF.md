@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-23T17:13:11.791Z
+- **Última sincronización:** 2026-08-23T17:51:07.887Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -110,9 +110,95 @@ previo sin commitear, y el de publicación, con el trabajo nuevo.
 - La sustitución por defecto pasó de permanente a "sólo hoy". **Es un cambio de
   comportamiento que el cliente aún no ha confirmado.**
 
+## Turno de claude-code — brechas finales de QA
+
+### Qué se implementó
+
+**1. Biblioteca (punto H)**
+- Fuera el texto fijo `Participante 001` de `Biblioteca.tsx`. La biblioteca es el
+  catálogo del método, no datos de una persona: el kicker pasa a "Ejercicios del método".
+- Ficha completa al tocar un ejercicio: equipo, tipo de carga, músculo principal,
+  secundarios, instrucciones breves y **alternativas equivalentes**, que salen del campo
+  `movimiento` (§16) sin lista aparte que mantener.
+- Se salta de una equivalente a otra sin cerrar la hoja.
+- La cuadrícula sigue visual (§15, §25); el detalle vive en la hoja.
+
+**2. Progresión**
+- `domina()` ahora devuelve `false` si alguna serie tiene técnica `deficiente`. Antes,
+  tres series al tope con la última rota recomendaban **más peso**.
+- Sólo se corta ese caso; el resto de umbrales sigue pendiente de que el cliente los defina.
+- El coach **sí** puede fijar "subir carga" a pesar de la técnica: el bloqueo es de la
+  recomendación automática, no de su criterio.
+- La tarjeta muestra las cifras que ya calculaba y no se veían: reps objetivo, peso
+  sugerido e incremento. Sin referencia previa no enseña ningún número.
+
+**3. Foto de perfil**
+- Tabla propia (`fotosDePerfil`), Dexie v5. Opcional, editable y eliminable.
+- Reutiliza `reducirImagen`. Verificado en navegador: 1600×1600 → 1080×1080.
+- Sin foto muestra iniciales. Los botones miran el dato, no la vista previa: si fallara
+  la miniatura, la foto seguiría siendo borrable.
+
+**4. Guardado, recuperación y corrección**
+- Autosave del borrador por participante+fecha+día+posición+serie (Dexie v6).
+- Se guarda **sólo lo que el participante tocó**: guardar siempre dejaría borradores de
+  valores que nadie escribió, y ésos acabarían pisando la referencia del día siguiente.
+- El borrador se borra **después** de registrar la serie, no antes.
+- Una sola lógica auditada en `src/logica/correccion.ts`, usada por Hoy **y** por Historial.
+- "Deshacer" apila una entrada `motivo: 'reversion'`: el rastro **crece**, no se recorta.
+- Se puede abrir una sesión ya cerrada desde Historial y corregirla.
+
+**5. Aislamiento por participante**
+- `historialDeEjercicio`, `idsDeEjerciciosConHistorial` y `seriesEntreFechas` reciben
+  `participanteId`. `Sustitucion` y `PlantillaDia` lo llevan dentro.
+- **Los ids de plantilla pasan a ser `<participante>|upper-a`.** La prueba de aislamiento
+  destapó que con `upper-a` a secas el segundo participante sobrescribía los días del
+  primero, porque el id es la clave primaria.
+- Migraciones v7 y v8 asignan sustituciones y plantillas al participante existente sin
+  borrar nada. Cubiertas por `src/datos/migracion.test.ts` sobre una base del esquema viejo.
+- La interfaz sigue siendo de un solo participante: no se añadió selector ni panel.
+
+**Extra encontrado durante la verificación**
+- Tocar "Lower B" en Perfil abría el Coach en Upper A: `App.tsx` descartaba el día
+  elegido. Corregido y con prueba.
+- `MaxListenersExceededWarning`: venía de que `useEntrenamiento` releía las sesiones del
+  participante una vez por ejercicio, superando los diez oyentes de una misma señal de
+  Dexie. Se agrupó en `historialDeEjercicios` (dos consultas en vez de diez). **De 82
+  avisos a 0**, sin silenciarlo. Además las bases de prueba ahora se cierran solas
+  (`src/pruebas/base.ts`).
+
+### Limitación conocida de las pruebas
+
+`fake-indexeddb` **no conserva los `Blob`**: los convierte en objetos planos sin `size` ni
+contenido. Las pruebas de fotos comprueban el contrato de almacenamiento (que esté, que se
+sustituya, que se borre, que no se mezcle); que la imagen viaje entera se verificó en el
+navegador.
+
+### Preguntas abiertas — no inventar respuesta
+
+1. **Vídeo**: alojamiento y contenido. Su punto H dice "foto/video corto"; la foto ya está,
+   así que el vídeo podría ser opcional. Opciones costeadas en `docs/OPCION-VIDEO.md`.
+2. **"Dominar" una carga**: aparte de bloquear técnica deficiente, falta el criterio completo.
+3. **Calentamientos**: ¿cuentan en el progreso visual de series (el contador N/M)?
+4. **Sustituciones**: ¿permanente o "sólo por hoy" por defecto? Y qué debe mostrar el
+   contador de la sesión cuando la variante está sustituida.
+5. **Permisos**: separación coach / participante.
+6. **Recuperación subjetiva**: si se usa y cómo.
+7. **Ejercicios definitivos** de Lower A, Upper B y Lower B (§28 los deja sin confirmar).
+8. **Datos reales de las máquinas** del gimnasio para calibrar incrementos (§13).
+9. **Mínimo de cinco ejercicios**: ¿obligatorio, con los otros tres días aún vacíos?
+10. **Documento de "preguntas 1–18"**: no está en ninguno de los dos PDFs entregados.
+
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-23T17:51:07.888Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca y perfil completos; progresión corregida; recomendaciones numéricas visibles; autosave y corrección histórica auditada; aislamiento por participante. Extra: el Coach ya abre el día que se toca (antes descartaba la elección) y se eliminó el MaxListenersExceededWarning agrupando la carga de historiales en una sola consulta (de 82 avisos a 0)
+- **Verificación:** npm test (324/324); npm run lint (0 errores, los mismos 3 warnings de la línea base); npm run build; QA móvil 390x844 en base aislada: alta, foto de perfil, biblioteca completa, autosave y recuperación tras recargar, corrección histórica, deshacer conservando auditoría y ausencia de mezcla entre dos participantes
+- **Siguiente:** Esperar decisiones del cliente sobre vídeo, calentamiento, sustituciones, roles, recuperación, otros tres días y calibración del gimnasio
+
 
 ### 2026-08-23T17:13:11.792Z | claude-code | ADOPT
 - **Estado:** active

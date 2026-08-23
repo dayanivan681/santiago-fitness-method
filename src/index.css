@@ -491,6 +491,12 @@ button,
   color: var(--positivo);
 }
 
+.recomendacion__detalle {
+  margin: 0;
+  font: 600 12px/1.35 'Barlow', sans-serif;
+  color: var(--texto-60);
+}
+
 .detalle-carga {
   display: flex;
   align-items: center;
@@ -853,6 +859,15 @@ button,
   text-wrap: pretty;
 }
 
+/* La foto en la ficha de la biblioteca: identifica el ejercicio (§15). */
+.hoja__imagen {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: var(--radio-chico);
+  display: block;
+}
+
 .variante {
   display: flex;
   align-items: center;
@@ -1035,15 +1050,30 @@ button,
 }
 
 .sesion {
+  width: 100%;
   padding: 11px 13px;
+  border: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: none;
+  color: inherit;
+  text-align: left;
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 .sesion:last-child {
   border-bottom: none;
+}
+
+/* La sesión abierta para corregir: separada del resumen, no encima. */
+.sesion__correccion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0 4px;
 }
 
 .sesion__fecha {
@@ -1210,6 +1240,54 @@ button,
 
 .limitacion__nota {
   color: rgba(242, 242, 240, 0.45);
+}
+
+/* ---------- Foto de perfil ---------- */
+
+.foto-perfil {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.foto-perfil__imagen {
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--borde-tenue);
+}
+
+.foto-perfil__iniciales {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--texto-60);
+}
+
+.foto-perfil__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+/* El input nativo se oculta y manda la etiqueta, que sí se puede vestir. */
+.foto-perfil__elegir {
+  cursor: pointer;
+}
+
+.foto-perfil__elegir input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* ---------- Progreso físico (medidas y fotos) ---------- */

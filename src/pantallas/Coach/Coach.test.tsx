@@ -3,21 +3,23 @@ import { describe, test, expect, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Coach } from './Coach'
-import { BaseDatosSantiago } from '../../datos/esquema'
+import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 import { sembrar } from '../../datos/semilla'
+import { idDeDia } from '../../datos/semilla'
 import { crearSlot } from '../../logica/plantilla'
 import { LAT_PULLDOWN, PRESS_INCLINADO_CONVERGENTE } from '../../datos/semilla/biblioteca'
 import { evitar } from '../../logica/limitaciones'
 import { sembrarParticipante } from '../../pruebas/participante'
 
 let repositorio: RepositorioLocal
+let participanteId: string
 
 beforeEach(async () => {
-  const db = new BaseDatosSantiago(`prueba-coach-${crypto.randomUUID()}`)
+  const db = baseDePrueba(`prueba-coach-${crypto.randomUUID()}`)
   repositorio = new RepositorioLocal(db)
   await sembrar(repositorio)
-  await sembrarParticipante(repositorio)
+  participanteId = (await sembrarParticipante(repositorio)).id
 })
 
 async function abrirUpperA() {
@@ -30,7 +32,7 @@ describe('reemplazar un ejercicio (§23)', () => {
   test('cambiar el ejercicio no destruye la estructura del entrenamiento', async () => {
     // Arrange: la posición 2 es hipertrofia, 3 series, 6–15 reps, 120 s
     await abrirUpperA()
-    const antes = (await repositorio.obtenerPlantilla('upper-a'))!.slots[1]
+    const antes = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[1]
 
     // Act: se cambia el press convergente por el lat pulldown
     await userEvent.selectOptions(
@@ -40,7 +42,7 @@ describe('reemplazar un ejercicio (§23)', () => {
 
     // Assert: sólo cambia el ejercicio
     await waitFor(async () => {
-      const despues = (await repositorio.obtenerPlantilla('upper-a'))!.slots[1]
+      const despues = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[1]
       expect(despues.ejercicioId).toBe(LAT_PULLDOWN.id)
       expect(despues.estimulo).toBe(antes.estimulo)
       expect(despues.seriesObjetivo).toBe(antes.seriesObjetivo)
@@ -64,7 +66,7 @@ describe('ajustar un ejercicio (§23)', () => {
 
     // Assert
     await waitFor(async () => {
-      const slot = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+      const slot = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[0]
       expect(slot.seriesObjetivo).toBe(5)
       expect(slot.ejercicioId).toBe('press-banca-15-smith')
     })
@@ -86,7 +88,7 @@ describe('definir los días que faltan (§28)', () => {
 
     // Assert: §4 — la posición 1 es de fuerza
     await waitFor(async () => {
-      const plantilla = (await repositorio.obtenerPlantilla('lower-a'))!
+      const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'lower-a')))!
       expect(plantilla.slots).toHaveLength(1)
       expect(plantilla.slots[0].orden).toBe(1)
       expect(plantilla.slots[0].estimulo).toBe('fuerza')
@@ -105,7 +107,7 @@ describe('quitar un ejercicio (§23)', () => {
 
     // Assert
     await waitFor(async () => {
-      const plantilla = (await repositorio.obtenerPlantilla('upper-a'))!
+      const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!
       expect(plantilla.slots).toHaveLength(4)
       expect(plantilla.slots.map((s) => s.orden)).toEqual([1, 2, 3, 4])
       expect(plantilla.slots[0].ejercicioId).toBe(PRESS_INCLINADO_CONVERGENTE.id)
@@ -122,7 +124,7 @@ describe('quitar un ejercicio (§23)', () => {
 
   test('avisa al llegar a los 8 y no deja añadir un noveno', async () => {
     // Arrange: se completa Upper A hasta el máximo
-    const plantilla = (await repositorio.obtenerPlantilla('upper-a'))!
+    const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!
     await repositorio.guardarPlantilla({
       ...plantilla,
       slots: [
@@ -179,7 +181,7 @@ describe('limitaciones conectadas con la programación (punto G)', () => {
     )
 
     await waitFor(async () => {
-      const plantilla = await repositorio.obtenerPlantilla('upper-a')
+      const plantilla = await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a'))
       expect(plantilla!.slots[1].ejercicioId).toBe(DOMINADAS)
     })
   })
@@ -199,7 +201,7 @@ describe('limitaciones conectadas con la programación (punto G)', () => {
 
     // Assert: se asigna la alternativa y el aviso desaparece
     await waitFor(async () => {
-      const plantilla = await repositorio.obtenerPlantilla('upper-a')
+      const plantilla = await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a'))
       expect(plantilla!.slots[1].ejercicioId).toBe('jalon-agarre-cerrado')
     })
     await waitFor(() =>
@@ -228,14 +230,14 @@ describe('ordenar el día', () => {
     // Su especificación V1 pide los días editables y ordenables.
     // Arrange
     await abrirUpperA()
-    const antes = (await repositorio.obtenerPlantilla('upper-a'))!.slots
+    const antes = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots
 
     // Act
     await userEvent.click(screen.getByRole('button', { name: 'Subir el ejercicio 2' }))
 
     // Assert: el segundo pasa a primero y las posiciones siguen sin huecos
     await waitFor(async () => {
-      const despues = (await repositorio.obtenerPlantilla('upper-a'))!.slots
+      const despues = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots
       expect(despues[0].ejercicioId).toBe(antes[1].ejercicioId)
       expect(despues[1].ejercicioId).toBe(antes[0].ejercicioId)
       expect(despues.map((slot) => slot.orden)).toEqual([1, 2, 3, 4, 5])
@@ -245,14 +247,14 @@ describe('ordenar el día', () => {
   test('el ejercicio se lleva su programación al cambiar de sitio (§23)', async () => {
     // Arrange: la posición 1 es de fuerza, 4 series, 1–5 reps
     await abrirUpperA()
-    const primero = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+    const primero = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[0]
 
     // Act
     await userEvent.click(screen.getByRole('button', { name: 'Bajar el ejercicio 1' }))
 
     // Assert
     await waitFor(async () => {
-      const despues = (await repositorio.obtenerPlantilla('upper-a'))!.slots[1]
+      const despues = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[1]
       expect(despues.ejercicioId).toBe(primero.ejercicioId)
       expect(despues.estimulo).toBe(primero.estimulo)
       expect(despues.seriesObjetivo).toBe(primero.seriesObjetivo)
@@ -288,7 +290,7 @@ describe('la progresión la puede fijar el coach (V1)', () => {
 
     // Assert: se guarda sin tocar el resto de la programación
     await waitFor(async () => {
-      const slot = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+      const slot = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[0]
       expect(slot.progresionFijada).toBe('mantener')
       expect(slot.seriesObjetivo).toBe(4)
     })
@@ -301,7 +303,7 @@ describe('la progresión la puede fijar el coach (V1)', () => {
       'mantener',
     )
     await waitFor(async () => {
-      expect((await repositorio.obtenerPlantilla('upper-a'))!.slots[0].progresionFijada).toBe(
+      expect((await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[0].progresionFijada).toBe(
         'mantener',
       )
     })
@@ -309,8 +311,27 @@ describe('la progresión la puede fijar el coach (V1)', () => {
     await userEvent.selectOptions(screen.getByLabelText('Progresión del ejercicio 1'), '')
 
     await waitFor(async () => {
-      const slot = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+      const slot = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[0]
       expect(slot.progresionFijada).toBeUndefined()
     })
+  })
+})
+
+describe('abrir el día que se pidió', () => {
+  test('el coach entra en el día que tocó, no siempre en el primero', async () => {
+    // Antes se descartaba el día elegido y siempre aparecía Upper A, con lo que
+    // había que volver a buscar el día dentro.
+    render(<Coach repositorio={repositorio} plantillaId={idDeDia(participanteId, 'lower-b')} />)
+
+    // Sale como filtro activo y en la cabecera: el coach ve dónde está.
+    expect(
+      await screen.findByRole('button', { name: 'Lower B', pressed: true }),
+    ).toBeInTheDocument()
+  })
+
+  test('sin día concreto entra en el primero de la rotación (§28)', async () => {
+    render(<Coach repositorio={repositorio} />)
+
+    expect(await screen.findByRole('button', { name: 'Upper A', pressed: true })).toBeInTheDocument()
   })
 })

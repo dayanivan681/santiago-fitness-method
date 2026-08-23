@@ -7,6 +7,7 @@
  */
 
 import { ALTA_POR_DEFECTO, crearParticipante, type DatosAlta } from '../logica/participante'
+import { crearDiasIniciales } from '../datos/semilla'
 import type { Repositorio } from '../datos/repositorio'
 import type { Participante } from '../dominio/tipos'
 
@@ -20,5 +21,7 @@ export async function sembrarParticipante(
     ...cambios,
   })
   await repositorio.guardarParticipante(participante)
+  // Igual que el alta real: los cuatro días de §28 nacen con el participante.
+  await crearDiasIniciales(repositorio, participante.id)
   return participante
 }

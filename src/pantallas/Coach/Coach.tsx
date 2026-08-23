@@ -17,12 +17,18 @@ import type { Repositorio } from '../../datos/repositorio'
 
 interface Props {
   readonly repositorio?: Repositorio
+  /** El día que se pidió editar desde Perfil. */
+  readonly plantillaId?: string
   readonly onVolver?: () => void
 }
 
-export function Coach({ repositorio = repositorioPorDefecto, onVolver }: Props = {}) {
+export function Coach({
+  repositorio = repositorioPorDefecto,
+  plantillaId,
+  onVolver,
+}: Props = {}) {
   const { datos, cargando, elegirPlantilla, reemplazar, ajustar, anadir, quitar, mover } =
-    useCoach(repositorio)
+    useCoach(repositorio, plantillaId)
   const [ejercicioAAnadir, setEjercicioAAnadir] = useState('')
 
   if (cargando) return <p className="aviso">Cargando…</p>

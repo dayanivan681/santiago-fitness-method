@@ -9,21 +9,35 @@
 import type { Ejercicio } from '../../dominio/tipos'
 import type { Repositorio } from '../repositorio'
 import { BIBLIOTECA_INICIAL } from './biblioteca'
-import { PLANTILLAS_INICIALES } from './plantillas'
+import { plantillasIniciales } from './plantillas'
+
+// Lo necesitan las pantallas y las pruebas para localizar un día concreto.
+export { idDeDia } from './plantillas'
 
 /**
- * Siembra la biblioteca y las plantillas si aún no existen.
- * Es idempotente: no pisa datos ya registrados, porque §19 prohíbe perder
- * historial y el coach puede haber editado ya las plantillas (§23).
+ * Siembra la biblioteca que trae la app.
+ *
+ * Los días de §28 ya no se crean aquí: son de un participante concreto y nacen
+ * con él, en `crearDiasIniciales`. Sembrarlos sin dueño dejaba una estructura
+ * compartida que el coach no podía ajustar por persona (§23).
  */
 export async function sembrar(repositorio: Repositorio): Promise<void> {
   await sincronizarBiblioteca(repositorio)
+}
 
-  const plantillasExistentes = await repositorio.listarPlantillas()
-  if (plantillasExistentes.length === 0) {
-    for (const plantilla of PLANTILLAS_INICIALES) {
-      await repositorio.guardarPlantilla(plantilla)
-    }
+/**
+ * Los cuatro días de §28 para un participante recién dado de alta.
+ * Idempotente: si ya los tiene, no se tocan (§19, §23).
+ */
+export async function crearDiasIniciales(
+  repositorio: Repositorio,
+  participanteId: string,
+): Promise<void> {
+  const suyas = await repositorio.listarPlantillas(participanteId)
+  if (suyas.length > 0) return
+
+  for (const plantilla of plantillasIniciales(participanteId)) {
+    await repositorio.guardarPlantilla(plantilla)
   }
 }
 

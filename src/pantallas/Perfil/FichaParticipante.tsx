@@ -11,6 +11,8 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { INCREMENTO_IDEAL_LB } from '../../dominio/carga'
 import { formatearEstatura } from '../../dominio/estatura'
 import { CamposParticipante } from './CamposParticipante'
+import { FotoDePerfil } from './FotoDePerfil'
+import type { Repositorio } from '../../datos/repositorio'
 import type { Participante } from '../../dominio/tipos'
 
 const SEXO: Readonly<Record<Participante['sexo'], string>> = {
@@ -20,10 +22,11 @@ const SEXO: Readonly<Record<Participante['sexo'], string>> = {
 
 interface Props {
   readonly participante: Participante
+  readonly repositorio: Repositorio
   readonly onGuardar: (cambios: Participante) => Promise<void>
 }
 
-export function FichaParticipante({ participante, onGuardar }: Props) {
+export function FichaParticipante({ participante, repositorio, onGuardar }: Props) {
   const [editando, setEditando] = useState(false)
   const [borrador, setBorrador] = useState(participante)
 
@@ -48,6 +51,8 @@ export function FichaParticipante({ participante, onGuardar }: Props) {
             Editar
           </button>
         </div>
+
+        <FotoDePerfil participante={participante} repositorio={repositorio} />
 
         <div className="rejilla-datos">
           <Dato etiqueta="Nombre" valor={participante.nombre} />

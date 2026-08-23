@@ -1,18 +1,22 @@
 /**
  * Pantalla de biblioteca.
  * Guía del proyecto §15: visual, sirve para identificar el ejercicio sin saber
- * los nombres técnicos. Imagen, nombre, equipo y explicación corta.
- * §16: las variantes aparecen separadas, porque lo son.
+ * los nombres técnicos. §16: las variantes aparecen separadas, porque lo son.
+ *
+ * La cuadrícula se queda visual —imagen, nombre y equipo— y el resto de lo que
+ * pide el punto H del cliente (músculos, tipo de carga, alternativas) se abre
+ * al tocar la ficha, para no llenar la pantalla del móvil de texto.
  */
 
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
-import { NOMBRE_MUSCULO } from '../../aplicacion/useVolumen'
 import { Cabecera } from '../../componentes/Cabecera'
 import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
+import { NOMBRE_MUSCULO } from '../../dominio/etiquetas'
+import { HojaEjercicio } from './HojaEjercicio'
 import type { Repositorio } from '../../datos/repositorio'
-import type { Musculo } from '../../dominio/tipos'
+import type { Ejercicio, Musculo } from '../../dominio/tipos'
 
 interface Props {
   readonly repositorio?: Repositorio
@@ -22,6 +26,7 @@ const TODOS = 'todos'
 
 export function Biblioteca({ repositorio = repositorioPorDefecto }: Props = {}) {
   const [filtro, setFiltro] = useState<Musculo | typeof TODOS>(TODOS)
+  const [abierto, setAbierto] = useState<Ejercicio | null>(null)
 
   const ejercicios = useLiveQuery(async () => {
     const todos = await repositorio.listarEjercicios()
@@ -40,8 +45,10 @@ export function Biblioteca({ repositorio = repositorioPorDefecto }: Props = {}) 
 
   return (
     <>
+      {/* La biblioteca es el catálogo del método, no datos de nadie: aquí el
+          nombre del participante no aportaba nada y además estaba fijo. */}
       <Cabecera
-        kicker="Participante 001"
+        kicker="Ejercicios del método"
         titulo="Biblioteca"
         meta={`${ejercicios.length} ejercicios`}
       />
@@ -71,7 +78,12 @@ export function Biblioteca({ repositorio = repositorioPorDefecto }: Props = {}) 
 
         <div className="rejilla" style={{ marginTop: 12 }}>
           {visibles.map((ejercicio) => (
-            <article key={ejercicio.id} className="ficha">
+            <button
+              key={ejercicio.id}
+              type="button"
+              className="ficha"
+              onClick={() => setAbierto(ejercicio)}
+            >
               {ejercicio.imagen ? (
                 <img className="ficha__imagen" src={ejercicio.imagen} alt="" />
               ) : (
@@ -82,7 +94,7 @@ export function Biblioteca({ repositorio = repositorioPorDefecto }: Props = {}) 
                 <span className="ficha__equipo">{etiquetaEquipo(ejercicio.equipo)}</span>
                 <p className="ficha__pista">{ejercicio.explicacionCorta}</p>
               </div>
-            </article>
+            </button>
           ))}
         </div>
 
@@ -91,6 +103,16 @@ export function Biblioteca({ repositorio = repositorioPorDefecto }: Props = {}) 
           y barra libre no se mezclan.
         </p>
       </div>
+
+      {abierto && (
+        <HojaEjercicio
+          ejercicio={abierto}
+          biblioteca={ejercicios}
+          // Saltar de una equivalente a otra sin cerrar y volver a buscar.
+          onElegir={setAbierto}
+          onCerrar={() => setAbierto(null)}
+        />
+      )}
     </>
   )
 }

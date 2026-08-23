@@ -10,6 +10,7 @@ import type {
   Ejercicio,
   Participante,
   PlantillaDia,
+  BorradorDeSerie,
   RegistroDeProgreso,
   SerieRegistrada,
   Sesion,
@@ -36,6 +37,19 @@ export class RepositorioLocal implements Repositorio {
     return this.db.participantes.toCollection().first()
   }
 
+  async obtenerFotoDePerfil(participanteId: string): Promise<Blob | undefined> {
+    return (await this.db.fotosDePerfil.get(participanteId))?.imagen
+  }
+
+  /** `put`: cambiar la foto sustituye la anterior, no acumula. */
+  async guardarFotoDePerfil(participanteId: string, imagen: Blob): Promise<void> {
+    await this.db.fotosDePerfil.put({ id: participanteId, imagen })
+  }
+
+  async borrarFotoDePerfil(participanteId: string): Promise<void> {
+    await this.db.fotosDePerfil.delete(participanteId)
+  }
+
   listarEjercicios(): Promise<Ejercicio[]> {
     return this.db.ejercicios.toArray()
   }
@@ -49,8 +63,11 @@ export class RepositorioLocal implements Repositorio {
   }
 
   /** §28 fija la secuencia de la rotación, así que se ordena explícitamente. */
-  async listarPlantillas(): Promise<PlantillaDia[]> {
-    const plantillas = await this.db.plantillas.toArray()
+  async listarPlantillas(participanteId: string): Promise<PlantillaDia[]> {
+    const plantillas = await this.db.plantillas
+      .where('participanteId')
+      .equals(participanteId)
+      .toArray()
     return plantillas.sort((a, b) => a.orden - b.orden)
   }
 
@@ -77,8 +94,11 @@ export class RepositorioLocal implements Repositorio {
     }
   }
 
-  listarSustituciones(fecha: string): Promise<Sustitucion[]> {
-    return this.db.sustituciones.where('fecha').equals(fecha).toArray()
+  listarSustituciones(participanteId: string, fecha: string): Promise<Sustitucion[]> {
+    return this.db.sustituciones
+      .where('[participanteId+fecha]')
+      .equals([participanteId, fecha])
+      .toArray()
   }
 
   /** `put`: cambiar de opinión el mismo día pisa la sustitución anterior. */
@@ -109,18 +129,56 @@ export class RepositorioLocal implements Repositorio {
     }
   }
 
+  obtenerBorrador(id: string): Promise<BorradorDeSerie | undefined> {
+    return this.db.borradores.get(id)
+  }
+
+  /** `put`: cada tecla pisa el borrador anterior de esa misma serie. */
+  async guardarBorrador(borrador: BorradorDeSerie): Promise<void> {
+    await this.db.borradores.put(borrador)
+  }
+
+  async borrarBorrador(id: string): Promise<void> {
+    await this.db.borradores.delete(id)
+  }
+
   listarSeriesDeSesion(sesionId: string): Promise<SerieRegistrada[]> {
     return this.db.series.where('sesionId').equals(sesionId).toArray()
   }
 
-  async historialDeEjercicio(ejercicioId: string): Promise<SerieConFecha[]> {
+  async historialDeEjercicio(
+    participanteId: string,
+    ejercicioId: string,
+  ): Promise<SerieConFecha[]> {
     const series = await this.db.series.where('ejercicioId').equals(ejercicioId).toArray()
-    return this.conFecha(series)
+    return this.conFecha(series, await this.sesionesDe(participanteId))
   }
 
-  async idsDeEjerciciosConHistorial(): Promise<string[]> {
-    const claves = await this.db.series.orderBy('ejercicioId').uniqueKeys()
-    return claves.map(String)
+  async historialDeEjercicios(
+    participanteId: string,
+    ejercicioIds: readonly string[],
+  ): Promise<ReadonlyMap<string, SerieConFecha[]>> {
+    const fechaPorSesion = await this.sesionesDe(participanteId)
+    const series = await this.db.series
+      .where('ejercicioId')
+      .anyOf([...ejercicioIds])
+      .toArray()
+
+    const porEjercicio = new Map<string, SerieConFecha[]>(
+      ejercicioIds.map((id) => [id, []]),
+    )
+    for (const serie of this.conFecha(series, fechaPorSesion)) {
+      porEjercicio.get(serie.ejercicioId)?.push(serie)
+    }
+    return porEjercicio
+  }
+
+  async idsDeEjerciciosConHistorial(participanteId: string): Promise<string[]> {
+    const suyas = await this.sesionesDe(participanteId)
+    if (suyas.size === 0) return []
+
+    const series = await this.db.series.where('sesionId').anyOf([...suyas.keys()]).toArray()
+    return [...new Set(series.map((serie) => serie.ejercicioId))]
   }
 
   listarProgreso(participanteId: string): Promise<RegistroDeProgreso[]> {
@@ -149,14 +207,23 @@ export class RepositorioLocal implements Repositorio {
     await this.db.fotos.delete(registroId)
   }
 
-  async seriesEntreFechas(desde: string, hasta: string): Promise<SerieConFecha[]> {
+  async seriesEntreFechas(
+    participanteId: string,
+    desde: string,
+    hasta: string,
+  ): Promise<SerieConFecha[]> {
     const sesiones = await this.db.sesiones
       .where('fecha')
       .between(desde, hasta, true, true)
       .toArray()
-    if (sesiones.length === 0) return []
 
-    const fechaPorSesion = new Map(sesiones.map((sesion) => [sesion.id, sesion.fecha]))
+    const fechaPorSesion = new Map(
+      sesiones
+        .filter((sesion) => sesion.participanteId === participanteId)
+        .map((sesion) => [sesion.id, sesion.fecha]),
+    )
+    if (fechaPorSesion.size === 0) return []
+
     const series = await this.db.series
       .where('sesionId')
       .anyOf([...fechaPorSesion.keys()])
@@ -168,18 +235,23 @@ export class RepositorioLocal implements Repositorio {
     }))
   }
 
-  /** Adjunta a cada serie la fecha de su sesión (§7, §9, §18). */
-  private async conFecha(series: SerieRegistrada[]): Promise<SerieConFecha[]> {
-    if (series.length === 0) return []
+  /** Las sesiones de un participante, por id, con su fecha. */
+  private async sesionesDe(participanteId: string): Promise<Map<string, string>> {
+    const sesiones = await this.db.sesiones
+      .where('participanteId')
+      .equals(participanteId)
+      .toArray()
+    return new Map(sesiones.map((sesion) => [sesion.id, sesion.fecha]))
+  }
 
-    const idsDeSesion = [...new Set(series.map((serie) => serie.sesionId))]
-    const sesiones = await this.db.sesiones.bulkGet(idsDeSesion)
-    const fechaPorSesion = new Map(
-      sesiones
-        .filter((sesion): sesion is Sesion => sesion !== undefined)
-        .map((sesion) => [sesion.id, sesion.fecha]),
-    )
-
+  /**
+   * Adjunta a cada serie la fecha de su sesión (§7, §9, §18) y descarta las que
+   * no son del participante: una serie sin sesión suya no es suya.
+   */
+  private conFecha(
+    series: SerieRegistrada[],
+    fechaPorSesion: Map<string, string>,
+  ): SerieConFecha[] {
     return series.flatMap((serie) => {
       const fecha = fechaPorSesion.get(serie.sesionId)
       return fecha ? [{ ...serie, fecha }] : []

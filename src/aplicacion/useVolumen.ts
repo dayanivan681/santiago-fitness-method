@@ -13,6 +13,8 @@ import {
   type EstadoVolumen,
 } from '../logica/volumen'
 import type { Musculo, Sexo } from '../dominio/tipos'
+// Se re-exporta porque varias pantallas lo importaban desde aquí.
+export { NOMBRE_MUSCULO } from '../dominio/etiquetas'
 import type { RangoReps } from '../dominio/estimulo'
 
 /**
@@ -33,20 +35,6 @@ const MUSCULOS_CON_OBJETIVO: readonly Musculo[] = [
   'deltoideLateral',
 ]
 
-export const NOMBRE_MUSCULO: Readonly<Record<Musculo, string>> = {
-  pecho: 'Pecho',
-  espalda: 'Espalda',
-  cuadriceps: 'Cuádriceps',
-  gluteos: 'Glúteos',
-  femoral: 'Femoral',
-  biceps: 'Bíceps',
-  triceps: 'Tríceps',
-  deltoideLateral: 'Deltoide lateral',
-  deltoideAnterior: 'Deltoide anterior',
-  deltoidePosterior: 'Deltoide posterior',
-  pantorrillas: 'Pantorrillas',
-  core: 'Core',
-}
 
 export interface FilaVolumen {
   readonly musculo: Musculo
@@ -71,12 +59,13 @@ export function useVolumen(repositorio: Repositorio) {
     const desde = fechaHaceDias(DIAS_DE_LA_VENTANA - 1)
     const hasta = fechaDeHoy()
 
-    const [participante, ejercicios, series] = await Promise.all([
-      repositorio.participanteActual(),
-      repositorio.listarEjercicios(),
-      repositorio.seriesEntreFechas(desde, hasta),
-    ])
+    const participante = await repositorio.participanteActual()
     if (!participante) return null
+
+    const [ejercicios, series] = await Promise.all([
+      repositorio.listarEjercicios(),
+      repositorio.seriesEntreFechas(participante.id, desde, hasta),
+    ])
 
     const biblioteca = new Map(ejercicios.map((ejercicio) => [ejercicio.id, ejercicio]))
     const directas = seriesDirectasPorMusculo(series, biblioteca)

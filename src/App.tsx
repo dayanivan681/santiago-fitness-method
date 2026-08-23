@@ -25,7 +25,10 @@ export function App() {
   const [seccion, setSeccion] = useState<Seccion>('hoy')
   // El coach no es una pestaña: se entra desde Perfil → Estructura de 4 días,
   // porque editar plantillas no es algo que se haga entrenando (§25).
-  const [coachAbierto, setCoachAbierto] = useState(false)
+  // Guarda qué día se pidió, no sólo que se abrió: tocar "Lower A" y aterrizar
+  // en Upper A obligaba a buscarlo otra vez dentro.
+  const [diaAEditar, setDiaAEditar] = useState<string | null>(null)
+  const coachAbierto = diaAEditar !== null
 
   useEffect(() => {
     sembrar(repositorio).then(() => setListo(true))
@@ -38,7 +41,7 @@ export function App() {
     [],
   )
 
-  const cerrarCoach = useCallback(() => setCoachAbierto(false), [])
+  const cerrarCoach = useCallback(() => setDiaAEditar(null), [])
   const volverDeCoach = useCapa(coachAbierto, cerrarCoach)
 
   if (!listo || participante === undefined) return <p className="aviso">Preparando…</p>
@@ -55,7 +58,7 @@ export function App() {
   if (coachAbierto) {
     return (
       <div className="app">
-        <Coach onVolver={volverDeCoach} />
+        <Coach plantillaId={diaAEditar ?? undefined} onVolver={volverDeCoach} />
       </div>
     )
   }
@@ -65,7 +68,7 @@ export function App() {
       {seccion === 'hoy' && <EntrenamientoHoy />}
       {seccion === 'biblioteca' && <Biblioteca />}
       {seccion === 'historial' && <Historial />}
-      {seccion === 'perfil' && <Perfil onAbrirCoach={() => setCoachAbierto(true)} />}
+      {seccion === 'perfil' && <Perfil onAbrirCoach={setDiaAEditar} />}
 
       <nav className="pestanas" aria-label="Secciones">
         {PESTANAS.map(({ id, etiqueta }) => (

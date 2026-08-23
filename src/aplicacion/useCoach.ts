@@ -29,16 +29,20 @@ export interface DatosCoach {
   readonly participante: Participante
 }
 
-export function useCoach(repositorio: Repositorio) {
-  const [plantillaIdElegida, elegirPlantilla] = useState<string | null>(null)
+export function useCoach(repositorio: Repositorio, plantillaInicial?: string) {
+  const [plantillaIdElegida, elegirPlantilla] = useState<string | null>(
+    plantillaInicial ?? null,
+  )
 
   const datos = useLiveQuery(async (): Promise<DatosCoach | null> => {
-    const [plantillas, ejercicios, participante] = await Promise.all([
-      repositorio.listarPlantillas(),
+    const participante = await repositorio.participanteActual()
+    if (!participante) return null
+
+    const [plantillas, ejercicios] = await Promise.all([
+      repositorio.listarPlantillas(participante.id),
       repositorio.listarEjercicios(),
-      repositorio.participanteActual(),
     ])
-    if (plantillas.length === 0 || !participante) return null
+    if (plantillas.length === 0) return null
 
     const plantilla =
       plantillas.find((p) => p.id === plantillaIdElegida) ?? plantillas[0]

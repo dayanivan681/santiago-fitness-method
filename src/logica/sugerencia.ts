@@ -127,12 +127,20 @@ function conNumeros(
  * pedía el plan en el tope del rango y ninguna con más de una repetición en
  * reserva. Con que la mejor serie llegara al tope no basta — eso premiaba una
  * serie buena entre cuatro flojas.
+ *
+ * Y nunca con la técnica rota. El cliente pide que la técnica entre en la
+ * decisión: sin esto, tres series en el tope con la última hecha de cualquier
+ * manera recomendarían más peso, que es justo como se lesiona alguien. Se corta
+ * sólo el caso inseguro —`deficiente`—; el resto de umbrales sigue pendiente de
+ * que él los defina.
  */
 function domina(
   series: readonly SerieComparable[],
   rango: RangoReps,
   seriesObjetivo: number,
 ): boolean {
+  if (series.some((serie) => serie.tecnica === 'deficiente')) return false
+
   const enElTope = series.filter((serie) => serie.reps >= rango.max).length
   return enElTope >= seriesObjetivo && series.every((serie) => serie.rir <= RIR_DOMINADO)
 }

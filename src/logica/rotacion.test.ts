@@ -4,6 +4,7 @@ import type { PlantillaDia, Sesion } from '../dominio/tipos'
 
 const plantilla = (id: string, nombre: string, orden: number): PlantillaDia => ({
   id,
+  participanteId: '001',
   nombre,
   orden,
   slots: [],

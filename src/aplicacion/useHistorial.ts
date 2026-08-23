@@ -9,7 +9,13 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
 import type { Repositorio } from '../datos/repositorio'
 import { rangoDeEjercicio } from '../logica/plantilla'
-import type { Ejercicio, ReferenciasEjercicio } from '../dominio/tipos'
+import {
+  aplicarCorreccion,
+  deshacerCorreccion,
+  puedeDeshacerse,
+  type ValoresCorregidos,
+} from '../logica/correccion'
+import type { Ejercicio, ReferenciasEjercicio, SerieRegistrada } from '../dominio/tipos'
 
 export interface SesionDelHistorial {
   readonly fecha: string
@@ -31,10 +37,13 @@ export function useHistorial(repositorio: Repositorio) {
   const [ejercicioIdElegido, elegirEjercicio] = useState<string | null>(null)
 
   const datos = useLiveQuery(async (): Promise<DatosHistorial> => {
+    const participante = await repositorio.participanteActual()
+    if (!participante) return { entrenados: [], sesiones: [] }
+
     const [ids, ejercicios, plantillas] = await Promise.all([
-      repositorio.idsDeEjerciciosConHistorial(),
+      repositorio.idsDeEjerciciosConHistorial(participante.id),
       repositorio.listarEjercicios(),
-      repositorio.listarPlantillas(),
+      repositorio.listarPlantillas(participante.id),
     ])
 
     const entrenados = ejercicios
@@ -45,10 +54,9 @@ export function useHistorial(repositorio: Repositorio) {
       entrenados.find((e) => e.id === ejercicioIdElegido) ?? entrenados[0]
     if (!ejercicio) return { entrenados, sesiones: [] }
 
-    const historial = await repositorio.historialDeEjercicio(ejercicio.id)
+    const historial = await repositorio.historialDeEjercicio(participante.id, ejercicio.id)
     const rango = rangoDeEjercicio(plantillas, ejercicio.id)
-    const participante = await repositorio.participanteActual()
-    const sesiones = participante ? await repositorio.listarSesiones(participante.id) : []
+    const sesiones = await repositorio.listarSesiones(participante.id)
     const cerradas = new Set(
       sesiones.filter((s) => s.completadaEn).map((s) => s.fecha),
     )
@@ -61,7 +69,33 @@ export function useHistorial(repositorio: Repositorio) {
     }
   }, [repositorio, ejercicioIdElegido])
 
-  return { datos, cargando: datos === undefined, elegirEjercicio }
+  /**
+   * Corregir una serie de una sesión ya cerrada.
+   *
+   * Usa exactamente la misma regla auditada que el entrenamiento de hoy: el
+   * valor anterior se apila, no desaparece (§19). Un número mal apuntado se
+   * descubre a menudo días después, y hasta ahora sólo se podía arreglar el
+   * mismo día.
+   */
+  async function corregirSerie(
+    serie: SerieRegistrada,
+    valores: ValoresCorregidos,
+  ): Promise<void> {
+    await repositorio.corregirSerie(aplicarCorreccion(serie, valores))
+  }
+
+  async function deshacerUltimaCorreccion(serie: SerieRegistrada): Promise<void> {
+    if (!puedeDeshacerse(serie)) return
+    await repositorio.corregirSerie(deshacerCorreccion(serie))
+  }
+
+  return {
+    datos,
+    cargando: datos === undefined,
+    elegirEjercicio,
+    corregirSerie,
+    deshacerUltimaCorreccion,
+  }
 }
 
 /** §18: el historial se lee por sesiones, de la más reciente hacia atrás. */

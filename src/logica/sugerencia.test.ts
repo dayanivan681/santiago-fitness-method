@@ -169,3 +169,72 @@ describe('el coach fija la recomendación', () => {
     expect(siguienteObjetivo([], contexto({ fijada: 'subirCarga' })).tipo).toBe('sinReferencia')
   })
 })
+
+describe('la técnica deficiente frena la subida de carga', () => {
+  // El cliente pide que la técnica entre en la decisión. Sin esto, tres series
+  // en el tope con la espalda redondeada recomendarían más peso, que es
+  // exactamente cómo se lesiona alguien.
+  const conTecnica = (
+    cargaTotalLb: number,
+    reps: number,
+    rir: number,
+    tecnica: SerieComparable['tecnica'],
+  ): SerieComparable => ({ cargaTotalLb, reps, rir, tecnica })
+
+  test('con técnica buena y el rango dominado, sí sube', () => {
+    // Arrange: las 3 series objetivo en el tope, RIR 1, técnica buena
+    const ultima = [
+      conTecnica(100, 15, 1, 'buena'),
+      conTecnica(100, 15, 1, 'buena'),
+      conTecnica(100, 15, 0, 'buena'),
+    ]
+
+    // Act + Assert
+    expect(siguienteObjetivo(ultima, contexto()).tipo).toBe('subirCarga')
+  })
+
+  test('una sola serie con técnica deficiente lo bloquea', () => {
+    // Arrange: mismo rendimiento, pero la última se rompió
+    const ultima = [
+      conTecnica(100, 15, 1, 'buena'),
+      conTecnica(100, 15, 1, 'buena'),
+      conTecnica(100, 15, 0, 'deficiente'),
+    ]
+
+    // Act + Assert: se sostiene la carga, no se premia
+    expect(siguienteObjetivo(ultima, contexto()).tipo).toBe('mantener')
+  })
+
+  test('la técnica excelente no estorba', () => {
+    const ultima = [
+      conTecnica(100, 15, 1, 'excelente'),
+      conTecnica(100, 15, 1, 'excelente'),
+      conTecnica(100, 15, 0, 'excelente'),
+    ]
+
+    expect(siguienteObjetivo(ultima, contexto()).tipo).toBe('subirCarga')
+  })
+
+  test('la técnica aceptable tampoco bloquea: sólo la deficiente', () => {
+    // No se redefinen todavía todos los umbrales; sólo se corta lo inseguro.
+    const ultima = [
+      conTecnica(100, 15, 1, 'aceptable'),
+      conTecnica(100, 15, 1, 'aceptable'),
+      conTecnica(100, 15, 0, 'aceptable'),
+    ]
+
+    expect(siguienteObjetivo(ultima, contexto()).tipo).toBe('subirCarga')
+  })
+
+  test('el coach todavía puede fijar subir carga a pesar de la técnica', () => {
+    // El bloqueo es de la recomendación automática. Él ve al participante.
+    const ultima = [
+      conTecnica(100, 15, 1, 'buena'),
+      conTecnica(100, 15, 0, 'deficiente'),
+    ]
+
+    expect(
+      siguienteObjetivo(ultima, contexto({ seriesObjetivo: 2, fijada: 'subirCarga' })).tipo,
+    ).toBe('subirCarga')
+  })
+})

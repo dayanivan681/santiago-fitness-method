@@ -13,6 +13,7 @@ import type { PlantillaDia } from '../dominio/tipos'
 
 const UPPER_A: PlantillaDia = {
   id: 'upper-a',
+  participanteId: '001',
   nombre: 'Upper A',
   orden: 1,
   slots: [
@@ -22,7 +23,7 @@ const UPPER_A: PlantillaDia = {
   ],
 }
 
-const VACIA: PlantillaDia = { id: 'lower-a', nombre: 'Lower A', orden: 2, slots: [] }
+const VACIA: PlantillaDia = { id: 'lower-a', participanteId: '001', nombre: 'Lower A', orden: 2, slots: [] }
 
 describe('crearSlot (§4, §10–12)', () => {
   test('toma el rango y el descanso por defecto del estímulo', () => {

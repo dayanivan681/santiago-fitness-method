@@ -11,6 +11,7 @@ import type {
   Participante,
   PlantillaDia,
   SerieRegistrada,
+  BorradorDeSerie,
   RegistroDeProgreso,
   Sesion,
   Sustitucion,
@@ -26,6 +27,10 @@ export class BaseDatosSantiago extends Dexie {
   progreso!: EntityTable<RegistroDeProgreso, 'id'>
   /** Las fotos, aparte: una lista de medidas no debe arrastrar megas de imagen. */
   fotos!: EntityTable<{ id: string; imagen: Blob }, 'id'>
+  /** Foto de perfil, con el id del participante como clave. Aparte por lo mismo. */
+  fotosDePerfil!: EntityTable<{ id: string; imagen: Blob }, 'id'>
+  /** Series a medio teclear. Se borran al guardarlas de verdad. */
+  borradores!: EntityTable<BorradorDeSerie, 'id'>
 
   constructor(nombre = 'santiago-fitness-method') {
     super(nombre)
@@ -64,6 +69,56 @@ export class BaseDatosSantiago extends Dexie {
       progreso: 'id, participanteId, fecha',
       fotos: 'id',
     })
+
+    // v5: foto de perfil. Su V1 la pide junto a los datos de §2, y es distinta
+    // de las fotos de progreso: identifica al participante, no documenta su
+    // evolución. Tabla propia para no cargar la imagen al leer la ficha.
+    this.version(5).stores({ fotosDePerfil: 'id' })
+
+    // v6: borradores de serie. El cliente pide autosave y recuperación si la
+    // app se cierra; entre ajustar el peso y tocar Guardar puede pasar de todo.
+    this.version(6).stores({ borradores: 'id, [participanteId+fecha]' })
+
+    // v8 va después; se declara aquí abajo.
+
+    // v7: las sustituciones pasan a ser de un participante. Las que ya existen
+    // se le asignan al que hay —§19: no se borra nada—, y su id se rehace para
+    // que siga coincidiendo con el que calcula la app.
+    this.version(7)
+      .stores({ sustituciones: 'id, [participanteId+fecha]' })
+      .upgrade(async (tx) => {
+        const participantes = await tx.table<Participante>('participantes').toArray()
+        const dueno = participantes[0]?.id
+        if (!dueno) return
+
+        const tabla = tx.table<Sustitucion>('sustituciones')
+        const existentes = await tabla.toArray()
+        await tabla.clear()
+        await tabla.bulkAdd(
+          existentes.map((sustitucion) => ({
+            ...sustitucion,
+            participanteId: dueno,
+            id: `${dueno}|${sustitucion.fecha}|${sustitucion.plantillaDiaId}|${sustitucion.orden}`,
+          })),
+        )
+      })
+
+    // v8: los días pasan a ser de un participante. Los que ya existen se le
+    // asignan al que hay, con sus ejercicios y ajustes intactos (§19, §23).
+    this.version(8)
+      .stores({ plantillas: 'id, nombre, orden, participanteId' })
+      .upgrade(async (tx) => {
+        const participantes = await tx.table<Participante>('participantes').toArray()
+        const dueno = participantes[0]?.id
+        if (!dueno) return
+
+        await tx
+          .table<Editable<PlantillaDia>>('plantillas')
+          .toCollection()
+          .modify((plantilla) => {
+            plantilla.participanteId = dueno
+          })
+      })
   }
 }
 

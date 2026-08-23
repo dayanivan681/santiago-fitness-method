@@ -1,13 +1,15 @@
 import 'fake-indexeddb/auto'
 import { describe, test, expect, beforeEach } from 'vitest'
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
-import { BaseDatosSantiago } from '../../datos/esquema'
+import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 import { sembrar } from '../../datos/semilla'
+import { idDeDia } from '../../datos/semilla'
 import { sembrarParticipante } from '../../pruebas/participante'
 import { fechaDeHoy } from '../../datos/repositorio'
+import { idBorrador } from '../../logica/borrador'
 import { evitar } from '../../logica/limitaciones'
 import { actualizarSlot, anadirSlot, MAX_EJERCICIOS_POR_DIA } from '../../logica/plantilla'
 import type { PlantillaDia } from '../../dominio/tipos'
@@ -23,7 +25,7 @@ async function sembrarSesionAnterior(fecha = '2026-01-05') {
   await repositorio.crearSesion({
     id: 'sesion-anterior',
     participanteId,
-    plantillaDiaId: 'upper-a',
+    plantillaDiaId: idDeDia(participanteId, 'upper-a'),
     fecha,
   })
   await repositorio.registrarSerie({
@@ -37,6 +39,17 @@ async function sembrarSesionAnterior(fecha = '2026-01-05') {
   })
 }
 
+/** La clave del borrador de la posición 1 de Upper A. */
+function idDeLaPrimeraSerie(numeroSerie = 1) {
+  return idBorrador({
+    participanteId,
+    fecha: fechaDeHoy(),
+    plantillaDiaId: idDeDia(participanteId, 'upper-a'),
+    orden: 1,
+    numeroSerie,
+  })
+}
+
 /** El primer ejercicio viene desplegado; los demás hay que abrirlos. */
 async function abrirUpperA() {
   render(<EntrenamientoHoy repositorio={repositorio} />)
@@ -45,7 +58,7 @@ async function abrirUpperA() {
 }
 
 beforeEach(async () => {
-  const db = new BaseDatosSantiago(`prueba-ui-${crypto.randomUUID()}`)
+  const db = baseDePrueba(`prueba-ui-${crypto.randomUUID()}`)
   repositorio = new RepositorioLocal(db)
   await sembrar(repositorio)
   participanteId = (await sembrarParticipante(repositorio)).id
@@ -99,7 +112,7 @@ describe('referencia del entrenamiento anterior (§7)', () => {
     expect(screen.getAllByText(/Anterior: 45\/lado lb × 5 · RIR 2/)).toHaveLength(4)
 
     // Nada queda registrado mientras no se confirme
-    expect(await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
+    expect(await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
   })
 
   test('el paso del peso es el incremento real de la máquina (§13, §17)', async () => {
@@ -125,7 +138,7 @@ describe('registrar una serie (§5, §19)', () => {
 
     // Assert
     await waitFor(async () => {
-      const historial = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
+      const historial = await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)
       expect(historial).toHaveLength(1)
       expect(historial[0].pesoRegistradoLb).toBe(2.5)
       expect(historial[0].repsRealizadas).toBe(2)
@@ -177,14 +190,14 @@ describe('cambiar la variante asignada (§16, §23)', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       expect(screen.getByText('Sólo hoy')).toBeInTheDocument()
     })
-    const plantilla = await repositorio.obtenerPlantilla('upper-a')
+    const plantilla = await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a'))
     expect(plantilla!.slots[0].ejercicioId).toBe(PRESS_BANCA_15_SMITH.id)
   })
 
   test('fijarla sí cambia la plantilla, sin romper la estructura (§23)', async () => {
     // Arrange
     await abrirUpperA()
-    const antes = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+    const antes = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[0]
 
     // Act
     await userEvent.click(screen.getAllByRole('button', { name: 'Cambiar variante' })[0])
@@ -193,7 +206,7 @@ describe('cambiar la variante asignada (§16, §23)', () => {
 
     // Assert: cambia el ejercicio, se conserva todo lo demás
     await waitFor(async () => {
-      const despues = (await repositorio.obtenerPlantilla('upper-a'))!.slots[0]
+      const despues = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!.slots[0]
       expect(despues.ejercicioId).toBe('press-banca-barra')
       expect(despues.estimulo).toBe(antes.estimulo)
       expect(despues.seriesObjetivo).toBe(antes.seriesObjetivo)
@@ -201,7 +214,7 @@ describe('cambiar la variante asignada (§16, §23)', () => {
       expect(despues.repMax).toBe(antes.repMax)
     })
     // Y no queda además un cambio de un día que la pise
-    expect(await repositorio.listarSustituciones(fechaDeHoy())).toHaveLength(0)
+    expect(await repositorio.listarSustituciones(participanteId, fechaDeHoy())).toHaveLength(0)
   })
 
   test('volver a la variante asignada deshace el cambio del día', async () => {
@@ -220,7 +233,7 @@ describe('cambiar la variante asignada (§16, §23)', () => {
 
     // Assert: la tarjeta deja de estar marcada y no queda rastro del cambio
     await waitFor(() => expect(screen.queryByText('Sólo hoy')).not.toBeInTheDocument())
-    expect(await repositorio.listarSustituciones(fechaDeHoy())).toHaveLength(0)
+    expect(await repositorio.listarSustituciones(participanteId, fechaDeHoy())).toHaveLength(0)
   })
 
 })
@@ -246,7 +259,7 @@ describe('corregir deja rastro (§19)', () => {
     // Esperar a ese botón, y no sólo al dato en la base, es lo que garantiza
     // que la tarjeta ya se repintó.
     const editar = await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
-    const [original] = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
+    const [original] = await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)
 
     // Act: se corrige subiendo una repetición
     await userEvent.click(editar)
@@ -255,14 +268,14 @@ describe('corregir deja rastro (§19)', () => {
 
     // Assert: el valor equivocado sigue estando, no desaparece
     await waitFor(async () => {
-      const [corregida] = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
+      const [corregida] = await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)
       expect(corregida.repsRealizadas).toBe(original.repsRealizadas + 1)
       expect(corregida.correcciones).toHaveLength(1)
       expect(corregida.correcciones![0].repsRealizadas).toBe(original.repsRealizadas)
     })
 
     // Y sigue habiendo una sola serie: corregir no duplica
-    expect(await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
+    expect(await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
   })
 })
 
@@ -285,7 +298,13 @@ describe('un día de ocho ejercicios (criterios 2 y 10)', () => {
   test('la pantalla los muestra todos, sin cambiar código', async () => {
     // Arrange: el coach arma un día de ocho desde la propia app
     const ocho = (await repositorio.listarEjercicios()).slice(0, MAX_EJERCICIOS_POR_DIA)
-    const vacia: PlantillaDia = { id: 'lower-a', nombre: 'Lower A', orden: 2, slots: [] }
+    const vacia: PlantillaDia = {
+      id: idDeDia(participanteId, 'lower-a'),
+      participanteId,
+      nombre: 'Lower A',
+      orden: 2,
+      slots: [],
+    }
     const lleno = ocho.reduce<PlantillaDia>(
       (plantilla, ejercicio) => anadirSlot(plantilla, ejercicio.id),
       vacia,
@@ -345,7 +364,7 @@ describe('la recomendación que fijó el coach (V1)', () => {
   test('manda sobre la que calcularía la app, y se ve de quién es', async () => {
     // Arrange: con 45 lb × 5 la app propondría subir reps; el coach dice mantener
     await sembrarSesionAnterior()
-    const plantilla = (await repositorio.obtenerPlantilla('upper-a'))!
+    const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!
     await repositorio.guardarPlantilla(
       actualizarSlot(plantilla, 1, { progresionFijada: 'mantener' }),
     )
@@ -378,7 +397,7 @@ describe('entrada rápida — tocar el valor para escribirlo directo (reduce pul
     )
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
     await waitFor(async () => {
-      const [serie] = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
+      const [serie] = await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)
       expect(serie.pesoRegistradoLb).toBe(135)
     })
   })
@@ -397,7 +416,7 @@ describe('entrada rápida — tocar el valor para escribirlo directo (reduce pul
     // Assert
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
     await waitFor(async () => {
-      const [serie] = await repositorio.historialDeEjercicio(PRESS_BANCA_15_SMITH.id)
+      const [serie] = await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)
       expect(serie.repsRealizadas).toBe(8)
     })
   })
@@ -443,5 +462,187 @@ describe('RIR — el tope de la escala se ve como "5+" (§14)', () => {
 
     // Assert
     expect(rir).toHaveTextContent('5+')
+  })
+})
+
+describe('la recomendación dice cuánto, no sólo qué (§6)', () => {
+  test('al subir reps propone el número concreto', async () => {
+    // Arrange: 3 reps queda dentro del rango de fuerza (1–5) y por debajo del
+    // tope, que es cuando §11 manda progresar en repeticiones.
+    await repositorio.crearSesion({
+      id: 'previa',
+      participanteId,
+      plantillaDiaId: idDeDia(participanteId, 'upper-a'),
+      fecha: '2026-01-05',
+    })
+    await repositorio.registrarSerie({
+      id: 'previa-1',
+      sesionId: 'previa',
+      ejercicioId: PRESS_BANCA_15_SMITH.id,
+      numeroSerie: 1,
+      pesoRegistradoLb: 45,
+      repsRealizadas: 3,
+      rir: 2,
+    })
+
+    // Act
+    await abrirUpperA()
+
+    // Assert: el rótulo solo no dice cuántas
+    expect(await screen.findByText(/Objetivo: 4 reps con el mismo peso/)).toBeInTheDocument()
+  })
+
+  test('al subir carga propone el peso y el incremento', async () => {
+    // Arrange: dos series al tope del rango de fuerza con RIR 1 dominan la carga
+    await repositorio.crearSesion({
+      id: 'dominada',
+      participanteId,
+      plantillaDiaId: idDeDia(participanteId, 'upper-a'),
+      fecha: '2026-01-05',
+    })
+    for (const numeroSerie of [1, 2, 3, 4]) {
+      await repositorio.registrarSerie({
+        id: `dominada-${numeroSerie}`,
+        sesionId: 'dominada',
+        ejercicioId: PRESS_BANCA_15_SMITH.id,
+        numeroSerie,
+        pesoRegistradoLb: 45,
+        repsRealizadas: 5,
+        rir: 1,
+      })
+    }
+
+    // Act
+    await abrirUpperA()
+
+    // Assert: §13 y §17 — el Smith sube 5 lb totales, 2.5 por lado
+    expect(await screen.findByText(/Objetivo: 47\.5\/lado lb \(\+2\.5\/lado\)/)).toBeInTheDocument()
+  })
+
+  test('sin referencia no inventa ningún número', async () => {
+    // Primera vez con el ejercicio: no hay de dónde sacar peso ni reps.
+    await abrirUpperA()
+
+    expect(screen.getByText('Primera vez')).toBeInTheDocument()
+    expect(screen.queryByText(/Objetivo:/)).not.toBeInTheDocument()
+  })
+})
+
+describe('autosave del borrador y recuperación', () => {
+  test('lo ajustado sobrevive a cerrar y reabrir la app', async () => {
+    // El cliente pide recuperación si la app se cierra: entre ajustar el peso y
+    // tocar Guardar puede sonar el teléfono o el móvil matar la pestaña.
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
+    await userEvent.click(screen.getByLabelText(`Subir reps de la serie 1 de ${PRESS}`))
+    await waitFor(async () => {
+      expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeDefined()
+    })
+
+    // Act: se cierra y se vuelve a abrir
+    cleanup()
+    await abrirUpperA()
+
+    // Assert: el ajuste sigue ahí, sin haberlo registrado en el historial
+    await waitFor(() =>
+      expect(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)).toHaveTextContent('2.5'),
+    )
+    expect(screen.getByLabelText(`Reps de la serie 1 de ${PRESS}`)).toHaveTextContent('2')
+    expect(await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)).toHaveLength(0)
+  })
+
+  test('no guarda borrador de una serie que nadie tocó', async () => {
+    // Si lo hiciera, mañana ese borrador pisaría la referencia del día.
+    await abrirUpperA()
+
+    await waitFor(() => expect(screen.getByText(PRESS)).toBeInTheDocument())
+
+    expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeUndefined()
+  })
+
+  test('el borrador desaparece al registrar la serie de verdad', async () => {
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
+    await waitFor(async () => {
+      expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeDefined()
+    })
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    // Assert
+    await waitFor(async () => {
+      expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeUndefined()
+    })
+    expect(await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
+  })
+
+  test('cada serie tiene su propio borrador', async () => {
+    // Sin la posición y el número en la clave, se pisarían entre ellas.
+    await abrirUpperA()
+
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 2 de ${PRESS}`))
+
+    await waitFor(async () => {
+      expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeUndefined()
+      expect(
+        await repositorio.obtenerBorrador(idDeLaPrimeraSerie(2)),
+      ).toBeDefined()
+    })
+  })
+})
+
+describe('deshacer una corrección (§19)', () => {
+  test('devuelve los valores y deja constancia de la vuelta atrás', async () => {
+    // Arrange: se guarda una serie y se corrige subiendo una repetición
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await userEvent.click(await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`))
+    await userEvent.click(await screen.findByLabelText(`Subir reps de la serie 1 de ${PRESS}`))
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    const deshacer = await screen.findByLabelText(`Deshacer la corrección de la serie 1 de ${PRESS}`)
+
+    // Act
+    await userEvent.click(deshacer)
+
+    // Assert: vuelve a 1 repetición y el rastro guarda las dos cosas
+    await waitFor(async () => {
+      const [serie] = await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)
+      expect(serie.repsRealizadas).toBe(1)
+      expect(serie.correcciones).toHaveLength(2)
+      expect(serie.correcciones!.map((c) => c.motivo)).toEqual(['correccion', 'reversion'])
+    })
+  })
+
+  test('sin corrección previa no ofrece deshacer', async () => {
+    await abrirUpperA()
+
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    expect(
+      screen.queryByLabelText(`Deshacer la corrección de la serie 1 de ${PRESS}`),
+    ).not.toBeInTheDocument()
+  })
+
+  test('deshecha una vez, no vuelve a ofrecerse', async () => {
+    // La serie ya está en los valores previos: no queda nada que echar atrás.
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await userEvent.click(await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`))
+    await userEvent.click(await screen.findByLabelText(`Subir reps de la serie 1 de ${PRESS}`))
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    await userEvent.click(
+      await screen.findByLabelText(`Deshacer la corrección de la serie 1 de ${PRESS}`),
+    )
+
+    await waitFor(() =>
+      expect(
+        screen.queryByLabelText(`Deshacer la corrección de la serie 1 de ${PRESS}`),
+      ).not.toBeInTheDocument(),
+    )
   })
 })

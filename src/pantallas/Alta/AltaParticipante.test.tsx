@@ -3,13 +3,13 @@ import { describe, test, expect, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AltaParticipante } from './AltaParticipante'
-import { BaseDatosSantiago } from '../../datos/esquema'
+import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 
 let repositorio: RepositorioLocal
 
 beforeEach(() => {
-  repositorio = new RepositorioLocal(new BaseDatosSantiago(`prueba-alta-${crypto.randomUUID()}`))
+  repositorio = new RepositorioLocal(baseDePrueba(`prueba-alta-${crypto.randomUUID()}`))
 })
 
 function abrir() {
