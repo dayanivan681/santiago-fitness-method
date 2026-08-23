@@ -36,7 +36,7 @@ y números grandes.
 | **E** | Temporizador manual | ✅ **Hecho.** Hoy arranca solo al guardar. Se quita y se pone un botón visible. |
 | **F** | Volumen más visual | ✅ **Hecho.** Sus cuatro estados: Dentro del objetivo · Falta volumen · Objetivo cumplido · Revisar recuperación. Hoy hay tres. |
 | **G** | Limitaciones conectadas | ✅ **Hecho.** El perfil lleva una lista de ejercicios a evitar; al asignar uno, el coach recibe el aviso con las equivalentes y las cambia de un toque. Avisa, no bloquea. |
-| **H** | Biblioteca útil en gimnasio | ⏳ **Pendiente el vídeo corto** — plan y costes en `docs/OPCION-VIDEO.md`, a la espera de que elija opción. |
+| **H** | Biblioteca útil en gimnasio | ⚠️ **Lo más incompleto.** La ficha tiene foto, equipo y explicación corta. Faltan **músculo principal, secundarios, tipo de carga y alternativas equivalentes** — los cuatro ya están en la base, es trabajo de pantalla. Escribe *"foto/video corto"*: la foto ya está, así que el vídeo parece opcional. **Conviene confirmarlo** (`docs/OPCION-VIDEO.md`). |
 | **I** | Guardado robusto | ✅ **Hecho.** Autosave, edición y ahora **auditoría**: al corregir, el valor anterior se apila con su hora en vez de desaparecer. |
 | **J** | Separar MVP de futuras | **Ya se respeta.** Sin pagos, chat, nutrición, redes ni wearables. |
 
@@ -110,7 +110,7 @@ acordada, salta antes de llegar al gimnasio.
 | Punto | Estado |
 |---|---|
 | 1 participante real, arquitectura para más, sin panel ficticio | ✅ La app ya no siembra a nadie: el coach lo da de alta al abrirla |
-| Perfil: foto, datos, objetivo, frecuencia, limitaciones, notas | ✅ Notas del coach y fotos de progreso; las limitaciones ya son estructuradas |
+| Perfil: foto, datos, objetivo, frecuencia, limitaciones, notas | ⚠️ Datos, objetivo, frecuencia, limitaciones y notas están. **Falta la foto de perfil** — las fotos de progreso son otra cosa |
 | Día con 5–8 ejercicios editables y **ordenables** | ✅ Se ordenan con flechas, y el ejercicio se lleva su programación |
 | Registro por serie: carga, reps, RIR, descanso; técnica si es simple | ✅ Técnica incluida, con "Buena" por defecto |
 | Última + mejor + **objetivo de hoy** dentro del ejercicio | ✅ |
@@ -170,9 +170,16 @@ completada · limitaciones estructuradas conectadas con la asignación.
 Alta del participante · reordenar ejercicios · notas del coach · medidas y fotos
 de progreso con fecha · recomendación fijable por el coach.
 
-**Pendiente**
-Sólo el vídeo corto en la biblioteca, a la espera de que elija opción
-(`docs/OPCION-VIDEO.md`).
+**Pendiente de construir**
+Foto de perfil · ficha de biblioteca completa: músculo principal y secundarios,
+tipo de carga y alternativas equivalentes. Los cuatro datos ya existen en la
+base; sólo hay que mostrarlos.
+
+**Pendiente de su respuesta**
+Las cinco decisiones de la sección 3 que cambian comportamiento · el documento
+de las 18 preguntas que menciona y no aparece en el PDF · **si la foto le basta
+o quiere además vídeo** en la biblioteca, y en ese caso qué opción de
+`docs/OPCION-VIDEO.md` · el visto bueno visual con el móvil en la mano.
 
 ---
 
