@@ -59,7 +59,14 @@ export function HojaVariantes({
 
   return (
     <div className="hoja" role="dialog" aria-label="Variante asignada">
-      <button type="button" className="hoja__fondo" onClick={cerrar} aria-label="Cerrar" />
+      {/* El fondo también cierra, pero con su propio nombre: dos botones
+          "Cerrar" en el mismo diálogo confunden a quien usa lector de pantalla. */}
+      <button
+        type="button"
+        className="hoja__fondo"
+        onClick={cerrar}
+        aria-label="Cerrar tocando fuera"
+      />
 
       <div className="hoja__panel">
         <div className="hoja__cabecera">

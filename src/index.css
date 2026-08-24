@@ -929,6 +929,32 @@ button,
   display: block;
 }
 
+/* Historial de la variante dentro de su ficha: compacto, se lee de un vistazo. */
+.historial-variante {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radio-chico);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.historial-variante__fecha {
+  flex: none;
+  width: 52px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-50);
+}
+
+.historial-variante__series {
+  font: 600 13px/1.2 'Barlow', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
 .variante {
   display: flex;
   align-items: center;

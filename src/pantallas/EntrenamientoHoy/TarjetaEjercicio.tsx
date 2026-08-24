@@ -27,6 +27,8 @@ interface Props {
   readonly abierta: boolean
   readonly onAlternar: () => void
   readonly onAbrirVariantes: () => void
+  /** Abre la ficha del ejercicio: datos, equivalentes e historial de la variante. */
+  readonly onAbrirFicha: () => void
   /** El cliente pide temporizador manual: lo arranca el participante, no el guardado. */
   readonly onDescansar: () => void
   readonly onGuardarSerie: (
@@ -46,6 +48,7 @@ export function TarjetaEjercicio({
   abierta,
   onAlternar,
   onAbrirVariantes,
+  onAbrirFicha,
   onDescansar,
   onGuardarSerie,
   onCorregirSerie,
@@ -171,6 +174,10 @@ export function TarjetaEjercicio({
             <span style={{ display: 'flex', gap: 14 }}>
               <button type="button" className="enlace" onClick={onDescansar}>
                 Descanso
+              </button>
+              {/* Consultar el ejercicio delante de la máquina, sin salir. */}
+              <button type="button" className="enlace" onClick={onAbrirFicha}>
+                Ficha
               </button>
               {item.variantes.length > 1 && (
                 <button type="button" className="enlace" onClick={onAbrirVariantes}>

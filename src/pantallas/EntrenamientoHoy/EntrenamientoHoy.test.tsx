@@ -876,3 +876,60 @@ describe('el cronómetro convive con la barra de sesión', () => {
     ).toBeInTheDocument()
   })
 })
+
+describe('ficha del ejercicio desde el entrenamiento (fases 4 y 5)', () => {
+  test('se abre sin salir de la sesión', async () => {
+    // Delante de la máquina se consulta el ejercicio sin perder el sitio.
+    await abrirUpperA()
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Ficha' })[0])
+
+    const ficha = await screen.findByRole('dialog', { name: PRESS })
+    expect(within(ficha).getByText('Músculo principal')).toBeInTheDocument()
+    expect(within(ficha).getByText('Alternativas equivalentes')).toBeInTheDocument()
+  })
+
+  test('abrirla y cerrarla NO pierde lo que llevas tecleado', async () => {
+    // Es la condición que pide el plan: consultar la ficha no puede costarte la
+    // serie a medio escribir.
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
+    await userEvent.click(screen.getByLabelText(`Subir reps de la serie 1 de ${PRESS}`))
+
+    // Act
+    await userEvent.click(screen.getAllByRole('button', { name: 'Ficha' })[0])
+    const ficha = await screen.findByRole('dialog', { name: PRESS })
+    await userEvent.click(within(ficha).getByRole('button', { name: 'Cerrar' }))
+
+    // Assert
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog', { name: PRESS })).not.toBeInTheDocument(),
+    )
+    expect(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)).toHaveTextContent('2.5')
+    expect(screen.getByLabelText(`Reps de la serie 1 de ${PRESS}`)).toHaveTextContent('2')
+  })
+
+  test('muestra el historial de esa variante, no el de otra (§16)', async () => {
+    // Arrange: 45 lb/lado × 5 la última vez con el Smith
+    await sembrarSesionAnterior()
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getAllByRole('button', { name: 'Ficha' })[0])
+
+    // Assert
+    const ficha = await screen.findByRole('dialog', { name: PRESS })
+    expect(within(ficha).getByText('Historial de esta variante')).toBeInTheDocument()
+    expect(within(ficha).getByText(/45\/lado lb × 5/)).toBeInTheDocument()
+  })
+
+  test('una variante sin historial lo dice, en vez de dejar el hueco vacío', async () => {
+    await abrirUpperA()
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Ficha' })[0])
+
+    const ficha = await screen.findByRole('dialog', { name: PRESS })
+    expect(within(ficha).getByText('Todavía sin entrenar.')).toBeInTheDocument()
+  })
+})

@@ -10,7 +10,9 @@ import { Cabecera } from '../../componentes/Cabecera'
 import { formatearSegundos } from '../../logica/descanso'
 import { TarjetaEjercicio } from './TarjetaEjercicio'
 import { HojaVariantes } from './HojaVariantes'
+import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
 import { fechaDeHoy, type Repositorio } from '../../datos/repositorio'
+import type { Ejercicio } from '../../dominio/tipos'
 
 /** §12: el descanso se puede alargar sin pelearse con el cronómetro. */
 const PRORROGA_SEGUNDOS = 30
@@ -36,6 +38,7 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
 
   const [abierta, setAbierta] = useState(0)
   const [variantesDe, setVariantesDe] = useState<number | null>(null)
+  const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
   const [descanso, setDescanso] = useState(0)
   const temporizador = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -144,6 +147,7 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
                 abierta={abierta === indice}
                 onAlternar={() => setAbierta((actual) => (actual === indice ? -1 : indice))}
                 onAbrirVariantes={() => setVariantesDe(indice)}
+                onAbrirFicha={() => setFichaDe(ejercicioDelDia.ejercicio)}
                 onDescansar={() => arrancarDescanso(ejercicioDelDia.slot.descansoSegundos)}
                 onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
                   await registrarSerie(ejercicioId, numeroSerie, valores)
@@ -246,6 +250,18 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
             Listo
           </button>
         </div>
+      )}
+
+      {/* La ficha se superpone: la tarjeta sigue montada debajo, así que abrirla
+          y cerrarla no cuesta lo que llevas tecleado en la serie. */}
+      {fichaDe && (
+        <HojaEjercicio
+          ejercicio={fichaDe}
+          biblioteca={ejerciciosDelDia.flatMap((e) => e.variantes)}
+          historial={{ participanteId: participante.id, repositorio }}
+          onElegir={setFichaDe}
+          onCerrar={() => setFichaDe(null)}
+        />
       )}
 
       {item && (
