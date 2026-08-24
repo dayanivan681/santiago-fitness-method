@@ -215,9 +215,14 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
 
       {descanso > 0 && (
         <div
-          className={
-            descanso <= SEGUNDOS_DE_AVISO ? 'descanso descanso--acabando' : 'descanso'
-          }
+          className={[
+            'descanso',
+            descanso <= SEGUNDOS_DE_AVISO && 'descanso--acabando',
+            // Sin barra de sesión debajo, el cronómetro ocupa su sitio.
+            !(sesionDeHoy && !sesionDeHoy.completadaEn) && 'descanso--sin-barra',
+          ]
+            .filter(Boolean)
+            .join(' ')}
           role="status"
           aria-label="Temporizador de descanso"
         >

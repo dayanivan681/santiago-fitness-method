@@ -744,7 +744,14 @@ button,
   position: fixed;
   left: 14px;
   right: 14px;
-  bottom: calc(104px + env(safe-area-inset-bottom));
+  /*
+   * Apilado sobre la barra de sesión, no encima de ella.
+   *
+   * Las pestañas ocupan 73 px y la barra de progreso otros 53: el cronómetro
+   * arranca por encima de las dos. Cuando no hay sesión abierta tampoco hay
+   * barra, y entonces baja (ver `.descanso--sin-barra`).
+   */
+  bottom: calc(134px + env(safe-area-inset-bottom));
   z-index: 30;
   max-width: 492px;
   margin: 0 auto;
@@ -756,6 +763,11 @@ button,
   align-items: center;
   gap: 12px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Sin sesión abierta no hay barra de progreso debajo: el cronómetro baja. */
+.descanso--sin-barra {
+  bottom: calc(81px + env(safe-area-inset-bottom));
 }
 
 .descanso__rotulo {

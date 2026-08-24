@@ -836,3 +836,43 @@ describe('barra de progreso de la sesión', () => {
     expect(screen.getByText(/Sesión terminada/)).toBeInTheDocument()
   })
 })
+
+describe('el cronómetro convive con la barra de sesión', () => {
+  test('con sesión abierta se aparta para no taparla', async () => {
+    // Los dos son fijos al fondo: sin esto el cronómetro se comía la barra.
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+
+    // Act
+    await userEvent.click(screen.getAllByRole('button', { name: 'Descanso' })[0])
+
+    // Assert
+    const cronometro = await screen.findByRole('status', { name: 'Temporizador de descanso' })
+    expect(cronometro).not.toHaveClass('descanso--sin-barra')
+  })
+
+  test('sin sesión empezada ocupa el sitio de la barra', async () => {
+    await abrirUpperA()
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Descanso' })[0])
+
+    const cronometro = await screen.findByRole('status', { name: 'Temporizador de descanso' })
+    expect(cronometro).toHaveClass('descanso--sin-barra')
+  })
+
+  test('sigue visible al cambiar de ejercicio', async () => {
+    // Se descansa mirando el siguiente ejercicio, no la tarjeta que acabas de
+    // terminar: el cronómetro no puede desaparecer al navegar.
+    await abrirUpperA()
+    await userEvent.click(screen.getAllByRole('button', { name: 'Descanso' })[0])
+    await screen.findByRole('status', { name: 'Temporizador de descanso' })
+
+    await userEvent.click(screen.getByRole('button', { name: /Lat pulldown/ }))
+
+    expect(
+      screen.getByRole('status', { name: 'Temporizador de descanso' }),
+    ).toBeInTheDocument()
+  })
+})
