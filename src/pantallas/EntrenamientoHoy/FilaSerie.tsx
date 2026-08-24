@@ -125,6 +125,10 @@ export function FilaSerie({
   // Se recupera lo que quedó a medias antes de cerrar la app. Sólo mientras la
   // serie no esté registrada: después manda lo guardado, no el borrador.
   const recuperado = useRef(false)
+  // Se avisa de que estos números los dejó él a medias: sin decirlo, aparecen
+  // valores que no recuerda haber escrito y no sabe si son suyos o una
+  // sugerencia de la app.
+  const [vieneDeBorrador, setVieneDeBorrador] = useState(false)
   useEffect(() => {
     if (!idDelBorrador || !repositorio || registrada || recuperado.current) return
 
@@ -135,6 +139,7 @@ export function FilaSerie({
       // llegaría a activarse nunca en una serie estrenada.
       recuperado.current = true
       if (!borrador) return
+      setVieneDeBorrador(true)
       setPeso(borrador.pesoRegistradoLb)
       setReps(borrador.repsRealizadas)
       setRir(borrador.rir)
@@ -220,6 +225,9 @@ export function FilaSerie({
       <div className="serie__cabecera">
         <span className="serie__titulo">
           Serie {numeroSerie}
+          {!hecha && vieneDeBorrador && (
+            <span className="marca marca--recuperado">Recuperado sin guardar</span>
+          )}
           {(hecha ? registrada.esCalentamiento : esCalentamiento) && (
             <span className="marca marca--calentamiento">Calentamiento</span>
           )}

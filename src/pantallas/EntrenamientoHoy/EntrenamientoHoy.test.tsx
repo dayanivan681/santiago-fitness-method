@@ -933,3 +933,49 @@ describe('ficha del ejercicio desde el entrenamiento (fases 4 y 5)', () => {
     expect(within(ficha).getByText('Todavía sin entrenar.')).toBeInTheDocument()
   })
 })
+
+describe('avisar de que se recuperó un borrador', () => {
+  test('al volver, dice que lo que ves lo dejaste tú a medias', async () => {
+    // Sin aviso aparecen números que el participante no recuerda haber escrito
+    // y no sabe si son suyos o una sugerencia de la app.
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
+    await waitFor(async () => {
+      expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeDefined()
+    })
+
+    // Act
+    cleanup()
+    await abrirUpperA()
+
+    // Assert
+    expect(await screen.findByText('Recuperado sin guardar')).toBeInTheDocument()
+  })
+
+  test('sin borrador no avisa de nada', async () => {
+    await abrirUpperA()
+
+    expect(screen.queryByText('Recuperado sin guardar')).not.toBeInTheDocument()
+  })
+
+  test('el aviso se va al guardar la serie', async () => {
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
+    await waitFor(async () => {
+      expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeDefined()
+    })
+    cleanup()
+    await abrirUpperA()
+    await screen.findByText('Recuperado sin guardar')
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    // Assert
+    await waitFor(() =>
+      expect(screen.queryByText('Recuperado sin guardar')).not.toBeInTheDocument(),
+    )
+  })
+})

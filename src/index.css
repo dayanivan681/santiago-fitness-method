@@ -42,6 +42,21 @@
   --neutro: rgba(242, 242, 240, 0.5);
   --rojo: #e5352b;
 
+  /*
+   * Sistema de movimiento.
+   *
+   * Se anima para explicar un cambio, nunca para decorar. Los tiempos son
+   * cortos a propósito: la app se usa entre series, y una animación que retrase
+   * el siguiente toque estorba. Todo esto queda anulado por
+   * `prefers-reduced-motion` al final del archivo.
+   */
+  --mov-toque: 120ms;
+  --mov-confirmar: 150ms;
+  --mov-desplegar: 200ms;
+  --mov-hoja: 220ms;
+  --mov-progreso: 250ms;
+  --mov-curva: cubic-bezier(0.2, 0, 0, 1);
+
   --radio: 16px;
   --radio-chico: 12px;
 
@@ -1354,7 +1369,7 @@ button,
   font-size: 13px;
   line-height: 1;
   color: var(--positivo);
-  animation: aparecer-confirmacion 150ms ease-out;
+  animation: aparecer-confirmacion var(--mov-confirmar) var(--mov-curva);
 }
 
 @keyframes aparecer-confirmacion {
@@ -1401,7 +1416,7 @@ button,
   top: 0;
   height: 2px;
   background: var(--positivo);
-  transition: width 0.25s ease;
+  transition: width var(--mov-progreso) var(--mov-curva);
 }
 
 .progreso-sesion__texto {
@@ -1435,6 +1450,68 @@ button,
   content: '';
   position: absolute;
   inset: -5px;
+}
+
+/* Al pulsar, el control cede un poco: confirma el toque sin retrasarlo. */
+.paso__boton:active,
+.valor--tocable:active,
+.marca--tocable:active,
+.boton-guardar:active,
+.filtro:active,
+.enlace:active {
+  transform: scale(0.97);
+  transition: transform var(--mov-toque) var(--mov-curva);
+}
+
+/* El detalle del ejercicio entra explicando de dónde sale. */
+.ejercicio__detalle {
+  animation: desplegar var(--mov-desplegar) var(--mov-curva);
+}
+
+@keyframes desplegar {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* La hoja sube desde abajo, que es de donde viene. */
+.hoja__panel {
+  animation: subir-hoja var(--mov-hoja) var(--mov-curva);
+}
+
+.hoja__fondo {
+  animation: atenuar var(--mov-hoja) var(--mov-curva);
+}
+
+@keyframes subir-hoja {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes atenuar {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* El borrador recuperado se anuncia sin sobresaltar. */
+.marca--recuperado {
+  color: var(--texto-60);
+  animation: atenuar var(--mov-desplegar) var(--mov-curva);
 }
 
 /* ---------- Foto de perfil ---------- */
