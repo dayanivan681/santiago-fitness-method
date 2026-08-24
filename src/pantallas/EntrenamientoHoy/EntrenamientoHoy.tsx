@@ -93,7 +93,13 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
         meta={`${seriesHechas}/${seriesObjetivo} series`}
       />
 
-      <div className="contenido">
+      {/* Con la barra de sesión abajo hace falta más hueco, o el último texto
+          queda a seis píxeles de quedar tapado. */}
+      <div
+        className={
+          sesionDeHoy && !sesionDeHoy.completadaEn ? 'contenido contenido--con-barra' : 'contenido'
+        }
+      >
         <nav className="filtros" aria-label="Día de entrenamiento">
           {plantillas.map((opcion) => (
             <button
@@ -156,21 +162,13 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
             ))}
 
             {/* §19: la sesión la cierra el participante. Se guarda lo que hizo,
-                aunque falten ejercicios o series. */}
-            {sesionDeHoy &&
-              (sesionDeHoy.completadaEn ? (
-                <p className="nota nota--hecho">
-                  Sesión terminada. Lo registrado ya está en el historial.
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  className="boton-guardar boton-terminar"
-                  onClick={terminarSesion}
-                >
-                  Terminar sesión · {seriesHechas} de {seriesObjetivo} series
-                </button>
-              ))}
+                aunque falten ejercicios o series. Ahora vive en la barra fija;
+                aquí sólo queda la confirmación de que ya está cerrada. */}
+            {sesionDeHoy?.completadaEn && (
+              <p className="nota nota--hecho">
+                Sesión terminada. Lo registrado ya está en el historial.
+              </p>
+            )}
 
             <p className="nota">
               La app no impone el peso. Muestra la referencia anterior; tú ajustas lo que
@@ -182,6 +180,39 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
 
       {/* El nombre importa: los campos de la serie son <output>, que también
           anuncian estado, y sin él no se distinguiría cuál es el cronómetro. */}
+      {/*
+       * Progreso de la sesión, siempre a la vista.
+       *
+       * Antes había que bajar hasta el final de la lista —hasta ocho ejercicios—
+       * para ver cuánto llevabas y para poder cerrar la sesión. Con esto se sabe
+       * de un vistazo y se cierra desde donde estés.
+       */}
+      {sesionDeHoy && !sesionDeHoy.completadaEn && (
+        <div
+          className="progreso-sesion"
+          role="progressbar"
+          aria-label="Progreso de la sesión"
+          aria-valuemin={0}
+          aria-valuemax={seriesObjetivo}
+          aria-valuenow={seriesHechas}
+        >
+          <span
+            className="progreso-sesion__relleno"
+            style={{ width: `${(seriesHechas / Math.max(1, seriesObjetivo)) * 100}%` }}
+          />
+          <span className="progreso-sesion__texto">
+            {seriesHechas} de {seriesObjetivo} series
+          </span>
+          <button
+            type="button"
+            className="progreso-sesion__terminar"
+            onClick={terminarSesion}
+          >
+            Terminar sesión
+          </button>
+        </div>
+      )}
+
       {descanso > 0 && (
         <div
           className={

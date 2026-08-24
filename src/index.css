@@ -1330,6 +1330,75 @@ button,
   }
 }
 
+/*
+ * Barra de progreso de la sesión.
+ *
+ * Va sobre la navegación inferior, no encima de los controles: se lee de reojo
+ * entre series sin tapar nada de lo que se está tecleando.
+ */
+.progreso-sesion {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* Justo encima de las pestañas, que miden 73 px con su área segura. */
+  bottom: 73px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: rgba(11, 12, 13, 0.94);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--borde-tenue);
+}
+
+/* La barra de sesión ocupa ~53 px por encima de las pestañas. */
+.contenido--con-barra {
+  padding-bottom: 184px;
+}
+
+.progreso-sesion__relleno {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2px;
+  background: var(--positivo);
+  transition: width 0.25s ease;
+}
+
+.progreso-sesion__texto {
+  flex: 1;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-60);
+}
+
+.progreso-sesion__terminar {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--texto);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Área táctil de 44 px sin engordar el botón (§27). */
+.progreso-sesion__terminar::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+}
+
 /* ---------- Foto de perfil ---------- */
 
 .foto-perfil {

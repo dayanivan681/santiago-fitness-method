@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { describe, test, expect, beforeEach } from 'vitest'
-import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent, cleanup, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
 import { baseDePrueba } from '../../pruebas/base'
@@ -784,5 +784,55 @@ describe('el ejercicio terminado se pliega y pasa el turno', () => {
     await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
 
     expect(screen.getByLabelText(`Guardar la serie 2 de ${PRESS}`)).toBeInTheDocument()
+  })
+})
+
+describe('barra de progreso de la sesión', () => {
+  test('dice cuántas series llevas mientras entrenas', async () => {
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    // Assert
+    const barra = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+    await waitFor(() => expect(barra).toHaveTextContent('1 de 16 series'))
+  })
+
+  test('lleva el botón de terminar, sin bajar a buscarlo', async () => {
+    // §19: la cierra el participante. Antes había que llegar al final de la
+    // lista de ocho ejercicios para encontrar el botón.
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    const barra = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+    expect(within(barra).getByRole('button', { name: 'Terminar sesión' })).toBeInTheDocument()
+  })
+
+  test('no aparece antes de empezar: no hay sesión que resumir', async () => {
+    await abrirUpperA()
+
+    expect(
+      screen.queryByRole('progressbar', { name: 'Progreso de la sesión' }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('desaparece al terminar la sesión', async () => {
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    const barra = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+
+    // Act
+    await userEvent.click(within(barra).getByRole('button', { name: 'Terminar sesión' }))
+
+    // Assert
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('progressbar', { name: 'Progreso de la sesión' }),
+      ).not.toBeInTheDocument(),
+    )
+    expect(screen.getByText(/Sesión terminada/)).toBeInTheDocument()
   })
 })
