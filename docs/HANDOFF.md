@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-24T04:25:28.733Z
+- **Última sincronización:** 2026-08-24T04:32:06.490Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -300,9 +300,63 @@ Fases 4 a 8: ficha deslizable, historial contextual y el sistema común de
 microanimaciones. El vídeo de la ficha sigue bloqueado hasta que el cliente elija
 alojamiento.
 
+## Turno de claude-code — Plan 2, fases 4 a 8
+
+### Fase 4 y 5 — Ficha con historial contextual (`0f3abbe`)
+- La ficha que ya existía en Biblioteca se abre ahora desde el entrenamiento,
+  con **el historial de esa variante** dentro (§16: no se mezcla con el de las
+  equivalentes).
+- **Se superpone sin desmontar la tarjeta**: consultar el ejercicio delante de
+  la máquina no cuesta la serie a medio escribir. Es la condición explícita del
+  plan y está cubierta con test.
+- El fondo del diálogo deja de llamarse "Cerrar" igual que el botón: dos
+  controles con el mismo nombre confunden a quien usa lector de pantalla.
+
+### Fase 6 y 8 — Movimiento (`3b85f52`)
+- Tabla única de tiempos: toque 120 ms · confirmar 150 ms · desplegar 200 ms ·
+  hoja 220 ms · progreso 250 ms. Ninguno por encima de 250 ms.
+- **El borrador recuperado se anuncia.** Antes se restauraba en silencio y
+  aparecían números que el participante no recordaba haber escrito, sin saber si
+  eran suyos o una sugerencia de la app.
+- Tests sobre la propia hoja de estilos: que los tokens existan, que ninguno pase
+  de 250 ms, que `prefers-reduced-motion` los anule y que **la única animación
+  infinita siga siendo el aviso del cronómetro**.
+
+### Lo que apareció al verificar
+Cronómetro y barra de sesión son los dos fijos al fondo y **se solapaban 22 px**
+(`20984a7`). No lo veían los tests —el DOM de jsdom no tiene layout— sino la
+medición de posiciones en el navegador. Ahora se apilan: pestañas, barra,
+cronómetro. Verificado en 320×568 y 390×844.
+
+### Estado
+`npm test` 357 ✅ código 0 · `npm run lint` 0 warnings ✅ · `npm run build` ✅
+
+QA visual: 320×568 y 390×844, sin solapes entre las tres capas fijas, sin
+desborde horizontal, confirmación al guardar, plegado y avance, barra de sesión,
+ficha con historial y recuperación de borrador con aviso.
+
+### Excluido, como pedía el plan
+Inicio automático del descanso, superseries, calculadora de discos, 1RM,
+estadísticas avanzadas, wearables, social, cloud sync y pagos. El **vídeo** de la
+ficha sigue fuera hasta que el cliente elija alojamiento.
+
+### Pendiente
+Paso 10 del plan: presentación al cliente para aprobación visual. Y las 11
+decisiones suyas listadas más abajo, de las que la nº7 —los ejercicios de Lower
+A, Upper B y Lower B— es la que más frena: hoy tres de cada cuatro días el
+participante abre la app y no tiene nada que hacer.
+
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-24T04:32:06.491Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Plan 2 fases 4-8: ficha del ejercicio abrible desde el entrenamiento con el historial de esa variante, sin desmontar la tarjeta (no se pierde el borrador); sistema comun de microanimaciones con tabla unica de tiempos y tests sobre la hoja de estilos; aviso de borrador recuperado, que antes se restauraba en silencio. Corregido un solape de 22px entre cronometro y barra de sesion
+- **Verificación:** npm test 357/357 codigo 0; npm run lint 0 warnings; npm run build OK; QA visual 320x568 y 390x844 sin solapes ni desborde
+- **Siguiente:** Paso 10: presentacion al cliente para aprobacion visual. Sigue pendiente que el cliente decida los ejercicios de Lower A, Upper B y Lower B: hoy tres de cada cuatro dias la app abre vacia
+
 
 ### 2026-08-24T04:25:28.734Z | claude-code | CLAIM
 - **Estado:** active
