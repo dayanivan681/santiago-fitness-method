@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-24T04:00:30.657Z
+- **Última sincronización:** 2026-08-24T04:11:23.136Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -258,9 +258,59 @@ porque en dominadas 0 lb añadido es legítimo. Añadido a las preguntas abierta
 ### Plan 2 (patrones de Strong) — NO iniciado
 Por acuerdo explícito: no se empieza mientras el Plan 1 no esté cerrado. Ya lo está.
 
+## Turno de claude-code — Plan 2, fases 1 a 3
+
+Patrones de interacción tomados de Strong, **adaptados** al método: la
+programación sigue siendo del coach y el participante entra, ve lo suyo,
+registra y sigue. Nada de lo excluido en el plan (inicio automático del
+descanso, superseries, 1RM, social, cloud) se ha tocado.
+
+### Fase 1 — Registro más rápido (`9b0b26d`)
+- **La siguiente serie parte de lo que se acaba de levantar hoy**, no de la
+  referencia de la semana pasada. Sigue siendo editable (§6) y sólo se ajusta si
+  el participante no ha tocado nada: pisarle lo tecleado por guardar otra serie
+  sería peor que no ajustar.
+- El **calentamiento no arrastra su peso** a la serie de trabajo.
+- **Confirmación al guardar**: check con entrada de 150 ms, más el texto
+  "Guardada" para lectores de pantalla, que no ven ni el check ni el color.
+- **El ejercicio terminado se pliega y se abre el siguiente.** Plegado conserva
+  el resumen `4/4` y se puede reabrir para corregir.
+
+### Fase 2 — Progreso siempre visible (`2554fa4`)
+- Barra fija con `N de M series` y **Terminar sesión**. Antes había que bajar
+  hasta el final de la lista —hasta ocho ejercicios— para cerrar la sesión.
+- Sólo mientras hay sesión abierta; al cerrarla desaparece.
+- Va sobre la navegación, no sobre los controles, y el contenido gana hueco: sin
+  eso el último texto quedaba a **seis píxeles** de ser tapado.
+
+### Fase 3 — Cronómetro (`20984a7`)
+Casi todo lo que pedía el plan ya estaba (inicio manual, +30 s, Listo, visible al
+cambiar de ejercicio, pulso limitado a los últimos 10 s desde el Plan 1).
+
+Lo que **sí** apareció al verificar: cronómetro y barra de sesión son los dos
+fijos al fondo y **se solapaban 22 px**. El cronómetro se comía la barra recién
+añadida. Ahora se apilan, y sin sesión abierta el cronómetro baja al hueco libre.
+Con test, para que un cambio de alturas no vuelva a solaparlos en silencio.
+
+### Estado
+`npm test` 340 ✅ código 0 · `npm run lint` 0 warnings ✅ · `npm run build` ✅
+
+### Pendiente del Plan 2
+Fases 4 a 8: ficha deslizable, historial contextual y el sistema común de
+microanimaciones. El vídeo de la ficha sigue bloqueado hasta que el cliente elija
+alojamiento.
+
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-24T04:11:23.138Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Plan 2 fases 1-3: la siguiente serie parte de lo levantado hoy (no de la semana pasada) y el calentamiento no arrastra su peso; confirmacion al guardar con check y texto para lectores de pantalla; el ejercicio terminado se pliega y abre el siguiente; barra fija con N de M series y Terminar sesion. Corregido un solape de 22px entre el cronometro y la barra nueva
+- **Verificación:** npm test 340/340 codigo 0; npm run lint 0 warnings; npm run build OK; verificacion en navegador a 390x844 de confirmacion, prellenado, barra y solape
+- **Siguiente:** Plan 2 fases 4-8: ficha deslizable, historial contextual y microanimaciones. El video sigue bloqueado hasta que el cliente elija alojamiento
+
 
 ### 2026-08-24T04:00:30.658Z | claude-code | CLAIM
 - **Estado:** active
