@@ -31,6 +31,8 @@ interface Props {
   readonly repMin: number
   readonly registrada?: SerieRegistrada
   readonly referencia?: SerieComparable
+  /** La última serie efectiva de hoy: lo que se está levantando ahora mismo. */
+  readonly partida?: SerieRegistrada
   readonly conEtiquetas: boolean
   /** Sin ella no hay autosave: es lo que identifica el hueco que se teclea. */
   readonly claveDeBorrador?: Omit<ClaveDeBorrador, 'numeroSerie'>
@@ -46,6 +48,7 @@ export function FilaSerie({
   repMin,
   registrada,
   referencia,
+  partida,
   conEtiquetas,
   claveDeBorrador,
   repositorio,
@@ -62,11 +65,15 @@ export function FilaSerie({
     ? redondear(aPesoRegistradoLb(referencia.cargaTotalLb, ejercicio))
     : 0
 
+  // Lo de hoy manda sobre la referencia de la sesión anterior.
+  const pesoDePartida = partida?.pesoRegistradoLb ?? pesoDeReferencia
+  const repsDePartida = partida?.repsRealizadas ?? referencia?.reps ?? repMin
+
   const [editando, setEditando] = useState(false)
-  const [peso, setPeso] = useState(registrada?.pesoRegistradoLb ?? pesoDeReferencia)
+  const [peso, setPeso] = useState(registrada?.pesoRegistradoLb ?? pesoDePartida)
   // Las reps también arrancan en la referencia: con el rango de fuerza (1–5),
   // empezar en el mínimo obligaría a pulsar cuatro veces cada serie.
-  const [reps, setReps] = useState(registrada?.repsRealizadas ?? referencia?.reps ?? repMin)
+  const [reps, setReps] = useState(registrada?.repsRealizadas ?? repsDePartida)
   const [rir, setRir] = useState(registrada?.rir ?? 2)
 
   // Técnica y calentamiento se marcan sólo cuando se salen de lo normal: por
@@ -101,6 +108,19 @@ export function FilaSerie({
   const cambiarRir = marcar(setRir)
   const cambiarTecnica = marcar(setTecnica)
   const cambiarCalentamiento = marcar(setEsCalentamiento)
+
+  // Al registrarse una serie anterior cambia el punto de partida de ésta. Se
+  // sigue **sólo si el participante no ha tocado nada**: pisarle lo que lleva
+  // tecleado por guardar otra serie sería peor que no ajustar.
+  const [partidaSeguida, setPartidaSeguida] = useState(pesoDePartida)
+  if (pesoDePartida !== partidaSeguida) {
+    setPartidaSeguida(pesoDePartida)
+    if (!tocado && !registrada) {
+      setPeso(pesoDePartida)
+      setReps(repsDePartida)
+    }
+  }
+
 
   // Se recupera lo que quedó a medias antes de cerrar la app. Sólo mientras la
   // serie no esté registrada: después manda lo guardado, no el borrador.
@@ -207,6 +227,17 @@ export function FilaSerie({
 
         {hecha ? (
           <span className="serie__meta">
+            {/* Confirmación de que quedó guardada. El check la da de un vistazo;
+                el texto va oculto pero lo lee el lector de pantalla, que es
+                quien no puede ver ni el check ni el cambio de color. */}
+            <span
+              className="serie__confirmacion"
+              role="status"
+              aria-label={`Serie ${numeroSerie} de ${ejercicio.nombre}`}
+            >
+              <span aria-hidden="true">✓</span>
+              <span className="solo-lectores">Guardada</span>
+            </span>
             {registrada.tecnica && registrada.tecnica !== TECNICA_POR_DEFECTO && (
               <span className={`marca marca--${registrada.tecnica}`}>
                 {ETIQUETA_TECNICA[registrada.tecnica]}

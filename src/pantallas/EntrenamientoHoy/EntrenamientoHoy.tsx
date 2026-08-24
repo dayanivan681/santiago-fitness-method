@@ -55,6 +55,18 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
     }, 1000)
   }
 
+  /**
+   * Al completar la última serie, el ejercicio se pliega y se abre el siguiente.
+   *
+   * Es lo que se hace en el gimnasio: terminas y pasas al que toca. Plegado
+   * sigue viéndose el resumen —`4/4`, "Completo"— y se puede reabrir para
+   * corregir, así que no se esconde nada.
+   */
+  function avanzarSiTermino(indice: number, numeroSerie: number, seriesObjetivo: number) {
+    if (numeroSerie < seriesObjetivo) return
+    setAbierta((actual) => (actual === indice ? indice + 1 : actual))
+  }
+
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!datos) return <p className="aviso">No hay entrenamiento configurado todavía.</p>
 
@@ -127,7 +139,10 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
                 onAlternar={() => setAbierta((actual) => (actual === indice ? -1 : indice))}
                 onAbrirVariantes={() => setVariantesDe(indice)}
                 onDescansar={() => arrancarDescanso(ejercicioDelDia.slot.descansoSegundos)}
-                onGuardarSerie={registrarSerie}
+                onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
+                  await registrarSerie(ejercicioId, numeroSerie, valores)
+                  avanzarSiTermino(indice, numeroSerie, ejercicioDelDia.slot.seriesObjetivo)
+                }}
                 onCorregirSerie={corregirSerie}
                 onDeshacerCorreccion={deshacerUltimaCorreccion}
                 repositorio={repositorio}

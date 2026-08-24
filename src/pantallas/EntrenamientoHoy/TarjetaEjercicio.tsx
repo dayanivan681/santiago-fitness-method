@@ -13,6 +13,7 @@ import { ETIQUETA_SUGERENCIA, type Sugerencia } from '../../logica/sugerencia'
 import type { ClaveDeBorrador } from '../../logica/borrador'
 import type { Repositorio } from '../../datos/repositorio'
 import type { EjercicioDelDia, NuevaSerie } from '../../aplicacion/useEntrenamiento'
+import { esEfectiva } from '../../dominio/tipos'
 import type { Ejercicio, SerieComparable, SerieRegistrada } from '../../dominio/tipos'
 
 const ETIQUETA_ESTIMULO = {
@@ -57,6 +58,22 @@ export function TarjetaEjercicio({
   // §7: cada serie se compara contra la del mismo número de la última vez.
   const referenciaDe = (numeroSerie: number): SerieComparable | undefined =>
     referencias.ultimaSesion[numeroSerie - 1] ?? referencias.ultimaSesion.at(-1)
+
+  /**
+   * De dónde parte una serie que aún no se ha registrado.
+   *
+   * Lo que se está levantando **hoy** manda sobre lo de la semana pasada: si la
+   * serie 1 fue a 50 lb, la 2 empieza ahí y no en la referencia antigua. Sigue
+   * siendo un punto de partida editable, nunca una imposición (§6).
+   *
+   * El calentamiento se excluye: arrancar la serie de trabajo con el peso de la
+   * aproximación sería justo lo contrario de lo que hace falta.
+   */
+  const partidaDe = (numeroSerie: number): SerieRegistrada | undefined =>
+    seriesDeHoy
+      .filter((serie) => serie.numeroSerie < numeroSerie && esEfectiva(serie))
+      .sort((a, b) => a.numeroSerie - b.numeroSerie)
+      .at(-1)
 
   const numerosDeSerie = Array.from({ length: slot.seriesObjetivo }, (_, i) => i + 1)
   const hechas = seriesDeHoy.length
@@ -171,6 +188,7 @@ export function TarjetaEjercicio({
               repMin={slot.repMin}
               registrada={seriesDeHoy.find((serie) => serie.numeroSerie === numeroSerie)}
               referencia={referenciaDe(numeroSerie)}
+              partida={partidaDe(numeroSerie)}
               // Las etiquetas PESO / REPS / RIR se ponen sólo en la primera
               // serie: repetirlas en las cuatro es ruido (§25).
               conEtiquetas={numeroSerie === 1}

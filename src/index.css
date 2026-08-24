@@ -1291,6 +1291,45 @@ button,
   color: rgba(242, 242, 240, 0.45);
 }
 
+/*
+ * Sólo para lectores de pantalla.
+ *
+ * Cuando la confirmación es un check y un cambio de color, quien no ve la
+ * pantalla se queda sin ella. Este texto no ocupa sitio pero sí se lee.
+ */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* La confirmación aparece, no parpadea: 150 ms y se queda. */
+.serie__confirmacion {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--positivo);
+  animation: aparecer-confirmacion 150ms ease-out;
+}
+
+@keyframes aparecer-confirmacion {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* ---------- Foto de perfil ---------- */
 
 .foto-perfil {

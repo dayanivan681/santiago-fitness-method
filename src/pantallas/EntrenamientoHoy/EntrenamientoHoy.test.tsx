@@ -660,3 +660,129 @@ describe('deshacer una corrección (§19)', () => {
     )
   })
 })
+
+describe('la siguiente serie parte de lo que se acaba de levantar', () => {
+  test('la serie 2 arranca en el peso de la serie 1 de hoy, no en el de la semana pasada', async () => {
+    // Arrange: la última vez fueron 45 lb/lado, pero hoy se está levantando 50
+    await sembrarSesionAnterior()
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
+    const campo = await screen.findByLabelText(`Peso de la serie 1 de ${PRESS}`)
+    fireEvent.change(campo, { target: { value: '50' } })
+    await userEvent.tab()
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    // Assert: lo de hoy manda sobre la referencia de la sesión anterior
+    await waitFor(() =>
+      expect(screen.getByLabelText(`Peso de la serie 2 de ${PRESS}`)).toHaveTextContent('50'),
+    )
+  })
+
+  test('sin nada registrado hoy, sigue partiendo de la sesión anterior (§7)', async () => {
+    await sembrarSesionAnterior()
+
+    await abrirUpperA()
+
+    expect(screen.getByLabelText(`Peso de la serie 2 de ${PRESS}`)).toHaveTextContent('45')
+  })
+
+  test('el calentamiento no arrastra su peso a la serie siguiente', async () => {
+    // Arrancar la serie de trabajo con el peso de la aproximación sería justo
+    // lo contrario de lo que hace falta.
+    // Arrange
+    await sembrarSesionAnterior()
+    await abrirUpperA()
+    await userEvent.click(
+      screen.getByLabelText(`Marcar la serie 1 de ${PRESS} como calentamiento`),
+    )
+    await userEvent.click(screen.getByLabelText(`Bajar peso de la serie 1 de ${PRESS}`))
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    // Assert: la serie 2 sigue en la referencia real, no en la del calentamiento
+    expect(screen.getByLabelText(`Peso de la serie 2 de ${PRESS}`)).toHaveTextContent('45')
+  })
+})
+
+describe('confirmación al guardar una serie', () => {
+  test('la serie guardada queda marcada como hecha, con aviso para lectores de pantalla', async () => {
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    // Assert
+    const confirmacion = await screen.findByRole('status', { name: `Serie 1 de ${PRESS}` })
+    expect(confirmacion).toHaveTextContent('Guardada')
+  })
+})
+
+describe('el ejercicio terminado se pliega y pasa el turno', () => {
+  /** Upper A: el press es de fuerza con 4 series; el segundo es hipertrofia. */
+  async function completarElPrimerEjercicio() {
+    await abrirUpperA()
+    // Las tres primeras dejan el botón "Editar" a la vista…
+    for (const numeroSerie of [1, 2, 3]) {
+      await userEvent.click(screen.getByLabelText(`Guardar la serie ${numeroSerie} de ${PRESS}`))
+      await screen.findByLabelText(`Editar la serie ${numeroSerie} de ${PRESS}`)
+    }
+    // …y con la cuarta la tarjeta se pliega, así que no hay nada que esperar ahí.
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 4 de ${PRESS}`))
+  }
+
+  test('al completar la última serie se pliega y se abre el siguiente', async () => {
+    // Es lo que se hace en el gimnasio: terminas y pasas al que toca.
+    // Arrange + Act
+    await completarElPrimerEjercicio()
+
+    // Assert: el press ya no muestra sus series y el siguiente sí
+    await waitFor(() =>
+      expect(
+        screen.queryByLabelText(`Guardar la serie 1 de ${PRESS}`),
+      ).not.toBeInTheDocument(),
+    )
+    expect(
+      screen.getByLabelText('Guardar la serie 1 de Press inclinado convergente'),
+    ).toBeInTheDocument()
+  })
+
+  test('plegado sigue diciendo cuántas series se hicieron', async () => {
+    // Plegar no puede esconder el dato: 4/4 tiene que seguir a la vista.
+    await completarElPrimerEjercicio()
+
+    await waitFor(() => {
+      const resumen = screen.getByRole('button', { name: new RegExp(PRESS) })
+      expect(resumen).toHaveTextContent('4/4')
+      expect(resumen).toHaveTextContent('Completo')
+    })
+  })
+
+  test('se puede reabrir para corregir', async () => {
+    // Arrange
+    await completarElPrimerEjercicio()
+    await waitFor(() =>
+      expect(screen.queryByLabelText(`Guardar la serie 1 de ${PRESS}`)).not.toBeInTheDocument(),
+    )
+
+    // Act
+    await userEvent.click(screen.getByRole('button', { name: new RegExp(PRESS) }))
+
+    // Assert
+    expect(await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)).toBeInTheDocument()
+  })
+
+  test('no se pliega mientras queden series por hacer', async () => {
+    await abrirUpperA()
+
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    expect(screen.getByLabelText(`Guardar la serie 2 de ${PRESS}`)).toBeInTheDocument()
+  })
+})
