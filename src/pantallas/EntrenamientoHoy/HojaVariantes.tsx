@@ -6,8 +6,7 @@
  */
 
 import { useState } from 'react'
-import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
-import { ETIQUETA_CARGA } from '../../dominio/etiquetas'
+import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
 import { useReferenciasDeVariantes } from '../../aplicacion/useReferenciasDeVariantes'
 import { useCapa } from '../../aplicacion/useCapa'
 import { debeEvitarse } from '../../logica/limitaciones'

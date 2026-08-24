@@ -4,20 +4,8 @@
  * se muestra un marcador con la inicial y el equipo — informativo, no decorativo.
  */
 
-import type { Ejercicio, Equipo } from '../dominio/tipos'
-
-const ETIQUETA_EQUIPO: Readonly<Record<Equipo, string>> = {
-  smith: 'Smith',
-  convergente: 'Convergente',
-  cable: 'Cable',
-  mancuernas: 'Mancuernas',
-  barraLibre: 'Barra libre',
-  maquinaTradicional: 'Máquina',
-}
-
-export function etiquetaEquipo(equipo: Equipo): string {
-  return ETIQUETA_EQUIPO[equipo]
-}
+import { etiquetaEquipo } from '../dominio/etiquetas'
+import type { Ejercicio } from '../dominio/tipos'
 
 interface Props {
   readonly ejercicio: Ejercicio
@@ -31,7 +19,7 @@ export function ImagenEjercicio({ ejercicio }: Props) {
   return (
     <div className="imagen-ejercicio imagen-ejercicio--marcador" aria-hidden="true">
       <span className="imagen-ejercicio__inicial">{ejercicio.nombre.charAt(0)}</span>
-      <span className="imagen-ejercicio__equipo">{ETIQUETA_EQUIPO[ejercicio.equipo]}</span>
+      <span className="imagen-ejercicio__equipo">{etiquetaEquipo(ejercicio.equipo)}</span>
     </div>
   )
 }

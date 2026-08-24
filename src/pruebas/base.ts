@@ -9,12 +9,21 @@
  */
 
 import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
 import { BaseDatosSantiago } from '../datos/esquema'
 import { RepositorioLocal } from '../datos/repositorioLocal'
 
 const abiertas: BaseDatosSantiago[] = []
 
-afterEach(() => {
+afterEach(async () => {
+  // El orden importa. Cerrar la base con componentes todavía montados —o con
+  // escrituras en vuelo— hace que Dexie rechace con `DatabaseClosedError`, y
+  // ese rechazo sin dueño hace fallar la suite entera aunque todos los tests
+  // pasen. Primero se desmonta, luego se deja respirar un tick, y al final se
+  // cierra.
+  cleanup()
+  await new Promise((seguir) => setTimeout(seguir, 0))
+
   for (const base of abiertas.splice(0)) base.close()
 })
 

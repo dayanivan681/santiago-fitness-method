@@ -16,6 +16,26 @@ function abrir() {
   render(<AltaParticipante repositorio={repositorio} />)
 }
 
+/**
+ * El alta no termina al guardar el participante: después crea sus cuatro días.
+ * Esperar sólo al participante deja esas escrituras en vuelo, y el test acaba
+ * mientras la base se está usando.
+ */
+async function altaCompletada() {
+  const participante = await waitFor(async () => {
+    const encontrado = await repositorio.participanteActual()
+    expect(encontrado).toBeDefined()
+    return encontrado!
+  })
+
+  await waitFor(async () => {
+    // §28: Upper A · Lower A · Upper B · Lower B
+    expect(await repositorio.listarPlantillas(participante.id)).toHaveLength(4)
+  })
+
+  return participante
+}
+
 describe('alta del participante (criterio 1)', () => {
   test('con escribir el nombre basta: el resto son estimados', async () => {
     // Su criterio pide darlo de alta en menos de dos minutos.
@@ -27,11 +47,30 @@ describe('alta del participante (criterio 1)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Crear participante' }))
 
     // Assert
-    await waitFor(async () => {
-      const participante = await repositorio.participanteActual()
-      expect(participante?.nombre).toBe('Santiago')
-      expect(participante?.frecuenciaEntrenamiento).toBe(4)
-    })
+    const participante = await altaCompletada()
+    expect(participante.nombre).toBe('Santiago')
+    expect(participante.frecuenciaEntrenamiento).toBe(4)
+  })
+
+  test('nace con sus cuatro días de §28, no con una estructura compartida', async () => {
+    // Arrange
+    abrir()
+
+    // Act
+    await userEvent.type(screen.getByLabelText('Nombre'), 'Santiago')
+    await userEvent.click(screen.getByRole('button', { name: 'Crear participante' }))
+
+    // Assert
+    const participante = await altaCompletada()
+    const dias = await repositorio.listarPlantillas(participante.id)
+    expect(dias.map((dia) => dia.nombre)).toEqual([
+      'Upper A',
+      'Lower A',
+      'Upper B',
+      'Lower B',
+    ])
+    // Y son suyos: el id lleva su participante dentro (§23)
+    expect(dias.every((dia) => dia.participanteId === participante.id)).toBe(true)
   })
 
   test('el coach ajusta los estimados en el mismo formulario', async () => {
@@ -47,11 +86,9 @@ describe('alta del participante (criterio 1)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Crear participante' }))
 
     // Assert
-    await waitFor(async () => {
-      const participante = await repositorio.participanteActual()
-      expect(participante?.sexo).toBe('femenino')
-      expect(participante?.pesoCorporalLb).toBe(140)
-    })
+    const participante = await altaCompletada()
+    expect(participante.sexo).toBe('femenino')
+    expect(participante.pesoCorporalLb).toBe(140)
   })
 
   test('sin nombre no crea nada y dice por qué', async () => {

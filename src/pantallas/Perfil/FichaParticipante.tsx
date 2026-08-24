@@ -7,7 +7,7 @@
  * que rellenar cada vez.
  */
 
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { INCREMENTO_IDEAL_LB } from '../../dominio/carga'
 import { formatearEstatura } from '../../dominio/estatura'
 import { CamposParticipante } from './CamposParticipante'
@@ -30,7 +30,15 @@ export function FichaParticipante({ participante, repositorio, onGuardar }: Prop
   const [editando, setEditando] = useState(false)
   const [borrador, setBorrador] = useState(participante)
 
-  useEffect(() => setBorrador(participante), [participante])
+  // Se reinicia el borrador sólo al cambiar de persona, no cada vez que llega
+  // una versión nueva del mismo participante: si el coach está escribiendo y
+  // otra parte de la app guarda algo suyo —una limitación, por ejemplo—, no
+  // puede borrarle lo que lleva tecleado.
+  const [personaEnEdicion, setPersonaEnEdicion] = useState(participante.id)
+  if (participante.id !== personaEnEdicion) {
+    setPersonaEnEdicion(participante.id)
+    setBorrador(participante)
+  }
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault()

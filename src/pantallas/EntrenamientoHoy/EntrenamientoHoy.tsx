@@ -15,6 +15,9 @@ import { fechaDeHoy, type Repositorio } from '../../datos/repositorio'
 /** §12: el descanso se puede alargar sin pelearse con el cronómetro. */
 const PRORROGA_SEGUNDOS = 30
 
+/** Cuándo el cronómetro empieza a avisar de verdad. */
+const SEGUNDOS_DE_AVISO = 10
+
 interface Props {
   readonly repositorio?: Repositorio
 }
@@ -93,9 +96,11 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
           ))}
         </nav>
 
-        {/* Portada del día: da identidad a la sesión antes de la lista (§24). */}
+        {/* Portada del día: da identidad a la sesión antes de la lista (§24).
+            Sin foto real va compacta, para no empujar la primera serie fuera de
+            la pantalla en un móvil pequeño. */}
         {ejerciciosDelDia.length > 0 && (
-          <div className="portada" style={{ marginTop: 12 }}>
+          <div className="portada portada--compacta" style={{ marginTop: 12 }}>
             <div className="portada__imagen">
               <span className="portada__marcador">Foto del día</span>
             </div>
@@ -163,7 +168,13 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
       {/* El nombre importa: los campos de la serie son <output>, que también
           anuncian estado, y sin él no se distinguiría cuál es el cronómetro. */}
       {descanso > 0 && (
-        <div className="descanso" role="status" aria-label="Temporizador de descanso">
+        <div
+          className={
+            descanso <= SEGUNDOS_DE_AVISO ? 'descanso descanso--acabando' : 'descanso'
+          }
+          role="status"
+          aria-label="Temporizador de descanso"
+        >
           <span className="descanso__rotulo">Descanso</span>
           <span className="descanso__tiempo">{formatearSegundos(descanso)}</span>
           <button

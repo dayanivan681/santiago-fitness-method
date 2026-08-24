@@ -12,8 +12,7 @@
  */
 
 import { useCapa } from '../../aplicacion/useCapa'
-import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
-import { ETIQUETA_CARGA, NOMBRE_MUSCULO } from '../../dominio/etiquetas'
+import { ETIQUETA_CARGA, NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
 import type { Ejercicio } from '../../dominio/tipos'
 
 interface Props {

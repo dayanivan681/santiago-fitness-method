@@ -6,8 +6,7 @@
 
 import { aPesoRegistradoLb } from '../../dominio/carga'
 import { formatearRir } from '../../dominio/rir'
-import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
-import { ETIQUETA_CARGA } from '../../dominio/etiquetas'
+import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
 import { Miniatura } from '../../componentes/Miniatura'
 import { FilaSerie } from './FilaSerie'
 import { ETIQUETA_SUGERENCIA, type Sugerencia } from '../../logica/sugerencia'

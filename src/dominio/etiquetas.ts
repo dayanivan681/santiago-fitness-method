@@ -7,7 +7,7 @@
  */
 
 import type { TipoCarga } from './carga'
-import type { Musculo } from './tipos'
+import type { Equipo, Musculo } from './tipos'
 
 /** §17: cómo se interpreta el número que teclea el participante. */
 export const ETIQUETA_CARGA: Readonly<Record<TipoCarga, string>> = {
@@ -31,4 +31,18 @@ export const NOMBRE_MUSCULO: Readonly<Record<Musculo, string>> = {
   deltoidePosterior: 'Deltoide posterior',
   pantorrillas: 'Pantorrillas',
   core: 'Core',
+}
+
+/** §16: el equipo forma parte de la identidad del ejercicio, no es un adorno. */
+const ETIQUETA_EQUIPO: Readonly<Record<Equipo, string>> = {
+  smith: 'Smith',
+  convergente: 'Convergente',
+  cable: 'Cable',
+  mancuernas: 'Mancuernas',
+  barraLibre: 'Barra libre',
+  maquinaTradicional: 'Máquina',
+}
+
+export function etiquetaEquipo(equipo: Equipo): string {
+  return ETIQUETA_EQUIPO[equipo]
 }

@@ -287,6 +287,27 @@ button,
   color: var(--texto);
 }
 
+/*
+ * Portada compacta mientras no haya foto real del día.
+ *
+ * El marcador a rayas ocupaba un 40 % de una pantalla de 320 px y empujaba los
+ * controles de la primera serie fuera de la vista: había que hacer scroll antes
+ * de poder registrar nada, que es justo lo contrario de §1 y §25. Se conserva la
+ * identidad —el día y el lema— en una banda fina, y el hueco de la foto vuelve
+ * en cuanto haya una imagen de verdad.
+ */
+.portada--compacta .portada__imagen {
+  display: none;
+}
+
+.portada--compacta .portada__pie {
+  padding: 10px 14px 11px;
+}
+
+.portada--compacta .portada__lema {
+  font-size: 20px;
+}
+
 /* ---------- Tarjeta de ejercicio ---------- */
 
 .ejercicio {
@@ -602,7 +623,15 @@ button,
   gap: 2px;
 }
 
+/*
+ * El área táctil se amplía sin agrandar el dibujo.
+ *
+ * Tres columnas de 44 px no caben en un móvil de 320 px, así que el botón se
+ * queda estrecho a la vista y se le extiende la zona sensible por debajo con un
+ * pseudo-elemento. Se toca con el pulgar sin que el diseño se descoloque.
+ */
 .paso__boton {
+  position: relative;
   width: 34px;
   height: 44px;
   flex: none;
@@ -614,6 +643,13 @@ button,
   color: var(--texto-60);
   font: 600 16px/1 'Barlow', sans-serif;
   cursor: pointer;
+}
+
+.paso__boton::after {
+  content: '';
+  position: absolute;
+  /* 34 + 5 + 5 = 44 px de zona sensible. */
+  inset: 0 -5px;
 }
 
 .paso__boton:disabled {
@@ -642,6 +678,9 @@ button,
 
 .valor--tocable {
   width: 100%;
+  /* Sin esto, un valor de un solo dígito encogía el botón a 16 px y la
+     escritura directa quedaba casi imposible de acertar con el pulgar. */
+  min-width: 44px;
   cursor: pointer;
 }
 
@@ -725,6 +764,16 @@ button,
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+/*
+ * El pulso sólo cuando queda poco.
+ *
+ * Antes latía durante todo el descanso —hasta tres minutos en fuerza (§12)—, y
+ * un parpadeo constante en el borde de la pantalla cansa y deja de significar
+ * nada. Late cuando de verdad avisa: los últimos segundos.
+ */
+.descanso--acabando .descanso__rotulo {
   animation: latido 1.6s ease-in-out infinite;
 }
 
@@ -1569,10 +1618,18 @@ button,
 }
 
 .marca--tocable {
+  position: relative;
   cursor: pointer;
   /* El texto es diminuto por diseño; el área de toque no puede serlo. */
   padding: 10px 8px;
   margin: -6px 0;
+}
+
+/* Llega a 44 px de alto sin engordar la etiqueta, que es deliberadamente chica. */
+.marca--tocable::after {
+  content: '';
+  position: absolute;
+  inset: -5px 0;
 }
 
 .marca--excelente {
@@ -1615,4 +1672,29 @@ button,
   border-color: var(--borde-fuerte);
   color: var(--texto-60);
   text-align: center;
+}
+
+/*
+ * Movimiento reducido.
+ *
+ * Quien lo activa en el sistema suele hacerlo por mareo o migraña, y la app se
+ * usa entre series, mirándola de reojo. Se quitan las animaciones, pero **no la
+ * información**: el aviso del cronómetro sigue leyéndose en el color y el texto,
+ * y la barra de progreso sigue mostrando su ancho, sólo que sin transición.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .descanso--acabando .descanso__rotulo {
+    animation: none;
+    /* El aviso se mantiene por color, que no depende del movimiento. */
+    color: var(--rojo);
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

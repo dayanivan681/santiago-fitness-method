@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { describe, test, expect, beforeEach, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, cleanup } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Perfil } from './Perfil'
 import { baseDePrueba } from '../../pruebas/base'
@@ -246,6 +246,42 @@ describe('foto de perfil (V1)', () => {
       const participante = await repositorio.participanteActual()
       expect(await repositorio.obtenerFotoDePerfil(participante!.id)).toBeUndefined()
     })
+  })
+
+  test('sigue estando después de cerrar y reabrir la app', async () => {
+    // Es una foto guardada en el dispositivo, no algo de la sesión en curso.
+    // Arrange
+    await abrir()
+    await userEvent.upload(screen.getByLabelText('Foto de perfil'), retrato())
+    await screen.findByRole('button', { name: 'Quitar' })
+
+    // Act: se cierra la pantalla y se vuelve a entrar
+    cleanup()
+    await abrir()
+
+    // Assert
+    expect(await screen.findByRole('button', { name: 'Quitar' })).toBeInTheDocument()
+    expect(screen.queryByText('P0')).not.toBeInTheDocument()
+  })
+
+  test('reemplazarla no deja la anterior acumulada', async () => {
+    // Arrange
+    await abrir()
+    await userEvent.upload(screen.getByLabelText('Foto de perfil'), retrato())
+    await screen.findByRole('button', { name: 'Quitar' })
+
+    // Act
+    await userEvent.upload(
+      screen.getByLabelText('Foto de perfil'),
+      new File(['otra'], 'otra.jpg', { type: 'image/jpeg' }),
+    )
+
+    // Assert: una sola foto para ese participante
+    const participante = await repositorio.participanteActual()
+    await waitFor(async () => {
+      expect(await repositorio.obtenerFotoDePerfil(participante!.id)).toBeDefined()
+    })
+    expect(screen.getAllByRole('button', { name: 'Quitar' })).toHaveLength(1)
   })
 
   test('es distinta de las fotos de progreso: no aparece como medición', async () => {

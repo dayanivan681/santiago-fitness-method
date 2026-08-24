@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-23T17:51:07.887Z
+- **Última sincronización:** 2026-08-24T03:44:10.891Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -187,10 +187,88 @@ navegador.
 8. **Datos reales de las máquinas** del gimnasio para calibrar incrementos (§13).
 9. **Mínimo de cinco ejercicios**: ¿obligatorio, con los otros tres días aún vacíos?
 10. **Documento de "preguntas 1–18"**: no está en ninguno de los dos PDFs entregados.
+11. **Series con 0 lb**: ¿debe avisar la app al guardar una serie sin peso en un ejercicio
+    con carga externa? En peso corporal (dominadas, fondos) el 0 es válido.
+
+## Turno de claude-code — Plan 1: corrección de QA
+
+### El hallazgo que motivó el turno
+
+`npm test` terminaba con **código 1** aunque los 324 tests pasaran. Yo lo había dado por
+bueno verificando con `npx vitest run --testTimeout=8000` y **sin mirar el código de
+salida**. Vitest reportaba dos `DatabaseClosedError` como rechazos sin dueño.
+
+Causa: en `AltaParticipante.test.tsx`, el manejador de "Crear participante" sigue
+corriendo después del clic (`guardarParticipante` → `crearDiasIniciales`). El test daba
+el alta por buena en cuanto existía el participante, terminaba, y el `afterEach` cerraba
+IndexedDB **mientras se escribían los cuatro días**.
+
+### Fase 1 — Suite realmente verde
+- Los tests del alta esperan al flujo completo: participante **y** sus cuatro días.
+- `src/pruebas/base.ts` desmonta (`cleanup()`) y cede un tick **antes** de cerrar Dexie.
+- No se ocultó ningún error: se corrigió el orden de apagado.
+- **`npm test` → código 0**, tres corridas seguidas, cero `MaxListenersExceededWarning`.
+
+### Fase 2 — Regresiones
+Casi todo el listado ya estaba cubierto. Huecos reales añadidos:
+- La foto de perfil sobrevive a cerrar y reabrir.
+- Reemplazarla no deja la anterior acumulada.
+- El alta crea Upper A · Lower A · Upper B · Lower B, y son suyos.
+
+### Fase 3 — Accesibilidad y ergonomía
+- **`prefers-reduced-motion`**: se quitan animaciones, no información. El aviso del
+  cronómetro se mantiene por color y texto.
+- **El pulso del cronómetro** latía los tres minutos enteros de un descanso de fuerza
+  (§12). Ahora sólo en los últimos 10 s (`.descanso--acabando`), con test.
+- **Áreas táctiles a 44 px** sin agrandar el dibujo: tres columnas de 44 px no caben en
+  320 px, así que se extienden con pseudo-elementos. Medido en el navegador:
+  - "Reps" pasó de **16×44** a 47×44 — ese lo introduje yo con la escritura directa.
+  - Técnica 66×34 → 66×44, Calentamiento 52×34 → 52×44, `+`/`−` 34×44 → 44×44.
+- **Portada compacta** sin foto real: ocupaba el 40 % de una pantalla de 320 px y dejaba
+  los controles de la primera serie fuera de la vista.
+
+### Fase 4 — Warnings
+De 3 a **0**, sin desactivar reglas:
+- `useSegundosDesde.ts`: **era código muerto**, huérfano desde que el cronómetro pasó a
+  manual. Borrado.
+- `ImagenEjercicio.tsx`: `etiquetaEquipo` se movió a `src/dominio/etiquetas.ts`, junto a
+  las etiquetas de carga y músculo.
+- `FichaParticipante.tsx`: el borrador se reinicia **al cambiar de persona**, no en cada
+  actualización del mismo participante. Además de quitar el warning, arregla que guardar
+  algo suyo desde otra parte de la app pudiera borrar lo que el coach llevaba tecleado.
+
+### Fase 6 — QA de liberación
+- `npm test` 328 ✅ · `npm run lint` 0 warnings ✅ · `npm run build` ✅ (54 entradas precache)
+- Visual a **320×568** y **390×844**: sin desborde horizontal, sin contenido tapado por la
+  navegación, navegación completa Hoy → Biblioteca → Historial → Perfil.
+- Recarga en mitad de sesión: el ajuste sin guardar se recupera.
+- 5 y 8 ejercicios verificados.
+- **Offline no se probó en esta sesión**: el servidor de desarrollo no activa el service
+  worker. Lo que sí consta es que el build genera las 54 entradas de precarga. Queda
+  pendiente probarlo sobre `dist`.
+
+### Datos de prueba
+Se borraron dos series de 0 lb que dejé yo tocando "Guardar" sin peso. **No se tocaron**
+la medición del 23 ago ni las fotos: las metió el usuario.
+
+Eso destapó algo para el cliente: **la app permite guardar una serie con 0 lb**, y esa
+serie pasa a ser la referencia y alimenta la recomendación. No se puede bloquear sin más,
+porque en dominadas 0 lb añadido es legítimo. Añadido a las preguntas abiertas.
+
+### Plan 2 (patrones de Strong) — NO iniciado
+Por acuerdo explícito: no se empieza mientras el Plan 1 no esté cerrado. Ya lo está.
 
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-24T03:44:10.892Z | claude-code | ADOPT
+- **Estado:** active
+- **Tarea:** Plan 1: cerrar las correcciones de QA (suite verde, regresiones, accesibilidad, warnings)
+- **Cambios adoptados:** docs/HANDOFF.md, src/aplicacion/useSegundosDesde.ts, src/componentes/ImagenEjercicio.tsx, src/componentes/Miniatura.tsx, src/dominio/etiquetas.ts, src/index.css, src/pantallas/Alta/AltaParticipante.test.tsx, src/pantallas/Biblioteca/Biblioteca.tsx, src/pantallas/Biblioteca/HojaEjercicio.tsx, src/pantallas/Coach/EditorSlot.tsx, src/pantallas/EntrenamientoHoy/EntrenamientoHoy.test.tsx, src/pantallas/EntrenamientoHoy/EntrenamientoHoy.tsx, src/pantallas/EntrenamientoHoy/HojaVariantes.tsx, src/pantallas/EntrenamientoHoy/TarjetaEjercicio.tsx, src/pantallas/Perfil/FichaParticipante.tsx, src/pantallas/Perfil/Perfil.test.tsx, src/pruebas/base.ts
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-08-23T17:51:07.888Z | claude-code | PUBLISH
 - **Estado:** complete

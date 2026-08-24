@@ -4,7 +4,7 @@
  * descanso. Reemplazar no toca el resto de la configuración del slot.
  */
 
-import { etiquetaEquipo } from '../../componentes/ImagenEjercicio'
+import { etiquetaEquipo } from '../../dominio/etiquetas'
 import { alternativasEquivalentes, debeEvitarse } from '../../logica/limitaciones'
 import { ETIQUETA_SUGERENCIA } from '../../logica/sugerencia'
 import { PROGRESIONES, type TipoDeProgresion } from '../../dominio/progresion'

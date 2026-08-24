@@ -8,7 +8,7 @@
  * El color lo pone el estímulo, igual que el punto y la etiqueta.
  */
 
-import { etiquetaEquipo } from './ImagenEjercicio'
+import { etiquetaEquipo } from '../dominio/etiquetas'
 import type { Estimulo } from '../dominio/estimulo'
 import type { Ejercicio } from '../dominio/tipos'
 

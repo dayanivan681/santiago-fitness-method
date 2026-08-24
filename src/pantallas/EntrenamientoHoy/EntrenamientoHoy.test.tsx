@@ -342,6 +342,20 @@ describe('temporizador manual (criterio 5)', () => {
     expect(cronometro()).not.toBeInTheDocument()
   })
 
+  test('el pulso sólo aparece cuando queda poco, no durante todo el descanso', async () => {
+    // Latía los tres minutos enteros de un descanso de fuerza (§12). Un
+    // parpadeo constante en el borde cansa y deja de significar nada.
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getAllByRole('button', { name: 'Descanso' })[0])
+
+    // Assert: arranca en 180 s, muy lejos del aviso
+    const cronometro = await screen.findByRole('status', { name: 'Temporizador de descanso' })
+    expect(cronometro).not.toHaveClass('descanso--acabando')
+  })
+
   test('lo activa y lo desactiva el participante', async () => {
     // Arrange
     await abrirUpperA()
