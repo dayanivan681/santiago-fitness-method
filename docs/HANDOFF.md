@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-24T04:32:06.490Z
+- **Última sincronización:** 2026-08-28T13:05:34.678Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -349,6 +349,14 @@ participante abre la app y no tiene nada que hacer.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-28T13:05:34.679Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Preview para el cliente: exportar/importar datos, dias 2-4 con estimados y configuracion de despliegue
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-08-24T04:32:06.491Z | claude-code | PUBLISH
 - **Estado:** complete
