@@ -7,6 +7,7 @@ import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 import { sembrar } from '../../datos/semilla'
 import { sembrarParticipante } from '../../pruebas/participante'
+import { exportarRespaldo } from '../../datos/respaldo'
 
 let repositorio: RepositorioLocal
 
@@ -291,5 +292,68 @@ describe('foto de perfil (V1)', () => {
     await userEvent.upload(screen.getByLabelText('Foto de perfil'), retrato())
 
     expect(await screen.findByText('Todavía no hay mediciones.')).toBeInTheDocument()
+  })
+})
+
+describe('copia de seguridad', () => {
+  test('avisa de que los datos viven sólo en este dispositivo', async () => {
+    // El participante tiene que saberlo antes de perderlos, no después.
+    await abrir()
+
+    expect(
+      await screen.findByText(/Los datos viven sólo en este dispositivo/),
+    ).toBeInTheDocument()
+  })
+
+  test('un archivo que no es una copia se rechaza sin tocar nada', async () => {
+    // Restaurar basura encima de meses de entrenamiento no tendría vuelta atrás.
+    // Arrange
+    await abrir()
+    const basura = new File(['{"cualquier":"cosa"}'], 'notas.json', {
+      type: 'application/json',
+    })
+
+    // Act
+    await userEvent.upload(screen.getByLabelText('Archivo de copia'), basura)
+
+    // Assert
+    expect(
+      await screen.findByText('Ese archivo no es una copia de esta app.'),
+    ).toBeInTheDocument()
+    expect((await repositorio.participanteActual())?.nombre).toBe('Participante 001')
+  })
+
+  test('un archivo ilegible tampoco rompe la app', async () => {
+    await abrir()
+
+    await userEvent.upload(
+      screen.getByLabelText('Archivo de copia'),
+      new File(['esto no es json'], 'roto.json', { type: 'application/json' }),
+    )
+
+    expect(await screen.findByText('No se pudo leer el archivo.')).toBeInTheDocument()
+  })
+
+  test('restaurar una copia válida devuelve los datos', async () => {
+    // Arrange: una copia hecha con otro nombre
+    await abrir()
+    const actual = await repositorio.participanteActual()
+    const copia = await exportarRespaldo(repositorio, actual!.id)
+    const conOtroNombre = {
+      ...copia,
+      participante: { ...copia.participante, nombre: 'Santiago Restaurado' },
+    }
+
+    // Act
+    await userEvent.upload(
+      screen.getByLabelText('Archivo de copia'),
+      new File([JSON.stringify(conOtroNombre)], 'copia.json', { type: 'application/json' }),
+    )
+
+    // Assert
+    expect(await screen.findByText('Copia restaurada.')).toBeInTheDocument()
+    await waitFor(async () => {
+      expect((await repositorio.participanteActual())?.nombre).toBe('Santiago Restaurado')
+    })
   })
 })

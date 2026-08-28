@@ -10,6 +10,34 @@ líneas de código por ejercicio.
 
 ---
 
+## Los ejercicios de Lower A, Upper B y Lower B
+
+§28 dice que los ejercicios exactos de estos tres días **todavía debían
+confirmarse**. Venían vacíos por no inventar nada, pero el resultado era que
+tres de cada cuatro días la app abría diciendo *"todavía no tiene ejercicios
+definidos"* — que se lee como una app rota, no como una decisión pendiente.
+
+Ahora traen una propuesta siguiendo la estructura de §4 (fuerza · hipertrofia ×3
+· resistencia). **Son estimados, no una decisión**: el coach los cambia desde
+Perfil → Estructura de 4 días, y ahí también puede reordenarlos o sustituirlos.
+
+| Día | 1 · Fuerza | 2 · Hipertrofia | 3 · Hipertrofia | 4 · Hipertrofia | 5 · Resistencia |
+|---|---|---|---|---|---|
+| **Lower A** | Sentadilla con barra | Prensa de piernas | Curl femoral tumbado | Patada de glúteo en polea | Elevación de talones de pie |
+| **Upper B** | Remo con barra | Press pecho convergente | Jalón agarre cerrado | Curl con mancuernas | Extensión de tríceps en polea |
+| **Lower B** | Peso muerto rumano | Hack squat | Hip thrust con barra | Extensión de cuádriceps | Elevación de talones sentado |
+
+Dos criterios detrás de la propuesta, por si quiere discutirlos:
+
+- **Upper B empieza por tracción** (remo) porque Upper A ya pone un empuje en la
+  posición de fuerza.
+- **Lower B empieza por bisagra de cadera** (peso muerto rumano) para no repetir
+  el patrón de sentadilla que ya lleva Lower A.
+
+Upper A no se toca: §29 lo deja definido, con el Military Press ya retirado.
+
+---
+
 ## Qué significa cada columna
 
 - **Peso base** — lo que pesa el equipo *vacío*, antes de añadir discos. La barra

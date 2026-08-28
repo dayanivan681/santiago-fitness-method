@@ -11,6 +11,7 @@ import { Cabecera } from '../../componentes/Cabecera'
 import { FichaParticipante } from './FichaParticipante'
 import { PanelLimitaciones } from './PanelLimitaciones'
 import { PanelProgreso } from './PanelProgreso'
+import { PanelRespaldo } from './PanelRespaldo'
 import { PanelVolumen } from './PanelVolumen'
 import type { Repositorio } from '../../datos/repositorio'
 
@@ -82,6 +83,8 @@ export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Pr
               </button>
             ))}
           </section>
+
+          <PanelRespaldo participante={participante} repositorio={repositorio} />
 
           <p className="nota">
             Guardado local en el dispositivo durante el piloto. Después: cuenta por

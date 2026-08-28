@@ -73,9 +73,14 @@ describe('ajustar un ejercicio (§23)', () => {
   })
 })
 
-describe('definir los días que faltan (§28)', () => {
-  test('añadir el primer ejercicio de Lower A lo marca como fuerza', async () => {
-    // Arrange: §28 deja Lower A sin ejercicios a propósito
+describe('definir un día vacío (§28, §4)', () => {
+  test('añadir el primer ejercicio lo marca como fuerza', async () => {
+    // Arrange: el coach vació Lower A para rehacerlo desde cero. Los tres días
+    // que §28 dejaba sin confirmar ya vienen con estimados, así que el día
+    // vacío se construye aquí en vez de darlo por hecho.
+    const lowerA = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'lower-a')))!
+    await repositorio.guardarPlantilla({ ...lowerA, slots: [] })
+
     render(<Coach repositorio={repositorio} />)
     await userEvent.click(await screen.findByRole('button', { name: 'Lower A' }))
 

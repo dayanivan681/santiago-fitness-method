@@ -238,13 +238,58 @@ describe('cambiar la variante asignada (§16, §23)', () => {
 
 })
 
-describe('días sin definir (§28)', () => {
-  test('avisa que Lower A todavía no tiene ejercicios', async () => {
-    render(<EntrenamientoHoy repositorio={repositorio} />)
+describe('un día sin ejercicios (§28)', () => {
+  test('lo dice y explica dónde se arregla', async () => {
+    // Ya no pasa de fábrica —los cuatro días vienen con estimados—, pero el
+    // coach puede vaciar uno y entonces hay que decirlo, no dejar la pantalla
+    // en blanco.
+    // Arrange
+    const lowerA = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'lower-a')))!
+    await repositorio.guardarPlantilla({ ...lowerA, slots: [] })
 
+    // Act
+    render(<EntrenamientoHoy repositorio={repositorio} />)
     await userEvent.click(await screen.findByRole('button', { name: 'Lower A' }))
 
+    // Assert
     expect(await screen.findByText(/todavía no tiene ejercicios definidos/)).toBeInTheDocument()
+  })
+})
+
+describe('los cuatro días vienen listos para entrenar', () => {
+  test('ninguno abre vacío: §4 en los cuatro', async () => {
+    // Antes, tres de cada cuatro días abrían diciendo "no tiene ejercicios
+    // definidos", que se lee como una app rota y no como una decisión pendiente.
+    render(<EntrenamientoHoy repositorio={repositorio} />)
+
+    for (const dia of ['Upper A', 'Lower A', 'Upper B', 'Lower B']) {
+      await userEvent.click(await screen.findByRole('button', { name: dia }))
+      expect(
+        screen.queryByText(/todavía no tiene ejercicios definidos/),
+        `${dia} abre vacío`,
+      ).not.toBeInTheDocument()
+    }
+  })
+
+  test('cada día sigue la estructura de §4: fuerza, hipertrofia y resistencia', async () => {
+    for (const dia of ['lower-a', 'upper-b', 'lower-b']) {
+      const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, dia)))!
+      expect(plantilla.slots.map((s) => s.estimulo), dia).toEqual([
+        'fuerza',
+        'hipertrofia',
+        'hipertrofia',
+        'hipertrofia',
+        'resistencia',
+      ])
+    }
+  })
+
+  test('no repiten el mismo ejercicio dentro del día', async () => {
+    for (const dia of ['upper-a', 'lower-a', 'upper-b', 'lower-b']) {
+      const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, dia)))!
+      const ejercicios = plantilla.slots.map((s) => s.ejercicioId)
+      expect(new Set(ejercicios).size, dia).toBe(ejercicios.length)
+    }
   })
 })
 

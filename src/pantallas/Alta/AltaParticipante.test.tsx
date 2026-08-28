@@ -137,3 +137,58 @@ describe('alta del participante (criterio 1)', () => {
     }
   })
 })
+
+describe('restaurar una copia desde el alta', () => {
+  test('un móvil nuevo puede recuperar los datos sin dar de alta a nadie', async () => {
+    // Es el caso para el que existe la copia: dispositivo nuevo o navegador
+    // borrado. Si sólo se pudiera restaurar desde Perfil —que necesita un
+    // participante— la copia no serviría justo cuando hace falta.
+    // Arrange
+    const copia = {
+      version: 1,
+      exportadoEn: '2026-08-24T10:00:00.000Z',
+      participante: {
+        id: 'abc',
+        nombre: 'Santiago',
+        sexo: 'masculino',
+        edad: 30,
+        estaturaCm: 175,
+        pesoCorporalLb: 175,
+        objetivo: 'Ganar fuerza',
+        frecuenciaEntrenamiento: 4,
+        limitaciones: '',
+      },
+      plantillas: [],
+      sesiones: [],
+      series: [],
+      progreso: [],
+      sustituciones: [],
+    }
+    abrir()
+
+    // Act
+    await userEvent.upload(
+      screen.getByLabelText('Archivo de copia'),
+      new File([JSON.stringify(copia)], 'copia.json', { type: 'application/json' }),
+    )
+
+    // Assert
+    await waitFor(async () => {
+      expect((await repositorio.participanteActual())?.nombre).toBe('Santiago')
+    })
+  })
+
+  test('un archivo que no es una copia no crea a nadie', async () => {
+    abrir()
+
+    await userEvent.upload(
+      screen.getByLabelText('Archivo de copia'),
+      new File(['{"otra":"cosa"}'], 'notas.json', { type: 'application/json' }),
+    )
+
+    expect(
+      await screen.findByText('Ese archivo no es una copia de esta app.'),
+    ).toBeInTheDocument()
+    expect(await repositorio.participanteActual()).toBeUndefined()
+  })
+})

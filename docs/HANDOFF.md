@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-28T13:05:34.678Z
+- **Última sincronización:** 2026-08-28T13:16:01.372Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -346,9 +346,82 @@ decisiones suyas listadas más abajo, de las que la nº7 —los ejercicios de Lo
 A, Upper B y Lower B— es la que más frena: hoy tres de cada cuatro días el
 participante abre la app y no tiene nada que hacer.
 
+## Turno de claude-code — Preview listo para el cliente
+
+### Copia de seguridad (lo más importante)
+Todo vive en el dispositivo (§26), y eso dejaba un riesgo sin red: si el
+navegador borra su almacenamiento se van meses de entrenamiento, y §19 deja de
+cumplirse por algo que no depende de la app.
+
+- Exportar e importar **un solo archivo `.json`**, con las fotos dentro en
+  base64 — el coach lo recibe por WhatsApp o correo sin casar piezas sueltas.
+- La biblioteca **no** entra: son 33 fichas con foto que la app ya trae.
+- **Restaurar es idempotente**: reimportar el mismo archivo no duplica el
+  historial. Con test.
+- Nunca se confía en el archivo: si no es un respaldo válido se rechaza entero,
+  porque restaurar algo a medias encima del historial no tiene vuelta atrás.
+
+**Fallo de diseño encontrado al probarlo en el navegador:** el botón de
+restaurar vivía sólo en Perfil, que necesita un participante. Pero el caso para
+el que existe la copia —móvil nuevo, navegador borrado— arranca **sin**
+participante, así que la copia no servía justo cuando hacía falta. Ahora también
+se restaura desde la pantalla de alta.
+
+Verificado de punta a punta en el navegador: borré la base entera, la app abrió
+en el alta, restauré el archivo y volvieron participante, los cuatro días, la
+serie y **la foto de perfil intacta a 1080×1080**.
+
+### Los tres días vacíos
+§28 los dejaba sin confirmar, así que venían vacíos. El resultado real era que
+**tres de cada cuatro días la app abría diciendo "todavía no tiene ejercicios
+definidos"** — que se lee como una app rota, no como una decisión pendiente.
+
+Ahora traen una propuesta según §4 (fuerza · hipertrofia ×3 · resistencia),
+documentada en `docs/ESTIMADOS-A-CONFIRMAR.md` **como estimados**, no como
+decisión. El coach los cambia desde la pantalla Coach.
+
+Los dos tests que daban por hecho el día vacío se adaptaron en vez de borrarse:
+el comportamiento sigue importando porque el coach puede vaciar un día.
+
+### Despliegue
+`docs/DESPLIEGUE.md` + `public/_headers` (caché: assets con hash para siempre,
+`index.html` y `sw.js` nunca).
+
+**Cloudflare Pages, no Vercel.** Verificado: Vercel Hobby prohíbe el uso
+comercial e incluye explícitamente *"un consultor pagado escribiendo el
+código"*, que es este proyecto. Cloudflare permite uso comercial gratis con
+ancho de banda ilimitado, y la app es 100% estática.
+
+**GitHub Pages queda descartado por un motivo concreto**: sirve bajo un
+subdirectorio y las rutas de imagen son absolutas, así que exigiría tocar
+`vite.config.ts` y el manifiesto.
+
+### Lo que hay que decidir antes de enseñársela
+**IndexedDB es por origen.** Si el cliente prueba en `algo.pages.dev` y luego se
+mueve a un dominio propio, **los datos del piloto no viajan**. Conviene fijar el
+dominio definitivo antes de que escriba el primer dato real — o exportar la copia
+antes de mover.
+
+### Estado
+`npm test` 384 ✅ código 0 · `npm run lint` 0 warnings ✅ · `npm run build` ✅
+`docs/cliente` sin tocar.
+
+### Verificación pendiente, que sólo se puede hacer publicada
+El **modo sin conexión**: el servidor de desarrollo no activa el service worker.
+Hay que abrirla desde el móvil, ponerlo en modo avión y comprobar que sigue
+funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
+
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-28T13:16:01.373Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Preview listo: exportar/importar los datos en un solo archivo con las fotos dentro (restaurar es idempotente y tambien se puede desde el alta, que es el caso real de movil nuevo); los tres dias que §28 dejaba vacios traen propuesta segun §4 marcada como estimado; docs/DESPLIEGUE.md y public/_headers para Cloudflare Pages
+- **Verificación:** npm test 384/384 codigo 0; npm run lint 0 warnings; npm run build OK; verificacion en navegador del ciclo completo borrar base -> restaurar copia -> foto de perfil intacta a 1080x1080; cuatro dias con 5 ejercicios
+- **Siguiente:** Conectar el repo a Cloudflare Pages y FIJAR EL DOMINIO DEFINITIVO antes de que el cliente escriba datos reales: IndexedDB es por origen y no viaja. Despues probar sin conexion desde el movil en modo avion
+
 
 ### 2026-08-28T13:05:34.679Z | claude-code | CLAIM
 - **Estado:** active
