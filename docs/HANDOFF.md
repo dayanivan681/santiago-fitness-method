@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T01:04:18.741Z
+- **Última sincronización:** 2026-08-30T01:37:29.913Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T01:37:29.914Z | claude-code | ADOPT
+- **Estado:** active
+- **Tarea:** Despliegue en Cloudflare y opciones para probar en movil
+- **Cambios adoptados:** docs/DESPLIEGUE.md, package.json, docs/PROBAR-EN-MOVIL.md
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-08-30T01:04:18.742Z | claude-code | PUBLISH
 - **Estado:** complete

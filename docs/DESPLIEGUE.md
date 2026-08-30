@@ -26,6 +26,24 @@ sabiendo que lo de esa etapa es desechable — o exportar la copia antes de move
 **GitHub Pages no vale sin tocar código**: sirve bajo `/santiago-fitness-method/`
 y habría que cambiar `vite.config.ts` y el manifiesto.
 
+## ¿Se puede empezar en una cuenta y moverla después?
+
+Sí, y sin drama: **en Cloudflare no vive nada**. El sitio se reconstruye desde
+GitHub en cada despliegue, así que "transferir" es borrar el proyecto en una
+cuenta y crearlo en la otra apuntando al mismo repositorio. Dos minutos.
+
+Lo único que **no** se mueve solo son los datos del participante, porque
+IndexedDB está atado al origen:
+
+- Si se usa un **dominio propio**, se apunta a la cuenta nueva y el origen no
+  cambia: no se pierde nada.
+- Si se usa el subdominio `*.pages.dev`, la URL cambia con la cuenta. En ese
+  caso, antes de mover: **Perfil → Copia de seguridad → Descargar copia**, y
+  restaurarla en la URL nueva.
+
+Por eso la copia de seguridad existe: hace que esta decisión deje de ser
+irreversible.
+
 ## Pasos
 
 1. En Cloudflare → Workers & Pages → Create → Pages → Connect to Git.
@@ -40,6 +58,18 @@ y habría que cambiar `vite.config.ts` y el manifiesto.
    probable sin pasos extra.
 5. Si hay dominio propio: Custom domains → añadirlo **antes** de entregarle la
    app al cliente.
+
+### Atajo para el primer despliegue
+
+Si sólo quieres verla publicada cuanto antes, sin conectar el repositorio:
+
+```
+npx wrangler login     # abre el navegador para entrar en tu cuenta
+npm run deploy         # compila y publica
+```
+
+Es un despliegue suelto: no se actualiza sola con cada push. Para el piloto
+conviene igualmente conectar el repositorio como arriba.
 
 `public/_headers` ya trae las cabeceras de caché: los assets llevan hash en el
 nombre y se cachean para siempre; `index.html` y `sw.js` no, para que la app note
