@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T19:48:04.165Z
+- **Última sincronización:** 2026-08-30T20:19:32.529Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T20:19:32.530Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA de produccion completado: 410 pruebas pasan; lint y build limpios; seguridad y funciones principales verificadas. Resultado NOT READY por un P2: enlaces usados o expirados muestran Entrar en GET antes de rechazarse en POST.
+- **Verificación:** npm test; npm run lint; npm run build
+- **Siguiente:** Validar el token contra D1 en GET y mostrar directamente el estado invalido/expirado; luego repetir QA de acceso y Safari/iPhone.
+
 
 ### 2026-08-30T19:48:04.165Z | codex | CLAIM
 - **Estado:** active
