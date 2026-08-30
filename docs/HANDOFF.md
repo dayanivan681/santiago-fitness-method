@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T17:54:18.883Z
+- **Última sincronización:** 2026-08-30T18:07:03.209Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T18:07:03.210Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Acceso por enlace privado construido y probado, sin cutover. Cerrado el bypass de previews (Access ahora cubre el comodin). D1 santiago-acceso con invitaciones y sesiones. functions/_middleware.ts como frontera de autenticacion delante de los estaticos, con AUTH_MODE=access en produccion (nada cambia) y magic en ramas. Invitaciones de un solo uso por UPDATE atomico, sesiones opacas revocables, logout a /salir
+- **Verificación:** npm test 410/410 codigo 0; npm run lint 0 warnings; npm run build OK; tsc -b OK; 16/16 pruebas A-K y bypass contra el runtime real de Pages; atomicidad verificada contra D1 remota
+- **Siguiente:** Cutover: AUTH_MODE=magic en produccion, verificar, reducir Access a /admin, generar el enlace del cliente
+
 
 ### 2026-08-30T17:54:18.883Z | claude-code | CLAIM
 - **Estado:** active

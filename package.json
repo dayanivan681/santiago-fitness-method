@@ -16,7 +16,9 @@
     "handoff:sync": "node scripts/handoff-sync.mjs sync",
     "handoff:claim": "node scripts/handoff-sync.mjs claim",
     "handoff:adopt": "node scripts/handoff-sync.mjs adopt",
-    "handoff:publish": "node scripts/handoff-sync.mjs publish"
+    "handoff:publish": "node scripts/handoff-sync.mjs publish",
+    "invitar": "node scripts/invitar.mjs",
+    "d1:migrar": "wrangler d1 execute santiago-acceso --remote --file=migrations/0001_acceso.sql"
   },
   "dependencies": {
     "dexie": "^4.4.5",
@@ -25,6 +27,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260830.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.5",

@@ -1,56 +1,94 @@
-# Acceso del cliente — Cloudflare Access
+# Acceso — enlace privado (sin cutover todavía)
 
-La app no tiene login propio. Toda la autenticación la hace Cloudflare Access
-delante del sitio: el navegador nunca recibe la app sin estar autorizado.
+Dos sistemas conviven a propósito hasta el cambio en producción:
 
-## Configuración vigente
+- **Hoy en producción manda Cloudflare Access** con OTP por correo.
+- **El sustituto ya está construido y probado**: enlaces de invitación de un
+  solo uso resueltos por `functions/_middleware.ts`.
+
+El interruptor es `AUTH_MODE` en `wrangler.toml`.
+
+| Valor | Quién autentica |
+|---|---|
+| `access` | El middleware deja pasar; manda Cloudflare Access. **Producción ahora.** |
+| `magic` | Manda el middleware: cookie de sesión o 401. Despliegues de rama. |
+
+Si la variable falta, el middleware asume `magic` y cierra. Fallar cerrado es lo
+único aceptable en una puerta.
+
+## Cómo entra cada uno
+
+**Cliente** — enlace privado → botón *Entrar* → app. Nunca ve Cloudflare, ni
+escribe correo, ni crea cuenta.
+
+**Coach** — Cloudflare Access con OTP en `/admin/invitar`, la página que genera
+los enlaces. Para usar la app como participante, se genera un enlace a sí mismo.
+
+## Generar un enlace
+
+Desde la app: `https://santiago-fitness-method.pages.dev/admin/invitar`.
+
+Desde la terminal:
+
+```bash
+npm run invitar -- --cliente santiago
+```
+
+El token se imprime una sola vez. En la base sólo queda su SHA-256, así que no
+se puede recuperar: si se pierde, se genera otro.
+
+## Revocar
+
+```bash
+npx wrangler d1 execute santiago-acceso --remote \
+  --command "UPDATE sesiones SET revocada_en=unixepoch()
+             WHERE cliente_id='santiago' AND revocada_en IS NULL"
+```
+
+D1 es de consistencia fuerte: la siguiente petición ya falla. No hay ventana de
+propagación — la razón de no haber usado KV.
+
+## Por qué el GET no consume el enlace
+
+WhatsApp, iMessage y los antivirus de correo abren los enlaces que reciben para
+previsualizarlos. Si el GET consumiera el token, el enlace llegaría gastado.
+`/access` sólo enseña un botón; el POST de ese botón es el único que consume.
+
+## Pruebas
+
+```bash
+npm run build
+npx wrangler pages dev --port 8788     # en otra terminal
+BASE_URL=http://localhost:8788 node scripts/pruebas-acceso.mjs
+```
+
+Dieciséis comprobaciones: A–K más dos de bypass. Usan la D1 de verdad, no
+dobles: lo que hay que demostrar es que SQLite aplica la atomicidad del uso
+único, y un mock no probaría nada.
+
+## Secuencia del cambio en producción
+
+1. `AUTH_MODE = "magic"` en `[vars]` de `wrangler.toml`, desplegar.
+   Access sigue delante: dos puertas seguidas, ninguna ventana abierta.
+2. Generarse un enlace y comprobar el flujo entero.
+3. Reducir la aplicación de Access a la ruta `/admin`. Aquí es cuando el cliente
+   deja de ver Cloudflare.
+4. Generar el enlace del cliente y mandárselo.
+
+Vuelta atrás en cualquier punto: `AUTH_MODE = "access"` y desplegar. Mientras la
+aplicación de Access siga cubriendo el hostname completo, se vuelve exactamente
+al comportamiento actual.
+
+## Configuración vigente en Cloudflare
 
 | | |
 |---|---|
-| URL de producción | `https://santiago-fitness-method.pages.dev` |
-| Aplicación | **Santiago Fitness Method** |
-| ID de aplicación | `5b3a4bda-e929-4b38-9116-bba12c4b8c88` |
-| Política | `Cliente y coach` (Allow, lista explícita de correos) |
-| ID de política | `e58035bc-b9e3-4f11-a2be-78f8e2453831` |
-| Método de entrada | **One-time PIN** únicamente |
-| Sesión de aplicación | 1 semana (7 días) |
-| Sesión de política | Heredada de la aplicación |
-| Dominio de equipo | `cool-surf-8e6d.cloudflareaccess.com` |
+| Aplicación de Access | **Santiago Fitness Method** |
+| Destinos | `santiago-fitness-method.pages.dev` y `*.santiago-fitness-method.pages.dev` |
+| Política | `Cliente y coach` · Allow · lista explícita de correos |
+| Método de entrada | One-time PIN |
+| Sesión | 1 semana, heredada por la política |
+| Base D1 | `santiago-acceso` · `7cb38489-4054-45e9-94d9-aad9c9f533f5` |
 
-## Correos autorizados
-
-- `yayo1716@gmail.com` — coach
-
-**Falta el correo del cliente.** Para añadirlo:
-
-1. `dash.cloudflare.com` → **Zero Trust** → **Access controls** → **Policies**
-2. Abrir `Cliente y coach`
-3. En *Include · Emails*, escribir el correo del cliente en el campo vacío
-4. Guardar
-
-No usar `Emails ending in`, ni `Everyone`, ni comodines: la lista tiene que
-seguir siendo explícita.
-
-## Cerrar sesión
-
-El enlace *Cerrar sesión* del Perfil apunta a `/cdn-cgi/access/logout`, que es
-el endpoint de Cloudflare. La app no guarda cookies ni tokens de sesión: eso lo
-gestiona Cloudflare entero.
-
-## Por qué no hay modo sin conexión
-
-Un service worker sirve la app desde su propia caché sin tocar la red, así que
-una copia guardada antes entraría **sin pasar por Cloudflare Access**. Mientras
-Access sea la única capa de autenticación, las dos cosas no pueden convivir.
-
-Por eso:
-
-- no se registra ningún service worker;
-- `public/sw.js` es un service worker de autodestrucción que desmonta lo que
-  dejó la versión anterior (borra cachés, se desregistra y recarga la pestaña);
-- `src/aplicacion/limpiarOffline.ts` hace la misma limpieza desde la app;
-- `public/_headers` sirve el HTML con `no-store`, para que el navegador no
-  pueda reutilizar una copia de disco sin preguntar al servidor.
-
-`public/sw.js` se puede borrar cuando ya no queden navegadores con la versión
-antigua instalada.
+El comodín se añadió para cerrar un agujero real: las URLs de despliegue servían
+la app entera con HTTP 200 y sin login.
