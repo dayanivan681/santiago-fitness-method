@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T22:19:51.777Z
+- **Última sincronización:** 2026-08-30T22:30:27.252Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T22:30:27.253Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Regression final del deployment 1e116167/21d5ece completada: Chrome limpio y magic auth PASS; refresh, single-use, logout, static protection y sw.js PASS; Safari macOS limpio PASS; D1 verificado y datos qa-final limpiados; invitación Santiago intacta.
+- **Verificación:** npm test (414); npm run lint; npm run build; Chrome Browser; Safari macOS privado; curl estático y sw.js; D1 remoto
+- **Siguiente:** Safari iOS: NOT EXECUTED — no device available
+
 
 ### 2026-08-30T22:19:51.777Z | codex | CLAIM
 - **Estado:** active
