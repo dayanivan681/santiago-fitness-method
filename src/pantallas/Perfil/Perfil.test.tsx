@@ -357,3 +357,15 @@ describe('copia de seguridad', () => {
     })
   })
 })
+
+describe('cierre de sesión', () => {
+  test('ofrece cerrar sesión a través de Cloudflare Access', async () => {
+    // El acceso lo gestiona Cloudflare, no la app: tiene que ser su endpoint
+    // y no lógica propia, o la sesión seguiría viva tras "cerrar sesión".
+    await abrir()
+
+    const enlace = screen.getByRole('link', { name: 'Cerrar sesión' })
+
+    expect(enlace).toHaveAttribute('href', '/cdn-cgi/access/logout')
+  })
+})

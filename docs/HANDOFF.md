@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T17:28:38.166Z
+- **Última sincronización:** 2026-08-30T17:39:05.278Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T17:39:05.278Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Cloud-first: eliminado el service worker y la precarga PWA; anadido sw.js de autodestruccion y limpiarOffline() para desmontar cachés de versiones anteriores; HTML servido con no-store; enlace Cerrar sesion a /cdn-cgi/access/logout en Perfil; manifest estatico sin standalone para que la sesion de Access viaje; documentado el acceso en docs/ACCESO.md
+- **Verificación:** npm test 397/397 codigo 0; npm run lint 0 warnings; npm run build OK; despliegue en Cloudflare Pages verificado
+- **Siguiente:** Anadir el correo del cliente a la politica Cliente y coach en Zero Trust; probar login OTP end-to-end desde el movil
+
 
 ### 2026-08-30T17:28:38.166Z | claude-code | CLAIM
 - **Estado:** active

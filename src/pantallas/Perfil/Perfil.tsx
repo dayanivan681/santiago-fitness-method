@@ -90,6 +90,14 @@ export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Pr
             Guardado local en el dispositivo durante el piloto. Después: cuenta por
             participante, acceso del coach y sincronización.
           </p>
+
+          {/* El acceso lo gestiona Cloudflare Access, no la app: por eso es un
+              enlace a su endpoint y no un botón con lógica propia. */}
+          <p className="nota">
+            <a className="enlace" href="/cdn-cgi/access/logout">
+              Cerrar sesión
+            </a>
+          </p>
         </div>
       </div>
     </>

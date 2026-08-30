@@ -1,8 +1,24 @@
 # Cabeceras para Cloudflare Pages.
 #
 # El hash del build ya está en el nombre de cada archivo de assets, así que se
-# pueden cachear para siempre. El service worker y el index NO: son los que
-# tienen que notar que hay una versión nueva.
+# pueden cachear para siempre.
+#
+# El HTML no: es la puerta. Cada carga tiene que llegar al servidor para que
+# Cloudflare Access decida si autoriza. Con `no-store` el navegador ni siquiera
+# lo guarda en disco, así que no puede servir una copia vieja sin pasar por el
+# login.
+
+/
+  Cache-Control: no-store
+
+/index.html
+  Cache-Control: no-store
+
+/sw.js
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Cache-Control: no-cache
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
@@ -12,12 +28,3 @@
 
 /fuentes/*
   Cache-Control: public, max-age=31536000, immutable
-
-/sw.js
-  Cache-Control: no-cache
-
-/index.html
-  Cache-Control: no-cache
-
-/manifest.webmanifest
-  Cache-Control: no-cache
