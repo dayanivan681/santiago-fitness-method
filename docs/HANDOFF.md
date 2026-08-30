@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T22:49:36.387Z
+- **Última sincronización:** 2026-08-30T22:51:59.290Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T22:51:59.291Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** QA independiente del admin y del deployment 784445dd/dcb388c: aislamiento de /admin, Probar como cliente, estáticos, sesión y pruebas finales
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-08-30T22:49:36.388Z | claude-code | PUBLISH
 - **Estado:** complete
