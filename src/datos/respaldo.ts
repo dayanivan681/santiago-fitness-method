@@ -8,7 +8,7 @@
  */
 
 import { VERSION_RESPALDO, type FotoRespaldada, type Respaldo } from '../logica/respaldo'
-import type { Repositorio } from './repositorio'
+import { fechaDeHoy, type Repositorio } from './repositorio'
 import type { SerieRegistrada } from '../dominio/tipos'
 
 export async function exportarRespaldo(
@@ -21,10 +21,14 @@ export async function exportarRespaldo(
     throw new Error(`No hay participante ${participanteId} que exportar`)
   }
 
-  const [plantillas, sesiones, progreso] = await Promise.all([
+  const [plantillas, sesiones, progreso, sustituciones] = await Promise.all([
     repositorio.listarPlantillas(participanteId),
     repositorio.listarSesiones(participanteId),
     repositorio.listarProgreso(participanteId),
+    // Sólo las de hoy: una sustitución vale para un día y las de días pasados
+    // ya no cambian nada. Pero las de hoy sí, y restaurar a media sesión sin
+    // ellas devolvería el día a la variante de la plantilla sin avisar.
+    repositorio.listarSustituciones(participanteId, fechaDeHoy(ahora)),
   ])
 
   // Las series se piden por sesión: es la única forma de no arrastrar las de
@@ -53,8 +57,7 @@ export async function exportarRespaldo(
     sesiones,
     series: porSesion.flat(),
     progreso,
-    // Las sustituciones son de un día concreto y caducan: no valen la pena.
-    sustituciones: [],
+    sustituciones,
     fotos: fotos.filter((foto): foto is FotoRespaldada => foto !== undefined),
     ...(fotoDePerfil ? { fotoDePerfil } : {}),
   }
@@ -89,6 +92,10 @@ export async function restaurarRespaldo(
   }
 
   await restaurarSeries(repositorio, respaldo.series)
+
+  for (const sustitucion of respaldo.sustituciones) {
+    await repositorio.guardarSustitucion(sustitucion)
+  }
 
   for (const registro of respaldo.progreso) {
     const foto = respaldo.fotos?.find((guardada) => guardada.id === registro.id)

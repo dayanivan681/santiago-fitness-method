@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T01:01:41.131Z
+- **Última sincronización:** 2026-08-30T01:04:18.741Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T01:04:18.742Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Corregida la fila de Offline: el cliente pregunto 'sin internet Y sincronizar luego' y solo esta la primera mitad; la sincronizacion es Etapa 2. Anotado ademas que el offline no lo pidio, lo decidi yo. Corregidas dos filas desactualizadas (foto de perfil y punto H) y matizada la biblioteca: las fotos son de banco libre, no de su gimnasio. El respaldo ya incluye las sustituciones del dia, que exportaba vacias en silencio
+- **Verificación:** npm test 386/386 codigo 0; npm run lint 0 warnings; npm run build OK; docs/cliente sin tocar
+- **Siguiente:** Desplegar en Cloudflare Pages fijando el dominio definitivo. De la especificacion V1 solo falta el video, que depende de que el cliente elija alojamiento
+
 
 ### 2026-08-30T01:01:41.132Z | claude-code | CLAIM
 - **Estado:** active

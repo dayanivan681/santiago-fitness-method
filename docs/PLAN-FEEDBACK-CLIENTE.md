@@ -36,7 +36,7 @@ y números grandes.
 | **E** | Temporizador manual | ✅ **Hecho.** Hoy arranca solo al guardar. Se quita y se pone un botón visible. |
 | **F** | Volumen más visual | ✅ **Hecho.** Sus cuatro estados: Dentro del objetivo · Falta volumen · Objetivo cumplido · Revisar recuperación. Hoy hay tres. |
 | **G** | Limitaciones conectadas | ✅ **Hecho.** El perfil lleva una lista de ejercicios a evitar; al asignar uno, el coach recibe el aviso con las equivalentes y las cambia de un toque. Avisa, no bloquea. |
-| **H** | Biblioteca útil en gimnasio | ⚠️ **Lo más incompleto.** La ficha tiene foto, equipo y explicación corta. Faltan **músculo principal, secundarios, tipo de carga y alternativas equivalentes** — los cuatro ya están en la base, es trabajo de pantalla. Escribe *"foto/video corto"*: la foto ya está, así que el vídeo parece opcional. **Conviene confirmarlo** (`docs/OPCION-VIDEO.md`). |
+| **H** | Biblioteca útil en gimnasio | ✅ **Hecho salvo el vídeo.** La ficha reúne foto, equipo, tipo de carga, músculo principal, secundarios, instrucciones breves y alternativas equivalentes, y se abre también desde el entrenamiento con el historial de esa variante. Escribe *"foto/video corto"*: la foto ya está, así que **el vídeo parece opcional — conviene confirmarlo** (`docs/OPCION-VIDEO.md`). |
 | **I** | Guardado robusto | ✅ **Hecho.** Autosave, edición y ahora **auditoría**: al corregir, el valor anterior se apila con su hora en vez de desaparecer. |
 | **J** | Separar MVP de futuras | **Ya se respeta.** Sin pagos, chat, nutrición, redes ni wearables. |
 
@@ -69,7 +69,7 @@ anterior en vez de sobrescribirlo.
 | **Sustituciones** | La equivalencia la define el campo `movimiento`, que mantiene el coach. **Por defecto sólo por ese día**, con opción de fijarla permanente. *(Hoy es siempre permanente — ver aviso abajo.)* |
 | **Fotos de progreso** | **En el dispositivo, sin subir a ningún sitio**, con fecha. Mientras no haya cuentas, la foto no sale del móvil: eso resuelve consentimiento y permisos por construcción. Frecuencia libre, sugerencia cada 4 semanas. |
 | **Finalización de sesión** | **La cierra el participante a mano**, nunca automáticamente. Se guarda lo que se hizo aunque falten ejercicios o series: §19 dice que lo registrado es lo que pasó, y una sesión a medias es un dato válido. |
-| **Offline** | **Ya resuelto.** Guarda en el dispositivo y se instala como app; el gimnasio sin cobertura está cubierto. |
+| **Offline** | **Media respuesta, y conviene decirlo claro.** Usted pregunta si el registro debe *"funcionar sin internet **y sincronizar luego**"*. Lo primero está: la app se instala y guarda en el dispositivo, así que el gimnasio sin cobertura queda cubierto. **Lo segundo no existe**: no hay sincronización, y es Etapa 2 (§31), porque exige cuentas y base de datos en la nube. Mientras tanto, la copia de seguridad del perfil es la única forma de mover datos entre dispositivos. Falta además comprobarlo publicado: el servidor de desarrollo no activa el modo sin conexión. |
 
 > **Sustituciones: ya está invertido.** Antes, cambiar de variante reescribía la
 > plantilla para siempre. Ahora al cambiar se elige entre **Sólo hoy** (por
@@ -110,13 +110,13 @@ acordada, salta antes de llegar al gimnasio.
 | Punto | Estado |
 |---|---|
 | 1 participante real, arquitectura para más, sin panel ficticio | ✅ La app ya no siembra a nadie: el coach lo da de alta al abrirla |
-| Perfil: foto, datos, objetivo, frecuencia, limitaciones, notas | ⚠️ Datos, objetivo, frecuencia, limitaciones y notas están. **Falta la foto de perfil** — las fotos de progreso son otra cosa |
+| Perfil: foto, datos, objetivo, frecuencia, limitaciones, notas | ✅ Los seis, foto de perfil incluida (distinta de las de progreso) |
 | Día con 5–8 ejercicios editables y **ordenables** | ✅ Se ordenan con flechas, y el ejercicio se lleva su programación |
 | Registro por serie: carga, reps, RIR, descanso; técnica si es simple | ✅ Técnica incluida, con "Buena" por defecto |
 | Última + mejor + **objetivo de hoy** dentro del ejercicio | ✅ |
 | Temporizador manual | ✅ Lo arranca el participante |
 | Historial por variante sin sobrescribir | ✅ |
-| Biblioteca visual con ejercicios reales | ✅ 33 ejercicios con foto |
+| Biblioteca visual con ejercicios reales | ⚠️ 33 ejercicios con foto y ficha completa. **Las fotos son de un banco libre, no de su gimnasio**, y los ejercicios son los que suponemos que usa: eso sí necesita su confirmación |
 | Sustitución conservando historiales | ✅ Y ahora distingue sólo hoy de permanente |
 | Progresión: Mantener / Subir reps / Subir carga mínima / Revisar-reducir, editable | ✅ El coach la fija por ejercicio; el objetivo se sigue calculando |
 | Volumen directo por grupo con estado simple | ✅ Sus cuatro estados |
@@ -170,10 +170,20 @@ completada · limitaciones estructuradas conectadas con la asignación.
 Alta del participante · reordenar ejercicios · notas del coach · medidas y fotos
 de progreso con fecha · recomendación fijable por el coach.
 
+> **Aviso sobre el modo sin conexión.** Usted lo dejó como *"falta decidir"* y en
+> último lugar de su orden de trabajo. Lo construimos igualmente porque salía
+> casi gratis —la app no tiene servidor, así que funcionar sin conexión son unas
+> líneas de configuración—, pero **no lo pidió**: si prefiere no contarlo como
+> parte de la V1, no cambia nada de lo demás.
+
 **Pendiente de construir**
-Foto de perfil · ficha de biblioteca completa: músculo principal y secundarios,
-tipo de carga y alternativas equivalentes. Los cuatro datos ya existen en la
-base; sólo hay que mostrarlos.
+Sólo el **vídeo** de la biblioteca, y depende de que elija alojamiento. Nada más
+de su especificación V1 queda sin hacer.
+
+Fuera de su lista pero construido, porque su orden de trabajo lo menciona
+(*"datos, fotos, offline/respaldo"*): **copia de seguridad** en un archivo, que
+hoy es la única forma de que usted reciba los datos del participante y de que no
+se pierdan si el móvil borra su almacenamiento.
 
 **Pendiente de su respuesta**
 Las cinco decisiones de la sección 3 que cambian comportamiento · el documento

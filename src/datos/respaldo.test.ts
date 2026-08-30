@@ -5,6 +5,8 @@ import { sembrar } from './semilla'
 import { sembrarParticipante } from '../pruebas/participante'
 import { aBase64, aBlob, exportarRespaldo, restaurarRespaldo } from './respaldo'
 import { PRESS_BANCA_15_SMITH } from './semilla/biblioteca'
+import { idSustitucion } from '../logica/sustitucion'
+import { fechaDeHoy } from './repositorio'
 import type { RepositorioLocal } from './repositorioLocal'
 import type { Participante } from '../dominio/tipos'
 
@@ -158,5 +160,50 @@ describe('las fotos viajan dentro del archivo', () => {
 
     expect(() => aBase64(grande.buffer)).not.toThrow()
     expect(aBase64(grande.buffer).length).toBeGreaterThan(100_000)
+  })
+})
+
+describe('las sustituciones del día', () => {
+  test('viajan en la copia y vuelven al restaurar', async () => {
+    // Restaurar a media sesión sin ellas devolvería el día a la variante de la
+    // plantilla sin avisar, y el participante vería otro ejercicio del que está
+    // haciendo.
+    // Arrange
+    // La misma noción de "hoy" que usa la app: local, no UTC.
+    const hoy = fechaDeHoy()
+    await repositorio.guardarSustitucion({
+      id: idSustitucion(participante.id, hoy, 'upper-a', 1),
+      participanteId: participante.id,
+      fecha: hoy,
+      plantillaDiaId: `${participante.id}|upper-a`,
+      orden: 1,
+      ejercicioId: 'press-banca-barra',
+    })
+
+    // Act
+    const copia = await exportarRespaldo(repositorio, participante.id)
+    const nueva = repositorioDePrueba()
+    await sembrar(nueva)
+    await restaurarRespaldo(nueva, copia)
+
+    // Assert
+    expect(copia.sustituciones).toHaveLength(1)
+    const restauradas = await nueva.listarSustituciones(participante.id, hoy)
+    expect(restauradas[0].ejercicioId).toBe('press-banca-barra')
+  })
+
+  test('las de días pasados no se arrastran: ya no cambian nada', async () => {
+    await repositorio.guardarSustitucion({
+      id: idSustitucion(participante.id, '2026-01-05', 'upper-a', 1),
+      participanteId: participante.id,
+      fecha: '2026-01-05',
+      plantillaDiaId: `${participante.id}|upper-a`,
+      orden: 1,
+      ejercicioId: 'press-banca-barra',
+    })
+
+    const copia = await exportarRespaldo(repositorio, participante.id)
+
+    expect(copia.sustituciones).toHaveLength(0)
   })
 })
