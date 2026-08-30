@@ -57,6 +57,24 @@ const RUTA_SALIR = '/salir'
  */
 const PREFIJO_ADMIN = '/admin'
 
+/**
+ * La única ruta pública de la aplicación, y hay que entender por qué.
+ *
+ * Una instalación antigua de la PWA sigue controlada por el service worker de
+ * entonces, que sirve la app desde su propia caché sin tocar la red — es decir,
+ * saltándose esta puerta. La forma de desactivarlo es que el navegador descargue
+ * el `/sw.js` de autodestrucción que lo sustituye.
+ *
+ * Pero el navegador pide ese fichero SIN sesión, y hasta ahora recibía la página
+ * de "Acceso requerido": HTML con 401 en vez de JavaScript. La actualización
+ * fallaba y el worker viejo se quedaba indefinidamente.
+ *
+ * Exceptuarlo no abre nada: `public/sw.js` no contiene aplicación, ni datos, ni
+ * secretos, ni un manejador `fetch`. Sólo borra cachés, se desregistra y recarga
+ * las pestañas para que vuelvan a pasar por aquí.
+ */
+const RUTA_SW = '/sw.js'
+
 export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   const { request, env, next } = contexto
   const url = new URL(request.url)
@@ -67,6 +85,8 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
 
   if (modo === 'access') return next()
 
+  if (url.pathname === RUTA_SW) return atenderServiceWorker(next)
+
   if (url.pathname.startsWith(PREFIJO_ADMIN)) return next()
 
   if (url.pathname === RUTA_ACCESO) return atenderAcceso(request, env)
@@ -74,6 +94,21 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   if (url.pathname === RUTA_SALIR) return atenderSalir(request, env)
 
   return atenderApp(request, env, next)
+}
+
+/**
+ * Sirve el service worker de autodestrucción, sin exigir sesión.
+ *
+ * Las cabeceras impiden que un intermediario devuelva una copia guardada: si el
+ * navegador recibiera el fichero viejo, la migración no ocurriría nunca.
+ */
+async function atenderServiceWorker(next: () => Promise<Response>): Promise<Response> {
+  const respuesta = await next()
+  const servido = new Response(respuesta.body, respuesta)
+
+  servido.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+
+  return servido
 }
 
 /**

@@ -427,6 +427,76 @@ async function verGet(token) {
   )
 }
 
+
+// ═══ P1 · el service worker de migración debe ser alcanzable ════════════════
+
+// ---- P1-1 · /sw.js accesible sin sesión ------------------------------------
+{
+  const r = await pedir('/sw.js')
+  const cuerpo = await r.text()
+
+  comprobar(
+    'P1-1', '/sw.js se sirve sin sesión, como JavaScript',
+    r.status === 200 && (r.headers.get('content-type') ?? '').includes('javascript'),
+    `status=${r.status} tipo=${r.headers.get('content-type')}`,
+  )
+
+  comprobar(
+    'P1-2', '/sw.js no se puede servir de una copia guardada',
+    ['no-store', 'no-cache', 'must-revalidate'].every((d) =>
+      (r.headers.get('cache-control') ?? '').includes(d),
+    ),
+    r.headers.get('cache-control'),
+  )
+
+  comprobar(
+    'P1-3', '/sw.js sólo migra: sin fetch, sin precarga, sin datos',
+    !/addEventListener\(\s*['"]fetch/.test(cuerpo) &&
+      !/precache|workbox|__WB_MANIFEST/i.test(cuerpo) &&
+      !/sfm_sesion|token|cookie|secret|password|D1|invitacion/i.test(cuerpo) &&
+      /skipWaiting/.test(cuerpo) &&
+      /unregister/.test(cuerpo) &&
+      /caches\.delete/.test(cuerpo),
+    'el contenido no cumple lo esperado',
+  )
+}
+
+// ---- P1-4 · la excepción es SÓLO /sw.js ------------------------------------
+{
+  // `/salir` no entra: es una página del middleware, no de la aplicación, y ya
+  // era pública antes de este cambio. Se comprueba aparte, más abajo.
+  const rutas = ['/', '/index.html', '/manifest.webmanifest', '/sw.js.map', '/swjs', '/sw.js/x']
+  const indice = await pedir('/sw.js')            // sólo para descubrir los bundles
+  const conSesion = await pedir('/', { headers: { Cookie: cookieBuena } })
+  const html = await conSesion.text()
+  const js = html.match(/\/assets\/index-[\w-]+\.js/)?.[0]
+  const css = html.match(/\/assets\/index-[\w-]+\.css/)?.[0]
+
+  const todas = [...rutas, js, css, '/ejercicios/sentadilla-barra.jpg'].filter(Boolean)
+  const estados = await Promise.all(todas.map(async (r) => [r, (await pedir(r)).status]))
+  const publicas = estados.filter(([ruta, estado]) => estado === 200 && ruta !== '/sw.js')
+
+  comprobar(
+    'P1-4', 'Ninguna otra ruta de la aplicación se volvió pública',
+    indice.status === 200 && publicas.length === 0,
+    `públicas de más: ${publicas.map(([r, e]) => r + '=' + e).join(', ')}`,
+  )
+
+  // `/salir` responde 200 sin sesión desde siempre: enseña "Sesión cerrada" y
+  // borra la cookie. No sirve aplicación ni filtra nada, pero conviene fijarlo
+  // para que nadie lo convierta en una vía de entrada por descuido.
+  const salir = await pedir('/salir')
+  const textoSalir = await salir.text()
+
+  comprobar(
+    'P1-5', '/salir sigue siendo sólo la página de cierre, sin aplicación',
+    salir.status === 200 &&
+      textoSalir.includes('Sesión cerrada') &&
+      !textoSalir.includes('assets/index-'),
+    `status=${salir.status}`,
+  )
+}
+
 const fallos = resultados.filter((r) => !r.ok)
 console.log(`\n${resultados.length - fallos.length}/${resultados.length} correctas\n`)
 process.exit(fallos.length === 0 ? 0 : 1)

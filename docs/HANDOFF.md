@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T22:08:52.660Z
+- **Última sincronización:** 2026-08-30T22:16:38.183Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T22:16:38.184Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** P1: /sw.js queda exceptuado de la puerta para que las instalaciones PWA antiguas puedan descargar el service worker de autodestruccion. Antes recibian HTML con 401 en vez de JavaScript y la actualizacion fallaba, asi que el worker viejo seguia sirviendo la app cacheada saltandose la autenticacion. Se sirve con no-store, no-cache, must-revalidate. Ninguna otra ruta cambia
+- **Verificación:** npm test 414/414 codigo 0; lint 0 warnings; build OK; 32/32 pruebas de acceso incluidas 5 nuevas del P1; migracion reproducida y verificada en navegador con worker antiguo instalado
+- **Siguiente:** Codex ejecuta el regression QA final
+
 
 ### 2026-08-30T22:08:52.661Z | claude-code | CLAIM
 - **Estado:** active
