@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T21:21:44.901Z
+- **Última sincronización:** 2026-08-30T21:34:44.850Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T21:34:44.851Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Final QA retest: P2 de magic links FIXED; 414 tests, lint y build pasan; 18/18 comprobaciones auth/D1 independientes; selector de foto y foco PASS. Resultado NOT READY: P1 de regresion, un perfil con la PWA antigua sigue controlado por sw.js y sirve el bundle viejo/registerSW.js incluso tras varias recargas, contraviniendo el aislamiento y la migracion sin service worker.
+- **Verificación:** npm test (414/414); npm run lint; npm run build; auth production 18/18; mobile 360/390/412; D1 cleanup 0/0
+- **Siguiente:** Corregir y verificar la migracion de service workers antiguos en un perfil previamente instalado; considerar servir publicamente solo el sw.js autodestructivo antes del middleware y probar que elimina cache, pierde control y cae en Acceso requerido. Luego repetir QA y Safari/iPhone owner smoke.
+
 
 ### 2026-08-30T21:21:44.902Z | codex | CLAIM
 - **Estado:** active
