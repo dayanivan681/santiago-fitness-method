@@ -13,7 +13,11 @@ pages_build_output_dir = "dist"
 # mundo fuera, nunca a todo el mundo dentro.
 
 [vars]
-AUTH_MODE = "access"
+# Paso 1 del cambio: manda el middleware. Cloudflare Access sigue delante del
+# hostname y del comodín, así que son dos puertas seguidas. Si el middleware
+# fallara, la app queda cerrada por partida doble, nunca abierta.
+# Vuelta atrás: poner "access" aquí y volver a desplegar.
+AUTH_MODE = "magic"
 
 [[d1_databases]]
 binding = "ACCESO"

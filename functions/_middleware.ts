@@ -29,11 +29,22 @@ import { paginaEntrar, paginaSesionCerrada, paginaSinAcceso } from './lib/pagina
 type Entorno = {
   readonly ACCESO: D1Database
   readonly AUTH_MODE?: string
+  readonly CF_PAGES_COMMIT_SHA?: string
 }
 
 /** Rutas que gestiona el propio middleware. */
 const RUTA_ACCESO = '/access'
 const RUTA_SALIR = '/salir'
+
+/**
+ * TEMPORAL — comprobación de que el middleware llega al borde.
+ *
+ * Existe porque Cloudflare Access impide sondear el sitio desde fuera: sin esto
+ * no hay forma de distinguir "el middleware no se ejecuta" de "se ejecuta y deja
+ * pasar". No devuelve nada sensible: ni tokens, ni cookies, ni identificadores
+ * de base de datos. Quitar en cuanto se confirme la segunda puerta.
+ */
+const RUTA_DIAGNOSTICO = '/diagnostico'
 
 /**
  * `/admin` lo protege Cloudflare Access con el OTP del coach. El middleware lo
@@ -50,6 +61,20 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   // configurado deja a todo el mundo fuera, nunca a todo el mundo dentro.
   const modo = env.AUTH_MODE ?? 'magic'
 
+  if (url.pathname === RUTA_DIAGNOSTICO) return diagnostico(modo, env)
+
+  const respuesta = await resolver(url, request, env, next, modo)
+
+  return conSello(respuesta, modo, env)
+}
+
+async function resolver(
+  url: URL,
+  request: Request,
+  env: Entorno,
+  next: () => Promise<Response>,
+  modo: string,
+): Promise<Response> {
   if (modo === 'access') return next()
 
   if (url.pathname.startsWith(PREFIJO_ADMIN)) return next()
@@ -59,6 +84,41 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   if (url.pathname === RUTA_SALIR) return atenderSalir(request, env)
 
   return atenderApp(request, env, next)
+}
+
+/**
+ * TEMPORAL — sella cada respuesta con prueba de que pasó por aquí.
+ *
+ * Sin secretos: sólo si el middleware corrió, en qué modo, y los 8 primeros
+ * caracteres del commit desplegado.
+ */
+function conSello(respuesta: Response, modo: string, env: Entorno): Response {
+  const sellada = new Response(respuesta.body, respuesta)
+  sellada.headers.set('X-SFM-Auth-Middleware', 'active')
+  sellada.headers.set('X-SFM-Auth-Mode', modo)
+  sellada.headers.set('X-SFM-Commit', (env.CF_PAGES_COMMIT_SHA ?? 'desconocido').slice(0, 8))
+
+  return sellada
+}
+
+/** TEMPORAL — página legible sin abrir las herramientas del navegador. */
+function diagnostico(modo: string, env: Entorno): Response {
+  const lineas = [
+    'middleware      : ACTIVO',
+    `AUTH_MODE       : ${modo}`,
+    `segunda puerta  : ${modo === 'magic' ? 'SÍ (exige sesión)' : 'NO (deja pasar)'}`,
+    `commit          : ${(env.CF_PAGES_COMMIT_SHA ?? 'desconocido').slice(0, 8)}`,
+    `binding D1      : ${env.ACCESO ? 'presente' : 'AUSENTE'}`,
+  ]
+
+  return new Response(`${lineas.join('\n')}\n`, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-SFM-Auth-Middleware': 'active',
+      'X-SFM-Auth-Mode': modo,
+    },
+  })
 }
 
 /**

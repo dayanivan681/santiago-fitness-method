@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T18:12:49.551Z
+- **Última sincronización:** 2026-08-30T18:38:51.551Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T18:38:51.552Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Arreglada la segunda puerta: el proyecto esta conectado a Git y el hostname sirve el despliegue canonico (github:push), no el mas reciente subido a mano. wrangler.toml con AUTH_MODE=magic estaba sin commitear, asi que el canonico seguia en access. Commiteado. Anadidos diagnosticos temporales no sensibles: cabeceras X-SFM-Auth-Middleware/Mode/Commit y ruta /diagnostico
+- **Verificación:** npm test 410/410 codigo 0; lint 0 warnings; build OK; 16/16 pruebas A-K y bypass en el runtime real de Pages
+- **Siguiente:** Repetir SOLO la prueba: incognito, OTP de Access, esperar Acceso caducado. Luego quitar los diagnosticos temporales
+
 
 ### 2026-08-30T18:12:49.552Z | claude-code | CLAIM
 - **Estado:** active
