@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T05:44:14.871Z
+- **Última sincronización:** 2026-08-30T06:05:25.821Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T06:05:25.822Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Landing profesional en /presentacion con capturas reales de Hoy, Coach, Biblioteca, Ficha, Temporizador, Variantes y Perfil; flujo de coach y participante explicado desde el codigo y los PDFs; limites del piloto visibles; ruta principal de la app intacta
+- **Verificación:** npm test: 392/392; npm run lint; npm run build; Browser/IAB 1280x720; Playwright 1488x1042 y 390x844; consola 0 errores; docs/cliente sin cambios
+- **Siguiente:** Revisar la landing publicada en /presentacion y usarla para la presentacion al cliente
+
 
 ### 2026-08-30T05:44:14.871Z | codex | CLAIM
 - **Estado:** active
