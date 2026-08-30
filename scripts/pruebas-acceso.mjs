@@ -497,6 +497,88 @@ async function verGet(token) {
   )
 }
 
+
+// ═══ Admin · pantalla propia y "Probar como cliente" ════════════════════════
+//
+// La cabecera de Access se puede falsificar aquí porque en local no hay Access
+// delante. En producción Cloudflare elimina las cabeceras `Cf-Access-*` que
+// mande un cliente, así que sólo puede llegar de Access. La comprobación del
+// código es una defensa secundaria, no la puerta.
+
+const COMO_COACH = { 'Cf-Access-Jwt-Assertion': 'simulado' }
+
+// ---- ADMIN-1 · /admin ya no sirve la aplicación del cliente ----------------
+{
+  const rutas = ['/admin', '/admin/', '/admin/invitar', '/admin/lo-que-sea']
+  const respuestas = await Promise.all(
+    rutas.map(async (r) => {
+      const x = await pedir(r, { headers: COMO_COACH })
+      return { r, estado: x.status, html: await x.text() }
+    }),
+  )
+
+  comprobar(
+    'ADMIN-1', 'Ninguna ruta de /admin sirve la SPA del cliente',
+    respuestas.every((x) => x.estado === 200 && !x.html.includes('assets/index-') && x.html.includes('Probar como cliente')),
+    respuestas.map((x) => `${x.r}=${x.estado}`).join(', '),
+  )
+}
+
+// ---- ADMIN-2 · sin Access, cerrado -----------------------------------------
+{
+  const r = await pedir('/admin/')
+  const html = await r.text()
+
+  comprobar(
+    'ADMIN-2', 'Sin la cabecera de Access → 403 y sin aplicación',
+    r.status === 403 && !html.includes('assets/index-') && html.includes('No autorizado'),
+    `status=${r.status}`,
+  )
+}
+
+// ---- ADMIN-3 · Probar como cliente crea una sesión normal ------------------
+{
+  const antes = contarSesiones()
+  const r = await pedir('/admin/', {
+    method: 'POST',
+    headers: { ...COMO_COACH, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ accion: 'probar' }),
+  })
+  const cabecera = r.headers.get('set-cookie') ?? ''
+  const cookie = cabecera.split(';')[0]
+
+  comprobar(
+    'ADMIN-3', 'Probar como cliente → 302 a / con la cookie de siempre',
+    r.status === 302 &&
+      r.headers.get('location') === '/' &&
+      cookie.startsWith('sfm_sesion=') &&
+      ['HttpOnly', 'Secure', 'SameSite=Lax', 'Path=/', 'Max-Age=604800'].every((a) => cabecera.includes(a)) &&
+      contarSesiones() === antes + 1,
+    `status=${r.status} sesiones=+${contarSesiones() - antes}`,
+  )
+
+  // ---- ADMIN-4 · con esa sesión carga TODO, imágenes incluidas -------------
+  const html = await (await pedir('/', { headers: { Cookie: cookie } })).text()
+  const js = html.match(/\/assets\/index-[\w-]+\.js/)?.[0]
+  const css = html.match(/\/assets\/index-[\w-]+\.css/)?.[0]
+  const rutas = [js, css, '/manifest.webmanifest', '/ejercicios/sentadilla-barra.jpg']
+
+  const conSesion = await Promise.all(rutas.map((r) => pedir(r, { headers: { Cookie: cookie } })))
+  const sinSesion = await Promise.all(rutas.map((r) => pedir(r)))
+
+  comprobar(
+    'ADMIN-4', 'Con la sesión del coach cargan JS, CSS, manifest e imágenes',
+    conSesion.every((x) => x.status === 200),
+    conSesion.map((x) => x.status).join(','),
+  )
+
+  comprobar(
+    'ADMIN-5', 'Anónimo sigue recibiendo 401 en todas ellas, imágenes incluidas',
+    sinSesion.every((x) => x.status === 401),
+    sinSesion.map((x) => x.status).join(','),
+  )
+}
+
 const fallos = resultados.filter((r) => !r.ok)
 console.log(`\n${resultados.length - fallos.length}/${resultados.length} correctas\n`)
 process.exit(fallos.length === 0 ? 0 : 1)

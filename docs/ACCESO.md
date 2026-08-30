@@ -28,12 +28,19 @@ Si la variable falta, el middleware asume `magic` y cierra. Fallar cerrado es lo
 **Cliente** — enlace privado → botón *Entrar* → app. Nunca ve Cloudflare, ni
 escribe correo, ni crea cuenta.
 
-**Coach** — Cloudflare Access con OTP en `/admin/invitar`, la página que genera
-los enlaces. Para usar la app como participante, se genera un enlace a sí mismo.
+**Coach** — Cloudflare Access con OTP en `/admin`, su pantalla propia. Desde ahí
+puede *Probar como cliente* (abre una sesión de participante normal y entra en la
+app) y *Generar acceso para Santiago*.
+
+Nada bajo `/admin` sirve aplicación de cliente. Antes no existía función para esa
+ruta y Cloudflare Pages caía en su reserva de página única: servía la SPA, que
+cargaba porque Access dejaba pasar el HTML, pero sus imágenes y bundles viven
+fuera de `/admin` y chocaban con la puerta del enlace mágico. Un catch-all en
+`functions/admin/[[ruta]].ts` lo impide.
 
 ## Generar un enlace
 
-Desde la app: `https://santiago-fitness-method.pages.dev/admin/invitar`.
+Desde la app: `https://santiago-fitness-method.pages.dev/admin`.
 
 Desde la terminal:
 

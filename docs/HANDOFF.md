@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T22:44:59.904Z
+- **Última sincronización:** 2026-08-30T22:49:36.387Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T22:49:36.388Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** P1b: /admin ya no cae en la reserva de pagina unica de Pages, que servia la SPA del cliente y hacia que sus imagenes y bundles chocaran con la puerta del enlace magico. Nueva pantalla del coach en functions/admin/[[ruta]].ts con Probar como cliente (crea una sesion de participante normal y redirige a /), Generar acceso para Santiago y estado. Eliminado functions/admin/invitar.ts, que queda fundido ahi
+- **Verificación:** npm test 414/414 codigo 0; lint 0 warnings; build OK; 37/37 pruebas de acceso con 5 nuevas de admin; verificado que anonimo sigue en 401 para imagenes, JS, CSS y manifest
+- **Siguiente:** Codex ejecuta el regression QA final
+
 
 ### 2026-08-30T22:44:59.905Z | claude-code | CLAIM
 - **Estado:** active
