@@ -13,10 +13,12 @@ pages_build_output_dir = "dist"
 # mundo fuera, nunca a todo el mundo dentro.
 
 [vars]
-# Paso 1 del cambio: manda el middleware. Cloudflare Access sigue delante del
-# hostname y del comodín, así que son dos puertas seguidas. Si el middleware
-# fallara, la app queda cerrada por partida doble, nunca abierta.
-# Vuelta atrás: poner "access" aquí y volver a desplegar.
+# Manda el middleware. Cloudflare Access ya sólo cubre /admin y los despliegues
+# de rama, así que ésta es la única puerta de la app: no la pongas en "access"
+# sin devolver antes Access al hostname completo, o la app quedaría abierta.
+#
+# Ojo: el proyecto está conectado a Git y el hostname sirve el despliegue
+# canónico, que sale de un push. Esta variable sólo cuenta si está commiteada.
 AUTH_MODE = "magic"
 
 [[d1_databases]]

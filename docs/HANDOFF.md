@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T19:02:53.380Z
+- **Última sincronización:** 2026-08-30T19:07:38.945Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T19:07:38.946Z | claude-code | ADOPT
+- **Estado:** active
+- **Tarea:** Cierre del cutover: documentacion y comentarios (solo comentarios y docs, sin cambio de comportamiento)
+- **Cambios adoptados:** docs/ACCESO.md, wrangler.toml
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-08-30T19:02:53.381Z | claude-code | PUBLISH
 - **Estado:** complete

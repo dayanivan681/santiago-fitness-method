@@ -1,17 +1,24 @@
-# Acceso — enlace privado (sin cutover todavía)
+# Acceso — enlace privado
 
-Dos sistemas conviven a propósito hasta el cambio en producción:
+El cambio está hecho. Quién autentica qué:
 
-- **Hoy en producción manda Cloudflare Access** con OTP por correo.
-- **El sustituto ya está construido y probado**: enlaces de invitación de un
-  solo uso resueltos por `functions/_middleware.ts`.
+| Ruta | Autentica |
+|---|---|
+| `santiago-fitness-method.pages.dev/*` | El middleware, con enlace privado. **Sin Cloudflare a la vista.** |
+| `santiago-fitness-method.pages.dev/admin/*` | Cloudflare Access con OTP, sólo el coach |
+| `*.santiago-fitness-method.pages.dev` (previews) | Cloudflare Access con OTP |
 
-El interruptor es `AUTH_MODE` en `wrangler.toml`.
+El interruptor sigue siendo `AUTH_MODE` en `wrangler.toml`.
 
 | Valor | Quién autentica |
 |---|---|
-| `access` | El middleware deja pasar; manda Cloudflare Access. **Producción ahora.** |
-| `magic` | Manda el middleware: cookie de sesión o 401. Despliegues de rama. |
+| `magic` | Manda el middleware: cookie de sesión o 401. **Producción ahora.** |
+| `access` | El middleware deja pasar. Sólo para volver atrás, y ya no basta: Access ya no cubre la raíz. |
+
+**Aviso importante.** El proyecto está conectado a Git y el hostname sirve el
+despliegue **canónico**, que sale de un push. Un `wrangler pages deploy` a mano
+crea un despliegue más reciente que **nunca llega a servirse**. La configuración
+sólo cuenta si está commiteada. Este malentendido ya costó una prueba fallida.
 
 Si la variable falta, el middleware asume `magic` y cierra. Fallar cerrado es lo
 único aceptable en una puerta.
@@ -62,22 +69,21 @@ npx wrangler pages dev --port 8788     # en otra terminal
 BASE_URL=http://localhost:8788 node scripts/pruebas-acceso.mjs
 ```
 
-Dieciséis comprobaciones: A–K más dos de bypass. Usan la D1 de verdad, no
+Diecisiete comprobaciones: A–K, dos de bypass y una de limpieza. Usan la D1 de verdad, no
 dobles: lo que hay que demostrar es que SQLite aplica la atomicidad del uso
 único, y un mock no probaría nada.
 
-## Secuencia del cambio en producción
+## Vuelta atrás
 
-1. `AUTH_MODE = "magic"` en `[vars]` de `wrangler.toml`, desplegar.
-   Access sigue delante: dos puertas seguidas, ninguna ventana abierta.
-2. Generarse un enlace y comprobar el flujo entero.
-3. Reducir la aplicación de Access a la ruta `/admin`. Aquí es cuando el cliente
-   deja de ver Cloudflare.
-4. Generar el enlace del cliente y mandárselo.
+Para devolver todo a Cloudflare Access hacen falta **dos** cambios, y en este
+orden — al revés dejaría la app abierta unos segundos:
 
-Vuelta atrás en cualquier punto: `AUTH_MODE = "access"` y desplegar. Mientras la
-aplicación de Access siga cubriendo el hostname completo, se vuelve exactamente
-al comportamiento actual.
+1. En la aplicación de Access, quitar el `admin` del campo *Path* de la primera
+   destinación, para que vuelva a cubrir el hostname entero.
+2. `AUTH_MODE = "access"` en `wrangler.toml`, commit y push.
+
+Si sólo hiciera falta cerrar deprisa, el paso 1 basta: Access vuelve a estar
+delante y el middleware sigue exigiendo sesión por debajo.
 
 ## Configuración vigente en Cloudflare
 
