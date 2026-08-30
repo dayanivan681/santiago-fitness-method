@@ -10,6 +10,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:roles": "node scripts/pruebas-roles.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "handoff:status": "node scripts/handoff-sync.mjs status",
@@ -18,7 +19,8 @@
     "handoff:adopt": "node scripts/handoff-sync.mjs adopt",
     "handoff:publish": "node scripts/handoff-sync.mjs publish",
     "invitar": "node scripts/invitar.mjs",
-    "d1:migrar": "wrangler d1 execute santiago-acceso --remote --file=migrations/0001_acceso.sql"
+    "d1:migrar": "wrangler d1 execute santiago-acceso --remote --file=migrations/0001_acceso.sql",
+    "d1:migrar-roles": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0002_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0003_seed_qa_role_split.sql"
   },
   "dependencies": {
     "dexie": "^4.4.5",

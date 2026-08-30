@@ -54,7 +54,7 @@ export function AltaParticipante({ repositorio = repositorioPorDefecto }: Props 
         <form className="panel" onSubmit={enviar}>
           <p className="nota">
             Los valores ya vienen puestos como estimados. Escribe el nombre y corrige lo
-            que haga falta; después todo sigue siendo editable desde Perfil.
+            que haga falta; después el coach podrá administrarlo desde su consola.
           </p>
 
           <CamposParticipante

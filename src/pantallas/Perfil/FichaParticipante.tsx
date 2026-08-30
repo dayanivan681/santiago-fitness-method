@@ -24,9 +24,11 @@ interface Props {
   readonly participante: Participante
   readonly repositorio: Repositorio
   readonly onGuardar: (cambios: Participante) => Promise<void>
+  /** La consola del coach puede habilitar la edición; el cliente sólo lee. */
+  readonly editable?: boolean
 }
 
-export function FichaParticipante({ participante, repositorio, onGuardar }: Props) {
+export function FichaParticipante({ participante, repositorio, onGuardar, editable = true }: Props) {
   const [editando, setEditando] = useState(false)
   const [borrador, setBorrador] = useState(participante)
 
@@ -51,13 +53,15 @@ export function FichaParticipante({ participante, repositorio, onGuardar }: Prop
       <section className="panel">
         <div className="panel__cabecera">
           <h2 className="panel__titulo">Participante</h2>
-          <button
-            type="button"
-            className="hoja__cerrar"
-            onClick={() => setEditando(true)}
-          >
-            Editar
-          </button>
+          {editable && (
+            <button
+              type="button"
+              className="hoja__cerrar"
+              onClick={() => setEditando(true)}
+            >
+              Editar
+            </button>
+          )}
         </div>
 
         <FotoDePerfil participante={participante} repositorio={repositorio} />

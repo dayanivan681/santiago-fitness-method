@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T23:19:44.925Z
+- **Última sincronización:** 2026-08-30T23:57:36.253Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T23:57:36.253Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Issue #1 implementado: separación real Coach/Admin vs Cliente; consola /admin con clientes, perfiles, rutinas y enlaces respaldados por D1; API de cliente derivada de sesión; preview con sesión normal y retorno seguro; superficie cliente sin editor Coach; migraciones 0002/0003 y documentación actualizada. La invitación final de Santiago no se modificó.
+- **Verificación:** npm test (417/417); npm run lint (0 warnings); npm run build; test:roles (8/8); pruebas-acceso (37/37); migraciones D1 0002/0003 remotas aplicadas; QA dual-role local desktop/mobile; Santiago verificado sin cambios
+- **Siguiente:** Esperar el despliegue Git canónico y completar OTP real de Cloudflare Access en /admin más Safari macOS/iOS antes de READY FOR SANTIAGO
+
 
 ### 2026-08-30T23:19:44.926Z | codex | CLAIM
 - **Estado:** active

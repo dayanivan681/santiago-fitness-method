@@ -4,7 +4,6 @@
  * vive aquí, en segundo plano según §25) y §28 (la estructura de 4 días).
  */
 
-import { useLiveQuery } from 'dexie-react-hooks'
 import { usePerfil } from '../../aplicacion/usePerfil'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { Cabecera } from '../../componentes/Cabecera'
@@ -17,18 +16,18 @@ import type { Repositorio } from '../../datos/repositorio'
 
 interface Props {
   readonly repositorio?: Repositorio
-  readonly onAbrirCoach?: (plantillaId: string) => void
+  /** La consola puede abrir una sesión normal de preview; no añade permisos. */
+  readonly vistaPrevia?: boolean
+  /** La ruta principal es sólo participante; tests/legacy pueden renderizar la ficha coach. */
+  readonly soloParticipante?: boolean
 }
 
-export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Props = {}) {
+export function Perfil({
+  repositorio = repositorioPorDefecto,
+  vistaPrevia = false,
+  soloParticipante = false,
+}: Props = {}) {
   const { participante, cargando, guardar } = usePerfil(repositorio)
-  const plantillas = useLiveQuery(
-    async () => {
-      const actual = await repositorio.participanteActual()
-      return actual ? repositorio.listarPlantillas(actual.id) : []
-    },
-    [repositorio],
-  )
 
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!participante) return <p className="aviso">No hay participante configurado.</p>
@@ -47,6 +46,7 @@ export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Pr
             participante={participante}
             repositorio={repositorio}
             onGuardar={guardar}
+            editable={!soloParticipante}
           />
 
           {/* Datos del cuerpo juntos: la ficha y cómo va cambiando. */}
@@ -57,38 +57,17 @@ export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Pr
             participante={participante}
             repositorio={repositorio}
             onGuardar={guardar}
+            soloLectura={soloParticipante}
           />
 
           <PanelVolumen repositorio={repositorio} />
 
-          <section className="panel">
-            <div className="panel__cabecera">
-              <h2 className="panel__titulo">Estructura de 4 días</h2>
-              <span className="panel__nota">Editar</span>
-            </div>
-
-            {(plantillas ?? []).map((plantilla) => (
-              <button
-                key={plantilla.id}
-                type="button"
-                className="dia"
-                onClick={() => onAbrirCoach?.(plantilla.id)}
-              >
-                <span className="dia__nombre">{plantilla.nombre}</span>
-                <span className="dia__nota">
-                  {plantilla.slots.length === 0
-                    ? 'Por confirmar'
-                    : `${plantilla.slots.length} ejercicios`}
-                </span>
-              </button>
-            ))}
-          </section>
-
           <PanelRespaldo participante={participante} repositorio={repositorio} />
 
           <p className="nota">
-            Guardado local en el dispositivo durante el piloto. Después: cuenta por
-            participante, acceso del coach y sincronización.
+            Tu identidad y rutina llegan del panel del coach y se sincronizan desde la
+            nube. Series, historial, fotos y progreso se guardan localmente en este
+            dispositivo durante este release.
           </p>
 
           {/* El acceso lo resuelve el middleware del borde, no la app: por eso
@@ -98,6 +77,9 @@ export function Perfil({ repositorio = repositorioPorDefecto, onAbrirCoach }: Pr
             <a className="enlace" href="/salir">
               Cerrar sesión
             </a>
+            {vistaPrevia && (
+              <> · <a className="enlace" href="/salir?volver=admin">Salir de vista previa</a></>
+            )}
           </p>
         </div>
       </div>

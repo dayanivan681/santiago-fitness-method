@@ -193,7 +193,39 @@ async function atenderSalir(request: Request, env: Entorno): Promise<Response> {
   // copia del valor seguiría entrando.
   if (cookie) await cerrarSesion(env.ACCESO, cookie)
 
+  // La previsualización del coach usa la misma sesión que un participante,
+  // pero deja una salida inequívoca al panel. El marcador no concede ningún
+  // permiso: sólo permite limpiar la sesión y volver a pedir Cloudflare Access.
+  const volverAlAdmin =
+    new URL(request.url).searchParams.get('volver') === 'admin' &&
+    leerCookieConNombre(request, 'sfm_preview') === '1'
+  if (volverAlAdmin) {
+    const cabeceras = new Headers({ Location: '/admin/', 'Cache-Control': 'no-store' })
+    cabeceras.append('Set-Cookie', cabeceraDeCookieBorrada())
+    cabeceras.append('Set-Cookie', cookieDePreviewBorrada())
+    return new Response(null, {
+      status: 302,
+      headers: cabeceras,
+    })
+  }
+
   return paginaSesionCerrada(cabeceraDeCookieBorrada())
+}
+
+function leerCookieConNombre(request: Request, nombre: string): string | null {
+  const cabecera = request.headers.get('Cookie')
+  if (!cabecera) return null
+  for (const trozo of cabecera.split(';')) {
+    const separador = trozo.indexOf('=')
+    if (separador !== -1 && trozo.slice(0, separador).trim() === nombre) {
+      return trozo.slice(separador + 1).trim() || null
+    }
+  }
+  return null
+}
+
+function cookieDePreviewBorrada(): string {
+  return 'sfm_preview=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0'
 }
 
 /**

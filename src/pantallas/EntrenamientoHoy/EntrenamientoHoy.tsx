@@ -136,10 +136,11 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
         )}
 
         {ejerciciosDelDia.length === 0 ? (
-          // §28: Lower A, Upper B y Lower B siguen sin confirmarse.
+          // Si el coach aún no ha publicado ese día desde /admin, el participante
+          // recibe un estado vacío explícito en vez de controles de programación.
           <p className="aviso">
-            {plantilla.nombre} todavía no tiene ejercicios definidos. Se configuran desde
-            Perfil → Estructura de 4 días.
+            {plantilla.nombre} todavía no tiene ejercicios definidos. El coach lo configura
+            desde la consola Coach/Admin.
           </p>
         ) : (
           <div className="pila" style={{ marginTop: 12 }}>

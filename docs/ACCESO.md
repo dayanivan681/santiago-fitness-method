@@ -28,9 +28,12 @@ Si la variable falta, el middleware asume `magic` y cierra. Fallar cerrado es lo
 **Cliente** — enlace privado → botón *Entrar* → app. Nunca ve Cloudflare, ni
 escribe correo, ni crea cuenta.
 
-**Coach** — Cloudflare Access con OTP en `/admin`, su pantalla propia. Desde ahí
-puede *Probar como cliente* (abre una sesión de participante normal y entra en la
-app) y *Generar acceso para Santiago*.
+**Coach** — Cloudflare Access con OTP en `/admin`, su consola propia. Desde ahí
+puede listar clientes, abrir su ficha, editar perfil y rutina (días, ejercicios,
+orden, series, rango, descanso y progresión), generar/revocar enlaces y
+*Previsualizar cliente*. La previsualización crea la misma sesión normal que el
+enlace mágico; no existe bypass permanente. `Salir de vista previa` revoca esa
+sesión y vuelve a pedir `/admin/` a Access.
 
 Nada bajo `/admin` sirve aplicación de cliente. Antes no existía función para esa
 ruta y Cloudflare Pages caía en su reserva de página única: servía la SPA, que
@@ -40,7 +43,7 @@ fuera de `/admin` y chocaban con la puerta del enlace mágico. Un catch-all en
 
 ## Generar un enlace
 
-Desde la app: `https://santiago-fitness-method.pages.dev/admin`.
+Desde la consola: `https://santiago-fitness-method.pages.dev/admin`.
 
 Desde la terminal:
 
@@ -76,9 +79,31 @@ npx wrangler pages dev --port 8788     # en otra terminal
 BASE_URL=http://localhost:8788 node scripts/pruebas-acceso.mjs
 ```
 
-Diecisiete comprobaciones: A–K, dos de bypass y una de limpieza. Usan la D1 de verdad, no
-dobles: lo que hay que demostrar es que SQLite aplica la atomicidad del uso
-único, y un mock no probaría nada.
+La regresión de acceso cubre A–K, las comprobaciones de bypass, service worker y
+la consola admin (37 checks). El issue P0 añade pruebas de superficie por rol y
+el round-trip coach → cliente. Usan D1 de verdad, no dobles, para comprobar
+atomicidad y persistencia.
+
+## Frontera de datos del release
+
+`clientes` y `rutinas` son tablas cloud en D1 (`migrations/0002_role_split.sql`).
+El panel admin es el único que puede escribirlas y exige Cloudflare Access más la
+cabecera secundaria. `/api/cliente` valida `sfm_sesion` y deriva el
+`cliente_id` de esa sesión: ignora cualquier identidad que intente mandar el
+navegador. Al iniciar o recargar, la app copia ese perfil y rutina a IndexedDB.
+
+Series, sesiones, fotos, progreso y borradores siguen locales en este release;
+no se presentan como datos compartidos entre dispositivos. El cliente no recibe
+ninguna ruta ni control de edición de rutina, aunque intente abrir URLs antiguas.
+
+Después de crear el D1 original, aplicar la frontera una sola vez:
+
+```bash
+npm run d1:migrar-roles
+```
+
+La migración sólo inserta los clientes técnicos `santiago` y `dayan-test` si no
+existen y no consume, revoca ni reemplaza la invitación real de Santiago.
 
 ## Vuelta atrás
 

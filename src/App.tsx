@@ -1,14 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { repositorio } from './aplicacion/repositorio'
+import { sincronizarConfiguracionCloud } from './aplicacion/sincronizarCloud'
 import { sembrar } from './datos/semilla'
 import { AltaParticipante } from './pantallas/Alta/AltaParticipante'
 import { EntrenamientoHoy } from './pantallas/EntrenamientoHoy/EntrenamientoHoy'
 import { Biblioteca } from './pantallas/Biblioteca/Biblioteca'
 import { Historial } from './pantallas/Historial/Historial'
 import { Perfil } from './pantallas/Perfil/Perfil'
-import { Coach } from './pantallas/Coach/Coach'
-import { useCapa } from './aplicacion/useCapa'
 
 type Seccion = 'hoy' | 'biblioteca' | 'historial' | 'perfil'
 
@@ -22,16 +21,21 @@ const PESTANAS: readonly { readonly id: Seccion; readonly etiqueta: string }[] =
 
 export function App() {
   const [listo, setListo] = useState(false)
+  const [vistaPrevia, setVistaPrevia] = useState(false)
   const [seccion, setSeccion] = useState<Seccion>('hoy')
-  // El coach no es una pestaña: se entra desde Perfil → Estructura de 4 días,
-  // porque editar plantillas no es algo que se haga entrenando (§25).
-  // Guarda qué día se pidió, no sólo que se abrió: tocar "Lower A" y aterrizar
-  // en Upper A obligaba a buscarlo otra vez dentro.
-  const [diaAEditar, setDiaAEditar] = useState<string | null>(null)
-  const coachAbierto = diaAEditar !== null
 
   useEffect(() => {
-    sembrar(repositorio).then(() => setListo(true))
+    let cancelado = false
+    void (async () => {
+      await sembrar(repositorio)
+      const cloud = await sincronizarConfiguracionCloud(repositorio)
+      if (cancelado) return
+      setVistaPrevia(cloud?.preview === true)
+      setListo(true)
+    })()
+    return () => {
+      cancelado = true
+    }
   }, [])
 
   // `undefined` es "todavía cargando" y `null` es "no hay nadie dado de alta":
@@ -40,9 +44,6 @@ export function App() {
     () => repositorio.participanteActual().then((encontrado) => encontrado ?? null),
     [],
   )
-
-  const cerrarCoach = useCallback(() => setDiaAEditar(null), [])
-  const volverDeCoach = useCapa(coachAbierto, cerrarCoach)
 
   if (!listo || participante === undefined) return <p className="aviso">Preparando…</p>
 
@@ -55,20 +56,12 @@ export function App() {
     )
   }
 
-  if (coachAbierto) {
-    return (
-      <div className="app">
-        <Coach plantillaId={diaAEditar ?? undefined} onVolver={volverDeCoach} />
-      </div>
-    )
-  }
-
   return (
     <div className="app">
       {seccion === 'hoy' && <EntrenamientoHoy />}
       {seccion === 'biblioteca' && <Biblioteca />}
       {seccion === 'historial' && <Historial />}
-      {seccion === 'perfil' && <Perfil onAbrirCoach={setDiaAEditar} />}
+      {seccion === 'perfil' && <Perfil vistaPrevia={vistaPrevia} soloParticipante />}
 
       <nav className="pestanas" aria-label="Secciones">
         {PESTANAS.map(({ id, etiqueta }) => (

@@ -3,25 +3,23 @@ import './presentacion.css'
 const CAPTURAS = {
   hoy: '/presentacion/hoy.png',
   biblioteca: '/presentacion/biblioteca.png',
-  coach: '/presentacion/coach.png',
   ficha: '/presentacion/ficha-ejercicio.png',
   temporizador: '/presentacion/temporizador.png',
   variantes: '/presentacion/variantes.png',
-  perfil: '/presentacion/perfil-estructura.png',
 } as const
 
 const FUNCIONES_ACTUALES = [
   {
     nombre: 'Alta y perfil',
     detalle:
-      'Crear un participante, editar sus datos, objetivo, frecuencia, foto y ejercicios a evitar.',
-    ubicacion: 'Perfil',
+      'Crear un cliente y editar sus datos, objetivo, frecuencia, foto y restricciones desde la consola protegida.',
+    ubicacion: '/admin',
   },
   {
     nombre: 'Programación de 4 días',
     detalle:
       'Editar Upper A, Lower A, Upper B y Lower B; añadir, quitar, reemplazar y reordenar entre 5 y 8 ejercicios.',
-    ubicacion: 'Perfil → Estructura de 4 días',
+    ubicacion: 'Coach/Admin → ficha del cliente',
   },
   {
     nombre: 'Registro por serie',
@@ -50,15 +48,14 @@ const FUNCIONES_ACTUALES = [
   {
     nombre: 'Copia de seguridad',
     detalle:
-      'Descargar o restaurar un archivo con los datos locales del participante y sus fotos.',
+      'Descargar o restaurar un archivo con las series, sesiones, fotos y progreso locales.',
     ubicacion: 'Perfil',
   },
 ] as const
 
 const LIMITES_PILOTO = [
-  'La interfaz trabaja con un participante a la vez.',
-  'Coach y participante no tienen cuentas ni permisos separados.',
-  'Los datos se guardan localmente en el dispositivo; no hay sincronización en la nube.',
+  'El coach administra identidad y rutina en D1; series, sesiones, fotos y progreso siguen locales en el dispositivo.',
+  'La consola Coach/Admin está protegida por Cloudflare Access y el cliente entra por enlace de un solo uso.',
   'La biblioteca tiene imágenes, pero todavía no incorpora vídeo.',
   'No incluye chat, pagos, nutrición completa, redes sociales ni wearables.',
 ] as const
@@ -115,8 +112,8 @@ export function Presentacion() {
         <div className="presentacion__introduccion">
           <h2 id="titulo-flujo">Un ciclo entre coach, participante y registro</h2>
           <p>
-            En el piloto no existen accesos separados. La programación y el entrenamiento
-            viven en la misma app y en el mismo perfil local.
+            El coach prepara la identidad y la rutina en su consola protegida. El participante
+            entra por su enlace y sólo ve el entrenamiento, la biblioteca, su historial y su perfil.
           </p>
         </div>
 
@@ -185,21 +182,19 @@ export function Presentacion() {
       </section>
 
       <section className="presentacion__recorrido presentacion__recorrido--invertido" aria-labelledby="titulo-coach">
-        <figure className="presentacion__marco">
-          <img src={CAPTURAS.coach} alt="Pantalla Coach real editando Upper A" />
-          <figcaption>Coach · edición de Upper A</figcaption>
-        </figure>
         <div className="presentacion__texto-seccion">
           <h2 id="titulo-coach">Cómo la usa el coach</h2>
           <p>
-            Desde Perfil, el coach abre Estructura de 4 días y elige el día que quiere
-            editar. La programación se cambia desde esa pantalla.
+            Entra por Cloudflare Access a <code>/admin</code>, elige un cliente y abre su ficha.
+            Esa consola escribe el perfil y la programación en D1 para que el cliente los reciba
+            al recargar o abrir una nueva sesión.
           </p>
           <ul>
+            <li>Crear y seleccionar clientes; ver estado de sesiones y enlaces.</li>
             <li>Añadir, quitar, reemplazar y reordenar ejercicios.</li>
             <li>Editar series, repeticiones mínimas y máximas, y descanso.</li>
             <li>Dejar la progresión automática o fijar una recomendación.</li>
-            <li>Recibir una advertencia al asignar un ejercicio restringido en el perfil.</li>
+            <li>Generar/revocar enlaces y previsualizar al cliente con una sesión normal.</li>
           </ul>
         </div>
       </section>
@@ -210,20 +205,14 @@ export function Presentacion() {
           <p>
             La biblioteca reúne 33 ejercicios y puede filtrarse por músculo. Cada ficha
             muestra la información disponible para identificar y ejecutar el ejercicio.
-            En Perfil se administran los datos del participante, las medidas, las fotos,
-            las limitaciones, el volumen semanal, los cuatro días y la copia de seguridad.
+            En Perfil el participante consulta sus datos, medidas, fotos, volumen semanal y
+            copia local. Los cuatro días sólo se editan desde Coach/Admin.
           </p>
         </div>
-        <div className="presentacion__doble-media">
-          <figure className="presentacion__marco">
-            <img src={CAPTURAS.biblioteca} alt="Biblioteca real con ejercicios e imágenes" />
-            <figcaption>Biblioteca · 33 ejercicios</figcaption>
-          </figure>
-          <figure className="presentacion__marco">
-            <img src={CAPTURAS.perfil} alt="Estructura de cuatro días y copia de seguridad en Perfil" />
-            <figcaption>Perfil · estructura y respaldo</figcaption>
-          </figure>
-        </div>
+        <figure className="presentacion__marco">
+          <img src={CAPTURAS.biblioteca} alt="Biblioteca real con ejercicios e imágenes" />
+          <figcaption>Biblioteca · 33 ejercicios</figcaption>
+        </figure>
       </section>
 
       <section className="presentacion__funciones" id="funciones" aria-labelledby="titulo-funciones">

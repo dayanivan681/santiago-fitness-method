@@ -8,9 +8,9 @@ describe('Presentación de la app', () => {
 
     expect(screen.getByRole('heading', { name: 'Cómo la usa el participante' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Cómo la usa el coach' })).toBeInTheDocument()
-    expect(screen.getByText('Coach y participante no tienen cuentas ni permisos separados.')).toBeInTheDocument()
+    expect(screen.getByText(/La consola Coach\/Admin está protegida por Cloudflare Access/)).toBeInTheDocument()
     expect(
-      screen.getByText('Los datos se guardan localmente en el dispositivo; no hay sincronización en la nube.'),
+      screen.getByText(/series, sesiones, fotos y progreso siguen locales/),
     ).toBeInTheDocument()
   })
 
@@ -21,10 +21,7 @@ describe('Presentación de la app', () => {
       'src',
       '/presentacion/hoy.png',
     )
-    expect(screen.getByAltText('Pantalla Coach real editando Upper A')).toHaveAttribute(
-      'src',
-      '/presentacion/coach.png',
-    )
+    expect(screen.queryByAltText('Pantalla Coach real editando Upper A')).not.toBeInTheDocument()
     expect(screen.getByAltText('Biblioteca real con ejercicios e imágenes')).toHaveAttribute(
       'src',
       '/presentacion/biblioteca.png',

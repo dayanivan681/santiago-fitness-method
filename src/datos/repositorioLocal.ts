@@ -32,8 +32,17 @@ export class RepositorioLocal implements Repositorio {
     await this.db.participantes.put(participante)
   }
 
-  /** El primero que haya: durante el piloto hay uno y sólo uno (§27). */
+  /**
+   * El cliente cloud seleccionado en este dispositivo, o el primero durante
+   * el piloto local. La selección sólo evita que una previsualización de otro
+   * cliente lea el primer registro histórico de IndexedDB; no concede acceso.
+   */
   async participanteActual(): Promise<Participante | undefined> {
+    const seleccionado = idSeleccionado()
+    if (seleccionado) {
+      const encontrado = await this.db.participantes.get(seleccionado)
+      if (encontrado) return encontrado
+    }
     return this.db.participantes.toCollection().first()
   }
 
@@ -257,4 +266,15 @@ export class RepositorioLocal implements Repositorio {
       return fecha ? [{ ...serie, fecha }] : []
     })
   }
+}
+
+function idSeleccionado(): string | null {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return window.localStorage.getItem('sfm_cliente_id')
+    }
+  } catch {
+    // Un storage bloqueado no impide el modo local de participante único.
+  }
+  return null
 }

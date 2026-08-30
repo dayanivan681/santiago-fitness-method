@@ -1,12 +1,12 @@
 /**
  * Copia de seguridad de los datos.
  *
- * Todo vive en el dispositivo (§26), y eso deja un riesgo sin red: si el
- * navegador borra su almacenamiento se van meses de entrenamiento, y §19 —"lo
- * registrado no se pierde"— deja de cumplirse por algo que no depende de la app.
+ * El registro de entrenamiento vive en el dispositivo (§26), y eso deja un
+ * riesgo: si el navegador borra su almacenamiento se van meses de entrenamiento.
+ * La identidad y la rutina ya llegan de D1; esta copia cubre las partes locales.
  *
- * El archivo es además, mientras no haya cuentas, la única forma de que el coach
- * reciba lo que hizo el participante.
+ * El archivo sigue siendo útil para mover lo que hizo el participante entre
+ * dispositivos, porque ese historial todavía no se sincroniza.
  */
 
 import { useRef, useState } from 'react'
@@ -73,8 +73,10 @@ export function PanelRespaldo({ participante, repositorio }: Props) {
       </div>
 
       <p className="nota">
-        Los datos viven sólo en este dispositivo. Guarda una copia de vez en cuando: si
-        se borra el navegador o cambias de móvil, es lo único que los recupera.
+        Los datos viven sólo en este dispositivo cuando son series, sesiones, fotos y
+        progreso. Guarda una copia de vez en cuando: si se borra el navegador o cambias
+        de móvil, es lo único que recupera ese registro local. El perfil y la rutina se
+        sincronizan desde el panel del coach.
       </p>
 
       <div className="foto-perfil__acciones">

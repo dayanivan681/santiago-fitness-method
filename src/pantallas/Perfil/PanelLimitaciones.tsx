@@ -17,9 +17,10 @@ interface Props {
   readonly participante: Participante
   readonly repositorio: Repositorio
   readonly onGuardar: (cambios: Participante) => Promise<void>
+  readonly soloLectura?: boolean
 }
 
-export function PanelLimitaciones({ participante, repositorio, onGuardar }: Props) {
+export function PanelLimitaciones({ participante, repositorio, onGuardar, soloLectura = false }: Props) {
   const ejercicios = useLiveQuery(() => repositorio.listarEjercicios(), [repositorio])
   const [elegido, setElegido] = useState('')
 
@@ -50,41 +51,45 @@ export function PanelLimitaciones({ participante, repositorio, onGuardar }: Prop
           {restringidos.map((ejercicio) => (
             <span key={ejercicio.id} className="limitacion__alternativas">
               <span style={{ flex: 1 }}>{ejercicio.nombre}</span>
-              <button
-                type="button"
-                className="filtro"
-                aria-label={`Quitar ${ejercicio.nombre}`}
-                onClick={() => onGuardar(dejarDeEvitar(participante, ejercicio.id))}
-              >
-                Quitar
-              </button>
+              {!soloLectura && (
+                <button
+                  type="button"
+                  className="filtro"
+                  aria-label={`Quitar ${ejercicio.nombre}`}
+                  onClick={() => onGuardar(dejarDeEvitar(participante, ejercicio.id))}
+                >
+                  Quitar
+                </button>
+              )}
             </span>
           ))}
         </div>
       )}
 
-      <form style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }} onSubmit={anadir}>
-        <label className="campo-texto" style={{ flex: 1 }}>
-          <span className="etiqueta-campo">Añadir restricción</span>
-          <select
-            value={elegido}
-            onChange={(e) => setElegido(e.target.value)}
-            aria-label="Ejercicio a evitar"
-          >
-            <option value="">Elegir…</option>
-            {biblioteca
-              .filter((ejercicio) => !evitados.includes(ejercicio.id))
-              .map((ejercicio) => (
-                <option key={ejercicio.id} value={ejercicio.id}>
-                  {ejercicio.nombre}
-                </option>
-              ))}
-          </select>
-        </label>
-        <button type="submit" className="boton-guardar" disabled={!elegido}>
-          Evitar
-        </button>
-      </form>
+      {!soloLectura && (
+        <form style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }} onSubmit={anadir}>
+          <label className="campo-texto" style={{ flex: 1 }}>
+            <span className="etiqueta-campo">Añadir restricción</span>
+            <select
+              value={elegido}
+              onChange={(e) => setElegido(e.target.value)}
+              aria-label="Ejercicio a evitar"
+            >
+              <option value="">Elegir…</option>
+              {biblioteca
+                .filter((ejercicio) => !evitados.includes(ejercicio.id))
+                .map((ejercicio) => (
+                  <option key={ejercicio.id} value={ejercicio.id}>
+                    {ejercicio.nombre}
+                  </option>
+                ))}
+            </select>
+          </label>
+          <button type="submit" className="boton-guardar" disabled={!elegido}>
+            Evitar
+          </button>
+        </form>
+      )}
     </section>
   )
 }
