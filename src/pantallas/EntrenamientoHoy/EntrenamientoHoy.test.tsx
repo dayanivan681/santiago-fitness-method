@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { describe, test, expect, beforeEach } from 'vitest'
+import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor, fireEvent, cleanup, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
@@ -976,6 +976,26 @@ describe('ficha del ejercicio desde el entrenamiento (fases 4 y 5)', () => {
 
     const ficha = await screen.findByRole('dialog', { name: PRESS })
     expect(within(ficha).getByText('Todavía sin entrenar.')).toBeInTheDocument()
+  })
+
+  test('cada alternativa aparece una sola vez y React no avisa de claves duplicadas', async () => {
+    const errorDeConsola = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+
+    try {
+      await abrirUpperA()
+
+      await userEvent.click(screen.getAllByRole('button', { name: 'Ficha' })[0])
+
+      const ficha = await screen.findByRole('dialog', { name: PRESS })
+      expect(
+        within(ficha).getAllByRole('button', { name: 'Press banca plano con barra' }),
+      ).toHaveLength(1)
+      expect(errorDeConsola.mock.calls.flat().join(' ')).not.toContain(
+        'Encountered two children with the same key',
+      )
+    } finally {
+      errorDeConsola.mockRestore()
+    }
   })
 })
 

@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T02:36:03.504Z
+- **Última sincronización:** 2026-08-30T02:54:59.051Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T02:54:59.052Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Deduplicación de alternativas, regresión UI y migración v9 segura para días estimados; Cloudflare Pages conectado a GitHub
+- **Verificación:** 389 tests; npm run lint; npm run build; QA navegador sin warnings React; Pages Git activo
+- **Siguiente:** Validar el despliegue definitivo y PWA offline en el dominio HTTPS
+
 
 ### 2026-08-30T02:36:03.505Z | codex | CLAIM
 - **Estado:** active

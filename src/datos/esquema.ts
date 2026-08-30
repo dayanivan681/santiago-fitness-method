@@ -16,6 +16,7 @@ import type {
   Sesion,
   Sustitucion,
 } from '../dominio/tipos'
+import { plantillasIniciales } from './semilla/plantillas'
 
 export class BaseDatosSantiago extends Dexie {
   participantes!: EntityTable<Participante, 'id'>
@@ -119,6 +120,47 @@ export class BaseDatosSantiago extends Dexie {
             plantilla.participanteId = dueno
           })
       })
+
+    // v9: una versión anterior creó Lower A, Upper B y Lower B vacíos. Las
+    // propuestas posteriores sólo se aplicaban al dar de alta a alguien nuevo,
+    // por lo que el participante existente nunca las recibió.
+    //
+    // Se migra únicamente la huella exacta de aquel estado de fábrica: los tres
+    // días existen y los tres están vacíos. Si uno contiene cualquier ajuste,
+    // se considera una configuración del coach y no se toca ninguno (§19, §23).
+    this.version(9)
+      .stores({ plantillas: 'id, nombre, orden, participanteId' })
+      .upgrade(async (tx) => {
+        const participantes = await tx.table<Participante>('participantes').toArray()
+        const tabla = tx.table<PlantillaDia>('plantillas')
+
+        for (const participante of participantes) {
+          const suyas = await tabla
+            .where('participanteId')
+            .equals(participante.id)
+            .toArray()
+          const pendientes = suyas.filter((plantilla) =>
+            ORDEN_DIAS_ESTIMADOS.has(plantilla.orden),
+          )
+
+          if (pendientes.length !== ORDEN_DIAS_ESTIMADOS.size) continue
+          if (!pendientes.every((plantilla) => plantilla.slots.length === 0)) continue
+
+          const propuestaPorOrden = new Map(
+            plantillasIniciales(participante.id).map((plantilla) => [
+              plantilla.orden,
+              plantilla,
+            ]),
+          )
+
+          await tabla.bulkPut(
+            pendientes.map((plantilla) => ({
+              ...plantilla,
+              slots: propuestaPorOrden.get(plantilla.orden)!.slots,
+            })),
+          )
+        }
+      })
   }
 }
 
@@ -134,5 +176,8 @@ const ORDEN_INICIAL_DIAS: Readonly<Record<string, number>> = {
 
 /** Las plantillas que el coach cree después van al final hasta que las ordene. */
 const ORDEN_DESCONOCIDO = 99
+
+/** Días que la versión anterior dejó vacíos a la espera de confirmación. */
+const ORDEN_DIAS_ESTIMADOS: ReadonlySet<number> = new Set([2, 3, 4])
 
 export const db = new BaseDatosSantiago()

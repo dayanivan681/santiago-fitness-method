@@ -83,6 +83,9 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
     sesionDeHoy,
   } = datos
   const item = variantesDe === null ? undefined : ejerciciosDelDia[variantesDe]
+  const bibliotecaDelDia = ejerciciosUnicos(
+    ejerciciosDelDia.flatMap((ejercicioDelDia) => ejercicioDelDia.variantes),
+  )
 
   // El cliente pide que el temporizador NO arranque solo: lo activa el
   // participante. Ojo con no confundirlo con el descanso *medido* que guarda el
@@ -257,7 +260,7 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
       {fichaDe && (
         <HojaEjercicio
           ejercicio={fichaDe}
-          biblioteca={ejerciciosDelDia.flatMap((e) => e.variantes)}
+          biblioteca={bibliotecaDelDia}
           historial={{ participanteId: participante.id, repositorio }}
           onElegir={setFichaDe}
           onCerrar={() => setFichaDe(null)}
@@ -288,4 +291,13 @@ function detener(ref: { current: ReturnType<typeof setInterval> | null }) {
     clearInterval(ref.current)
     ref.current = null
   }
+}
+
+/**
+ * Cada ejercicio del día carga todas sus variantes, así que al aplanarlas se
+ * repite el mismo catálogo varias veces. La ficha necesita una sola fila por
+ * ejercicio: además de evitar botones duplicados, conserva claves React únicas.
+ */
+function ejerciciosUnicos(ejercicios: readonly Ejercicio[]): Ejercicio[] {
+  return [...new Map(ejercicios.map((ejercicio) => [ejercicio.id, ejercicio])).values()]
 }

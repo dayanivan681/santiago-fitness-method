@@ -3,6 +3,7 @@ import { describe, test, expect } from 'vitest'
 import Dexie from 'dexie'
 import { baseDePrueba } from '../pruebas/base'
 import { RepositorioLocal } from './repositorioLocal'
+import { plantillasIniciales } from './semilla/plantillas'
 
 /**
  * Actualizar la app no puede costarle el historial a nadie.
@@ -19,6 +20,25 @@ async function baseAnterior(nombre: string) {
     participantes: 'id',
     ejercicios: 'id, musculoPrimario',
     plantillas: 'id, nombre, orden',
+    sesiones: 'id, participanteId, fecha, plantillaDiaId',
+    series: 'id, sesionId, ejercicioId',
+    sustituciones: 'id, [participanteId+fecha]',
+    progreso: 'id, participanteId, fecha',
+    fotos: 'id',
+    fotosDePerfil: 'id',
+    borradores: 'id, [participanteId+fecha]',
+  })
+  await vieja.open()
+  return vieja
+}
+
+/** La versión que ya tenía días por participante, pero tres seguían vacíos. */
+async function baseVersion8(nombre: string) {
+  const vieja = new Dexie(nombre)
+  vieja.version(8).stores({
+    participantes: 'id',
+    ejercicios: 'id, musculoPrimario',
+    plantillas: 'id, nombre, orden, participanteId',
     sesiones: 'id, participanteId, fecha, plantillaDiaId',
     series: 'id, sesionId, ejercicioId',
     sustituciones: 'id, [participanteId+fecha]',
@@ -122,5 +142,52 @@ describe('migración al esquema por participante', () => {
     const repositorio = new RepositorioLocal(baseDePrueba(nombre))
 
     expect(await repositorio.listarProgreso('001')).toHaveLength(1)
+  })
+})
+
+describe('migración de los tres días estimados', () => {
+  test('rellena el estado legado de tres días vacíos sin tocar Upper A', async () => {
+    const nombre = `migra-dias-${crypto.randomUUID()}`
+    const vieja = await baseVersion8(nombre)
+    const participanteId = '001'
+    const [upperA, ...pendientes] = plantillasIniciales(participanteId)
+    const upperPersonalizado = { ...upperA, slots: upperA.slots.slice(0, 1) }
+
+    await vieja.table('participantes').put({ id: participanteId, nombre: 'Piloto' })
+    await vieja.table('plantillas').bulkPut([
+      upperPersonalizado,
+      ...pendientes.map((plantilla) => ({ ...plantilla, slots: [] })),
+    ])
+    vieja.close()
+
+    const repositorio = new RepositorioLocal(baseDePrueba(nombre))
+    const migradas = await repositorio.listarPlantillas(participanteId)
+
+    expect(migradas[0].slots).toEqual(upperPersonalizado.slots)
+    expect(migradas.slice(1).map((plantilla) => plantilla.slots.length)).toEqual([5, 5, 5])
+  })
+
+  test('no sobrescribe ni completa nada cuando detecta un día personalizado', async () => {
+    const nombre = `migra-dias-${crypto.randomUUID()}`
+    const vieja = await baseVersion8(nombre)
+    const participanteId = '001'
+    const [upperA, lowerA, upperB, lowerB] = plantillasIniciales(participanteId)
+    const lowerPersonalizado = { ...lowerA, slots: lowerA.slots.slice(0, 1) }
+
+    await vieja.table('participantes').put({ id: participanteId, nombre: 'Piloto' })
+    await vieja.table('plantillas').bulkPut([
+      upperA,
+      lowerPersonalizado,
+      { ...upperB, slots: [] },
+      { ...lowerB, slots: [] },
+    ])
+    vieja.close()
+
+    const repositorio = new RepositorioLocal(baseDePrueba(nombre))
+    const migradas = await repositorio.listarPlantillas(participanteId)
+
+    expect(migradas[1].slots).toEqual(lowerPersonalizado.slots)
+    expect(migradas[2].slots).toHaveLength(0)
+    expect(migradas[3].slots).toHaveLength(0)
   })
 })
