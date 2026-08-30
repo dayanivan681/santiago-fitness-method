@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T22:51:59.290Z
+- **Última sincronización:** 2026-08-30T22:59:27.245Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T22:59:27.246Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Retest QA independiente de dcb388c/784445dd: suite local de acceso/admin 37/37; /admin propio y sin SPA, sin cabecera 403, cabecera Cf-Access falsificada no bypass en producción, root/estáticos protegidos y sw.js público sólo migración. D1 mantiene una invitación Santiago pendiente y cero sesiones activas. No se tocaron docs/cliente ni código de producto.
+- **Verificación:** npm test (36 archivos, 414); npm run lint; npm run build; BASE_URL=http://localhost:8788 D1_MODO=--local node scripts/pruebas-acceso.mjs (37/37); smoke HTTPS canonical; smoke deployment 784445dd; D1 remoto
+- **Siguiente:** Validación manual pendiente: OTP del coach en producción → /admin → Probar como cliente → / con imagen real; Safari iOS sigue sin dispositivo.
+
 
 ### 2026-08-30T22:51:59.291Z | codex | CLAIM
 - **Estado:** active
