@@ -71,3 +71,32 @@ describe('nada parpadea para siempre', () => {
     expect(CSS).toContain('.descanso--acabando .descanso__rotulo {')
   })
 })
+
+/**
+ * Foco de teclado (P3-B).
+ *
+ * jsdom no pinta, así que se comprueba sobre la hoja de estilos: que el anillo
+ * exista, que salga de una variable en vez de valores sueltos, y sobre todo que
+ * los dos sitios donde antes desaparecía lo tengan — el campo de texto, que
+ * anulaba el outline, y la etiqueta de archivo, cuyo input está oculto.
+ */
+describe('foco de teclado', () => {
+  test('el anillo sale de una variable, no de valores sueltos', () => {
+    expect(CSS).toContain('--foco-color')
+    expect(CSS).toContain('--foco-grosor')
+  })
+
+  test('hay un anillo global para :focus-visible', () => {
+    expect(CSS).toMatch(/:focus-visible\s*\{[^}]*outline:\s*var\(--foco-grosor\)/)
+  })
+
+  test('los campos de texto recuperan el anillo con teclado', () => {
+    // La regla de arriba pone `outline: none` en :focus; sin esta, tabular a un
+    // campo no mostraría nada.
+    expect(CSS).toMatch(/\.campo-texto input:focus-visible[\s\S]{0,200}?outline:\s*var\(--foco-grosor\)/)
+  })
+
+  test('la etiqueta de archivo muestra el foco de su input oculto', () => {
+    expect(CSS).toMatch(/\.foto-perfil__elegir:focus-within\s*\{[^}]*outline:\s*var\(--foco-grosor\)/)
+  })
+})

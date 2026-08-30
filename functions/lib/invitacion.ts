@@ -81,3 +81,44 @@ export async function consumirInvitacion(
 
   return { clienteId: fila.cliente_id, tokenHash }
 }
+
+/**
+ * Estado de una invitación, sin tocarla.
+ *
+ * El GET de `/access` la necesita para no enseñar un botón "Entrar" que va a
+ * fallar. Es de sólo lectura a propósito: los previsualizadores de enlaces de
+ * WhatsApp, iMessage o los antivirus de correo hacen GET automáticamente, y
+ * consumir ahí dejaría al participante sin acceso antes de tocar nada.
+ *
+ * Esto NO sustituye a `consumirInvitacion`: entre este SELECT y el POST puede
+ * pasar cualquier cosa. El POST vuelve a decidirlo todo con su UPDATE atómico.
+ */
+export type EstadoDeInvitacion =
+  | 'valida'
+  | 'consumida'
+  | 'expirada'
+  | 'revocada'
+  /** No existe, o el token es inventado. No se distingue una cosa de la otra. */
+  | 'desconocida'
+
+export async function estadoDeInvitacion(
+  db: D1Database,
+  token: string,
+  ahora = ahoraEnSegundos(),
+): Promise<EstadoDeInvitacion> {
+  const fila = await db
+    .prepare(
+      `SELECT consumida_en, revocada_en, expira_en
+         FROM invitaciones
+        WHERE token_hash = ?1`,
+    )
+    .bind(await resumen(token))
+    .first<{ consumida_en: number | null; revocada_en: number | null; expira_en: number }>()
+
+  if (!fila) return 'desconocida'
+  if (fila.consumida_en !== null) return 'consumida'
+  if (fila.expira_en <= ahora) return 'expirada'
+  if (fila.revocada_en !== null) return 'revocada'
+
+  return 'valida'
+}

@@ -41,6 +41,8 @@
   --positivo: #ffffff;
   --neutro: rgba(242, 242, 240, 0.5);
   --rojo: #e5352b;
+  --foco-color: #e5352b;
+  --foco-grosor: 2px;
 
   /*
    * Sistema de movimiento.
@@ -1287,6 +1289,16 @@ button,
   outline: none;
 }
 
+/* El `outline: none` de arriba es para el foco de ratón, que ya se ve por el
+   borde. El de teclado necesita el anillo: quien navega tabulando no tiene
+   otra pista de dónde está. */
+.campo-texto input:focus-visible,
+.campo-texto select:focus-visible,
+.campo-texto textarea:focus-visible {
+  outline: var(--foco-grosor) solid var(--foco-color);
+  outline-offset: 2px;
+}
+
 @media (max-width: 480px) {
   .campo-texto input,
   .campo-texto select,
@@ -1920,4 +1932,29 @@ button,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---------- Foco de teclado ---------- */
+
+/*
+ * El foco existía pero se confundía con los bordes de la interfaz. Un anillo en
+ * el rojo del método lo hace inequívoco sin cambiar el diseño de nada.
+ *
+ * `:focus-visible` y no `:focus`: sólo aparece cuando el navegador cree que el
+ * usuario navega con teclado, así que tocar un botón en el móvil no lo dibuja.
+ */
+:focus-visible {
+  outline: var(--foco-grosor) solid var(--foco-color);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/*
+ * Los controles de archivo esconden el `input` nativo y muestran una etiqueta.
+ * El foco cae en el input invisible: sin esto, tabular hasta ahí no dibuja nada
+ * y el teclado se pierde. `:focus-within` traslada el anillo a la etiqueta.
+ */
+.foto-perfil__elegir:focus-within {
+  outline: var(--foco-grosor) solid var(--foco-color);
+  outline-offset: 3px;
 }

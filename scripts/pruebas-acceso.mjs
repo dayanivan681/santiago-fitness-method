@@ -40,7 +40,16 @@ function sembrarInvitacion({ cliente = 'santiago', creadaHace = 0, vigencia = 7 
 }
 
 async function pedir(ruta, opciones = {}) {
-  return fetch(`${BASE_URL}${ruta}`, { redirect: 'manual', ...opciones })
+  // El servidor local corta alguna conexión bajo ráfagas; reintentar evita
+  // fallos que no son del código bajo prueba.
+  for (let intento = 0; ; intento += 1) {
+    try {
+      return await fetch(`${BASE_URL}${ruta}`, { redirect: 'manual', ...opciones })
+    } catch (error) {
+      if (intento >= 3) throw error
+      await new Promise((seguir) => setTimeout(seguir, 250))
+    }
+  }
 }
 
 /** POST del formulario de /access. Devuelve la cookie de sesión si entró. */
@@ -110,8 +119,8 @@ let cookieBuena = null
   const segundo = await entrarCon(token)
   const texto = await segundo.respuesta.text()
   comprobar(
-    'C', 'Enlace reutilizado → "Enlace no válido" (un solo uso)',
-    segundo.respuesta.status === 401 && !segundo.cookie && texto.includes('Enlace no válido'),
+    'C', 'Enlace reutilizado → "Este enlace ya fue utilizado" (un solo uso)',
+    segundo.respuesta.status === 401 && !segundo.cookie && texto.includes('Este enlace ya fue utilizado'),
     `status=${segundo.respuesta.status} cookie=${!!segundo.cookie}`,
   )
 }
@@ -247,6 +256,174 @@ let cookieBuena = null
     'LIMPIO', 'Ni /diagnostico ni cabeceras X-SFM en producción',
     diag.status === 401 && sfm.length === 0,
     `diagnostico=${diag.status} cabeceras=${sfm.join(',') || 'ninguna'}`,
+  )
+}
+
+
+// ═══ P2 · el GET valida sin consumir ════════════════════════════════════════
+
+function contarSesiones() {
+  const salida = sql(`SELECT COUNT(*) AS n FROM sesiones`)
+  return Number(JSON.parse(salida)[0].results[0].n)
+}
+
+function estadoEnBase(hash) {
+  const f = JSON.parse(sql(
+    `SELECT consumida_en, revocada_en FROM invitaciones WHERE token_hash = '${hash}'`,
+  ))[0].results[0]
+  return f ?? null
+}
+
+async function verGet(token) {
+  const r = await pedir(`/access?t=${token}`)
+  return { status: r.status, html: await r.text() }
+}
+
+// ---- P2-1 · GET de invitación válida ---------------------------------------
+{
+  const { token, hash } = sembrarInvitacion()
+  const sesionesAntes = contarSesiones()
+
+  const { status, html } = await verGet(token)
+
+  comprobar(
+    'P2-1', 'GET válido → "Tu acceso está listo" con botón, sin consumir',
+    status === 200 &&
+      html.includes('Tu acceso está listo') &&
+      html.includes('>Entrar<') &&
+      estadoEnBase(hash).consumida_en === null &&
+      contarSesiones() === sesionesAntes,
+    `status=${status} consumida=${estadoEnBase(hash).consumida_en}`,
+  )
+}
+
+// ---- P2-2 · varios GET seguidos --------------------------------------------
+{
+  const { token, hash } = sembrarInvitacion()
+  const sesionesAntes = contarSesiones()
+
+  for (let i = 0; i < 3; i += 1) await verGet(token)
+
+  comprobar(
+    'P2-2', 'Varios GET → sigue sin consumir y sin sesiones',
+    estadoEnBase(hash).consumida_en === null && contarSesiones() === sesionesAntes,
+    `consumida=${estadoEnBase(hash).consumida_en}`,
+  )
+}
+
+// ---- P2-3 · GET de invitación ya usada -------------------------------------
+{
+  const { token } = sembrarInvitacion()
+  await entrarCon(token)
+
+  const { html } = await verGet(token)
+
+  comprobar(
+    'P2-3', 'GET de invitación usada → "Este enlace ya fue utilizado", sin botón',
+    html.includes('Este enlace ya fue utilizado') && !html.includes('>Entrar<'),
+    'no coincide el texto',
+  )
+}
+
+// ---- P2-4 · GET de invitación expirada -------------------------------------
+{
+  const { token } = sembrarInvitacion({ creadaHace: 8 * DIA, vigencia: 7 * DIA })
+
+  const { html } = await verGet(token)
+
+  comprobar(
+    'P2-4', 'GET de invitación expirada → "Este enlace ha expirado", sin botón',
+    html.includes('Este enlace ha expirado') && !html.includes('>Entrar<'),
+    'no coincide el texto',
+  )
+}
+
+// ---- P2-5 · GET de invitación revocada -------------------------------------
+{
+  const { token, hash } = sembrarInvitacion()
+  sql(`UPDATE invitaciones SET revocada_en = ${ahora()} WHERE token_hash = '${hash}'`)
+
+  const { html } = await verGet(token)
+
+  comprobar(
+    'P2-5', 'GET de invitación revocada → "Este enlace ya no está activo", sin botón',
+    html.includes('Este enlace ya no está activo') && !html.includes('>Entrar<'),
+    'no coincide el texto',
+  )
+}
+
+// ---- P2-6 · GET de token inexistente ---------------------------------------
+{
+  const { html } = await verGet(randomBytes(32).toString('base64url'))
+
+  comprobar(
+    'P2-6', 'GET de token inventado → "Enlace no válido", sin filtrar detalles',
+    html.includes('Enlace no válido') &&
+      !html.includes('>Entrar<') &&
+      !/D1|SQL|middleware|token_hash|cliente_id|stack/i.test(html),
+    'filtra información técnica o texto incorrecto',
+  )
+}
+
+// ---- P2-7 · carrera: GET válido, otro consume, POST original ---------------
+{
+  const { token } = sembrarInvitacion()
+
+  const previo = await verGet(token)          // pestaña A ve "válido"
+  const primero = await entrarCon(token)      // pestaña B lo consume
+  const tarde = await entrarCon(token)        // pestaña A envía su POST
+
+  comprobar(
+    'P2-7', 'GET válido + consumo ajeno → el POST original se rechaza igual',
+    previo.html.includes('>Entrar<') && !!primero.cookie && !tarde.cookie && tarde.respuesta.status === 401,
+    `primero=${!!primero.cookie} tarde=${!!tarde.cookie}`,
+  )
+}
+
+// ---- P2-8 · bot de previsualización: 10 GET --------------------------------
+{
+  const { token, hash } = sembrarInvitacion()
+  const sesionesAntes = contarSesiones()
+
+  for (let i = 0; i < 10; i += 1) await verGet(token)
+
+  const sigueUsable = await entrarCon(token)
+
+  comprobar(
+    'P2-8', 'Diez GET de un bot → la invitación sigue usable y sin sesiones',
+    estadoEnBase(hash).consumida_en !== null &&
+      contarSesiones() === sesionesAntes + 1 &&
+      !!sigueUsable.cookie,
+    `entró después de los GET: ${!!sigueUsable.cookie}`,
+  )
+}
+
+// ---- P2-9 · flujo normal GET → POST ----------------------------------------
+{
+  const { token } = sembrarInvitacion()
+  const sesionesAntes = contarSesiones()
+
+  await verGet(token)
+  const { cookie } = await entrarCon(token)
+
+  comprobar(
+    'P2-9', 'GET y luego POST → exactamente una sesión',
+    !!cookie && contarSesiones() === sesionesAntes + 1,
+    `sesiones nuevas=${contarSesiones() - sesionesAntes}`,
+  )
+}
+
+// ---- P2-10 · GET inmediatamente después del POST ---------------------------
+{
+  const { token } = sembrarInvitacion()
+  await entrarCon(token)
+
+  const { html } = await verGet(token)
+
+  comprobar(
+    'P2-10', 'GET justo tras usarlo → "Este enlace ya fue utilizado"',
+    html.includes('Este enlace ya fue utilizado') && !html.includes('>Entrar<'),
+    'no coincide el texto',
   )
 }
 

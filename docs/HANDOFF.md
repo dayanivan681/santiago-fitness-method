@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T20:24:57.217Z
+- **Última sincronización:** 2026-08-30T20:33:28.095Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T20:33:28.096Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** P2: el GET de /access consulta el estado de la invitacion en D1 sin consumirla y muestra la pantalla que toca (valida, ya utilizada, expirada, no activa, no valida). El POST conserva su UPDATE atomico y vuelve a decidir por su cuenta. P3-A: sustituido el control de archivo nativo de PanelProgreso por un boton propio en espanol. P3-B: anillo de foco visible por variable, con focus-within en las etiquetas de archivo cuyo input esta oculto
+- **Verificación:** npm test 414/414 codigo 0; lint 0 warnings; build OK; 27/27 pruebas de acceso incluidos los 10 del P2
+- **Siguiente:** Codex ejecuta el regression QA final
+
 
 ### 2026-08-30T20:24:57.218Z | claude-code | CLAIM
 - **Estado:** active

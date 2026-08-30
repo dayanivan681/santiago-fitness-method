@@ -99,14 +99,23 @@ export function PanelProgreso({ participante, repositorio }: Props) {
             </label>
           ))}
 
-          <label className="campo-texto" style={{ gridColumn: '1 / -1' }}>
+          {/* El control nativo de archivo se pinta en el idioma del sistema
+              ("Choose file / No file chosen") y rompe la pantalla. Se oculta y
+              se sustituye por un botón propio; el nombre del archivo elegido se
+              muestra aparte, que es la única información útil que daba. */}
+          <div className="campo-texto" style={{ gridColumn: '1 / -1' }}>
             <span className="etiqueta-campo">Foto</span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFoto(e.target.files?.[0] ?? null)}
-            />
-          </label>
+            <label className="filtro foto-perfil__elegir">
+              {foto ? 'Cambiar foto' : 'Seleccionar foto'}
+              <input
+                type="file"
+                accept="image/*"
+                aria-label="Foto"
+                onChange={(e) => setFoto(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            {foto && <span className="nota">{foto.name}</span>}
+          </div>
         </div>
 
         {aviso !== '' && (

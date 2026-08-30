@@ -117,7 +117,54 @@ export function paginaAccesoRequerido(): Response {
   )
 }
 
-/** El enlace existía pero ya no sirve: usado, caducado, revocado o inventado. */
+/**
+ * El enlace ya se usó.
+ *
+ * Se distingue de "no válido" porque el participante hizo lo correcto: entró.
+ * Decirle que su enlace era inválido le haría dudar de si llegó a entrar.
+ */
+export function paginaEnlaceUsado(): Response {
+  return respuesta(
+    envolver(
+      'Enlace ya utilizado · Santiago Fitness Method',
+      `<div class="barra"></div>
+       <p class="marca">Santiago Fitness Method</p>
+       <h1>Este enlace ya fue utilizado</h1>
+       <p>Solicita un nuevo enlace a tu coach para volver a acceder.</p>`,
+    ),
+    401,
+  )
+}
+
+/** Pasaron los 7 días sin usarlo. */
+export function paginaEnlaceExpirado(): Response {
+  return respuesta(
+    envolver(
+      'Enlace expirado · Santiago Fitness Method',
+      `<div class="barra"></div>
+       <p class="marca">Santiago Fitness Method</p>
+       <h1>Este enlace ha expirado</h1>
+       <p>Solicita un nuevo enlace a tu coach.</p>`,
+    ),
+    401,
+  )
+}
+
+/** El coach lo desactivó a propósito. */
+export function paginaEnlaceInactivo(): Response {
+  return respuesta(
+    envolver(
+      'Enlace no activo · Santiago Fitness Method',
+      `<div class="barra"></div>
+       <p class="marca">Santiago Fitness Method</p>
+       <h1>Este enlace ya no está activo</h1>
+       <p>Solicita un nuevo enlace a tu coach.</p>`,
+    ),
+    401,
+  )
+}
+
+/** El token no corresponde a ninguna invitación, o falta. */
 export function paginaEnlaceNoValido(): Response {
   return respuesta(
     envolver(
@@ -125,7 +172,7 @@ export function paginaEnlaceNoValido(): Response {
       `<div class="barra"></div>
        <p class="marca">Santiago Fitness Method</p>
        <h1>Enlace no válido</h1>
-       <p>Este enlace ya se usó o venció. Pídele uno nuevo a tu entrenador.</p>`,
+       <p>Solicita un nuevo enlace a tu coach.</p>`,
     ),
     401,
   )

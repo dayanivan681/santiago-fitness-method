@@ -16,7 +16,12 @@
  * llega a servirse.
  */
 
-import { ahoraEnSegundos, consumirInvitacion } from './lib/invitacion'
+import {
+  ahoraEnSegundos,
+  consumirInvitacion,
+  estadoDeInvitacion,
+  type EstadoDeInvitacion,
+} from './lib/invitacion'
 import {
   cabeceraDeCookieBorrada,
   cerrarSesion,
@@ -28,7 +33,10 @@ import {
 } from './lib/sesion'
 import {
   paginaAccesoRequerido,
+  paginaEnlaceExpirado,
+  paginaEnlaceInactivo,
   paginaEnlaceNoValido,
+  paginaEnlaceUsado,
   paginaEntrar,
   paginaSesionCerrada,
 } from './lib/paginas'
@@ -71,13 +79,31 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
 /**
  * Entrada por enlace de invitación.
  *
- * El GET nunca consume: enseña un botón. Sólo el POST valida y gasta el token.
+ * El GET nunca consume: mira en qué estado está la invitación y lo dice. Sólo
+ * el POST gasta el token.
+ *
+ * El GET consulta pero NO decide: entre esta lectura y el POST la invitación
+ * puede consumirse desde otra pestaña. Por eso el POST repite la comprobación
+ * con su UPDATE atómico en vez de fiarse de que aquí salió válida.
  */
 async function atenderAcceso(request: Request, env: Entorno): Promise<Response> {
   if (request.method === 'GET') {
     const token = new URL(request.url).searchParams.get('t')
+    if (!token) return paginaEnlaceNoValido()
 
-    return token ? paginaEntrar(token) : paginaEnlaceNoValido()
+    // Sólo lectura: un previsualizador de enlaces no puede gastar la invitación.
+    switch (await estadoDeInvitacion(env.ACCESO, token)) {
+      case 'valida':
+        return paginaEntrar(token)
+      case 'consumida':
+        return paginaEnlaceUsado()
+      case 'expirada':
+        return paginaEnlaceExpirado()
+      case 'revocada':
+        return paginaEnlaceInactivo()
+      default:
+        return paginaEnlaceNoValido()
+    }
   }
 
   if (request.method !== 'POST') {
@@ -92,8 +118,9 @@ async function atenderAcceso(request: Request, env: Entorno): Promise<Response> 
   const invitacion = await consumirInvitacion(env.ACCESO, token, ahora)
 
   // Una sola sentencia decidió si existía, si estaba sin usar, sin revocar y
-  // sin caducar. Si devuelve null, no hay nada más que comprobar.
-  if (!invitacion) return paginaEnlaceNoValido()
+  // sin caducar. Si devuelve null no se entra, y da igual por qué: la sesión no
+  // se crea. El estado sólo se consulta después, para decir algo útil.
+  if (!invitacion) return paginaDelEstado(await estadoDeInvitacion(env.ACCESO, token, ahora))
 
   const { cookie } = await crearSesion(
     env.ACCESO,
@@ -112,6 +139,15 @@ async function atenderAcceso(request: Request, env: Entorno): Promise<Response> 
       'Referrer-Policy': 'no-referrer',
     },
   })
+}
+
+/** Traduce un estado a su pantalla. El rechazo ya ocurrió antes de llamar aquí. */
+function paginaDelEstado(estado: EstadoDeInvitacion): Response {
+  if (estado === 'consumida') return paginaEnlaceUsado()
+  if (estado === 'expirada') return paginaEnlaceExpirado()
+  if (estado === 'revocada') return paginaEnlaceInactivo()
+
+  return paginaEnlaceNoValido()
 }
 
 /** Cierre de sesión: revoca en el servidor y borra la cookie. */
