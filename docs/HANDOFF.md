@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T19:00:52.646Z
+- **Última sincronización:** 2026-08-30T19:02:53.380Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-30T19:02:53.381Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Cutover: quitados los diagnosticos temporales (ruta /diagnostico y cabeceras X-SFM). Separadas las pantallas sin sesion: Acceso requerido para quien abre la URL sin sesion, Enlace no valido para invitacion usada o vencida, Sesion cerrada tras el logout
+- **Verificación:** npm test 410/410 codigo 0; lint 0 warnings; build OK; 17/17 pruebas A-K, bypass y limpieza en el runtime real de Pages
+- **Siguiente:** Reducir Access a /admin manteniendo el comodin de previews, y generar la invitacion de Santiago
+
 
 ### 2026-08-30T19:00:52.647Z | claude-code | CLAIM
 - **Estado:** active

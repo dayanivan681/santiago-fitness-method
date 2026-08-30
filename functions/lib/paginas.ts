@@ -98,15 +98,34 @@ export function paginaEntrar(token: string): Response {
   )
 }
 
-/** Sin sesión válida, enlace gastado, caducado o inventado. */
-export function paginaSinAcceso(): Response {
+/**
+ * Alguien abre la app sin sesión.
+ *
+ * No es lo mismo que un enlace gastado, y decirle "caducado" a quien nunca tuvo
+ * uno confunde: parecería que algo se rompió cuando sólo falta la invitación.
+ */
+export function paginaAccesoRequerido(): Response {
   return respuesta(
     envolver(
-      'Acceso caducado · Santiago Fitness Method',
+      'Acceso requerido · Santiago Fitness Method',
       `<div class="barra"></div>
        <p class="marca">Santiago Fitness Method</p>
-       <h1>Acceso caducado</h1>
-       <p>Este enlace ya se usó o venció. Pídele uno nuevo a tu entrenador y entrarás igual de rápido.</p>`,
+       <h1>Acceso requerido</h1>
+       <p>Necesitas un enlace de acceso válido para entrar a Santiago Fitness Method.</p>`,
+    ),
+    401,
+  )
+}
+
+/** El enlace existía pero ya no sirve: usado, caducado, revocado o inventado. */
+export function paginaEnlaceNoValido(): Response {
+  return respuesta(
+    envolver(
+      'Enlace no válido · Santiago Fitness Method',
+      `<div class="barra"></div>
+       <p class="marca">Santiago Fitness Method</p>
+       <h1>Enlace no válido</h1>
+       <p>Este enlace ya se usó o venció. Pídele uno nuevo a tu entrenador.</p>`,
     ),
     401,
   )

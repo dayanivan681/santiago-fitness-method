@@ -68,8 +68,8 @@ console.log(`\nPruebas de acceso contra ${BASE_URL}  (D1 ${MODO})\n`)
   const r = await pedir('/')
   const cuerpo = await r.text()
   comprobar(
-    'A', 'Sin sesión → app inaccesible',
-    r.status === 401 && !cuerpo.includes('assets/index-'),
+    'A', 'Sin sesión → "Acceso requerido", no la app',
+    r.status === 401 && !cuerpo.includes('assets/index-') && cuerpo.includes('Acceso requerido'),
     `status=${r.status} sirvió-app=${cuerpo.includes('assets/index-')}`,
   )
 }
@@ -108,9 +108,10 @@ let cookieBuena = null
   const { token } = sembrarInvitacion()
   await entrarCon(token)
   const segundo = await entrarCon(token)
+  const texto = await segundo.respuesta.text()
   comprobar(
-    'C', 'Enlace reutilizado → rechazado (un solo uso)',
-    segundo.respuesta.status === 401 && !segundo.cookie,
+    'C', 'Enlace reutilizado → "Enlace no válido" (un solo uso)',
+    segundo.respuesta.status === 401 && !segundo.cookie && texto.includes('Enlace no válido'),
     `status=${segundo.respuesta.status} cookie=${!!segundo.cookie}`,
   )
 }
@@ -233,6 +234,19 @@ let cookieBuena = null
     'BYPASS-2', 'HEAD y /index.html directo tampoco pasan',
     cabeza.status === 401 && raro.status === 401,
     `HEAD=${cabeza.status} index.html=${raro.status}`,
+  )
+}
+
+// ---- Sin diagnósticos temporales -------------------------------------------
+{
+  const diag = await pedir('/diagnostico')
+  const cabeceras = await pedir('/')
+  const sfm = [...cabeceras.headers.keys()].filter((c) => c.toLowerCase().startsWith('x-sfm'))
+
+  comprobar(
+    'LIMPIO', 'Ni /diagnostico ni cabeceras X-SFM en producción',
+    diag.status === 401 && sfm.length === 0,
+    `diagnostico=${diag.status} cabeceras=${sfm.join(',') || 'ninguna'}`,
   )
 }
 
