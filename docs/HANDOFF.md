@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-30T23:57:36.253Z
+- **Última sincronización:** 2026-08-31T00:10:56.141Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T00:10:56.142Z | codex | ADOPT
+- **Estado:** active
+- **Tarea:** Aplicar la corrección P2 detectada en QA dual-role: área táctil mínima para Ficha en móvil y retest de release
+- **Cambios adoptados:** src/index.css
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-08-30T23:57:36.253Z | codex | PUBLISH
 - **Estado:** complete

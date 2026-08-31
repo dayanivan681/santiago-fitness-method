@@ -552,6 +552,7 @@ button,
   border: none;
   background: none;
   /* El texto es pequeño por diseño; el área de toque no puede serlo. */
+  min-width: 44px;
   padding: 14px 2px;
   margin: -14px -2px;
   cursor: pointer;
