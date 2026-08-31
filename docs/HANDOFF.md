@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T03:55:15.756Z
+- **Última sincronización:** 2026-08-31T03:57:36.443Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T03:57:36.443Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Issue #2 completado: migracion D1 4x5, readiness y placeholders; Preview y Chrome Incognito OTP/Admin/Preview/Admin aprobados
+- **Verificación:** npm test 424/424; lint; build; migracion 4/4; roles 11/11; acceso 37/37; D1 4x5; Chrome limpio sin errores
+- **Siguiente:** ninguno
+
 
 ### 2026-08-31T03:55:15.757Z | codex | CLAIM
 - **Estado:** active
