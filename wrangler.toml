@@ -21,6 +21,10 @@ pages_build_output_dir = "dist"
 # canónico, que sale de un push. Esta variable sólo cuenta si está commiteada.
 AUTH_MODE = "magic"
 
+# El cliente técnico `dayan-test` sólo se enseña fuera de producción. La fila se
+# conserva en D1 —preview usa la misma base—, sólo se oculta. Ver functions/lib/qa.ts.
+SHOW_QA_CLIENTS = "false"
+
 [[d1_databases]]
 binding = "ACCESO"
 database_name = "santiago-acceso"
@@ -30,6 +34,7 @@ database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
 # cambio en producción. Cloudflare Access sigue delante de ellos.
 [env.preview.vars]
 AUTH_MODE = "magic"
+SHOW_QA_CLIENTS = "true"
 
 [[env.preview.d1_databases]]
 binding = "ACCESO"

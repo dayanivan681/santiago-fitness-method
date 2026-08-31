@@ -8,6 +8,7 @@ import {
   VIDA_DE_SESION,
 } from './sesion'
 import { VIDA_DE_INVITACION } from './invitacion'
+import { clienteQaBloqueado, esClienteQa, filtrarClientesQa, qaHabilitado } from './qa'
 
 /**
  * Pruebas de la parte pura de la autenticación. Lo que toca D1 se comprueba
@@ -117,5 +118,55 @@ describe('cookie de sesión', () => {
     })
 
     expect(leerCookie(peticion)).toBeNull()
+  })
+})
+
+
+/**
+ * Separación del cliente técnico de QA (issue #3).
+ *
+ * Lo que hay que fijar aquí es la política, no la consulta: que la bandera sea
+ * explícita, que falle ocultando, y que la misma regla valga para listar y para
+ * operar. Las superficies se comprueban en scripts/pruebas-qa.mjs.
+ */
+describe('clientes de QA', () => {
+  it('reconoce el id reservado y sólo ese', () => {
+    expect(esClienteQa('dayan-test')).toBe(true)
+    expect(esClienteQa('santiago')).toBe(false)
+    expect(esClienteQa('dayan-test-2')).toBe(false)
+  })
+
+  it('sólo se habilita con la cadena exacta "true"', () => {
+    expect(qaHabilitado({ SHOW_QA_CLIENTS: 'true' })).toBe(true)
+    expect(qaHabilitado({ SHOW_QA_CLIENTS: 'false' })).toBe(false)
+    expect(qaHabilitado({ SHOW_QA_CLIENTS: 'TRUE' })).toBe(false)
+    expect(qaHabilitado({ SHOW_QA_CLIENTS: '1' })).toBe(false)
+  })
+
+  it('falla ocultando cuando falta la variable', () => {
+    // Un despliegue mal configurado debe comportarse como producción: enseñar
+    // QA al coach como si fuera un cliente real es el error caro.
+    expect(qaHabilitado({})).toBe(false)
+  })
+
+  it('filtra la lista en producción y la deja intacta en preview', () => {
+    // Arrange
+    const clientes = [{ id: 'santiago' }, { id: 'dayan-test' }]
+
+    // Act + Assert
+    expect(filtrarClientesQa(clientes, false).map((c) => c.id)).toEqual(['santiago'])
+    expect(filtrarClientesQa(clientes, true).map((c) => c.id)).toEqual(['santiago', 'dayan-test'])
+  })
+
+  it('bloquea operar sobre QA sólo cuando está oculto', () => {
+    expect(clienteQaBloqueado('dayan-test', false)).toBe(true)
+    expect(clienteQaBloqueado('dayan-test', true)).toBe(false)
+    expect(clienteQaBloqueado('santiago', false)).toBe(false)
+  })
+
+  it('no bloquea un cliente sin id, que no es de QA', () => {
+    // `previsualizar` sin cliente resuelve a QA antes de llegar aquí; una cadena
+    // vacía por su cuenta no debe rechazarse.
+    expect(clienteQaBloqueado('', false)).toBe(false)
   })
 })

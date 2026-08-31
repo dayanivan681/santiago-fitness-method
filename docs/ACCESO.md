@@ -138,3 +138,33 @@ delante y el middleware sigue exigiendo sesión por debajo.
 
 El comodín se añadió para cerrar un agujero real: las URLs de despliegue servían
 la app entera con HTTP 200 y sin login.
+
+## El cliente técnico de QA
+
+`dayan-test` (*QA Role Split*) existe para probar roles, impersonación y
+programación sin tocar los datos de nadie real. **Su fila en D1 se conserva
+siempre**: se oculta, no se borra, porque preview usa la misma base de datos que
+producción y el historial de QA sigue haciendo falta.
+
+Lo decide una bandera explícita, no el nombre del host:
+
+| Entorno | `SHOW_QA_CLIENTS` | `dayan-test` |
+|---|---|---|
+| Producción | `"false"` | invisible e inoperable |
+| Preview y desarrollo | `"true"` | visible y operable |
+
+Si la variable falta, se comporta como producción. Fallar ocultando es el error
+inofensivo; el contrario enseñaría un cliente de pruebas al coach como si fuera
+real.
+
+El filtro es de servidor, no de CSS. Se aplica en la lista del panel, en el
+resumen de estado, en `/admin/api/clientes`, en la ficha por `?cliente=` y en las
+mutaciones POST — incluida la impersonación, que sin cliente cae en QA por
+defecto. La regla vive en `functions/lib/qa.ts` (`esClienteQa`, `qaHabilitado`)
+para que todas las superficies apliquen exactamente la misma.
+
+La clasificación va por id reservado, suficiente para un único cliente técnico.
+Si algún día hay varios, toca una columna `es_qa` en `clientes`.
+
+Comprobación: `scripts/pruebas-qa.mjs`, ejecutado dos veces contra el mismo
+servidor con `QA_ESPERADO=true` y `QA_ESPERADO=false`.

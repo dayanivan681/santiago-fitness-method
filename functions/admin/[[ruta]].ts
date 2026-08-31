@@ -28,8 +28,13 @@ import {
   type RutinaCloud,
   validarSlots,
 } from '../lib/roles'
+import { clienteQaBloqueado, filtrarClientesQa, qaHabilitado } from '../lib/qa'
 
-type Entorno = { readonly ACCESO: D1Database }
+type Entorno = {
+  readonly ACCESO: D1Database
+  /** "true" sólo en preview y desarrollo. Ver functions/lib/qa.ts. */
+  readonly SHOW_QA_CLIENTS?: string
+}
 
 const CABECERA_DE_ACCESS = 'Cf-Access-Jwt-Assertion'
 const MAX_EJERCICIOS = 8
@@ -166,7 +171,13 @@ function opcionesProgresion(actual?: Progresion): string {
     .join('')
 }
 
-async function resumenDeEstado(db: D1Database): Promise<string> {
+/**
+ * Resumen de sesiones e invitaciones vivas.
+ *
+ * También se filtra: si sólo se ocultara la lista de clientes, el cliente
+ * técnico seguiría asomando aquí con sus sesiones y el coach lo vería igual.
+ */
+async function resumenDeEstado(db: D1Database, mostrarQa: boolean): Promise<string> {
   const ahora = Math.floor(Date.now() / 1000)
   const sesiones = await db
     .prepare(
@@ -182,9 +193,11 @@ async function resumenDeEstado(db: D1Database): Promise<string> {
     )
     .bind(ahora)
     .all<{ cliente_id: string; n: number }>()
+  const visible = (filas: readonly { cliente_id: string; n: number }[] | undefined) =>
+    filtrarClientesQa((filas ?? []).map((fila) => ({ ...fila, id: fila.cliente_id })), mostrarQa)
   const filas = [
-    ...(sesiones.results ?? []).map((fila) => `<tr><td>${escapar(fila.cliente_id)}</td><td>Sesión activa</td><td>${fila.n}</td></tr>`),
-    ...(invitaciones.results ?? []).map((fila) => `<tr><td>${escapar(fila.cliente_id)}</td><td>Invitación pendiente</td><td>${fila.n}</td></tr>`),
+    ...visible(sesiones.results).map((fila) => `<tr><td>${escapar(fila.cliente_id)}</td><td>Sesión activa</td><td>${fila.n}</td></tr>`),
+    ...visible(invitaciones.results).map((fila) => `<tr><td>${escapar(fila.cliente_id)}</td><td>Invitación pendiente</td><td>${fila.n}</td></tr>`),
   ]
   if (filas.length === 0) return '<p>No hay sesiones activas ni invitaciones pendientes.</p>'
   return `<table><thead><tr><th>Cliente</th><th>Estado</th><th>Cantidad</th></tr></thead><tbody>${filas.join('')}</tbody></table>`
@@ -244,8 +257,10 @@ function renderPendientesPerfil(pendientes: readonly string[]): string {
   </div>`
 }
 
-async function pantallaPrincipal(db: D1Database, extra = ''): Promise<Response> {
-  const perfiles = await listarPerfiles(db)
+async function pantallaPrincipal(db: D1Database, mostrarQa: boolean, extra = ''): Promise<Response> {
+  // El filtro va aquí, en el servidor: esconderlo con CSS dejaría el cliente
+  // técnico en el HTML que se manda al navegador.
+  const perfiles = filtrarClientesQa(await listarPerfiles(db), mostrarQa)
   const clientes = perfiles
     .map(
       (perfil) => `<article class="cliente-card">
@@ -263,7 +278,7 @@ async function pantallaPrincipal(db: D1Database, extra = ''): Promise<Response> 
        <div class="form-grid"><label class="campo"><span>cliente_id</span><input name="cliente_id" required pattern="[a-z0-9][a-z0-9_-]{1,40}"></label>
        <label class="campo"><span>Nombre</span><input name="nombre" required></label></div><div class="acciones" style="margin-top:12px"><button type="submit">Crear cliente</button></div>
      </form></section>
-     <section><h2>Estado de acceso</h2>${await resumenDeEstado(db)}</section>`,
+     <section><h2>Estado de acceso</h2>${await resumenDeEstado(db, mostrarQa)}</section>`,
   )
 }
 
@@ -332,11 +347,21 @@ function renderRutina(rutina: RutinaCloud): string {
     ${puedeAnadir ? `<form method="POST" class="acciones"><input type="hidden" name="accion" value="anadir-slot"><input type="hidden" name="cliente_id" value="${escapar(rutina.clienteId)}"><input type="hidden" name="dia" value="${rutina.orden}"><label class="campo" style="flex:1;min-width:220px"><span>Añadir ejercicio</span><select name="ejercicio" required><option value="">Elegir…</option>${CATALOGO_EJERCICIOS.map((ejercicio) => `<option value="${escapar(ejercicio.id)}">${escapar(ejercicio.nombre)}</option>`).join('')}</select></label><button type="submit">Añadir</button></form>` : '<p class="muted">Máximo de 8 ejercicios.</p>'}</div>`
 }
 
-async function atenderApi(request: Request, db: D1Database, path: string): Promise<Response> {
+async function atenderApi(
+  request: Request,
+  db: D1Database,
+  path: string,
+  mostrarQa: boolean,
+): Promise<Response> {
   if (request.method !== 'GET') return json({ error: 'Método no permitido' }, 405, { Allow: 'GET' })
-  if (path === '/admin/api/clientes') return json({ clients: await listarPerfiles(db) }, 200)
+  if (path === '/admin/api/clientes') {
+    return json({ clients: filtrarClientesQa(await listarPerfiles(db), mostrarQa) }, 200)
+  }
   const id = decodeURIComponent(path.replace('/admin/api/clientes/', ''))
   if (!idSeguro(id)) return json({ error: 'Cliente no válido' }, 400)
+  // Mismo 404 que un id inexistente: quien no debe verlo tampoco debe deducir
+  // que existe.
+  if (clienteQaBloqueado(id, mostrarQa)) return json({ error: 'Cliente no encontrado' }, 404)
   const perfil = await obtenerPerfil(db, id)
   if (!perfil) return json({ error: 'Cliente no encontrado' }, 404)
   return json({ profile: perfil, routines: await listarRutinas(db, id) }, 200)
@@ -357,23 +382,45 @@ export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
   await asegurarDatosIniciales(env.ACCESO)
   const url = new URL(request.url)
   const path = url.pathname
+  const mostrarQa = qaHabilitado(env)
 
   if (request.method === 'GET') {
-    if (path.startsWith('/admin/api/clientes')) return atenderApi(request, env.ACCESO, path)
+    if (path.startsWith('/admin/api/clientes')) return atenderApi(request, env.ACCESO, path, mostrarQa)
     if (path !== '/admin' && path !== '/admin/') {
       return pagina(`${cabecera()}<section><h2>Ruta admin no encontrada</h2><p>No se sirve la aplicación del cliente bajo /admin.</p>${boton('/admin/', 'Volver')}</section>`, 404)
     }
     const clienteId = url.searchParams.get('cliente')
     const estado = url.searchParams.get('estado')
     const extra = estado ? `<div class="flash">${escapar(estado)}</div>` : ''
+    if (clienteId && clienteQaBloqueado(clienteId, mostrarQa)) {
+      return pagina(
+        `${cabecera()}<section><h2>Cliente no encontrado</h2>${boton('/admin/', 'Volver a clientes')}</section>`,
+        404,
+      )
+    }
     return clienteId && idSeguro(clienteId)
       ? pantallaCliente(env.ACCESO, clienteId, extra)
-      : pantallaPrincipal(env.ACCESO, extra)
+      : pantallaPrincipal(env.ACCESO, mostrarQa, extra)
   }
 
   if (request.method !== 'POST') return new Response('Método no permitido', { status: 405 })
   const formulario = await request.formData()
   const accion = String(formulario.get('accion') ?? '')
+
+  // `probar` y `previsualizar` sin cliente apuntan al cliente técnico, así que
+  // el destino real se resuelve antes de mirar si está permitido. Sin esto, la
+  // impersonación de QA seguiría abierta en producción por la puerta de atrás.
+  const destino =
+    accion === 'probar'
+      ? CLIENTE_DE_PRUEBA
+      : String(formulario.get('cliente_id') ?? '') || (accion === 'previsualizar' ? CLIENTE_DE_PRUEBA : '')
+
+  if (clienteQaBloqueado(destino, mostrarQa)) {
+    return pagina(
+      `${cabecera()}<section><h2>Cliente no encontrado</h2>${boton('/admin/', 'Volver a clientes')}</section>`,
+      404,
+    )
+  }
 
   try {
     if (accion === 'crear-cliente') {

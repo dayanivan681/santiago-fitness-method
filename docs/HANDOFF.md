@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T04:10:16.238Z
+- **Última sincronización:** 2026-08-31T04:18:02.037Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T04:18:02.038Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Issue #3: dayan-test se oculta de produccion en el servidor mediante SHOW_QA_CLIENTS, y sigue visible y operable en preview. Filtrado en la lista del panel, el resumen de estado, /admin/api/clientes, la ficha por ?cliente= y las mutaciones POST incluida la impersonacion sin cliente. La fila de D1 se conserva intacta
+- **Verificación:** npm test 430/430 codigo 0; lint 0 warnings; build OK; pruebas-qa 13/13 en los dos modos; roles 11/11; acceso 37/37
+- **Siguiente:** Codex valida en preview y produccion
+
 
 ### 2026-08-31T04:10:16.239Z | claude-code | CLAIM
 - **Estado:** active
