@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T13:15:53.774Z
+- **Última sincronización:** 2026-08-31T13:21:25.614Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T13:21:25.615Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Revalidación final independiente Issue #4 PASS: preview-qa y producción verificadas a 390x844 y 1024; flujo Coach completo, preview cliente y regreso; cero scroll horizontal, clipping incorrecto, targets menores de 44px o errores de consola; QA visible sólo en preview
+- **Verificación:** npm test 437/437; npm run lint; npm run build; admin-ui 11/11; roles 11/11; acceso 37/37; QA 13/13 visible y 13/13 oculto; Browser preview-qa 9 pantallas en 390x844 y 1024; production visibility/layout; D1 Santiago 4x5 e invitación pendiente intacta
+- **Siguiente:** READY: revisar producto final y preparar prompt maestro para Claude Design usando el producto aprobado como fuente de verdad
+
 
 ### 2026-08-31T13:15:53.775Z | codex | CLAIM
 - **Estado:** active
