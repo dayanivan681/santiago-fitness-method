@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T12:48:43.462Z
+- **Última sincronización:** 2026-08-31T12:57:22.397Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T12:57:22.398Z | codex | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Retest independiente Issue #4: mobile 390x844, roles, acceso, D1 y seguridad pasan; detectado P1 desktop: la rejilla de días sale del marco de 820px y se recorta a 1024/1200px
+- **Verificación:** npm test 430/430; npm run lint; npm run build; admin-ui 11/11; roles 11/11; acceso 37/37; QA 13/13 visible y 13/13 oculto; browser producción 390x844 y desktop 1024/1200/1280; D1 Santiago 4x5; security probes
+- **Siguiente:** Corregir grid desktop con columnas que puedan encoger (p.ej. minmax(0,1fr)) y añadir regresión de layout; repetir retest antes de READY
+
 
 ### 2026-08-31T12:48:43.463Z | codex | CLAIM
 - **Estado:** active
