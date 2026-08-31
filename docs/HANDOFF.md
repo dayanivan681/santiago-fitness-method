@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T13:04:31.442Z
+- **Última sincronización:** 2026-08-31T13:12:37.593Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T13:12:37.594Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Issue #4 P1 resuelto: la rejilla de dias usaba 1fr, cuyo minimo implicito es auto, asi que el nombre de los ejercicios en una linea sin cortar fijaba un ancho minimo mayor que la columna y la segunda se salia del marco y del viewport. Ahora repeat(2,minmax(0,1fr)) con min-width:0 en los hijos. La prueba de regresion destapo el mismo fallo latente en .pareja (los campos emparejados del editor), tambien corregido. Retirado el overflow-x:hidden que tapaba el sintoma
+- **Verificación:** npm test 437/437 codigo 0; lint 0 warnings; build OK; admin-ui 11/11; roles 11/11; acceso 37/37; QA 13/13; geometria verificada en 320, 390, 1024, 1200 y 1280: cero elementos fuera del marco y cero scroll horizontal en 10 pantallas
+- **Siguiente:** Codex revalida el gate visual de desktop
+
 
 ### 2026-08-31T13:04:31.443Z | claude-code | CLAIM
 - **Estado:** active

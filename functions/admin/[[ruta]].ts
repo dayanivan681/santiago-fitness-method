@@ -175,7 +175,8 @@ function pagina(cuerpo: string, estado = 200): Response {
    --tenue:rgba(242,242,240,.55);--apagado:rgba(242,242,240,.38);
    --borde:rgba(255,255,255,.09);--borde-fuerte:rgba(255,255,255,.2);
    --rojo:#e5352b;--verde:#50c878;--radio:14px;--toque:44px}
- html,body{overflow-x:hidden}
+ /* Sin overflow-x:hidden a proposito: recortar en silencio convierte un
+    desbordamiento en algo invisible. Si algun dia vuelve a pasar, se vera. */
  body{margin:0;min-height:100vh;background:var(--fondo);color:var(--texto);
    font-family:'Barlow','Helvetica Neue',system-ui,-apple-system,sans-serif;
    font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -245,7 +246,10 @@ function pagina(cuerpo: string, estado = 200): Response {
    border:1px solid var(--borde-fuerte);border-radius:10px;color:var(--texto);
    padding:11px 12px;font:inherit;font-size:16px}
  textarea{min-height:96px;resize:vertical}
- .pareja{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ /* Mismo motivo que la rejilla de dias: un input dentro de una columna 1fr
+    no baja de su ancho intrinseco y empujaria la pareja fuera del marco. */
+ .pareja{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .pareja>*{min-width:0}
  .pendiente{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:999px;
    background:rgba(229,53,43,.15);color:#ffaaa4;font-size:9px;font-weight:700;
    letter-spacing:.08em;text-transform:uppercase}
@@ -261,7 +265,11 @@ function pagina(cuerpo: string, estado = 200): Response {
  .subordinada{margin-top:28px;padding-top:18px;border-top:1px solid var(--borde)}
  @media(min-width:760px){
    .marco{max-width:820px;padding-bottom:64px}
-   .rejilla-dias{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+   /* minmax(0,1fr) y no 1fr: el minimo implicito de 1fr es auto, asi que el
+      nombre de los ejercicios --que va en una linea sin cortar-- fijaba un
+      ancho minimo mayor que la columna y la rejilla se salia del marco. */
+   .rejilla-dias{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+   .rejilla-dias>*{min-width:0}
    .rejilla-dias .fila{margin:0}
    .cta{max-width:320px}
  }
