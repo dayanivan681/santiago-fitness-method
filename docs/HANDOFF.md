@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T00:10:56.141Z
+- **Última sincronización:** 2026-08-31T00:21:02.735Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T00:21:02.735Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Issue #1 implementado y verificado: separación Coach/Admin vs Cliente respaldada por D1, API de identidad derivada de sesión, preview normal y superficie cliente sin controles coach; P2 táctil corregida y producción 9ea2203 verificada.
+- **Verificación:** npm test 417/417; npm run lint 0 warnings; npm run build; test:roles 8/8; pruebas-acceso 37/37; dual-role production browser PASS; static/SW probes PASS; D1 QA invitation linked session exactly once, 7 days and revoked on logout; Santiago baseline unchanged; docs/cliente unchanged; fresh external Chrome Incognito NOT EXECUTED
+- **Siguiente:** No READY FOR SANTIAGO todavía: repetir Scenario A en un perfil Chrome Incognito realmente limpio y adjuntar el resultado; no abrir ni consumir la invitación real de Santiago.
+
 
 ### 2026-08-31T00:10:56.142Z | codex | ADOPT
 - **Estado:** active
