@@ -102,8 +102,16 @@ Después de crear el D1 original, aplicar la frontera una sola vez:
 npm run d1:migrar-roles
 ```
 
-La migración sólo inserta los clientes técnicos `santiago` y `dayan-test` si no
-existen y no consume, revoca ni reemplaza la invitación real de Santiago.
+La secuencia termina con `0004_seed_santiago_routines.sql`: completa los cuatro
+días de Santiago únicamente cuando la fila sigue estructuralmente vacía. Una
+rutina con al menos un slot se conserva sin cambios, por lo que reaplicar la
+migración es seguro. Ninguna de estas migraciones consume, revoca ni reemplaza
+la invitación real de Santiago.
+
+La ficha Coach/Admin calcula además `Estado de programación` para cualquier
+cliente. Sólo permite generar el enlace cuando existen exactamente cuatro días
+y cada uno tiene entre 5 y 8 ejercicios válidos. La vista previa permanece
+disponible para inspeccionar estados incompletos.
 
 ## Vuelta atrás
 

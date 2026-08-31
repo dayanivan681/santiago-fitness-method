@@ -7,7 +7,9 @@
  * dispositivo llegue al siguiente inicio de sesión del participante.
  */
 
-export type Estimulo = 'fuerza' | 'hipertrofia' | 'resistencia'
+import { PLANTILLAS_BASE, type EstimuloBase } from '../../shared/plantillas-base'
+
+export type Estimulo = EstimuloBase
 export type Progresion = 'mantener' | 'subirReps' | 'subirCarga' | 'revisarReducir'
 
 export type SlotCloud = {
@@ -83,12 +85,116 @@ export const CATALOGO_EJERCICIOS: readonly { id: string; nombre: string }[] = [
   { id: 'elevacion-talones-sentado', nombre: 'Elevación de talones sentado' },
 ]
 
-const DIAS = [
-  { slug: 'upper-a', nombre: 'Upper A', orden: 1 },
-  { slug: 'lower-a', nombre: 'Lower A', orden: 2 },
-  { slug: 'upper-b', nombre: 'Upper B', orden: 3 },
-  { slug: 'lower-b', nombre: 'Lower B', orden: 4 },
-] as const
+export type EstadoDiaProgramacion = {
+  nombre: string
+  orden: number
+  ejercicios: number
+  ejerciciosValidos: number
+  completo: boolean
+  detalle: string
+}
+
+export type EstadoProgramacion = {
+  ready: boolean
+  dias: EstadoDiaProgramacion[]
+  problemasGenerales: string[]
+}
+
+export type CampoPerfilPendiente = 'edad' | 'estatura' | 'peso' | 'objetivo' | 'notas'
+
+const IDS_DE_EJERCICIOS = new Set(CATALOGO_EJERCICIOS.map((ejercicio) => ejercicio.id))
+
+/**
+ * Gate de release genérico: exactamente cuatro días, cada uno con 5–8 slots
+ * válidos y consecutivos. No conoce IDs de clientes.
+ */
+export function evaluarEstadoProgramacion(rutinas: readonly RutinaCloud[]): EstadoProgramacion {
+  const problemasGenerales: string[] = []
+  if (rutinas.length !== DIAS_CLOUD_POR_DEFECTO.length) {
+    problemasGenerales.push(
+      `Se esperaban ${DIAS_CLOUD_POR_DEFECTO.length} días y hay ${rutinas.length}.`,
+    )
+  }
+
+  const dias = DIAS_CLOUD_POR_DEFECTO.map((dia) => {
+    const coincidencias = rutinas.filter((rutina) => rutina.orden === dia.orden)
+    const rutina = coincidencias[0]
+    if (!rutina) {
+      return {
+        nombre: dia.nombre,
+        orden: dia.orden,
+        ejercicios: 0,
+        ejerciciosValidos: 0,
+        completo: false,
+        detalle: `${dia.nombre}: día ausente`,
+      }
+    }
+
+    const ejerciciosValidos = rutina.slots.filter(
+      (slot, indice) =>
+        slot.orden === indice + 1 &&
+        IDS_DE_EJERCICIOS.has(slot.ejercicioId) &&
+        Number.isInteger(slot.seriesObjetivo) &&
+        slot.seriesObjetivo > 0 &&
+        Number.isInteger(slot.repMin) &&
+        Number.isInteger(slot.repMax) &&
+        slot.repMin > 0 &&
+        slot.repMax >= slot.repMin &&
+        Number.isInteger(slot.descansoSegundos) &&
+        slot.descansoSegundos >= 0,
+    ).length
+    const ejercicios = rutina.slots.length
+    const cantidadValida = ejercicios >= 5 && ejercicios <= 8
+    const completo = coincidencias.length === 1 && cantidadValida && ejerciciosValidos === ejercicios
+    let detalle = `${dia.nombre}: ${ejercicios} ejercicios`
+    if (coincidencias.length > 1) detalle = `${dia.nombre}: día duplicado`
+    else if (!cantidadValida) detalle = `${dia.nombre}: ${ejercicios} ejercicios`
+    else if (ejerciciosValidos !== ejercicios) {
+      detalle = `${dia.nombre}: ${ejerciciosValidos}/${ejercicios} ejercicios válidos`
+    }
+    return { nombre: dia.nombre, orden: dia.orden, ejercicios, ejerciciosValidos, completo, detalle }
+  })
+
+  return {
+    ready: problemasGenerales.length === 0 && dias.every((dia) => dia.completo),
+    dias,
+    problemasGenerales,
+  }
+}
+
+/** Campos de la semilla que todavía no representan datos confirmados. */
+export function camposPendientesPerfil(perfil: PerfilCloud): CampoPerfilPendiente[] {
+  const objetivoPendiente =
+    perfil.objetivo.trim() === '' || perfil.objetivo.trim().toLowerCase() === 'pendiente de confirmar'
+  const notasPendientes =
+    perfil.notas.trim() === '' || perfil.notas.toLowerCase().includes('confirmar datos con el coach')
+  const esPerfilSemilla = objetivoPendiente || notasPendientes
+  const pendientes: CampoPerfilPendiente[] = []
+  if (esPerfilSemilla && perfil.edad === 30) pendientes.push('edad')
+  if (esPerfilSemilla && Math.abs(perfil.estaturaCm - 175.26) < 0.001) pendientes.push('estatura')
+  if (esPerfilSemilla && Math.abs(perfil.pesoCorporalLb - 175) < 0.001) pendientes.push('peso')
+  if (objetivoPendiente) pendientes.push('objetivo')
+  if (notasPendientes) pendientes.push('notas')
+  return pendientes
+}
+
+/** Equivalente puro del guard SQL que usa la migración 0004. */
+export function slotsEstructuralmenteVacios(valor: string | null): boolean {
+  if (valor === null || valor.trim() === '') return true
+  try {
+    const slots: unknown = JSON.parse(valor)
+    return Array.isArray(slots) && slots.length === 0
+  } catch {
+    return false
+  }
+}
+
+export const DIAS_CLOUD_POR_DEFECTO = PLANTILLAS_BASE.map((plantilla) => ({
+  slug: plantilla.slug,
+  nombre: plantilla.nombre,
+  orden: plantilla.orden,
+  slots: plantilla.slots.map((slot) => ({ ...slot })),
+}))
 
 const SLOT_DEFAULTS: Readonly<Record<Estimulo, Omit<SlotCloud, 'orden' | 'ejercicioId'>>> = {
   fuerza: { estimulo: 'fuerza', seriesObjetivo: 4, repMin: 1, repMax: 5, descansoSegundos: 180 },
@@ -109,41 +215,6 @@ const SLOT_DEFAULTS: Readonly<Record<Estimulo, Omit<SlotCloud, 'orden' | 'ejerci
 }
 
 export function crearSlotCloud(orden: number, ejercicioId: string, estimulo: Estimulo): SlotCloud {
-  return { orden, ejercicioId, ...SLOT_DEFAULTS[estimulo] }
-}
-
-const DEFAULT_SLOTS: Readonly<Record<string, readonly SlotCloud[]>> = {
-  'upper-a': [
-    slot(1, 'press-banca-15-smith', 'fuerza'),
-    slot(2, 'press-inclinado-convergente', 'hipertrofia'),
-    slot(3, 'lat-pulldown-maquina', 'hipertrofia'),
-    slot(4, 'hip-thrust-barra', 'hipertrofia'),
-    slot(5, 'elevacion-lateral-mancuernas', 'resistencia'),
-  ],
-  'lower-a': [
-    slot(1, 'sentadilla-barra', 'fuerza'),
-    slot(2, 'prensa', 'hipertrofia'),
-    slot(3, 'curl-femoral-tumbado', 'hipertrofia'),
-    slot(4, 'patada-gluteo-polea', 'hipertrofia'),
-    slot(5, 'elevacion-talones-pie', 'resistencia'),
-  ],
-  'upper-b': [
-    slot(1, 'remo-barra', 'fuerza'),
-    slot(2, 'press-pecho-convergente', 'hipertrofia'),
-    slot(3, 'jalon-agarre-cerrado', 'hipertrofia'),
-    slot(4, 'curl-mancuernas', 'hipertrofia'),
-    slot(5, 'extension-triceps-polea', 'resistencia'),
-  ],
-  'lower-b': [
-    slot(1, 'peso-muerto-rumano', 'fuerza'),
-    slot(2, 'hack-squat', 'hipertrofia'),
-    slot(3, 'hip-thrust-barra', 'hipertrofia'),
-    slot(4, 'extension-cuadriceps', 'hipertrofia'),
-    slot(5, 'elevacion-talones-sentado', 'resistencia'),
-  ],
-}
-
-function slot(orden: number, ejercicioId: string, estimulo: Estimulo): SlotCloud {
   return { orden, ejercicioId, ...SLOT_DEFAULTS[estimulo] }
 }
 
@@ -245,8 +316,7 @@ export async function asegurarDatosIniciales(db: D1Database): Promise<void> {
       )
       .run()
 
-    for (const dia of DIAS) {
-      const slots = cliente.id === 'santiago' ? [] : DEFAULT_SLOTS[dia.slug] ?? []
+    for (const dia of DIAS_CLOUD_POR_DEFECTO) {
       await db
         .prepare(
           `INSERT INTO rutinas (id, cliente_id, nombre, orden, slots_json, actualizado_en)
@@ -258,7 +328,7 @@ export async function asegurarDatosIniciales(db: D1Database): Promise<void> {
           cliente.id,
           dia.nombre,
           dia.orden,
-          JSON.stringify(slots),
+          JSON.stringify(dia.slots),
           ahora,
         )
         .run()
@@ -398,7 +468,7 @@ export async function crearPerfil(db: D1Database, perfil: PerfilCloud): Promise<
       ahora,
     )
     .run()
-  for (const dia of DIAS) {
+  for (const dia of DIAS_CLOUD_POR_DEFECTO) {
     await db
       .prepare(
         `INSERT INTO rutinas (id, cliente_id, nombre, orden, slots_json, actualizado_en)

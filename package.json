@@ -10,6 +10,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:migracion-santiago": "node scripts/pruebas-migracion-santiago.mjs",
     "test:roles": "node scripts/pruebas-roles.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -20,7 +21,8 @@
     "handoff:publish": "node scripts/handoff-sync.mjs publish",
     "invitar": "node scripts/invitar.mjs",
     "d1:migrar": "wrangler d1 execute santiago-acceso --remote --file=migrations/0001_acceso.sql",
-    "d1:migrar-roles": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0002_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0003_seed_qa_role_split.sql"
+    "d1:migrar-roles": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0002_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0003_seed_qa_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0004_seed_santiago_routines.sql",
+    "d1:migrar-santiago": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0004_seed_santiago_routines.sql"
   },
   "dependencies": {
     "dexie": "^4.4.5",

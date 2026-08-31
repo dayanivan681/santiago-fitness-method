@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T02:41:34.515Z
+- **Última sincronización:** 2026-08-31T03:02:02.079Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T03:02:02.080Z | codex | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Implementada fuente unica de plantillas, migracion D1 idempotente para Santiago, readiness gate y placeholders; Preview QA desktop/movil aprobado
+- **Verificación:** npm test (424/424); npm run lint; npm run build; test:migracion-santiago (4/4); test:roles (11/11); test:acceso (37/37); D1 remoto 4x5 e invitacion intacta
+- **Siguiente:** Ejecutar gate manual en Chrome Incognito limpio: /admin/ -> Access OTP -> Santiago -> Preview -> salir a Admin
+
 
 ### 2026-08-31T02:41:34.516Z | codex | CLAIM
 - **Estado:** active

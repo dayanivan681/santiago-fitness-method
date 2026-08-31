@@ -12,8 +12,10 @@ import { crearCabeceraDeCookie, crearSesion, VIDA_DE_SESION } from '../lib/sesio
 import {
   asegurarDatosIniciales,
   CATALOGO_EJERCICIOS,
+  camposPendientesPerfil,
   crearPerfil,
   crearSlotCloud,
+  evaluarEstadoProgramacion,
   guardarPerfil,
   guardarRutina,
   listarPerfiles,
@@ -21,6 +23,7 @@ import {
   obtenerPerfil,
   obtenerRutina,
   type Estimulo,
+  type EstadoProgramacion,
   type Progresion,
   type RutinaCloud,
   validarSlots,
@@ -64,11 +67,19 @@ function pagina(cuerpo: string, estado = 200): Response {
       border-radius:16px;padding:20px;margin:0 0 14px}.cliente-card{display:flex;align-items:center;
       justify-content:space-between;gap:14px}.cliente-card strong{display:block;font-size:17px}
  .muted{color:rgba(242,242,240,.45);font-size:13px}.acciones{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
- button,.boton{display:inline-flex;align-items:center;justify-content:center;min-height:40px;
+ button,.boton{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
       padding:10px 14px;border:0;border-radius:10px;background:#f2f2f0;color:#0b0c0d;
       font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none}
  button.secundario,.boton.secundario{background:transparent;color:#f2f2f0;border:1px solid rgba(255,255,255,.22)}
  button.peligro{background:transparent;color:#ffd9d6;border:1px solid rgba(229,53,43,.6)}
+ button:disabled{cursor:not-allowed;opacity:.45}.estado-programacion{border-left:4px solid rgba(255,255,255,.22)}
+ .estado-programacion--ready{border-left-color:#50c878}.estado-programacion--incomplete{border-left-color:#e5352b}
+ .estado-etiqueta{display:inline-flex;align-items:center;min-height:28px;padding:5px 9px;border-radius:999px;
+      font-size:11px;font-weight:700;letter-spacing:.12em}.estado-etiqueta--ready{background:rgba(80,200,120,.14);color:#8ce7ab}
+ .estado-etiqueta--incomplete{background:rgba(229,53,43,.14);color:#ffaaa4}.estado-lista,.pendientes-lista{margin:10px 0 0;padding-left:20px;color:rgba(242,242,240,.72);font-size:14px;line-height:1.6}
+ .pendiente{display:inline-flex;margin-left:6px;padding:2px 6px;border-radius:999px;background:rgba(229,53,43,.14);
+      color:#ffaaa4;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+ .perfil-pendiente{margin:0 0 14px;padding:12px;border:1px solid rgba(229,53,43,.35);border-radius:10px;background:#181012}
  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid #e5352b;outline-offset:3px}
  label{display:block}.campo{display:flex;flex-direction:column;gap:6px}.campo span,.etiqueta{font-size:10px;
       letter-spacing:.12em;text-transform:uppercase;color:rgba(242,242,240,.46)}
@@ -192,6 +203,47 @@ async function estadoCliente(db: D1Database, clienteId: string): Promise<string>
   return `<p class="muted">Sesiones activas: ${sesiones?.n ?? 0} · Invitaciones pendientes: ${invitaciones?.n ?? 0}</p>`
 }
 
+function renderEstadoProgramacion(estado: EstadoProgramacion): string {
+  if (estado.ready) {
+    const resumen = estado.dias.map((dia) => `${dia.nombre}: ${dia.ejercicios}`).join(' · ')
+    return `<section class="estado-programacion estado-programacion--ready" aria-labelledby="estado-programacion">
+      <div class="cabecera-seccion"><div><h2 id="estado-programacion">Estado de programación</h2>
+      <p>Los cuatro días cumplen el rango de 5–8 ejercicios válidos.</p></div>
+      <strong class="estado-etiqueta estado-etiqueta--ready">READY</strong></div>
+      <p class="muted">${escapar(resumen)}</p>
+    </section>`
+  }
+  const problemas = [
+    ...estado.problemasGenerales,
+    ...estado.dias.filter((dia) => !dia.completo).map((dia) => dia.detalle),
+  ]
+  return `<section class="estado-programacion estado-programacion--incomplete" aria-labelledby="estado-programacion">
+    <div class="cabecera-seccion"><div><h2 id="estado-programacion">Estado de programación</h2>
+    <p>Completa la programación antes de generar el acceso final.</p></div>
+    <strong class="estado-etiqueta estado-etiqueta--incomplete">INCOMPLETE</strong></div>
+    <ul class="estado-lista">${problemas.map((problema) => `<li>${escapar(problema)}</li>`).join('')}</ul>
+  </section>`
+}
+
+function etiquetaPendiente(pendientes: readonly string[], campo: string): string {
+  return pendientes.includes(campo) ? '<span class="pendiente">Pendiente de confirmar</span>' : ''
+}
+
+function renderPendientesPerfil(pendientes: readonly string[]): string {
+  if (pendientes.length === 0) return ''
+  const nombres: Readonly<Record<string, string>> = {
+    edad: 'Edad',
+    estatura: 'Estatura',
+    peso: 'Peso',
+    objetivo: 'Objetivo',
+    notas: 'Notas del coach',
+  }
+  return `<div class="perfil-pendiente" role="status"><strong>Datos del perfil pendientes de confirmar</strong>
+    <p>Estos valores vienen de la semilla inicial y no deben presentarse como datos confirmados del cliente.</p>
+    <ul class="pendientes-lista">${pendientes.map((campo) => `<li>${escapar(nombres[campo] ?? campo)}: Pendiente de confirmar</li>`).join('')}</ul>
+  </div>`
+}
+
 async function pantallaPrincipal(db: D1Database, extra = ''): Promise<Response> {
   const perfiles = await listarPerfiles(db)
   const clientes = perfiles
@@ -215,35 +267,43 @@ async function pantallaPrincipal(db: D1Database, extra = ''): Promise<Response> 
   )
 }
 
-async function pantallaCliente(db: D1Database, clienteId: string, extra = ''): Promise<Response> {
+async function pantallaCliente(db: D1Database, clienteId: string, extra = '', status = 200): Promise<Response> {
   const perfil = await obtenerPerfil(db, clienteId)
   if (!perfil) return pagina(`${cabecera()}<section><h2>Cliente no encontrado</h2>${boton('/admin/', 'Volver a clientes')}</section>`, 404)
   const rutinas = await listarRutinas(db, clienteId)
+  const estadoProgramacion = evaluarEstadoProgramacion(rutinas)
+  const pendientes = camposPendientesPerfil(perfil)
+  const accionGenerar = estadoProgramacion.ready
+    ? `<form method="POST"><input type="hidden" name="accion" value="generar-enlace"><input type="hidden" name="cliente_id" value="${escapar(perfil.id)}"><button type="submit">Generar enlace</button></form>`
+    : `<div><button type="button" disabled aria-describedby="motivo-enlace-bloqueado">Generar enlace</button><p id="motivo-enlace-bloqueado" class="muted">Bloqueado: la programación está incompleta.</p></div>`
   return pagina(
     `${cabecera()}${extra}
      <p>${boton('/admin/', '← Clientes', 'secundario')}</p>
      <section><div class="cabecera-seccion"><div><h2>Ficha de ${escapar(perfil.nombre)}</h2><p class="muted">cliente_id: ${escapar(perfil.id)} · perfil gestionado por el coach</p></div>
-       <div class="acciones"><form method="POST"><input type="hidden" name="accion" value="previsualizar"><input type="hidden" name="cliente_id" value="${escapar(perfil.id)}"><button type="submit">Previsualizar cliente</button></form></div></div>
+       <div class="acciones"><form method="POST"><input type="hidden" name="accion" value="previsualizar"><input type="hidden" name="cliente_id" value="${escapar(perfil.id)}"><button type="submit">Vista previa como cliente</button></form></div></div>
+       ${renderPendientesPerfil(pendientes)}
        <form method="POST"><input type="hidden" name="accion" value="guardar-perfil"><input type="hidden" name="cliente_id" value="${escapar(perfil.id)}">
        <div class="form-grid form-grid--profile">
         <label class="campo"><span>Nombre</span><input name="nombre" value="${escapar(perfil.nombre)}" required></label>
         <label class="campo"><span>Sexo</span><select name="sexo"><option value="masculino"${perfil.sexo === 'masculino' ? ' selected' : ''}>Masculino</option><option value="femenino"${perfil.sexo === 'femenino' ? ' selected' : ''}>Femenino</option></select></label>
-        <label class="campo"><span>Edad</span><input type="number" name="edad" min="1" max="120" value="${perfil.edad}"></label>
-        <label class="campo"><span>Estatura (cm)</span><input type="number" name="estatura_cm" min="50" max="250" step="0.01" value="${perfil.estaturaCm}"></label>
-        <label class="campo"><span>Peso (lb)</span><input type="number" name="peso_lb" min="0" max="1000" step="0.1" value="${perfil.pesoCorporalLb}"></label>
+        <label class="campo"><span>Edad ${etiquetaPendiente(pendientes, 'edad')}</span><input type="number" name="edad" min="1" max="120" value="${perfil.edad}"></label>
+        <label class="campo"><span>Estatura (cm) ${etiquetaPendiente(pendientes, 'estatura')}</span><input type="number" name="estatura_cm" min="50" max="250" step="0.01" value="${perfil.estaturaCm}"></label>
+        <label class="campo"><span>Peso (lb) ${etiquetaPendiente(pendientes, 'peso')}</span><input type="number" name="peso_lb" min="0" max="1000" step="0.1" value="${perfil.pesoCorporalLb}"></label>
         <label class="campo"><span>Días / semana</span><input type="number" name="frecuencia" min="1" max="7" value="${perfil.frecuenciaEntrenamiento}"></label>
-        <label class="campo completo"><span>Objetivo</span><input name="objetivo" value="${escapar(perfil.objetivo)}"></label>
+        <label class="campo completo"><span>Objetivo ${etiquetaPendiente(pendientes, 'objetivo')}</span><input name="objetivo" value="${escapar(perfil.objetivo)}"></label>
         <label class="campo completo"><span>Limitaciones</span><textarea name="limitaciones">${escapar(perfil.limitaciones)}</textarea></label>
-        <label class="campo completo"><span>Notas del coach</span><textarea name="notas">${escapar(perfil.notas)}</textarea></label>
+        <label class="campo completo"><span>Notas del coach ${etiquetaPendiente(pendientes, 'notas')}</span><textarea name="notas">${escapar(perfil.notas)}</textarea></label>
        </div><div class="acciones" style="margin-top:12px"><button type="submit">Guardar perfil</button></div></form>
      </section>
+     ${renderEstadoProgramacion(estadoProgramacion)}
      <section><div class="cabecera-seccion"><div><h2>Acceso del cliente</h2>${await estadoCliente(db, clienteId)}</div></div>
-       <div class="acciones"><form method="POST"><input type="hidden" name="accion" value="generar-enlace"><input type="hidden" name="cliente_id" value="${escapar(perfil.id)}"><button type="submit">Generar enlace</button></form>
+       <div class="acciones">${accionGenerar}
        <form method="POST"><input type="hidden" name="accion" value="revocar-enlaces"><input type="hidden" name="cliente_id" value="${escapar(perfil.id)}"><button type="submit" class="peligro">Revocar pendientes</button></form></div>
      </section>
      <section><div class="cabecera-seccion"><div><h2>Rutina administrada</h2><p>Los cambios se guardan en D1 y se sincronizan al cliente. Puedes elegir ejercicios, añadir/quitar/reordenar y ajustar series, rango, descanso y progresión.</p></div></div>
        ${rutinas.map((rutina) => renderRutina(rutina)).join('')}
      </section>`,
+    status,
   )
 }
 
@@ -436,6 +496,17 @@ export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
     }
 
     if (accion === 'generar-enlace') {
+      const estadoProgramacion = evaluarEstadoProgramacion(
+        await listarRutinas(env.ACCESO, clienteId),
+      )
+      if (!estadoProgramacion.ready) {
+        return pantallaCliente(
+          env.ACCESO,
+          clienteId,
+          '<div class="flash">No se generó el enlace: completa los cuatro días con 5–8 ejercicios válidos.</div>',
+          409,
+        )
+      }
       const { token, expiraEn } = await crearInvitacion(env.ACCESO, clienteId)
       const enlace = `${url.origin}/access?t=${token}`
       const caduca = new Date(expiraEn * 1000).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })

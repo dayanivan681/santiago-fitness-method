@@ -77,6 +77,19 @@ try {
     comprobar('AUTH-1', 'API cliente y consola admin exigen su rol', anonApi.status === 401 && anonAdminApi.status === 403 && clientAdmin.status === 403, `${anonApi.status}/${anonAdminApi.status}/${clientAdmin.status}`)
   }
 
+  {
+    const santiago = await pedir('/admin/?cliente=santiago', { headers: ACCESS })
+    const html = await santiago.text()
+    comprobar(
+      'PROFILE-1',
+      'Admin marca los cinco placeholders de Santiago',
+      santiago.status === 200 &&
+        html.includes('Datos del perfil pendientes de confirmar') &&
+        ['Edad: Pendiente de confirmar', 'Estatura: Pendiente de confirmar', 'Peso: Pendiente de confirmar', 'Objetivo: Pendiente de confirmar', 'Notas del coach: Pendiente de confirmar'].every((texto) => html.includes(texto)),
+      `status=${santiago.status}`,
+    )
+  }
+
   const beforeLower = rutinasIniciales.find((routine) => routine.orden === 2)
   if (beforeLower && beforeLower.slots.length < 1) {
     const add = await post({ accion: 'anadir-slot', cliente_id: 'dayan-test', dia: '2', ejercicio: 'sentadilla-barra' })
@@ -105,6 +118,40 @@ try {
   const afterRemove = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
   const lowerFinal = afterRemove.routines.find((routine) => routine.orden === 2)
   comprobar('COACH-2c', 'Puede añadir, reordenar y quitar sin perder la rutina', add.status === 303 && move.status === 303 && remove.status === 303 && lowerAfterAdd?.slots.length === (lowerBefore?.slots.length ?? 0) + 1 && lowerFinal?.slots.length === lowerBefore?.slots.length, `add/move/remove=${add.status}/${move.status}/${remove.status}`)
+
+  {
+    const upperB = rutinasIniciales.find((routine) => routine.orden === 3)
+    const incompleta = escaparSql(JSON.stringify(upperB?.slots.slice(0, 4) ?? []))
+    sql(`UPDATE rutinas SET slots_json='${incompleta}', actualizado_en=unixepoch() WHERE cliente_id='dayan-test' AND orden=3;`)
+    const antes = Number(sql("SELECT COUNT(*) AS n FROM invitaciones WHERE cliente_id='dayan-test';")[0].results[0].n)
+    const detalle = await pedir('/admin/?cliente=dayan-test', { headers: ACCESS })
+    const detalleHtml = await detalle.text()
+    const bloqueada = await post({ accion: 'generar-enlace', cliente_id: 'dayan-test' })
+    const bloqueadaHtml = await bloqueada.text()
+    const despues = Number(sql("SELECT COUNT(*) AS n FROM invitaciones WHERE cliente_id='dayan-test';")[0].results[0].n)
+    comprobar(
+      'READY-1',
+      'INCOMPLETE identifica el día y deshabilita/bloquea invitaciones',
+      detalle.status === 200 &&
+        detalleHtml.includes('INCOMPLETE') &&
+        detalleHtml.includes('Upper B: 4 ejercicios') &&
+        detalleHtml.includes('disabled') &&
+        bloqueada.status === 409 &&
+        bloqueadaHtml.includes('No se generó el enlace') &&
+        antes === despues,
+      `detail=${detalle.status} post=${bloqueada.status} invites=${antes}->${despues}`,
+    )
+    const restaurada = escaparSql(JSON.stringify(upperB?.slots ?? []))
+    sql(`UPDATE rutinas SET slots_json='${restaurada}', actualizado_en=unixepoch() WHERE cliente_id='dayan-test' AND orden=3;`)
+    const lista = await pedir('/admin/?cliente=dayan-test', { headers: ACCESS })
+    const listaHtml = await lista.text()
+    comprobar(
+      'READY-2',
+      'READY se recupera al completar 4 días de 5–8 ejercicios',
+      lista.status === 200 && listaHtml.includes('estado-etiqueta--ready">READY') && listaHtml.includes('Upper A: 5') && listaHtml.includes('Lower B: 5'),
+      `status=${lista.status}`,
+    )
+  }
 
   const link = await post({ accion: 'generar-enlace', cliente_id: 'dayan-test' })
   const linkHtml = await link.text()
