@@ -78,7 +78,7 @@ try {
   }
 
   {
-    const santiago = await pedir('/admin/?cliente=santiago', { headers: ACCESS })
+    const santiago = await pedir('/admin/?cliente=santiago&seccion=perfil', { headers: ACCESS })
     const html = await santiago.text()
     comprobar(
       'PROFILE-1',
@@ -101,11 +101,11 @@ try {
   const edit = await post({
     accion: 'guardar-slot', cliente_id: 'dayan-test', dia: '1', orden: '1', ejercicio: 'remo-barra', estimulo: 'fuerza', series: '5', rep_min: '2', rep_max: '8', descanso: '90', progresion: 'subirCarga',
   })
-  const detail = await pedir('/admin/?cliente=dayan-test', { headers: ACCESS })
+  const detail = await pedir('/admin/?cliente=dayan-test&seccion=programa&dia=1', { headers: ACCESS })
   const detailHtml = await detail.text()
   const apiAfterEdit = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
   const first = apiAfterEdit.routines.find((routine) => routine.orden === 1)?.slots[0]
-  comprobar('COACH-2b', 'Guarda selección, series, rango, descanso y progresión tras refresh', edit.status === 303 && detail.status === 200 && first?.ejercicioId === 'remo-barra' && first?.seriesObjetivo === 5 && first?.repMin === 2 && first?.repMax === 8 && first?.descansoSegundos === 90 && first?.progresionFijada === 'subirCarga' && detailHtml.includes('Rutina administrada'), `edit=${edit.status}`)
+  comprobar('COACH-2b', 'Guarda selección, series, rango, descanso y progresión tras refresh', edit.status === 303 && detail.status === 200 && first?.ejercicioId === 'remo-barra' && first?.seriesObjetivo === 5 && first?.repMin === 2 && first?.repMax === 8 && first?.descansoSegundos === 90 && first?.progresionFijada === 'subirCarga' && detailHtml.includes('Remo con barra'), `edit=${edit.status}`)
 
   const lowerBefore = apiAfterEdit.routines.find((routine) => routine.orden === 2)
   const add = await post({ accion: 'anadir-slot', cliente_id: 'dayan-test', dia: '2', ejercicio: 'prensa' })
@@ -124,7 +124,8 @@ try {
     const incompleta = escaparSql(JSON.stringify(upperB?.slots.slice(0, 4) ?? []))
     sql(`UPDATE rutinas SET slots_json='${incompleta}', actualizado_en=unixepoch() WHERE cliente_id='dayan-test' AND orden=3;`)
     const antes = Number(sql("SELECT COUNT(*) AS n FROM invitaciones WHERE cliente_id='dayan-test';")[0].results[0].n)
-    const detalle = await pedir('/admin/?cliente=dayan-test', { headers: ACCESS })
+    // El estado de programación y el bloqueo del enlace viven en Acceso.
+    const detalle = await pedir('/admin/?cliente=dayan-test&seccion=acceso', { headers: ACCESS })
     const detalleHtml = await detalle.text()
     const bloqueada = await post({ accion: 'generar-enlace', cliente_id: 'dayan-test' })
     const bloqueadaHtml = await bloqueada.text()
@@ -143,12 +144,12 @@ try {
     )
     const restaurada = escaparSql(JSON.stringify(upperB?.slots ?? []))
     sql(`UPDATE rutinas SET slots_json='${restaurada}', actualizado_en=unixepoch() WHERE cliente_id='dayan-test' AND orden=3;`)
-    const lista = await pedir('/admin/?cliente=dayan-test', { headers: ACCESS })
+    const lista = await pedir('/admin/?cliente=dayan-test&seccion=acceso', { headers: ACCESS })
     const listaHtml = await lista.text()
     comprobar(
       'READY-2',
       'READY se recupera al completar 4 días de 5–8 ejercicios',
-      lista.status === 200 && listaHtml.includes('estado-etiqueta--ready">READY') && listaHtml.includes('Upper A: 5') && listaHtml.includes('Lower B: 5'),
+      lista.status === 200 && listaHtml.includes('insignia--ready">READY') && listaHtml.includes('Upper A: 5') && listaHtml.includes('Lower B: 5'),
       `status=${lista.status}`,
     )
   }

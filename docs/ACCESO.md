@@ -168,3 +168,27 @@ Si algún día hay varios, toca una columna `es_qa` en `clientes`.
 
 Comprobación: `scripts/pruebas-qa.mjs`, ejecutado dos veces contra el mismo
 servidor con `QA_ESPERADO=true` y `QA_ESPERADO=false`.
+
+## Consola del coach
+
+Organizada por pantallas, cada una con una sola pregunta. El estado vive en la
+URL, el servidor renderiza todo y no hace falta JavaScript:
+
+| Ruta | Pregunta |
+|---|---|
+| `/admin/` | ¿A quién gestiono? |
+| `/admin/?cliente=X&seccion=programa` | ¿Qué quiero gestionar? |
+| `…&seccion=programa&dia=N` | ¿Qué día? |
+| `…&seccion=programa&dia=N&ejercicio=O` | ¿Qué ejercicio? |
+| `…&seccion=perfil[&grupo=G]` | ¿Qué datos del cliente? |
+| `…&seccion=acceso` | ¿Cómo entra este cliente? |
+
+Guardar redirige al nivel desde el que se guardó, así que no se pierde el
+contexto. La vuelta atrás es siempre el nivel de arriba.
+
+Reordenar es un modo (`&modo=reordenar`), no flechas permanentes en cada fila.
+Quitar un ejercicio pasa por una pantalla de confirmación
+(`&confirmar=quitar`): el POST destructivo no existe en ninguna otra vista.
+
+Comprobación: `scripts/pruebas-admin-ui.mjs`. Necesita un cliente visible con
+ejercicios; si no lo encuentra, lo dice y se omite en vez de fallar.

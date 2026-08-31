@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-08-31T04:21:33.150Z
+- **Última sincronización:** 2026-08-31T04:40:34.963Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-08-31T04:40:34.964Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Issue #4: consola Coach/Admin rehecha mobile-first. Arquitectura por pantallas (clientes, hub con Programa/Perfil/Acceso, dia, ejercicio, grupos de perfil) con el estado en la URL y render en servidor. Resumen primero y detalle a demanda; sin ids ni contadores tecnicos en la lista; reordenar como modo; quitar tras confirmacion; acceso y sesiones agrupados en su seccion. Corregidos por el camino: formularios parciales de perfil que pisaban campos, pestanas de 40px y dia fuera de rango que se recortaba en silencio en vez de dar 404
+- **Verificación:** npm test 430/430 codigo 0; lint 0 warnings; build OK; admin-ui 11/11; roles 11/11; acceso 37/37; QA 13/13 en los dos modos; QA visual 390x844 y desktop sin desbordes, sin toques menores de 44px y sin controles sin nombre accesible
+- **Siguiente:** Codex valida el rediseno en preview y produccion
+
 
 ### 2026-08-31T04:21:33.151Z | claude-code | CLAIM
 - **Estado:** active
