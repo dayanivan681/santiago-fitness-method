@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-01T22:30:31.229Z
+- **Última sincronización:** 2026-09-01T23:08:52.969Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-01T23:08:52.970Z | claude-code | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA-MOB-01 y QA-MOB-02 corregidos y verificados en navegador; falta la ejecucion en simuladores porque este Mac no tiene Xcode. QA-MOB-01: el cronometro no entraba en la reserva inferior de .contenido (reservaba hasta 660 px con el borde del cronometro en 644), asi que tapaba controles y el toque se lo quedaba la barra; ahora el componente publica su altura medida en --alto-cronometro y las dos reglas de .contenido la suman. QA-MOB-02: el ::after simetrico de -6px se metia 3 px dentro de los steppers de peso y dejaba la marca en 44 justos; ahora crece 11 px hacia arriba (hay 24 libres) y solo 2 hacia abajo: 47 px sin robarle area a nadie. Ademas se corrigieron dos defectos reales encontrados al verificar: el autosave reescribia el borrador que registrarSerie acababa de borrar porque claveDeBorrador se recreaba en cada render (serie guardada con borrador fantasma), y los steppers de 44 px de la Fase 2 desbordaban su columna a 375 px provocando 6 pares de controles solapados. Sin cambios de logica de producto.
+- **Verificación:** npm test 525/525 en 24 corridas seguidas; npm run lint 0 avisos; npm run build OK; roles 11/11; acceso 37/37; admin-ui 11/11; QA 13/13 visible; navegador 320/375/390/393/430/768/1024 sin desborde ni solapes; iPhone SE (375x667) e iPhone 16 Pro (393x852 con safe-area 34) emulados: serie guardada, cronometro activo, Editar visible y tocable 69x44, Tecnica y Calentamiento 66x45 y 52x45, cero solapamientos, safe areas correctas; ida y vuelta a Biblioteca conserva la reserva; consola sin errores; D1 Santiago 4x5 e invitacion pendiente intactas
+- **Siguiente:** BLOQUEADO: faltan iPhone 16 Pro Simulator e iPhone SE Simulator. Este Mac solo tiene Command Line Tools; no hay /Applications/Xcode.app ni simctl. Instalar Xcode y ejecutar 'sudo xcode-select -s /Applications/Xcode.app/Contents/Developer' para poder correrlos.
+
 
 ### 2026-09-01T22:30:31.229Z | claude-code | CLAIM
 - **Estado:** active

@@ -249,7 +249,16 @@ button,
 
 .contenido {
   flex: 1;
-  padding: 14px calc(14px + var(--lado-seguro-der)) calc(var(--sobre-pestanas) + 47px)
+  /*
+   * El fondo reserva sitio para TODO lo que flota encima, cronómetro incluido.
+   *
+   * `--alto-cronometro` lo publica el propio componente midiéndose, y vale 0
+   * cuando no hay descanso en marcha. Antes no entraba en la cuenta: la barra
+   * se dibujaba sobre la última serie y el toque de "Editar" se lo quedaba ella
+   * (QA-MOB-01).
+   */
+  padding: 14px calc(14px + var(--lado-seguro-der))
+    calc(var(--sobre-pestanas) + 47px + var(--alto-cronometro, 0px))
     calc(14px + var(--lado-seguro-izq));
 }
 
@@ -725,13 +734,26 @@ button,
 .serie__campos {
   display: flex;
   gap: 6px;
+  /*
+   * Escape para pantallas estrechas.
+   *
+   * Peso y reps llevan dos steppers de 44 px más el número. En un iPhone SE los
+   * tres campos no caben en una línea, y sin envolver el reparto por proporción
+   * encogía la columna por debajo de sus propios controles: los steppers se
+   * salían del campo y el "+" de reps acababa encima del valor de RIR.
+   */
+  flex-wrap: wrap;
 }
 
 .campo {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 0;
+  /*
+   * `min-content` y no 0: un campo no puede encogerse por debajo de los
+   * controles que contiene. Con 0 el flex los aplastaba y desbordaban.
+   */
+  min-width: min-content;
 }
 
 .campo--peso {
@@ -1548,7 +1570,7 @@ button,
 
 /* Con la barra de sesión encima de las pestañas hace falta otro tanto abajo. */
 .contenido--con-barra {
-  padding-bottom: calc(var(--sobre-barra-sesion) + 58px);
+  padding-bottom: calc(var(--sobre-barra-sesion) + 58px + var(--alto-cronometro, 0px));
 }
 
 .progreso-sesion__relleno {
@@ -1995,10 +2017,18 @@ button,
 }
 
 /* Llega a 44 px de alto sin engordar la etiqueta, que es deliberadamente chica. */
+/*
+ * 34 + 11 + 2 = 47 px de zona sensible, creciendo casi todo hacia arriba.
+ *
+ * Simétrico no cabía: por debajo sólo hay 3 px hasta los steppers de peso, y
+ * el `-6px` anterior se metía 3 px dentro de ellos —les robaba el borde y a la
+ * vez dejaba la marca por debajo de 44 medida de verdad (QA-MOB-02)—. Por
+ * encima hay 24 px libres, así que la ampliación sube.
+ */
 .marca--tocable::after {
   content: '';
   position: absolute;
-  inset: -6px 0;
+  inset: -11px 0 -2px 0;
   /* Mismo motivo que en .enlace: la zona ampliada debe quedar por encima. */
   z-index: 1;
 }

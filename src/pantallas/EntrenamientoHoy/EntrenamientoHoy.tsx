@@ -3,7 +3,7 @@
  * Guía del proyecto §3 (ya viene cargado), §24 (los 5 ejercicios), §25.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
 import { useControlDescanso } from '../../aplicacion/contextoDescanso'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
@@ -13,6 +13,10 @@ import { HojaVariantes } from './HojaVariantes'
 import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
 import { fechaDeHoy, type Repositorio } from '../../datos/repositorio'
 import type { Ejercicio } from '../../dominio/tipos'
+import type { ClaveDeBorrador } from '../../logica/borrador'
+
+/** La clave sin `numeroSerie`: cada fila añade el suyo. */
+type ClaveDelDia = Omit<ClaveDeBorrador, 'numeroSerie'>
 import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 
 interface Props {
@@ -54,6 +58,35 @@ export function EntrenamientoHoy({
     declararBarraDeSesion(barraDeSesionVisible)
     return () => declararBarraDeSesion(false)
   }, [barraDeSesionVisible, declararBarraDeSesion])
+
+  /**
+   * La identidad de la clave del borrador tiene que sobrevivir al repintado.
+   *
+   * Antes se construía un objeto nuevo en cada render y viajaba como prop hasta
+   * el efecto de autosave de `FilaSerie`, que lo tiene en sus dependencias: el
+   * autosave se disparaba en CADA repintado. El daño se veía justo al guardar
+   * una serie —arrancar el descanso repinta el árbol— porque volvía a escribir
+   * el borrador que `registrarSerie` acababa de borrar, y la serie recién
+   * guardada se quedaba con un borrador fantasma.
+   *
+   * Atadas a `datos`: sólo cambian cuando cambia el entrenamiento, no cuando
+   * se repinta.
+   */
+  const clavesDelDia = useMemo(() => {
+    const claves = new Map<number, ClaveDelDia>()
+    if (!datos) return claves
+
+    const fecha = fechaDeHoy()
+    for (const item of datos.ejerciciosDelDia) {
+      claves.set(item.slot.orden, {
+        participanteId: datos.participante.id,
+        fecha,
+        plantillaDiaId: datos.plantilla.id,
+        orden: item.slot.orden,
+      })
+    }
+    return claves
+  }, [datos])
 
   /**
    * Al completar la última serie, el ejercicio se pliega y se abre el siguiente.
@@ -172,12 +205,7 @@ export function EntrenamientoHoy({
                 onCorregirSerie={corregirSerie}
                 onDeshacerCorreccion={deshacerUltimaCorreccion}
                 repositorio={repositorio}
-                claveDeBorrador={{
-                  participanteId: participante.id,
-                  fecha: fechaDeHoy(),
-                  plantillaDiaId: plantilla.id,
-                  orden: ejercicioDelDia.slot.orden,
-                }}
+                claveDeBorrador={clavesDelDia.get(ejercicioDelDia.slot.orden)}
               />
             ))}
 

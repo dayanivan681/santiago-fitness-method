@@ -181,3 +181,90 @@ describe("barras traslúcidas", () => {
     }
   })
 })
+
+/**
+ * QA-MOB-01 y QA-MOB-02 — geometría de lo que flota abajo y de las marcas.
+ *
+ * Estas son las mitades que viven en la hoja de estilos. La otra mitad de
+ * QA-MOB-01 —que el cronómetro publique su altura— está en Descanso.test.tsx.
+ */
+describe("el contenido reserva sitio para el cronómetro (QA-MOB-01)", () => {
+  const reservaDe = (selector: string) => {
+    const bloque = new RegExp(selector.replace(/[.-]/g, "\\$&") + "\\s*\\{[^}]*\\}").exec(css)?.[0] ?? ""
+    return /padding(?:-bottom)?:[^;]*/.exec(bloque)?.[0] ?? ""
+  }
+
+  it("la pantalla sin barra de sesión cuenta con el cronómetro", () => {
+    expect(reservaDe(".contenido")).toContain("var(--alto-cronometro, 0px)")
+  })
+
+  it("la pantalla con barra de sesión también", () => {
+    // Regresión del hallazgo: reservaba 184 px mientras el borde superior del
+    // cronómetro caía en 160, así que 24 px de contenido —la última serie
+    // guardada y su Editar— quedaban debajo y el toque se lo llevaba la barra.
+    expect(reservaDe(".contenido--con-barra")).toContain("var(--alto-cronometro, 0px)")
+  })
+
+  it("la reserva deja holgura por encima del borde del cronómetro", () => {
+    // El cronómetro se apoya 8 px por encima de lo que tenga debajo; la reserva
+    // suma bastante más que eso, además de su altura.
+    expect(css).toContain("bottom: calc(var(--sobre-barra-sesion) + 8px)")
+    expect(reservaDe(".contenido--con-barra")).toContain("var(--sobre-barra-sesion) + 58px")
+  })
+})
+
+describe("área táctil de Técnica y Calentamiento (QA-MOB-02)", () => {
+  const bloqueMarca = /\.marca\s*\{[^}]*\}/.exec(css)?.[0] ?? ""
+  // El relleno que manda es el de --tocable, que pisa al de .marca.
+  const bloqueTocable = /\.marca--tocable\s*\{[^}]*\}/.exec(css)?.[0] ?? ""
+  const pseudo = /\.marca--tocable::after\s*\{[^}]*\}/.exec(css)?.[0] ?? ""
+  // `inset: -11px 0 -2px 0`: los ceros van sin unidad, de ahí el px opcional.
+  const inset = /inset:\s*(-?\d+)(?:px)?\s+(-?\d+)(?:px)?\s+(-?\d+)(?:px)?\s+(-?\d+)(?:px)?/.exec(pseudo)
+  /** 2 x relleno vertical + la caja de la línea de 9.5px, que mide 14. */
+  const ALTO_DE_LINEA = 14
+  const altoVisible = Number(/padding:\s*(\d+)px/.exec(bloqueTocable)?.[1] ?? 0) * 2 + ALTO_DE_LINEA
+
+  it("la píldora sigue siendo compacta y con el mismo tamaño de letra", () => {
+    // Compacto es parte del diseño: lo que crece es la zona sensible, no el
+    // dibujo ni la letra.
+    expect(bloqueMarca).toContain("font-size: 9.5px")
+    expect(altoVisible).toBeLessThan(44)
+  })
+
+  it("la zona sensible llega a 44 px de alto con holgura", () => {
+    expect(inset).not.toBeNull()
+    const [, arriba, , abajo] = inset!.map(Number)
+    expect(altoVisible - arriba - abajo).toBeGreaterThanOrEqual(44)
+  })
+
+  it("crece hacia arriba, que es donde hay sitio, y no se mete en los steppers", () => {
+    // Por debajo sólo hay 3 px hasta los ± de peso. El -6px simétrico anterior
+    // se metía 3 px dentro de ellos: la marca les robaba el borde y ella misma
+    // se quedaba justo por debajo de 44 medida de verdad.
+    const [, arriba, , abajo] = inset!.map(Number)
+    expect(-abajo).toBeLessThanOrEqual(3)
+    expect(-arriba).toBeGreaterThan(-abajo)
+  })
+
+  it("la zona ampliada queda por encima de lo que se pinte después", () => {
+    expect(pseudo).toContain("z-index: 1")
+  })
+})
+
+describe("la fila de campos no aplasta sus propios controles", () => {
+  const bloqueCampo = /\.campo\s*\{[^}]*\}/.exec(css)?.[0] ?? ""
+  const bloqueFila = /\.serie__campos\s*\{[^}]*\}/.exec(css)?.[0] ?? ""
+
+  it("un campo no encoge por debajo de su contenido", () => {
+    // Con \`min-width: 0\` el flex repartía por proporción y dejaba la columna
+    // más estrecha que sus dos steppers de 44 px: se salían del campo y el "+"
+    // de reps caía encima del valor de RIR. En un iPhone SE eran 6 pares de
+    // controles pisándose.
+    expect(bloqueCampo).toContain("min-width: min-content")
+    expect(bloqueCampo).not.toMatch(/min-width:\s*0\s*;/)
+  })
+
+  it("la fila envuelve cuando los tres campos no caben", () => {
+    expect(bloqueFila).toContain("flex-wrap: wrap")
+  })
+})
