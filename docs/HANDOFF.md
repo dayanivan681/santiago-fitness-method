@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-01T03:03:45.609Z
+- **Última sincronización:** 2026-09-01T03:09:43.401Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-01T03:09:43.402Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Fase 2 Native Mobile Shell: deuda del gate (UI-10, contrato documental del timer, touch targets 44px), PWA standalone, shell movil con safe areas, preservacion de contexto, teclado, sheets, loading y pulido movil del Admin
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-01T03:03:45.610Z | codex | PUBLISH
 - **Estado:** complete
