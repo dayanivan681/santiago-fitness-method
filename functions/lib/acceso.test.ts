@@ -170,3 +170,29 @@ describe('clientes de QA', () => {
     expect(clienteQaBloqueado('', false)).toBe(false)
   })
 })
+
+describe('nombre visible del cliente de QA (Fase 1D)', () => {
+  it('el id técnico sigue siendo dayan-test', () => {
+    // Renombrar el id rompería el filtro de producción y las suites, que
+    // buscan siempre por identidad técnica y nunca por lo que se lee.
+    expect(esClienteQa('dayan-test')).toBe(true)
+    expect(esClienteQa('Cliente de prueba 1')).toBe(false)
+  })
+
+  it('el filtro no depende del nombre visible', () => {
+    // Arrange: el mismo cliente con el nombre nuevo y con el antiguo
+    const conNombreNuevo = [{ id: 'dayan-test', nombre: 'Cliente de prueba 1' }]
+    const conNombreViejo = [{ id: 'dayan-test', nombre: 'QA Role Split' }]
+
+    // Act + Assert: se oculta por id, se llame como se llame
+    expect(filtrarClientesQa(conNombreNuevo, false)).toEqual([])
+    expect(filtrarClientesQa(conNombreViejo, false)).toEqual([])
+  })
+
+  it('ivanprueba no es de QA y no se toca', () => {
+    // No está clasificado como técnico: en producción sigue siendo un cliente
+    // normal y visible.
+    expect(esClienteQa('ivanprueba')).toBe(false)
+    expect(filtrarClientesQa([{ id: 'ivanprueba' }], false)).toEqual([{ id: 'ivanprueba' }])
+  })
+})

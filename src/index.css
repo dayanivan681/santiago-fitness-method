@@ -226,7 +226,9 @@ button,
 }
 
 .pestanas__boton {
+  position: relative;
   flex: 1;
+  min-width: 44px;
   min-height: 48px;
   display: flex;
   flex-direction: column;
@@ -245,18 +247,41 @@ button,
   color: rgba(242, 242, 240, 0.38);
 }
 
-.pestanas__marca {
-  width: 18px;
-  height: 3px;
-  border-radius: 99px;
-  background: transparent;
+/*
+ * El icono acompaña al texto, no lo sustituye: la etiqueta sigue siendo el
+ * nombre accesible y lo que se lee de un vistazo con el móvil en la mano.
+ */
+.pestanas__icono {
+  display: block;
+  flex: none;
+  opacity: 0.75;
 }
 
+.pestanas__etiqueta {
+  display: block;
+  line-height: 1;
+}
+
+/*
+ * El estado activo no se fía sólo del color: además del blanco pleno, el icono
+ * pasa a opacidad completa y aparece la barra superior. Tres señales, y ninguna
+ * exclusivamente cromática.
+ */
 .pestanas__boton--activo {
   color: var(--texto);
 }
 
-.pestanas__boton--activo .pestanas__marca {
+.pestanas__boton--activo .pestanas__icono {
+  opacity: 1;
+}
+
+.pestanas__boton--activo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 18px;
+  height: 3px;
+  border-radius: 99px;
   background: var(--positivo);
 }
 
@@ -818,7 +843,10 @@ button,
 }
 
 .descanso__boton {
-  min-height: 40px;
+  /* Controles de la Fase 1: 44 px reales, sin pseudo-elementos, porque en la
+     barra del cronómetro sí hay sitio de sobra. */
+  min-height: 44px;
+  min-width: 44px;
   padding: 6px 12px;
   border: none;
   border-radius: 8px;

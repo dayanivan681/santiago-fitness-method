@@ -67,7 +67,7 @@ try {
     const html = await root.text()
     const nested = await pedir('/admin/ruta-desconocida', { headers: ACCESS })
     const nestedHtml = await nested.text()
-    comprobar('COACH-1', 'Consola admin y ruta anidada no sirven la SPA', root.status === 200 && html.includes('Coach / Admin') && html.includes('Santiago') && html.includes('QA Role Split') && nested.status === 404 && !nestedHtml.includes('assets/index-'), `root=${root.status} nested=${nested.status}`)
+    comprobar('COACH-1', 'Consola admin y ruta anidada no sirven la SPA', root.status === 200 && html.includes('Coach / Admin') && html.includes('Santiago') && html.includes('Cliente de prueba 1') && nested.status === 404 && !nestedHtml.includes('assets/index-'), `root=${root.status} nested=${nested.status}`)
   }
 
   {

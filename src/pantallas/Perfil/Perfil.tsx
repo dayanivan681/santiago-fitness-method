@@ -10,7 +10,6 @@ import { Cabecera } from '../../componentes/Cabecera'
 import { FichaParticipante } from './FichaParticipante'
 import { PanelLimitaciones } from './PanelLimitaciones'
 import { PanelProgreso } from './PanelProgreso'
-import { PanelRespaldo } from './PanelRespaldo'
 import { PanelVolumen } from './PanelVolumen'
 import type { Repositorio } from '../../datos/repositorio'
 
@@ -62,12 +61,13 @@ export function Perfil({
 
           <PanelVolumen repositorio={repositorio} />
 
-          <PanelRespaldo participante={participante} repositorio={repositorio} />
 
+          {/* Sin detalles de almacenamiento: al participante le importa de dónde
+              viene su rutina y dónde queda lo que entrena, no en qué se guarda.
+              Y no se promete sincronización entre dispositivos, que no existe. */}
           <p className="nota">
-            Tu identidad y rutina llegan del panel del coach y se sincronizan desde la
-            nube. Series, historial, fotos y progreso se guardan localmente en este
-            dispositivo durante este release.
+            Tu programa llega de tu coach. Tu entrenamiento se registra en este
+            dispositivo.
           </p>
 
           {/* El acceso lo resuelve el middleware del borde, no la app: por eso

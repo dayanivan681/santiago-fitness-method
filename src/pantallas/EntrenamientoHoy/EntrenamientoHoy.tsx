@@ -3,22 +3,16 @@
  * Guía del proyecto §3 (ya viene cargado), §24 (los 5 ejercicios), §25.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
+import { useControlDescanso } from '../../aplicacion/contextoDescanso'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { Cabecera } from '../../componentes/Cabecera'
-import { formatearSegundos } from '../../logica/descanso'
 import { TarjetaEjercicio } from './TarjetaEjercicio'
 import { HojaVariantes } from './HojaVariantes'
 import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
 import { fechaDeHoy, type Repositorio } from '../../datos/repositorio'
 import type { Ejercicio } from '../../dominio/tipos'
-
-/** §12: el descanso se puede alargar sin pelearse con el cronómetro. */
-const PRORROGA_SEGUNDOS = 30
-
-/** Cuándo el cronómetro empieza a avisar de verdad. */
-const SEGUNDOS_DE_AVISO = 10
 
 interface Props {
   readonly repositorio?: Repositorio
@@ -39,24 +33,17 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
   const [abierta, setAbierta] = useState(0)
   const [variantesDe, setVariantesDe] = useState<number | null>(null)
   const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
-  const [descanso, setDescanso] = useState(0)
-  const temporizador = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { arrancar: arrancarDescanso, declararBarraDeSesion } = useControlDescanso()
 
-  useEffect(() => () => detener(temporizador), [])
-
-  function arrancarDescanso(segundos: number) {
-    detener(temporizador)
-    setDescanso(segundos)
-    temporizador.current = setInterval(() => {
-      setDescanso((quedan) => {
-        if (quedan <= 1) {
-          detener(temporizador)
-          return 0
-        }
-        return quedan - 1
-      })
-    }, 1000)
-  }
+  /**
+   * El cronómetro vive en App y no sabe si hay una sesión abierta, pero los dos
+   * son fijos al fondo. Sin este aviso se solaparían: ya pasó una vez, 22 px.
+   */
+  const barraDeSesionVisible = Boolean(datos?.sesionDeHoy && !datos.sesionDeHoy.completadaEn)
+  useEffect(() => {
+    declararBarraDeSesion(barraDeSesionVisible)
+    return () => declararBarraDeSesion(false)
+  }, [barraDeSesionVisible, declararBarraDeSesion])
 
   /**
    * Al completar la última serie, el ejercicio se pliega y se abre el siguiente.
@@ -87,9 +74,10 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
     ejerciciosDelDia.flatMap((ejercicioDelDia) => ejercicioDelDia.variantes),
   )
 
-  // El cliente pide que el temporizador NO arranque solo: lo activa el
-  // participante. Ojo con no confundirlo con el descanso *medido* que guarda el
-  // historial (§5), que se sigue derivando solo de las marcas de tiempo.
+  // El descanso arranca solo al guardar una serie de trabajo, y el botón
+  // "Descanso" sigue disponible para arrancarlo a mano cuando hace falta.
+  // Ojo con no confundirlo con el descanso *medido* que guarda el historial
+  // (§5), que se sigue derivando solo de las marcas de tiempo de cada serie.
 
   return (
     <>
@@ -152,9 +140,23 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
                 onAlternar={() => setAbierta((actual) => (actual === indice ? -1 : indice))}
                 onAbrirVariantes={() => setVariantesDe(indice)}
                 onAbrirFicha={() => setFichaDe(ejercicioDelDia.ejercicio)}
-                onDescansar={() => arrancarDescanso(ejercicioDelDia.slot.descansoSegundos)}
+                onDescansar={() =>
+                  arrancarDescanso(
+                    ejercicioDelDia.ejercicio.id,
+                    ejercicioDelDia.slot.descansoSegundos,
+                  )
+                }
                 onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
+                  // Si esto lanza, no se llega al cronómetro: un guardado
+                  // fallido no debe arrancar ningún descanso.
                   await registrarSerie(ejercicioId, numeroSerie, valores)
+                  // El calentamiento no descansa: es preparación, y encadenar
+                  // tres minutos entre aproximaciones alarga la sesión sin
+                  // motivo. Las correcciones llegan por otra vía (onCorregir)
+                  // y tampoco pasan por aquí.
+                  if (!valores.esCalentamiento) {
+                    arrancarDescanso(ejercicioId, ejercicioDelDia.slot.descansoSegundos)
+                  }
                   avanzarSiTermino(indice, numeroSerie, ejercicioDelDia.slot.seriesObjetivo)
                 }}
                 onCorregirSerie={corregirSerie}
@@ -221,41 +223,6 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
         </div>
       )}
 
-      {descanso > 0 && (
-        <div
-          className={[
-            'descanso',
-            descanso <= SEGUNDOS_DE_AVISO && 'descanso--acabando',
-            // Sin barra de sesión debajo, el cronómetro ocupa su sitio.
-            !(sesionDeHoy && !sesionDeHoy.completadaEn) && 'descanso--sin-barra',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-          role="status"
-          aria-label="Temporizador de descanso"
-        >
-          <span className="descanso__rotulo">Descanso</span>
-          <span className="descanso__tiempo">{formatearSegundos(descanso)}</span>
-          <button
-            type="button"
-            className="descanso__boton"
-            onClick={() => setDescanso((quedan) => quedan + PRORROGA_SEGUNDOS)}
-          >
-            +{PRORROGA_SEGUNDOS}s
-          </button>
-          <button
-            type="button"
-            className="descanso__boton descanso__boton--fuerte"
-            onClick={() => {
-              detener(temporizador)
-              setDescanso(0)
-            }}
-          >
-            Listo
-          </button>
-        </div>
-      )}
-
       {/* La ficha se superpone: la tarjeta sigue montada debajo, así que abrirla
           y cerrarla no cuesta lo que llevas tecleado en la serie. */}
       {fichaDe && (
@@ -285,13 +252,6 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
       )}
     </>
   )
-}
-
-function detener(ref: { current: ReturnType<typeof setInterval> | null }) {
-  if (ref.current) {
-    clearInterval(ref.current)
-    ref.current = null
-  }
 }
 
 /**

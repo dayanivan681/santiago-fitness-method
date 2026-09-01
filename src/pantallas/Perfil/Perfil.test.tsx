@@ -8,6 +8,7 @@ import { RepositorioLocal } from '../../datos/repositorioLocal'
 import { sembrar } from '../../datos/semilla'
 import { sembrarParticipante } from '../../pruebas/participante'
 import { exportarRespaldo } from '../../datos/respaldo'
+import { PanelRespaldo } from './PanelRespaldo'
 
 let repositorio: RepositorioLocal
 
@@ -295,20 +296,54 @@ describe('foto de perfil (V1)', () => {
   })
 })
 
-describe('copia de seguridad', () => {
-  test('avisa de que los datos viven sólo en este dispositivo', async () => {
-    // El participante tiene que saberlo antes de perderlos, no después.
+describe('copia de seguridad fuera de la experiencia del cliente', () => {
+  test('el perfil ya no la ofrece', async () => {
+    // Fase 1C: deja de ser algo que el participante deba entender. El código
+    // sigue en el repositorio, pero no tiene puerta de entrada en su app.
     await abrir()
 
+    expect(screen.queryByText(/Copia de seguridad/i)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Archivo de copia')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Descargar copia/i })).not.toBeInTheDocument()
+    expect(screen.queryByText(/Restaurar copia/i)).not.toBeInTheDocument()
+  })
+
+  test('el perfil no explica dónde se guardan los datos por dentro', async () => {
+    // El copy técnico tampoco pertenece a la experiencia del cliente.
+    await abrir()
+
+    expect(screen.queryByText(/Los datos viven sólo en este dispositivo/)).not.toBeInTheDocument()
     expect(
-      await screen.findByText(/Los datos viven sólo en este dispositivo/),
+      await screen.findByText(/Tu programa llega de tu coach/),
     ).toBeInTheDocument()
   })
+
+  test('no promete sincronización entre dispositivos', async () => {
+    // Lo que no existe no se anuncia.
+    await abrir()
+
+    expect(screen.queryByText(/sincroniza/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/nube/i)).not.toBeInTheDocument()
+  })
+})
+
+/**
+ * El panel sigue existiendo y funcionando: lo que se retira en la Fase 1C es su
+ * sitio en la app del cliente, no el código. Se prueba montándolo directamente
+ * para no perder la cobertura de importación y restauración.
+ */
+describe('panel de copia (conservado, sin montar en la app)', () => {
+  async function abrirPanel() {
+    const participante = (await repositorio.participanteActual())!
+    render(<PanelRespaldo participante={participante} repositorio={repositorio} />)
+    await screen.findByLabelText('Archivo de copia')
+    return participante
+  }
 
   test('un archivo que no es una copia se rechaza sin tocar nada', async () => {
     // Restaurar basura encima de meses de entrenamiento no tendría vuelta atrás.
     // Arrange
-    await abrir()
+    await abrirPanel()
     const basura = new File(['{"cualquier":"cosa"}'], 'notas.json', {
       type: 'application/json',
     })
@@ -324,7 +359,7 @@ describe('copia de seguridad', () => {
   })
 
   test('un archivo ilegible tampoco rompe la app', async () => {
-    await abrir()
+    await abrirPanel()
 
     await userEvent.upload(
       screen.getByLabelText('Archivo de copia'),
@@ -336,9 +371,8 @@ describe('copia de seguridad', () => {
 
   test('restaurar una copia válida devuelve los datos', async () => {
     // Arrange: una copia hecha con otro nombre
-    await abrir()
-    const actual = await repositorio.participanteActual()
-    const copia = await exportarRespaldo(repositorio, actual!.id)
+    const actual = await abrirPanel()
+    const copia = await exportarRespaldo(repositorio, actual.id)
     const conOtroNombre = {
       ...copia,
       participante: { ...copia.participante, nombre: 'Santiago Restaurado' },

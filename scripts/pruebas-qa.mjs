@@ -16,6 +16,8 @@ const BASE_URL = process.env.BASE_URL ?? 'http://localhost:8788'
 const QA_VISIBLE = process.env.QA_ESPERADO === 'true'
 const COACH = { 'Cf-Access-Jwt-Assertion': 'simulado' }
 const QA = 'dayan-test'
+// El id es la identidad; el nombre sólo se usa para comprobar lo que se lee.
+const NOMBRE_QA = 'Cliente de prueba 1'
 
 const resultados = []
 
@@ -104,7 +106,7 @@ console.log(`\nSeparación de QA · ${BASE_URL} · esperando dayan-test ${QA_VIS
     'QA-6', `Navegación directa a ?cliente=dayan-test → ${QA_VISIBLE ? 'ficha' : '404 sin datos'}`,
     QA_VISIBLE
       ? html.status === 200 && cuerpo.includes(QA)
-      : html.status === 404 && !cuerpo.includes('QA Role Split'),
+      : html.status === 404 && !cuerpo.includes(NOMBRE_QA),
     `status=${html.status}`,
   )
 
@@ -183,7 +185,7 @@ console.log(`\nSeparación de QA · ${BASE_URL} · esperando dayan-test ${QA_VIS
     'QA-12', 'La app del participante no menciona QA ni la consola de admin',
     app.status === 200 &&
       !html.includes(QA) &&
-      !html.includes('QA Role Split') &&
+      !html.includes(NOMBRE_QA) &&
       !html.includes('/admin'),
     `status=${app.status}`,
   )

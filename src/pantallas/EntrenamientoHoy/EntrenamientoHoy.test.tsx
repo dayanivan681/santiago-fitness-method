@@ -3,6 +3,8 @@ import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor, fireEvent, cleanup, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
+import { ProveedorDescanso } from '../../aplicacion/ProveedorDescanso'
+import { Descanso } from '../../componentes/Descanso'
 import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 import { sembrar } from '../../datos/semilla'
@@ -51,8 +53,21 @@ function idDeLaPrimeraSerie(numeroSerie = 1) {
 }
 
 /** El primer ejercicio viene desplegado; los demás hay que abrirlos. */
+/**
+ * El cronómetro pasó a colgar de App, así que las pruebas de esta pantalla lo
+ * montan igual que lo hace App: proveedor alrededor y barra al final.
+ */
+function Pantalla() {
+  return (
+    <ProveedorDescanso>
+      <EntrenamientoHoy repositorio={repositorio} />
+      <Descanso />
+    </ProveedorDescanso>
+  )
+}
+
 async function abrirUpperA() {
-  render(<EntrenamientoHoy repositorio={repositorio} />)
+  render(<Pantalla />)
   await userEvent.click(await screen.findByRole('button', { name: 'Upper A' }))
   await screen.findByText(PRESS)
 }
@@ -248,7 +263,7 @@ describe('un día sin ejercicios (§28)', () => {
     await repositorio.guardarPlantilla({ ...lowerA, slots: [] })
 
     // Act
-    render(<EntrenamientoHoy repositorio={repositorio} />)
+    render(<Pantalla />)
     await userEvent.click(await screen.findByRole('button', { name: 'Lower A' }))
 
     // Assert
@@ -260,7 +275,7 @@ describe('los cuatro días vienen listos para entrenar', () => {
   test('ninguno abre vacío: §4 en los cuatro', async () => {
     // Antes, tres de cada cuatro días abrían diciendo "no tiene ejercicios
     // definidos", que se lee como una app rota y no como una decisión pendiente.
-    render(<EntrenamientoHoy repositorio={repositorio} />)
+    render(<Pantalla />)
 
     for (const dia of ['Upper A', 'Lower A', 'Upper B', 'Lower B']) {
       await userEvent.click(await screen.findByRole('button', { name: dia }))
@@ -357,7 +372,7 @@ describe('un día de ocho ejercicios (criterios 2 y 10)', () => {
     await repositorio.guardarPlantilla(lleno)
 
     // Act
-    render(<EntrenamientoHoy repositorio={repositorio} />)
+    render(<Pantalla />)
     await userEvent.click(await screen.findByRole('button', { name: 'Lower A' }))
 
     // Assert: los ocho, cada uno con su plan a la vista
@@ -373,9 +388,10 @@ describe('temporizador manual (criterio 5)', () => {
   const cronometro = () =>
     screen.queryByRole('status', { name: 'Temporizador de descanso' })
 
-  test('guardar una serie no arranca el cronómetro', async () => {
-    // El cliente lo pide manual: antes saltaba solo al guardar. Ojo, esto no es
-    // el descanso *medido* de §5, que se sigue derivando de las marcas de tiempo.
+  test('guardar una serie de trabajo arranca el descanso sola', async () => {
+    // Cambio de criterio de la Fase 1: antes era estrictamente manual. Ojo, esto
+    // no es el descanso *medido* de §5, que se sigue derivando de las marcas de
+    // tiempo de cada serie y no ha cambiado.
     // Arrange
     await abrirUpperA()
 
@@ -384,6 +400,44 @@ describe('temporizador manual (criterio 5)', () => {
     await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
 
     // Assert
+    expect(await screen.findByRole('status', { name: 'Temporizador de descanso' }))
+      .toHaveTextContent('Descanso')
+  })
+
+  test('un calentamiento no arranca el descanso', async () => {
+    // Es preparación: encadenar tres minutos entre aproximaciones alarga la
+    // sesión sin motivo.
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(
+      screen.getByLabelText(`Marcar la serie 1 de ${PRESS} como calentamiento`),
+    )
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    // Assert
+    expect(cronometro()).not.toBeInTheDocument()
+  })
+
+  test('corregir una serie ya guardada no arranca el descanso', async () => {
+    // La corrección no es una serie nueva: no toca descansar por ella.
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+    await userEvent.click(screen.getByRole('button', { name: 'Listo' }))
+    await waitFor(() => expect(cronometro()).not.toBeInTheDocument())
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Editar la serie 1 de ${PRESS}`))
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    // Assert
+    await waitFor(() =>
+      expect(screen.getByLabelText(`Editar la serie 1 de ${PRESS}`)).toBeInTheDocument(),
+    )
     expect(cronometro()).not.toBeInTheDocument()
   })
 

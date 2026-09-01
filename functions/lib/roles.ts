@@ -234,7 +234,9 @@ const DEFAULT_CLIENTES: readonly PerfilCloud[] = [
   },
   {
     id: 'dayan-test',
-    nombre: 'QA Role Split',
+    // El id técnico no cambia: por él se filtra en producción (functions/lib/qa.ts).
+    // Sólo cambia lo que lee el coach.
+    nombre: 'Cliente de prueba 1',
     sexo: 'masculino',
     edad: 30,
     estaturaCm: 175.26,

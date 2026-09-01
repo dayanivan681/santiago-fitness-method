@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-01T02:08:14.949Z
+- **Última sincronización:** 2026-09-01T02:38:32.955Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-01T02:38:32.956Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Fase 1 (0+1A+1B+1C+1D): cronómetro de descanso global a nivel de App con instante final absoluto (sobrevive a cambio de pestaña y al frenado del navegador), iconos SVG locales en las cuatro pestañas, retirada de Copia de seguridad de Perfil y del Alta conservando el código subyacente, y nombre visible 'Cliente de prueba 1' para el cliente tecnico dayan-test mediante migracion idempotente 0005. Sin capa offline, sin cache, sin tocar autenticacion, Santiago ni ivanprueba.
+- **Verificación:** npm test 470/470; npm run lint (0 warnings); npm run build; pruebas-roles 11/11; pruebas-acceso 37/37; pruebas-admin-ui 11/11; pruebas-qa 13/13 visible y 13/13 oculto; QA visual 320/390x844/430/1024
+- **Siguiente:** QA independiente de Fase 1. No iniciar Fase 2 hasta aprobacion.
+
 
 ### 2026-09-01T02:08:14.950Z | claude-code | CLAIM
 - **Estado:** active

@@ -3,6 +3,7 @@ import { describe, test, expect, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AltaParticipante } from './AltaParticipante'
+import { RestaurarCopia } from './RestaurarCopia'
 import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../../datos/repositorioLocal'
 
@@ -138,7 +139,26 @@ describe('alta del participante (criterio 1)', () => {
   })
 })
 
-describe('restaurar una copia desde el alta', () => {
+describe('el alta ya no ofrece restaurar una copia', () => {
+  test('no hay puerta de entrada a la copia en el alta', () => {
+    // Fase 1C: la copia deja de formar parte de lo que ve el participante.
+    abrir()
+
+    expect(screen.queryByLabelText('Archivo de copia')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Restaurar copia/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/¿Ya tenías datos\?/i)).not.toBeInTheDocument()
+  })
+})
+
+/**
+ * El componente sigue existiendo y funcionando: la Fase 1C retira su sitio en
+ * la app, no el código. Se monta directamente para conservar la cobertura.
+ */
+describe('restaurar una copia (conservado, sin montar en el alta)', () => {
+  function abrirRestaurar() {
+    render(<RestaurarCopia repositorio={repositorio} />)
+  }
+
   test('un móvil nuevo puede recuperar los datos sin dar de alta a nadie', async () => {
     // Es el caso para el que existe la copia: dispositivo nuevo o navegador
     // borrado. Si sólo se pudiera restaurar desde Perfil —que necesita un
@@ -164,7 +184,7 @@ describe('restaurar una copia desde el alta', () => {
       progreso: [],
       sustituciones: [],
     }
-    abrir()
+    abrirRestaurar()
 
     // Act
     await userEvent.upload(
@@ -179,7 +199,7 @@ describe('restaurar una copia desde el alta', () => {
   })
 
   test('un archivo que no es una copia no crea a nadie', async () => {
-    abrir()
+    abrirRestaurar()
 
     await userEvent.upload(
       screen.getByLabelText('Archivo de copia'),

@@ -12,7 +12,6 @@
 import { useState, type FormEvent } from 'react'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { Cabecera } from '../../componentes/Cabecera'
-import { RestaurarCopia } from './RestaurarCopia'
 import { crearDiasIniciales } from '../../datos/semilla'
 import { CamposParticipante } from '../Perfil/CamposParticipante'
 import {
@@ -80,7 +79,6 @@ export function AltaParticipante({ repositorio = repositorioPorDefecto }: Props 
         </form>
 
         {/* Va después del alta, no antes: empezar de cero es lo habitual. */}
-        <RestaurarCopia repositorio={repositorio} />
       </div>
     </>
   )
