@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-01T02:51:55.059Z
+- **Última sincronización:** 2026-09-01T03:03:45.609Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-01T03:03:45.610Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA independiente Phase 1 PASS: diff acotado; timer automatico/global, iconos, backup fuera y nombre QA validados; 470/470, lint y build; roles 11/11, acceso 37/37, QA 13/13 visible y oculto; browser 320/390/430/1024 sin overflow ni solapes; D1 Santiago 4x5 e invitacion intacta. P2: admin-ui UI-10 usa supuesto obsoleto de Santiago INCOMPLETE (10/11); referencias manuales stale y touch targets preexistentes de 40px.
+- **Verificación:** npm test 470/470 codigo 0; npm run lint 0 warnings; npm run build OK; test:roles 11/11; acceso 37/37; admin-ui 10/11 por fixture stale; QA visible 13/13; QA oculto 13/13; Browser local real 320/390x844/430/1024; D1 remoto read-only; production probes 401/302/SW 200
+- **Siguiente:** PHASE 2 puede comenzar despues de corregir contrato documental manual->automatico y el fixture UI-10; resolver targets preexistentes de 40px en Phase 2. No implementar onboarding todavia.
+
 
 ### 2026-09-01T02:51:55.061Z | codex | CLAIM
 - **Estado:** active
