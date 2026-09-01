@@ -383,7 +383,7 @@ describe('un día de ocho ejercicios (criterios 2 y 10)', () => {
   })
 })
 
-describe('temporizador manual (criterio 5)', () => {
+describe('temporizador de descanso (criterio 5)', () => {
   /** Los campos de la serie son <output>, que también tienen rol de estado. */
   const cronometro = () =>
     screen.queryByRole('status', { name: 'Temporizador de descanso' })
@@ -1095,6 +1095,30 @@ describe('avisar de que se recuperó un borrador', () => {
     // Assert
     await waitFor(() =>
       expect(screen.queryByText('Recuperado sin guardar')).not.toBeInTheDocument(),
+    )
+  })
+})
+
+describe('teclado móvil (Fase 2)', () => {
+  test('el peso pide un teclado decimal y las reps uno numérico', async () => {
+    // El peso lleva decimales (2.5 lb por lado); las repeticiones no. Pedir el
+    // teclado que toca ahorra un cambio de modo en cada serie.
+    // Arrange
+    await abrirUpperA()
+
+    // Act
+    await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
+
+    // Assert
+    expect(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)).toHaveAttribute(
+      'inputmode',
+      'decimal',
+    )
+
+    await userEvent.click(screen.getByLabelText(`Reps de la serie 1 de ${PRESS}`))
+    expect(screen.getByLabelText(`Reps de la serie 1 de ${PRESS}`)).toHaveAttribute(
+      'inputmode',
+      'numeric',
     )
   })
 })

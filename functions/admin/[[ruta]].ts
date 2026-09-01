@@ -174,17 +174,29 @@ function pagina(cuerpo: string, estado = 200): Response {
  :root{--fondo:#0b0c0d;--tarjeta:#111214;--hundido:#0e1012;--texto:#f2f2f0;
    --tenue:rgba(242,242,240,.55);--apagado:rgba(242,242,240,.38);
    --borde:rgba(255,255,255,.09);--borde-fuerte:rgba(255,255,255,.2);
-   --rojo:#e5352b;--verde:#50c878;--radio:14px;--toque:44px}
+   --rojo:#e5352b;--verde:#50c878;--radio:14px;--toque:44px;
+   --lado-izq:env(safe-area-inset-left,0px);--lado-der:env(safe-area-inset-right,0px);
+   --arriba:env(safe-area-inset-top,0px);--abajo:env(safe-area-inset-bottom,0px)}
  /* Sin overflow-x:hidden a proposito: recortar en silencio convierte un
     desbordamiento en algo invisible. Si algun dia vuelve a pasar, se vera. */
- body{margin:0;min-height:100vh;background:var(--fondo);color:var(--texto);
+ body{margin:0;min-height:100dvh;background:var(--fondo);color:var(--texto);
    font-family:'Barlow','Helvetica Neue',system-ui,-apple-system,sans-serif;
-   font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
- .marco{max-width:560px;margin:0 auto;padding:0 16px 96px}
+   font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+   /* Sin el destello azul de Android al tocar. */
+   -webkit-tap-highlight-color:transparent}
+ /* Controles: sin zoom por doble toque. El pellizco sigue funcionando. */
+ a,button,label,summary{touch-action:manipulation}
+ /* El toque se confirma en el acto, sin animacion larga. */
+ a:active,button:active{opacity:.72}
+ @media(prefers-reduced-motion:reduce){
+   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+ .marco{max-width:560px;margin:0 auto;
+   padding:0 calc(16px + var(--lado-der)) calc(96px + var(--abajo)) calc(16px + var(--lado-izq))}
  /* Barra superior: una sola vuelta atrás, siempre en el mismo sitio. */
  .barra{position:sticky;top:0;z-index:5;background:rgba(11,12,13,.94);
    backdrop-filter:blur(8px);border-bottom:1px solid var(--borde);
-   margin:0 -16px 18px;padding:10px 16px 12px}
+   margin:0 calc(-16px - var(--lado-der)) 18px calc(-16px - var(--lado-izq));
+   padding:calc(10px + var(--arriba)) calc(16px + var(--lado-der)) 12px calc(16px + var(--lado-izq))}
  .barra__fila{display:flex;align-items:center;gap:10px;min-height:var(--toque)}
  .atras{display:inline-flex;align-items:center;justify-content:center;
    min-width:var(--toque);min-height:var(--toque);margin-left:-10px;

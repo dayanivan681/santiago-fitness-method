@@ -541,7 +541,18 @@ const COMO_COACH = { 'Cf-Access-Jwt-Assertion': 'simulado' }
 }
 
 // ---- ADMIN-3 · Probar como cliente crea una sesión normal ------------------
-{
+//
+// "Probar como cliente" abre una sesión sobre el cliente QA, y el cliente QA no
+// existe cuando SHOW_QA_CLIENTS está apagado: en producción devuelve 404 a
+// propósito. Antes eso no se distinguía de un fallo y, peor, ADMIN-4 encadenaba
+// con una cookie vacía y reventaba el proceso con un "Invalid URL" que no
+// explicaba nada. Se dice y se omite, igual que hace la suite de la consola.
+const QA_VISIBLE =
+  (await pedir("/admin/api/clientes/dayan-test", { headers: COMO_COACH })).status === 200
+
+if (!QA_VISIBLE) {
+  console.log("  \x1b[33mOMITIDO\x1b[0m  ADMIN-3 a ADMIN-5 necesitan el cliente QA (SHOW_QA_CLIENTS=true).")
+} else {
   const antes = contarSesiones()
   const r = await pedir('/admin/', {
     method: 'POST',

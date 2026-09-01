@@ -3,7 +3,7 @@
  * Guía del proyecto §3 (ya viene cargado), §7 (referencia anterior), §24.
  */
 
-import { useState } from 'react'
+import { useMemoria, type Memoria } from './memoria'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
 import { fechaDeHoy, nuevoId, type Repositorio } from '../datos/repositorio'
@@ -73,8 +73,16 @@ export interface NuevaSerie {
   readonly esCalentamiento?: boolean
 }
 
-export function useEntrenamiento(repositorio: Repositorio) {
-  const [plantillaIdElegida, elegirPlantilla] = useState<string | null>(null)
+/**
+ * `memoriaDia` la pone `App` para que volver a Hoy desde otra pestaña abra el
+ * día que se estaba mirando y no el de la rotación. Sin ella el hook guarda la
+ * elección por su cuenta, que es lo que hacen las pruebas.
+ */
+export function useEntrenamiento(repositorio: Repositorio, memoriaDia?: Memoria<string | null>) {
+  // El hook interno se llama siempre, haya memoria de fuera o no: el orden de
+  // los hooks no puede depender de un argumento opcional.
+  const propia = useMemoria<string | null>(null)
+  const { valor: plantillaIdElegida, recordar: elegirPlantilla } = memoriaDia ?? propia
 
   const datos = useLiveQuery(
     () => cargarEntrenamiento(repositorio, plantillaIdElegida),

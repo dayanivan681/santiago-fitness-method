@@ -52,6 +52,25 @@
    * el siguiente toque estorba. Todo esto queda anulado por
    * `prefers-reduced-motion` al final del archivo.
    */
+  /*
+   * Altura de lo que vive pegado abajo.
+   *
+   * Los tres —pestañas, barra de sesión y cronómetro— se apilan, y hasta ahora
+   * cada uno repetía la suma a mano: 73, 81, 134, 184. Bastaba tocar uno para
+   * descuadrar los otros. Ahora se derivan de aquí.
+   *
+   * `env(...)` con respaldo 0px: en un navegador sin áreas seguras la variable
+   * queda vacía y `calc()` entero se invalidaría.
+   */
+  --fondo-seguro: env(safe-area-inset-bottom, 0px);
+  --lado-seguro-izq: env(safe-area-inset-left, 0px);
+  --lado-seguro-der: env(safe-area-inset-right, 0px);
+  --alto-pestanas: 73px;
+  --alto-barra-sesion: 53px;
+  /* Borde superior de las pestañas, ya por encima del indicador de inicio. */
+  --sobre-pestanas: calc(var(--alto-pestanas) + var(--fondo-seguro));
+  --sobre-barra-sesion: calc(var(--sobre-pestanas) + var(--alto-barra-sesion));
+
   --mov-toque: 120ms;
   --mov-confirmar: 150ms;
   --mov-desplegar: 200ms;
@@ -68,6 +87,14 @@
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  /*
+   * Al enfocar un campo el navegador lo desplaza a la vista; sin esta reserva
+   * lo deja justo detrás de las pestañas, la barra de sesión o el teclado.
+   */
+  scroll-padding-bottom: calc(var(--sobre-barra-sesion) + 24px);
 }
 
 body {
@@ -145,8 +172,30 @@ button,
 
 .aviso {
   padding: 2rem 1rem;
+  /* Reserva sitio: sin esto la pantalla se pliega mientras carga y el contenido
+     salta al llegar. */
+  min-height: 40dvh;
   color: var(--texto-42);
   text-align: center;
+}
+
+/*
+ * Arranque: el armazón ya está, sólo falta el contenido. Centrado y quieto,
+ * para que la app no dé la sensación de montarse a trozos.
+ */
+.app--arrancando {
+  justify-content: center;
+  align-items: center;
+}
+
+.arranque {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--texto-35);
 }
 
 /* ---------- Armazón ---------- */
@@ -168,7 +217,8 @@ button,
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  padding: calc(18px + env(safe-area-inset-top)) 18px 12px;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) calc(18px + var(--lado-seguro-der)) 12px
+    calc(18px + var(--lado-seguro-izq));
   background: var(--fondo);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -199,7 +249,8 @@ button,
 
 .contenido {
   flex: 1;
-  padding: 14px 14px calc(120px + env(safe-area-inset-bottom));
+  padding: 14px calc(14px + var(--lado-seguro-der)) calc(var(--sobre-pestanas) + 47px)
+    calc(14px + var(--lado-seguro-izq));
 }
 
 .pila {
@@ -218,11 +269,19 @@ button,
   margin: 0 auto;
   display: flex;
   gap: 4px;
-  padding: 10px 10px calc(14px + env(safe-area-inset-bottom));
+  padding: 10px calc(10px + var(--lado-seguro-der)) calc(14px + var(--fondo-seguro))
+    calc(10px + var(--lado-seguro-izq));
   background: rgba(11, 12, 13, 0.92);
   border-top: 1px solid var(--borde);
-  backdrop-filter: blur(14px);
+  /*
+   * El prefijado primero y el estándar después, no al revés.
+   *
+   * Al minificar, con el estándar delante se quedaba sólo el `-webkit-` y el
+   * desenfoque no llegaba a aplicarse: la barra tapaba el contenido sólo con su
+   * 92 % de opacidad. El orden importa porque gana la última declaración.
+   */
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 .pestanas__boton {
@@ -283,6 +342,22 @@ button,
   height: 3px;
   border-radius: 99px;
   background: var(--positivo);
+  /* La barra crece desde el centro al cambiar de sección. */
+  transition: transform var(--mov-toque) var(--mov-curva);
+}
+
+/*
+ * El toque se confirma en el icono, no en toda la pestaña: encoger el bloque
+ * entero movería la etiqueta y la barra de arriba, y se leería como un salto.
+ */
+.pestanas__icono {
+  transition:
+    opacity var(--mov-toque) var(--mov-curva),
+    transform var(--mov-toque) var(--mov-curva);
+}
+
+.pestanas__boton:active .pestanas__icono {
+  transform: scale(0.88);
 }
 
 /* ---------- Portada del día ---------- */
@@ -576,10 +651,16 @@ button,
 .enlace {
   border: none;
   background: none;
-  /* El texto es pequeño por diseño; el área de toque no puede serlo. */
+  /* El texto es pequeño por diseño; el área de toque no puede serlo: 12 px de
+     línea más 2x16 de relleno dan los 44 px reales, y el margen negativo evita
+     que la fila crezca. */
   min-width: 44px;
-  padding: 14px 2px;
-  margin: -14px -2px;
+  padding: 16px 2px;
+  margin: -16px -2px;
+  /* El área desbordada tiene que recibir el toque: sin esto la tapan los
+     bloques que se pintan después y el alto real se queda en 36 px. */
+  position: relative;
+  z-index: 1;
   cursor: pointer;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
@@ -611,6 +692,9 @@ button,
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  /* A 320 px los dos distintivos no caben junto al título: bajan de línea en
+     vez de salirse del marco. */
+  flex-wrap: wrap;
 }
 
 .serie__titulo {
@@ -667,15 +751,17 @@ button,
 }
 
 /*
- * El área táctil se amplía sin agrandar el dibujo.
+ * 44 x 44 reales, sin pseudo-elementos.
  *
- * Tres columnas de 44 px no caben en un móvil de 320 px, así que el botón se
- * queda estrecho a la vista y se le extiende la zona sensible por debajo con un
- * pseudo-elemento. Se toca con el pulgar sin que el diseño se descoloque.
+ * Antes el botón medía 34 px y estiraba su zona sensible con un ::after. Los
+ * dos steppers que se miran a través del hueco entre columnas —el + del peso y
+ * el – de las reps— acababan pisándose, y ninguno de los dos llegaba a 44. Se
+ * les da el ancho de verdad y el número, que es elástico, cede lo que haga
+ * falta: cabe incluso a 320 px.
  */
 .paso__boton {
   position: relative;
-  width: 34px;
+  width: 44px;
   height: 44px;
   flex: none;
   display: flex;
@@ -686,13 +772,6 @@ button,
   color: var(--texto-60);
   font: 600 16px/1 'Barlow', sans-serif;
   cursor: pointer;
-}
-
-.paso__boton::after {
-  content: '';
-  position: absolute;
-  /* 34 + 5 + 5 = 44 px de zona sensible. */
-  inset: 0 -5px;
 }
 
 .paso__boton:disabled {
@@ -708,7 +787,7 @@ button,
   justify-content: center;
   /* min-height y no height: dentro de .campo (columna) el flex-basis de
      `flex: 1` gana a height y la caja colapsaría a la altura del texto. */
-  min-height: 44px;
+  min-height: 45px;
   min-width: 0;
   padding: 0 4px;
   border: none;
@@ -731,6 +810,14 @@ button,
    para que abrirlo no mueva el resto de la fila. */
 .valor--edicion {
   width: 100%;
+  /*
+   * 16 px, no los 15 de `.valor`.
+   *
+   * Por debajo de 16, iOS amplía la página al enfocar el campo y luego la deja
+   * ampliada: el gesto más repetido de la app —escribir el peso— descolocaba la
+   * pantalla en cada serie. La diferencia de un píxel no se ve; el zoom sí.
+   */
+  font-size: 16px;
   text-align: center;
   -moz-appearance: textfield;
 }
@@ -761,7 +848,9 @@ button,
 .boton-guardar {
   flex: none;
   padding: 0 16px;
-  height: 40px;
+  /* min-height y no height: el texto nunca desborda si el sistema agranda la
+     tipografía, y son 44 px reales de toque. */
+  min-height: 44px;
   border: none;
   border-radius: 9px;
   background: var(--positivo);
@@ -785,16 +874,16 @@ button,
 
 .descanso {
   position: fixed;
-  left: 14px;
-  right: 14px;
+  left: calc(14px + var(--lado-seguro-izq));
+  right: calc(14px + var(--lado-seguro-der));
   /*
    * Apilado sobre la barra de sesión, no encima de ella.
    *
-   * Las pestañas ocupan 73 px y la barra de progreso otros 53: el cronómetro
-   * arranca por encima de las dos. Cuando no hay sesión abierta tampoco hay
-   * barra, y entonces baja (ver `.descanso--sin-barra`).
+   * Las alturas salen de `--sobre-barra-sesion`, que ya suma las pestañas, la
+   * barra de progreso y el indicador de inicio. Cuando no hay sesión abierta
+   * tampoco hay barra, y entonces baja (ver `.descanso--sin-barra`).
    */
-  bottom: calc(134px + env(safe-area-inset-bottom));
+  bottom: calc(var(--sobre-barra-sesion) + 8px);
   z-index: 30;
   max-width: 492px;
   margin: 0 auto;
@@ -810,7 +899,7 @@ button,
 
 /* Sin sesión abierta no hay barra de progreso debajo: el cronómetro baja. */
 .descanso--sin-barra {
-  bottom: calc(81px + env(safe-area-inset-bottom));
+  bottom: calc(var(--sobre-pestanas) + 8px);
 }
 
 .descanso__rotulo {
@@ -897,6 +986,10 @@ button,
   gap: 10px;
   max-height: 78dvh;
   overflow: auto;
+  /* Llegar al final de la hoja no arrastra la página de detrás. */
+  overscroll-behavior: contain;
+  /* El teclado del móvil no puede tapar el último campo. */
+  scroll-padding-bottom: 24px;
 }
 
 .hoja__cabecera {
@@ -917,8 +1010,12 @@ button,
 .hoja__cerrar {
   border: none;
   background: none;
-  padding: 12px 4px;
-  margin: -12px -4px;
+  /* 13 px de línea más 2x16 de relleno: 44 px reales sin engordar el rótulo. */
+  min-width: 44px;
+  padding: 16px 4px;
+  margin: -16px -4px;
+  position: relative;
+  z-index: 1;
   cursor: pointer;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
@@ -936,9 +1033,9 @@ button,
 }
 
 .orden-slot__boton {
-  width: 40px;
-  height: 40px;
-  margin: -8px 0;
+  width: 44px;
+  height: 44px;
+  margin: -10px 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1062,7 +1159,7 @@ button,
 
 .filtro {
   flex: none;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 14px;
   display: inline-flex;
   align-items: center;
@@ -1297,6 +1394,8 @@ button,
 .campo-texto select,
 .campo-texto textarea {
   width: 100%;
+  /* 35 px no se aciertan con el pulgar. El `textarea` la sube más abajo. */
+  min-height: 44px;
   padding: 7px 9px;
   border: 1px solid var(--borde-tenue);
   border-radius: 9px;
@@ -1346,7 +1445,7 @@ button,
 
 .campo-texto input[type='file']::file-selector-button {
   margin-right: 10px;
-  min-height: 34px;
+  min-height: 44px;
   padding: 0 12px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
@@ -1434,21 +1533,22 @@ button,
   position: fixed;
   left: 0;
   right: 0;
-  /* Justo encima de las pestañas, que miden 73 px con su área segura. */
-  bottom: 73px;
+  /* Justo encima de las pestañas, indicador de inicio incluido. */
+  bottom: var(--sobre-pestanas);
   z-index: 20;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 14px;
+  padding: 9px calc(14px + var(--lado-seguro-der)) 9px calc(14px + var(--lado-seguro-izq));
   background: rgba(11, 12, 13, 0.94);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--borde-tenue);
 }
 
-/* La barra de sesión ocupa ~53 px por encima de las pestañas. */
+/* Con la barra de sesión encima de las pestañas hace falta otro tanto abajo. */
 .contenido--con-barra {
-  padding-bottom: 184px;
+  padding-bottom: calc(var(--sobre-barra-sesion) + 58px);
 }
 
 .progreso-sesion__relleno {
@@ -1490,7 +1590,8 @@ button,
 .progreso-sesion__terminar::after {
   content: '';
   position: absolute;
-  inset: -5px;
+  inset: -6px;
+  z-index: 1;
 }
 
 /* Al pulsar, el control cede un poco: confirma el toque sin retrasarlo. */
@@ -1861,6 +1962,10 @@ button,
   display: flex;
   align-items: center;
   gap: 6px;
+  /* Se queda a la derecha mientras quepa, y envuelve cuando no. */
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 /*
@@ -1893,7 +1998,9 @@ button,
 .marca--tocable::after {
   content: '';
   position: absolute;
-  inset: -5px 0;
+  inset: -6px 0;
+  /* Mismo motivo que en .enlace: la zona ampliada debe quedar por encima. */
+  z-index: 1;
 }
 
 .marca--excelente {

@@ -13,12 +13,21 @@ import { HojaVariantes } from './HojaVariantes'
 import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
 import { fechaDeHoy, type Repositorio } from '../../datos/repositorio'
 import type { Ejercicio } from '../../dominio/tipos'
+import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 
 interface Props {
   readonly repositorio?: Repositorio
+  /** Día elegido, recordado por `App` mientras dure la pestaña. */
+  readonly memoriaDia?: Memoria<string | null>
+  /** Ejercicio desplegado, para no volver siempre al primero. */
+  readonly memoriaAbierta?: Memoria<number>
 }
 
-export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props = {}) {
+export function EntrenamientoHoy({
+  repositorio = repositorioPorDefecto,
+  memoriaDia,
+  memoriaAbierta,
+}: Props = {}) {
   const {
     datos,
     elegirPlantilla,
@@ -28,9 +37,10 @@ export function EntrenamientoHoy({ repositorio = repositorioPorDefecto }: Props 
     terminarSesion,
     cambiarVariante,
     cargando,
-  } = useEntrenamiento(repositorio)
+  } = useEntrenamiento(repositorio, memoriaDia)
 
-  const [abierta, setAbierta] = useState(0)
+  const abiertaPropia = useMemoria(0)
+  const { valor: abierta, recordar: setAbierta } = memoriaAbierta ?? abiertaPropia
   const [variantesDe, setVariantesDe] = useState<number | null>(null)
   const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
   const { arrancar: arrancarDescanso, declararBarraDeSesion } = useControlDescanso()

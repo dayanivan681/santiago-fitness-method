@@ -155,7 +155,7 @@ export function Presentacion() {
           </p>
           <ul>
             <li>El peso sigue siendo editable: la app no lo impone.</li>
-            <li>El temporizador se activa manualmente desde Descanso.</li>
+            <li>El descanso arranca solo al guardar una serie de trabajo.</li>
             <li>La ficha se abre sin perder la serie que se está editando.</li>
             <li>Una variante puede cambiarse sólo ese día o fijarse en la plantilla.</li>
           </ul>
@@ -168,8 +168,8 @@ export function Presentacion() {
 
       <section className="presentacion__triptico" aria-label="Controles durante el entrenamiento">
         <figure className="presentacion__marco">
-          <img src={CAPTURAS.temporizador} alt="Temporizador manual de descanso con más 30 segundos y Listo" />
-          <figcaption>Temporizador manual</figcaption>
+          <img src={CAPTURAS.temporizador} alt="Temporizador de descanso con más 30 segundos y Listo" />
+          <figcaption>Temporizador de descanso</figcaption>
         </figure>
         <figure className="presentacion__marco">
           <img src={CAPTURAS.variantes} alt="Selector real de variantes equivalentes" />

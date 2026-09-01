@@ -16,15 +16,19 @@ import { NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
 import { HojaEjercicio } from './HojaEjercicio'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Ejercicio, Musculo } from '../../dominio/tipos'
+import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 
 interface Props {
   readonly repositorio?: Repositorio
+  /** Filtro de músculo, recordado por `App` entre visitas. */
+  readonly memoriaFiltro?: Memoria<Musculo | typeof TODOS>
 }
 
 const TODOS = 'todos'
 
-export function Biblioteca({ repositorio = repositorioPorDefecto }: Props = {}) {
-  const [filtro, setFiltro] = useState<Musculo | typeof TODOS>(TODOS)
+export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro }: Props = {}) {
+  const filtroPropio = useMemoria<Musculo | typeof TODOS>(TODOS)
+  const { valor: filtro, recordar: setFiltro } = memoriaFiltro ?? filtroPropio
   const [abierto, setAbierto] = useState<Ejercicio | null>(null)
 
   const ejercicios = useLiveQuery(async () => {

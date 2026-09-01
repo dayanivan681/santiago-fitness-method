@@ -33,7 +33,7 @@ y números grandes.
 | **B** | Definir quién usa la app | **Ya está de facto.** Ver respuesta en la sección 3. |
 | **C** | Tarjeta más útil | ✅ **Hecho.** Última y mejor ya están; falta el **objetivo de hoy** y la **recomendación**, que está construida (`siguienteObjetivo`) pero dejó de mostrarse al aplicar el `Design.pdf`. Se devuelve con sus cuatro etiquetas. |
 | **D** | Progresión con reglas completas | ✅ **Hecho.** El veredicto pasa a considerar RIR, técnica, rango y series completadas, no sólo peso y reps. |
-| **E** | Temporizador manual | ✅ **Hecho.** Hoy arranca solo al guardar. Se quita y se pone un botón visible. |
+| **E** | Temporizador de descanso | ✅ **Hecho.** Arranca solo al guardar una serie **nueva de trabajo**, con el descanso que fijó el coach. El calentamiento, la corrección de una serie ya guardada y el historial no lo arrancan. El participante lo alarga con +30s o lo corta con Listo. |
 | **F** | Volumen más visual | ✅ **Hecho.** Sus cuatro estados: Dentro del objetivo · Falta volumen · Objetivo cumplido · Revisar recuperación. Hoy hay tres. |
 | **G** | Limitaciones conectadas | ✅ **Hecho.** El perfil lleva una lista de ejercicios a evitar; al asignar uno, el coach recibe el aviso con las equivalentes y las cambia de un toque. Avisa, no bloquea. |
 | **H** | Biblioteca útil en gimnasio | ✅ **Hecho salvo el vídeo.** La ficha reúne foto, equipo, tipo de carga, músculo principal, secundarios, instrucciones breves y alternativas equivalentes, y se abre también desde el entrenamiento con el historial de esa variante. Escribe *"foto/video corto"*: la foto ya está, así que **el vídeo parece opcional — conviene confirmarlo** (`docs/OPCION-VIDEO.md`). |
@@ -114,7 +114,7 @@ acordada, salta antes de llegar al gimnasio.
 | Día con 5–8 ejercicios editables y **ordenables** | ✅ Se ordenan con flechas, y el ejercicio se lleva su programación |
 | Registro por serie: carga, reps, RIR, descanso; técnica si es simple | ✅ Técnica incluida, con "Buena" por defecto |
 | Última + mejor + **objetivo de hoy** dentro del ejercicio | ✅ |
-| Temporizador manual | ✅ Lo arranca el participante |
+| Temporizador de descanso | ✅ Arranca solo al guardar una serie de trabajo; +30s y Listo quedan en manos del participante |
 | Historial por variante sin sobrescribir | ✅ |
 | Biblioteca visual con ejercicios reales | ⚠️ 33 ejercicios con foto y ficha completa. **Las fotos son de un banco libre, no de su gimnasio**, y los ejercicios son los que suponemos que usa: eso sí necesita su confirmación |
 | Sustitución conservando historiales | ✅ Y ahora distingue sólo hoy de permanente |
@@ -133,7 +133,7 @@ acordada, salta antes de llegar al gimnasio.
 | 2 | Sesión de 5–8 ejercicios sin cambiar código | ✅ |
 | 3 | Registrar una serie en segundos con una mano | ✅ |
 | 4 | Ver la referencia sin salir del ejercicio | ✅ |
-| 5 | Temporizador manual | ✅ Con test de que no arranca al guardar |
+| 5 | Temporizador de descanso | ✅ Con tests de que arranca en una serie de trabajo y de que no arranca en calentamiento, corrección ni historial |
 | 6 | Cerrar y reabrir sin perder la serie | ✅ |
 | 7 | Sustituir conservando ambos historiales | ✅ |
 | 8 | Editar un dato mal ingresado | ✅ |
@@ -160,7 +160,7 @@ nada: sigue con su participante y su historial.
 Agrupado por dependencia técnica, no por su orden sugerido.
 
 **Hecho**
-Alta del participante real · 5–8 ejercicios · temporizador manual ·
+Alta del participante real · 5–8 ejercicios · temporizador de descanso automático ·
 recomendación visible con sus cuatro etiquetas · veredicto con RIR y técnica ·
 cuatro estados de volumen · sustitución sólo del día con opción de fijarla ·
 auditoría al corregir · técnica por serie · marca de calentamiento · sesión

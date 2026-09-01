@@ -5,7 +5,7 @@
  * conserva su propio historial).
  */
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
 import { useReferenciasDeVariantes } from '../../aplicacion/useReferenciasDeVariantes'
 import { useCapa } from '../../aplicacion/useCapa'
@@ -51,14 +51,15 @@ export function HojaVariantes({
     variantes,
     rango,
   )
-  const cerrar = useCapa(true, onCerrar)
+  const panel = useRef<HTMLDivElement>(null)
+  const cerrar = useCapa(true, onCerrar, panel)
 
   // El caso corriente —la máquina está ocupada— es de un día, así que ése es
   // el valor por defecto. Fijar la variante en la plantilla se pide a mano.
   const [alcance, setAlcance] = useState<AlcanceDelCambio>('soloHoy')
 
   return (
-    <div className="hoja" role="dialog" aria-label="Variante asignada">
+    <div className="hoja" role="dialog" aria-modal="true" aria-label="Variante asignada">
       {/* El fondo también cierra, pero con su propio nombre: dos botones
           "Cerrar" en el mismo diálogo confunden a quien usa lector de pantalla. */}
       <button
@@ -68,7 +69,7 @@ export function HojaVariantes({
         aria-label="Cerrar tocando fuera"
       />
 
-      <div className="hoja__panel">
+      <div className="hoja__panel" ref={panel} tabIndex={-1}>
         <div className="hoja__cabecera">
           <h2 className="hoja__titulo">Variante asignada</h2>
           <button type="button" className="hoja__cerrar" onClick={cerrar}>

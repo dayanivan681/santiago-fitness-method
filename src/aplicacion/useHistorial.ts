@@ -4,7 +4,7 @@
  * reps, RIR, descanso, mejor referencia y última sesión) y §19 (nada se pierde).
  */
 
-import { useState } from 'react'
+import { useMemoria, type Memoria } from './memoria'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
 import type { Repositorio } from '../datos/repositorio'
@@ -33,8 +33,10 @@ export interface DatosHistorial {
   readonly sesiones: readonly SesionDelHistorial[]
 }
 
-export function useHistorial(repositorio: Repositorio) {
-  const [ejercicioIdElegido, elegirEjercicio] = useState<string | null>(null)
+/** `memoriaEjercicio` conserva el filtro al salir y volver a Historial. */
+export function useHistorial(repositorio: Repositorio, memoriaEjercicio?: Memoria<string | null>) {
+  const propia = useMemoria<string | null>(null)
+  const { valor: ejercicioIdElegido, recordar: elegirEjercicio } = memoriaEjercicio ?? propia
 
   const datos = useLiveQuery(async (): Promise<DatosHistorial> => {
     const participante = await repositorio.participanteActual()

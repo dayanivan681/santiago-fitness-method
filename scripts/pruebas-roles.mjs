@@ -55,10 +55,18 @@ function escaparSql(valor) {
 
 console.log(`\nQA de roles contra ${BASE_URL} (D1 ${MODO})\n`)
 
-const inicial = await (async () => {
-  const respuesta = await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })
-  return respuesta.json()
-})()
+// Toda esta suite gira alrededor del cliente técnico `dayan-test`, que en
+// producción está oculto a propósito y responde 404. Sin este aviso el fallo se
+// manifestaba como un "rutinasIniciales is not iterable" dentro del `finally`,
+// que no dice nada de lo que pasa realmente.
+const ficha = await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })
+if (ficha.status !== 200) {
+  console.log(`  \x1b[33mOMITIDO\x1b[0m  dayan-test no es visible aquí (HTTP ${ficha.status}).`)
+  console.log('  Ejecuta con SHOW_QA_CLIENTS=true: la frontera de roles se prueba sobre el cliente QA.\n')
+  process.exit(0)
+}
+
+const inicial = await ficha.json()
 const rutinasIniciales = structuredClone(inicial.routines)
 
 try {

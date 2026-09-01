@@ -29,7 +29,7 @@ interface Props {
   readonly onAbrirVariantes: () => void
   /** Abre la ficha del ejercicio: datos, equivalentes e historial de la variante. */
   readonly onAbrirFicha: () => void
-  /** El cliente pide temporizador manual: lo arranca el participante, no el guardado. */
+  /** Arranca el descanso a mano. El automático lo dispara guardar una serie de trabajo. */
   readonly onDescansar: () => void
   readonly onGuardarSerie: (
     ejercicioId: string,

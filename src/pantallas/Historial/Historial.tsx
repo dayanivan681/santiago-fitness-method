@@ -17,14 +17,17 @@ import { Cabecera } from '../../componentes/Cabecera'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Ejercicio, SerieComparable } from '../../dominio/tipos'
 import type { SerieConFecha } from '../../datos/referencias'
+import type { Memoria } from '../../aplicacion/memoria'
 
 interface Props {
   readonly repositorio?: Repositorio
+  /** Ejercicio del filtro, recordado por `App` entre visitas. */
+  readonly memoriaEjercicio?: Memoria<string | null>
 }
 
-export function Historial({ repositorio = repositorioPorDefecto }: Props = {}) {
+export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercicio }: Props = {}) {
   const { datos, cargando, elegirEjercicio, corregirSerie, deshacerUltimaCorreccion } =
-    useHistorial(repositorio)
+    useHistorial(repositorio, memoriaEjercicio)
   // Una sola sesión abierta a la vez: corregir es puntual, no se navega así.
   const [abierta, setAbierta] = useState<string | null>(null)
 

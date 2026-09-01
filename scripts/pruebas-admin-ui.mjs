@@ -238,17 +238,57 @@ if (HAY_EJERCICIOS) {
 }
 
 // ---- UI-10 · el gate de programación sigue mandando ----------------------
+//
+// El gate sólo se puede probar sobre un cliente INCOMPLETE, y ninguno lo está
+// de forma permanente: Santiago tiene sus cuatro días completos. Antes esta
+// prueba daba por hecho que le faltaban, y además pulsaba "generar-enlace"
+// sobre él, que hoy le crearía una invitación real.
+//
+// Así que el estado incompleto se fabrica aquí y se deshace al salir: se quita
+// el último ejercicio del día 1 del cliente de pruebas, se comprueba el gate y
+// se devuelve el ejercicio con sus valores exactos. La restauración se verifica;
+// si no cuadra, la prueba falla en vez de dejar el cliente a medias.
 {
-  const acceso = await html(`/admin/?cliente=santiago&seccion=acceso`)
-  const intento = await post({ accion: 'generar-enlace', cliente_id: 'santiago' })
+  const dia = 1
+  const antes = (await (await pedir(`/admin/api/clientes/${CLIENTE}`)).json())
+    .routines?.find((rutina) => rutina.orden === dia)
+  const original = antes?.slots?.at(-1)
 
-  comprobar(
-    'UI-10', 'Con la programación incompleta el enlace sigue bloqueado',
-    acceso.cuerpo.includes('disabled') &&
-      acceso.cuerpo.includes('INCOMPLETE') &&
-      intento.status === 409,
-    `acceso=${acceso.status} generar=${intento.status}`,
-  )
+  if (!original) {
+    comprobar('UI-10', 'Con la programación incompleta el enlace sigue bloqueado', false,
+      `no hay ejercicios en el día ${dia} de ${CLIENTE} para fabricar el estado incompleto`)
+  } else {
+    let acceso = { status: 0, cuerpo: '' }
+    let intento = { status: 0 }
+    try {
+      await post({ accion: 'quitar-slot', cliente_id: CLIENTE, dia: String(dia), orden: String(original.orden) })
+      acceso = await html(`/admin/?cliente=${CLIENTE}&seccion=acceso`)
+      intento = await post({ accion: 'generar-enlace', cliente_id: CLIENTE })
+    } finally {
+      // Se devuelve al final de la lista, que es de donde se quitó, y con los
+      // mismos números: añadir sólo repone el ejercicio con valores por defecto.
+      await post({ accion: 'anadir-slot', cliente_id: CLIENTE, dia: String(dia), ejercicio: original.ejercicioId })
+      await post({
+        accion: 'guardar-slot', cliente_id: CLIENTE, dia: String(dia), orden: String(original.orden),
+        ejercicio: original.ejercicioId, estimulo: original.estimulo,
+        series: String(original.seriesObjetivo), rep_min: String(original.repMin), rep_max: String(original.repMax),
+        descanso: String(original.descansoSegundos), progresion: original.progresionFijada ?? '',
+      })
+    }
+
+    const despues = (await (await pedir(`/admin/api/clientes/${CLIENTE}`)).json())
+      .routines?.find((rutina) => rutina.orden === dia)
+    const restaurado = JSON.stringify(despues?.slots ?? []) === JSON.stringify(antes.slots)
+
+    comprobar(
+      'UI-10', 'Con la programación incompleta el enlace sigue bloqueado',
+      acceso.cuerpo.includes('disabled') &&
+        acceso.cuerpo.includes('INCOMPLETE') &&
+        intento.status === 409 &&
+        restaurado,
+      `acceso=${acceso.status} generar=${intento.status} restaurado=${restaurado}`,
+    )
+  }
 }
 
 // ---- UI-11 · estados de vacío y de error ---------------------------------

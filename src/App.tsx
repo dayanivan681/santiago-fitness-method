@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { repositorio } from './aplicacion/repositorio'
 import { ProveedorDescanso } from './aplicacion/ProveedorDescanso'
+import { useMemoria } from './aplicacion/memoria'
+import { restaurarDesplazamiento } from './aplicacion/desplazamiento'
+import type { Musculo } from './dominio/tipos'
 import { Descanso } from './componentes/Descanso'
 import {
   IconoBiblioteca,
@@ -36,6 +39,30 @@ export function App() {
   const [vistaPrevia, setVistaPrevia] = useState(false)
   const [seccion, setSeccion] = useState<Seccion>('hoy')
 
+  /*
+   * Contexto de cada sección.
+   *
+   * Las pantallas se desmontan al cambiar de pestaña —mantenerlas montadas
+   * dejaría vivas las consultas de Dexie de las cuatro—, así que lo que el
+   * participante eligió vive aquí arriba y se lo devolvemos al volver. Es
+   * estado de navegación y muere con la pestaña: no se guarda en ningún sitio.
+   */
+  const diaDeHoy = useMemoria<string | null>(null)
+  const ejercicioAbierto = useMemoria(0)
+  const filtroBiblioteca = useMemoria<Musculo | 'todos'>('todos')
+  const ejercicioHistorial = useMemoria<string | null>(null)
+
+  // Volver a una sección la deja donde se dejó, no arriba del todo.
+  const desplazamientos = useRef<Partial<Record<Seccion, number>>>({})
+  const irA = (destino: Seccion) => {
+    desplazamientos.current = { ...desplazamientos.current, [seccion]: window.scrollY }
+    setSeccion(destino)
+  }
+  useLayoutEffect(
+    () => restaurarDesplazamiento(window, desplazamientos.current[seccion] ?? 0),
+    [seccion],
+  )
+
   useEffect(() => {
     let cancelado = false
     void (async () => {
@@ -57,7 +84,26 @@ export function App() {
     [],
   )
 
-  if (!listo || participante === undefined) return <p className="aviso">Preparando…</p>
+  /*
+   * Arranque.
+   *
+   * Antes era un `<p>` suelto: la app aparecía de golpe encima, con el marco,
+   * la cabecera y las pestañas entrando a la vez. Abierta desde la pantalla de
+   * inicio eso se lee como una web cargando. Ahora se pinta ya el armazón
+   * definitivo —mismo fondo, mismo ancho— y sólo cambia el contenido.
+   *
+   * Sin rueda giratoria: la base es local y esto dura un parpadeo; una rueda
+   * sugeriría una espera que no existe.
+   */
+  if (!listo || participante === undefined) {
+    return (
+      <div className="app app--arrancando">
+        <p className="arranque" role="status">
+          Preparando…
+        </p>
+      </div>
+    )
+  }
 
   // Instalación nueva: no hay a quién entrenar hasta que el coach lo dé de alta.
   if (participante === null) {
@@ -74,9 +120,11 @@ export function App() {
     // serie y serie. Al colgar de App, cambiar de pestaña no lo desmonta.
     <ProveedorDescanso>
     <div className="app">
-      {seccion === 'hoy' && <EntrenamientoHoy />}
-      {seccion === 'biblioteca' && <Biblioteca />}
-      {seccion === 'historial' && <Historial />}
+      {seccion === 'hoy' && (
+        <EntrenamientoHoy memoriaDia={diaDeHoy} memoriaAbierta={ejercicioAbierto} />
+      )}
+      {seccion === 'biblioteca' && <Biblioteca memoriaFiltro={filtroBiblioteca} />}
+      {seccion === 'historial' && <Historial memoriaEjercicio={ejercicioHistorial} />}
       {seccion === 'perfil' && <Perfil vistaPrevia={vistaPrevia} soloParticipante />}
 
       <nav className="pestanas" aria-label="Secciones">
@@ -88,7 +136,7 @@ export function App() {
               seccion === id ? 'pestanas__boton pestanas__boton--activo' : 'pestanas__boton'
             }
             aria-current={seccion === id ? 'page' : undefined}
-            onClick={() => setSeccion(id)}
+            onClick={() => irA(id)}
           >
             <Icono className="pestanas__icono" />
             <span className="pestanas__etiqueta">{etiqueta}</span>

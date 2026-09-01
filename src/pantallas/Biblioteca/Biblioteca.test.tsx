@@ -95,3 +95,45 @@ describe('ficha completa del ejercicio (punto H)', () => {
     expect(screen.queryByText('Tipo de carga')).not.toBeInTheDocument()
   })
 })
+
+describe('la ficha se comporta como un diálogo móvil (Fase 2)', () => {
+  test('se anuncia como modal', async () => {
+    const hoja = await abrirFicha('Press banca 15° Smith')
+
+    expect(hoja).toHaveAttribute('aria-modal', 'true')
+  })
+
+  test('el foco entra en la hoja al abrirla', async () => {
+    // Sin esto, quien navega con teclado o lector se queda en la página de
+    // detrás y no se entera de que hay una ficha abierta.
+    const hoja = await abrirFicha('Press banca 15° Smith')
+
+    expect(hoja.contains(document.activeElement)).toBe(true)
+  })
+
+  test('Escape la cierra, como cualquier diálogo', async () => {
+    // Arrange
+    await abrirFicha('Press banca 15° Smith')
+
+    // Act
+    await userEvent.keyboard('{Escape}')
+
+    // Assert
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  test('el foco vuelve al ejercicio desde el que se abrió', async () => {
+    // Arrange
+    await abrir()
+    const tarjeta = await screen.findByRole('button', { name: /Press banca 15° Smith/ })
+    await userEvent.click(tarjeta)
+    await screen.findByRole('dialog')
+
+    // Act
+    await userEvent.keyboard('{Escape}')
+
+    // Assert: sin esto el foco cae al principio del documento y hay que
+    // recorrer la cuadrícula entera otra vez.
+    expect(document.activeElement).toBe(tarjeta)
+  })
+})

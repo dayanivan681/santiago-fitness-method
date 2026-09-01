@@ -11,6 +11,7 @@
  * variantes equivalentes (§16, §23). No hay una lista aparte que mantener.
  */
 
+import { useRef } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useCapa } from '../../aplicacion/useCapa'
 import { ETIQUETA_CARGA, NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
@@ -42,7 +43,8 @@ export function HojaEjercicio({
   onElegir,
   onCerrar,
 }: Props) {
-  const cerrar = useCapa(true, onCerrar)
+  const panel = useRef<HTMLDivElement>(null)
+  const cerrar = useCapa(true, onCerrar, panel)
 
   // §16: mismas equivalentes que ofrece la sustitución, menos ella misma.
   const alternativas = biblioteca.filter(
@@ -50,7 +52,7 @@ export function HojaEjercicio({
   )
 
   return (
-    <div className="hoja" role="dialog" aria-label={ejercicio.nombre}>
+    <div className="hoja" role="dialog" aria-modal="true" aria-label={ejercicio.nombre}>
       {/* El fondo también cierra, pero con su propio nombre: dos botones
           "Cerrar" en el mismo diálogo confunden a quien usa lector de pantalla. */}
       <button
@@ -60,7 +62,7 @@ export function HojaEjercicio({
         aria-label="Cerrar tocando fuera"
       />
 
-      <div className="hoja__panel">
+      <div className="hoja__panel" ref={panel} tabIndex={-1}>
         <div className="hoja__cabecera">
           <h2 className="hoja__titulo">{ejercicio.nombre}</h2>
           <button type="button" className="hoja__cerrar" onClick={cerrar}>

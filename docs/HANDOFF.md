@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-01T03:09:43.401Z
+- **Última sincronización:** 2026-09-01T04:01:40.666Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -49,7 +49,7 @@ hay cambios remotos, cambios sin dueño o cualquier modificación dentro de
 - Última sesión y mejor referencia separadas.
 - Historial independiente por variante.
 - Sustituciones sin destruir historiales.
-- Temporizador manual.
+- Temporizador de descanso: arranca solo al guardar una serie nueva de trabajo; no en calentamiento, corrección ni historial.
 - Autosave, recuperación y corrección de datos.
 - Historial después de completar una sesión.
 - Perfil, limitaciones y volumen semanal.
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-01T04:01:40.667Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Fase 2 Native Mobile Shell. 2A: UI-10 deja de asumir Santiago INCOMPLETE y usa un fixture reversible sobre el cliente QA (antes le generaba una invitacion real a Santiago); referencias 'temporizador manual' alineadas con el contrato automatico; areas tactiles reales a 44px en filtros, enlaces, guardar/editar, steppers, campos de perfil/medicion y cerrar hoja. 2B: manifest standalone con id/scope/start_url y meta iOS, sin tocar sw.js ni anadir cache. 2C: pila inferior derivada de variables de area segura (la barra de sesion quedaba bajo el indicador de inicio), lados seguros, feedback al pulsar en las pestanas y contexto de seccion conservado al cambiar de pestana. 2D: valor--edicion a 16px para que iOS no amplie al enfocar, scroll-padding bajo lo fijo. 2F: hojas con aria-modal, foco de entrada y retorno, Escape y overscroll contenido. 2G: arranque con el armazon ya pintado. 2H: areas seguras y pulsado en Admin, que sigue con 0 scripts. Corregido ademas que el minificador se comia backdrop-filter en las pestanas.
+- **Verificación:** npm test 512/512 (3 corridas); npm run lint 0 avisos; npm run build OK; roles 11/11; acceso 37/37 con QA visible y 34/34 con QA oculto; admin-ui 11/11; QA 13/13 visible y 13/13 oculto; navegador 320/390x844/430/768/1024 en las cuatro secciones sin desborde ni targets <44; Admin 390/768/1024; sondas anonimas 401/401/401/403 y sw.js 200; 0 service workers y 0 caches; D1 Santiago 4x5 READY e invitacion pendiente intacta
+- **Siguiente:** QA independiente de Fase 2. Faltan pruebas en iPhone y Android fisicos: NOT EXECUTED. No iniciar Fase 3.
+
 
 ### 2026-09-01T03:09:43.402Z | claude-code | CLAIM
 - **Estado:** active
