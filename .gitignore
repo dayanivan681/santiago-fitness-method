@@ -27,3 +27,7 @@ dist-ssr
 # Variables locales de wrangler
 .dev.vars
 .wrangler
+
+# Capturas que dejan las corridas de Maestro
+*.png
+!public/**/*.png

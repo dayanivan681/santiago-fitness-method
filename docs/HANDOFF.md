@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** blocked
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-01T23:08:52.969Z
+- **Última sincronización:** 2026-09-02T01:14:57.513Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T01:14:57.514Z | claude-code | ADOPT
+- **Estado:** active
+- **Tarea:** QA movil automatizado con Maestro sobre Chromium, ante la ausencia de Xcode para los simuladores de iOS
+- **Cambios adoptados:** .gitignore, package.json, pruebas-maestro/
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-09-01T23:08:52.970Z | claude-code | PUBLISH
 - **Estado:** blocked
