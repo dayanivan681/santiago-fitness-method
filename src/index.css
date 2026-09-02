@@ -1343,6 +1343,19 @@ button,
   color: rgba(242, 242, 240, 0.45);
 }
 
+/* El día del método debajo de la fecha: dice en qué entrenamiento fue, sin
+   robarle ancho al resumen de series. */
+.sesion__dia {
+  display: block;
+  margin-top: 2px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-35);
+}
+
 .sesion__cuerpo {
   flex: 1;
   min-width: 0;

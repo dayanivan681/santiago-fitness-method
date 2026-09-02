@@ -19,6 +19,8 @@ import type { Ejercicio, ReferenciasEjercicio, SerieRegistrada } from '../domini
 
 export interface SesionDelHistorial {
   readonly fecha: string
+  /** Qué día del método se entrenó: "Upper A", "Lower B"… */
+  readonly dia?: string
   readonly series: readonly SerieConFecha[]
   /** Sin cerrar: se quedó a medias o se olvidó terminarla. */
   readonly sinTerminar: boolean
@@ -62,12 +64,20 @@ export function useHistorial(repositorio: Repositorio, memoriaEjercicio?: Memori
     const cerradas = new Set(
       sesiones.filter((s) => s.completadaEn).map((s) => s.fecha),
     )
+    // Con qué día del método se corresponde cada fecha. Sin esto el historial
+    // dice cuánto se levantó pero no en qué entrenamiento.
+    const diaPorFecha = new Map(
+      sesiones.map((sesion) => [
+        sesion.fecha,
+        plantillas.find((plantilla) => plantilla.id === sesion.plantillaDiaId)?.nombre,
+      ]),
+    )
 
     return {
       entrenados,
       ejercicio,
       referencias: derivarReferencias(ejercicio.id, historial, ejercicio, rango),
-      sesiones: agruparPorFecha(historial, cerradas),
+      sesiones: agruparPorFecha(historial, cerradas, diaPorFecha),
     }
   }, [repositorio, ejercicioIdElegido])
 
@@ -104,6 +114,7 @@ export function useHistorial(repositorio: Repositorio, memoriaEjercicio?: Memori
 function agruparPorFecha(
   historial: readonly SerieConFecha[],
   cerradas: ReadonlySet<string>,
+  diaPorFecha: ReadonlyMap<string, string | undefined>,
 ): SesionDelHistorial[] {
   const porFecha = historial.reduce((mapa, serie) => {
     const previas = mapa.get(serie.fecha) ?? []
@@ -114,6 +125,7 @@ function agruparPorFecha(
     .sort(([a], [b]) => b.localeCompare(a))
     .map(([fecha, series]) => ({
       fecha,
+      dia: diaPorFecha.get(fecha),
       series: [...series].sort((a, b) => a.numeroSerie - b.numeroSerie),
       sinTerminar: !cerradas.has(fecha),
     }))

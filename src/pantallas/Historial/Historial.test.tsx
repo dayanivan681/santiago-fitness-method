@@ -156,3 +156,77 @@ describe('el formato de peso es el mismo en toda la app', () => {
     expect(await screen.findByText('45 × 10 · 50 × 8 lb/lado')).toBeInTheDocument()
   })
 })
+
+describe('la sesión terminada se consulta después (Phase 1B)', () => {
+  /** Las filas de sesión del historial, que son botones para abrirlas. */
+  const filasDeSesion = () =>
+    screen.getAllByRole('button').filter((b) => b.className.split(' ').includes('sesion'))
+
+  test('muestra fecha, día del método, series, peso y repeticiones', async () => {
+    // Los cinco datos que el participante necesita para reconocer la sesión.
+    render(<Historial repositorio={repositorio} />)
+    await screen.findByText('Mejor referencia')
+
+    const [fila] = filasDeSesion()
+    expect(fila).toHaveTextContent('1 jul')
+    expect(fila).toHaveTextContent('Upper A')
+    expect(fila).toHaveTextContent('45 lb/lado × 10')
+  })
+
+  test('el ejercicio de la sesión se identifica', async () => {
+    render(<Historial repositorio={repositorio} />)
+
+    expect(await screen.findByRole('button', { name: PRESS })).toBeInTheDocument()
+  })
+
+  test('una sesión sin cerrar se distingue de una terminada', async () => {
+    // Arrange: una segunda sesión que se quedó a medias
+    await repositorio.crearSesion({
+      id: 's2',
+      participanteId,
+      plantillaDiaId: idDeDia(participanteId, 'upper-a'),
+      fecha: '2026-07-08',
+    })
+    await repositorio.registrarSerie({
+      id: 'serie-abierta',
+      sesionId: 's2',
+      ejercicioId: PRESS_BANCA_15_SMITH.id,
+      numeroSerie: 1,
+      pesoRegistradoLb: 45,
+      repsRealizadas: 6,
+      rir: 3,
+      instante: '2026-07-08T10:00:00.000Z',
+    })
+
+    // Act
+    render(<Historial repositorio={repositorio} />)
+    await screen.findByText('Mejor referencia')
+
+    // Assert: la del 8 lo dice; la del 1, que sí se cerró, no.
+    const filas = filasDeSesion()
+    const abierta = filas.find((f) => f.textContent?.includes('8 jul'))!
+    const cerrada = filas.find((f) => f.textContent?.includes('1 jul'))!
+    expect(abierta).toHaveTextContent('sin terminar')
+    expect(cerrada).not.toHaveTextContent('sin terminar')
+  })
+
+  test('cada fecha aparece una sola vez, aunque tenga varias series', async () => {
+    // Navegar, recargar o volver a guardar no puede partir una sesión en dos
+    // filas: la sesión se identifica por fecha y día, no por serie.
+    await repositorio.registrarSerie({
+      id: 'serie-1b',
+      sesionId: 's1',
+      ejercicioId: PRESS_BANCA_15_SMITH.id,
+      numeroSerie: 2,
+      pesoRegistradoLb: 45,
+      repsRealizadas: 9,
+      rir: 2,
+      instante: '2026-07-01T10:05:00.000Z',
+    })
+
+    render(<Historial repositorio={repositorio} />)
+    await screen.findByText('Mejor referencia')
+
+    expect(filasDeSesion().filter((f) => f.textContent?.includes('1 jul'))).toHaveLength(1)
+  })
+})

@@ -1286,3 +1286,118 @@ describe('Última vez (Phase 1A)', () => {
     expect(within(bloque).queryByRole('textbox')).not.toBeInTheDocument()
   })
 })
+
+describe('cierre de sesión (Phase 1B)', () => {
+  const barra = () => screen.queryByRole('progressbar', { name: 'Progreso de la sesión' })
+
+  test('el progreso aparece al guardar la primera serie y va contando', async () => {
+    // Antes de guardar nada no hay sesión abierta, así que tampoco barra.
+    await abrirUpperA()
+    expect(barra()).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    const progreso = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+    expect(progreso).toHaveAttribute('aria-valuenow', '1')
+    expect(progreso).toHaveTextContent('1 de 16 series')
+  })
+
+  test('la serie guardada se distingue de la pendiente', async () => {
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    // Assert: la 1 pasa a tener "Editar"; la 2 sigue con "Guardar".
+    expect(await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)).toBeInTheDocument()
+    expect(screen.getByLabelText(`Guardar la serie 2 de ${PRESS}`)).toBeInTheDocument()
+  })
+
+  test('terminar la sesión la cierra y lo dice', async () => {
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+
+    // Act
+    await userEvent.click(screen.getByRole('button', { name: 'Terminar sesión' }))
+
+    // Assert: la barra se retira y la pantalla confirma
+    expect(
+      await screen.findByText('Sesión terminada. Lo registrado ya está en el historial.'),
+    ).toBeInTheDocument()
+    await waitFor(() => expect(barra()).not.toBeInTheDocument())
+  })
+
+  test('la sesión queda registrada con su hora de cierre', async () => {
+    // Arrange
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+
+    // Act
+    await userEvent.click(screen.getByRole('button', { name: 'Terminar sesión' }))
+
+    // Assert
+    await waitFor(async () => {
+      const sesiones = await repositorio.listarSesiones(participanteId)
+      expect(sesiones.filter((s) => s.fecha === fechaDeHoy())).toHaveLength(1)
+      expect(sesiones.find((s) => s.fecha === fechaDeHoy())?.completadaEn).toBeDefined()
+    })
+  })
+
+  test('guardar varias series no crea varias sesiones', async () => {
+    // La sesión se busca por fecha y día antes de crearla: guardar de nuevo,
+    // navegar o recargar tiene que reutilizar la misma.
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 2 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 2 de ${PRESS}`)
+
+    const sesiones = await repositorio.listarSesiones(participanteId)
+    expect(sesiones.filter((s) => s.fecha === fechaDeHoy())).toHaveLength(1)
+  })
+
+  test('volver a montar la pantalla tampoco duplica la sesión', async () => {
+    // Equivale a recargar la app o volver desde otra pestaña.
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+
+    cleanup()
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 2 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 2 de ${PRESS}`)
+
+    const sesiones = await repositorio.listarSesiones(participanteId)
+    expect(sesiones.filter((s) => s.fecha === fechaDeHoy())).toHaveLength(1)
+  })
+
+  test('un borrador sin guardar no abre sesión ni cuenta como progreso', async () => {
+    // Arrange: se toca un valor, que dispara el autosave del borrador
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
+    await waitFor(async () => {
+      expect(await repositorio.obtenerBorrador(idDeLaPrimeraSerie())).toBeDefined()
+    })
+
+    // Assert: sigue sin haber sesión ni barra
+    expect(barra()).not.toBeInTheDocument()
+    expect(await repositorio.listarSesiones(participanteId)).toHaveLength(0)
+  })
+
+  test('el calentamiento cuenta como serie hecha pero no como referencia', async () => {
+    // La lógica vigente: se guarda y se ve, pero no arrastra el progreso a
+    // engaño ni se convierte en la marca del ejercicio.
+    await abrirUpperA()
+    await userEvent.click(
+      screen.getByLabelText(`Marcar la serie 1 de ${PRESS} como calentamiento`),
+    )
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    const progreso = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+    expect(progreso).toBeInTheDocument()
+    const series = await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)
+    expect(series.filter((s) => s.esCalentamiento)).toHaveLength(1)
+  })
+})

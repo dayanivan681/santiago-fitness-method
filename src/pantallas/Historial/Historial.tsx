@@ -106,7 +106,10 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
                   setAbierta((actual) => (actual === sesion.fecha ? null : sesion.fecha))
                 }
               >
-                <span className="sesion__fecha">{formatearFecha(sesion.fecha)}</span>
+                <span className="sesion__fecha">
+                  {formatearFecha(sesion.fecha)}
+                  {sesion.dia && <span className="sesion__dia">{sesion.dia}</span>}
+                </span>
                 <span className="sesion__cuerpo">
                   <span className="sesion__series">{resumirUltimaVez(sesion.series.map((s) => aComparable(s, ejercicio)), ejercicio) ?? '—'}</span>
                   <span className="sesion__detalle">
