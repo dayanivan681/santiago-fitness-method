@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T17:49:44.480Z
+- **Última sincronización:** 2026-09-02T17:54:57.148Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -649,6 +649,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T17:54:57.149Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Creado output/pdf/Santiago_Fitness_Method_Estado_y_Roadmap.pdf con estado completado, futuras fases, limites actuales de datos y respuesta a la pregunta de escalabilidad del ultimo PDF. docs/cliente permanecio intacto.
+- **Verificación:** PDF ReportLab 5 paginas; pdfplumber extraccion verificada; pdftoppm render e inspeccion visual; npm test (591/591); npm run lint; npm run build
+- **Siguiente:** Compartir el PDF con el cliente y confirmar cierre visual en Safari iPhone/PWA antes de declarar READY; la sincronizacion completa sigue siendo Etapa 2.
+
 
 ### 2026-09-02T17:49:44.481Z | codex | CLAIM
 - **Estado:** active
