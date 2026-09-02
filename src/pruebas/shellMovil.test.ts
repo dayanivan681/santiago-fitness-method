@@ -108,6 +108,7 @@ describe('áreas táctiles', () => {
     ['.boton-guardar', 'min-height'],
     ['.descanso__boton', 'min-height'],
     ['.dia', 'min-height'],
+    ['.progreso-sesion__terminar', 'min-height'],
   ] as const)('%s llega a 44 px', (selector, propiedad) => {
     expect(minimoDe(selector, propiedad)).toBeGreaterThanOrEqual(44)
   })
@@ -115,6 +116,13 @@ describe('áreas táctiles', () => {
   it('los steppers miden 44 de verdad, sin pseudo-elementos que se pisen', () => {
     expect(minimoDe('.paso__boton', 'width')).toBe(44)
     expect(minimoDe('.paso__boton', 'height')).toBe(44)
+  })
+
+  it('los steppers tienen una affordance visual delimitada', () => {
+    const bloque = /\.paso__boton\s*\{[^}]*\}/.exec(css)?.[0] ?? ''
+    expect(bloque).toContain('border: 1px solid')
+    expect(bloque).toContain('border-radius: 9px')
+    expect(bloque).toContain('background: var(--relleno)')
   })
 
   it('los enlaces pequeños amplían el área y la ponen por encima', () => {

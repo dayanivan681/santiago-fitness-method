@@ -905,8 +905,8 @@ describe('barra de progreso de la sesión', () => {
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
 
-    const barra = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
-    expect(within(barra).getByRole('button', { name: 'Terminar sesión' })).toBeInTheDocument()
+    await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+    expect(screen.getByRole('button', { name: 'Terminar sesión' })).toBeInTheDocument()
   })
 
   test('no aparece antes de empezar: no hay sesión que resumir', async () => {
@@ -921,10 +921,10 @@ describe('barra de progreso de la sesión', () => {
     // Arrange
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    const barra = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
+    await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
     // Act
-    await userEvent.click(within(barra).getByRole('button', { name: 'Terminar sesión' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Terminar sesión' }))
 
     // Assert
     await waitFor(() =>

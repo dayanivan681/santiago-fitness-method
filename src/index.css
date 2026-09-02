@@ -66,7 +66,7 @@
   --lado-seguro-izq: env(safe-area-inset-left, 0px);
   --lado-seguro-der: env(safe-area-inset-right, 0px);
   --alto-pestanas: 73px;
-  --alto-barra-sesion: 53px;
+  --alto-barra-sesion: 63px;
   /* Borde superior de las pestañas, ya por encima del indicador de inicio. */
   --sobre-pestanas: calc(var(--alto-pestanas) + var(--fondo-seguro));
   --sobre-barra-sesion: calc(var(--sobre-pestanas) + var(--alto-barra-sesion));
@@ -797,11 +797,28 @@ button,
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  background: none;
+  /* El área ya medía 44 px, pero un ± sin borde parecía texto suelto y no un
+     control. El recuadro mantiene la densidad y hace evidente dónde pulsar. */
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 9px;
+  background: var(--relleno);
   color: var(--texto-60);
   font: 600 16px/1 'Barlow', sans-serif;
   cursor: pointer;
+  transition:
+    background var(--mov-toque) var(--mov-curva),
+    border-color var(--mov-toque) var(--mov-curva),
+    transform var(--mov-toque) var(--mov-curva);
+}
+
+.paso__boton:hover:not(:disabled) {
+  background: var(--relleno-alto);
+  border-color: var(--texto-60);
+}
+
+.paso__boton:active:not(:disabled) {
+  background: var(--relleno-alto);
+  border-color: var(--texto-60);
 }
 
 .paso__boton:disabled {
@@ -1589,6 +1606,15 @@ button,
   border-top: 1px solid var(--borde-tenue);
 }
 
+.progreso-sesion__medidor {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
 /* Con la barra de sesión encima de las pestañas hace falta otro tanto abajo. */
 .contenido--con-barra {
   padding-bottom: calc(var(--sobre-barra-sesion) + 58px + var(--alto-cronometro, 0px));
@@ -1614,11 +1640,11 @@ button,
 }
 
 .progreso-sesion__terminar {
-  min-height: 34px;
+  min-height: 44px;
   padding: 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--borde-fuerte);
   border-radius: 99px;
-  background: transparent;
+  background: var(--relleno);
   color: var(--texto);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
@@ -1626,15 +1652,19 @@ button,
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  position: relative;
+  transition:
+    background var(--mov-toque) var(--mov-curva),
+    border-color var(--mov-toque) var(--mov-curva),
+    transform var(--mov-toque) var(--mov-curva);
 }
 
-/* Área táctil de 44 px sin engordar el botón (§27). */
-.progreso-sesion__terminar::after {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  z-index: 1;
+.progreso-sesion__terminar:hover {
+  background: var(--relleno-alto);
+}
+
+.progreso-sesion__terminar:active {
+  background: var(--relleno-alto);
+  transform: scale(0.97);
 }
 
 /* Al pulsar, el control cede un poco: confirma el toque sin retrasarlo. */

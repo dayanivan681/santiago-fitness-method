@@ -13,6 +13,119 @@ trabaja y lo publica antes de que el otro continúe.
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
 - **Última sincronización:** 2026-09-02T03:34:27.819Z
 
+## Turno de codex — Mobile UX polish + auditoría táctil (2026-09-02)
+
+### Alcance y protección de datos
+
+- Se revisó primero la interfaz del participante y después los controles
+  equivalentes de Admin. Los cambios son P2/P3 de bajo riesgo: no cambian la
+  lógica de entrenamiento, el modelo D1, la navegación ni los permisos.
+- Se usó únicamente `dayan-test` con invitaciones y sesiones en D1 local. Los
+  fixtures se identificaron por sus hashes exactos para limpiarlos; no se usó
+  Santiago para escribir y no se tocó D1 remoto.
+- `docs/cliente/` permaneció intacto.
+
+### Auditoría antes de modificar
+
+- **P2:** los steppers de peso y repeticiones tenían 44 px de caja, pero eran
+  glifos `+`/`−` sin borde ni fondo; la zona tocable no se distinguía a simple
+  vista.
+- **P2:** `Terminar sesión` dibujaba 34 px y dependía de un pseudo-elemento para
+  llegar a 44 px; su objetivo visual era pequeño.
+- **P2 de accesibilidad iOS:** la barra completa tenía `role="progressbar"` y
+  el botón de cierre quedaba descendiente de ese rol; Maestro/iOS no exponía
+  `Terminar sesión` aunque sí se veía.
+- **P3 conservado:** Técnica y Calentamiento siguen siendo píldoras compactas
+  de 34 px; su zona ampliada supera 44 px y no invade los steppers.
+- Admin conserva `--toque: 44px`, CTA, segmentos, flechas y cierres de 44 px.
+  El gate Admin autenticado no se pudo renderizar localmente porque Wrangler
+  no puede simular Cloudflare Access; se cubrió mediante inspección estática y
+  sus pruebas de consola.
+
+### Cambios realizados
+
+- `src/index.css`: steppers con borde, radio, fondo, contraste de hover/active y
+  feedback de pulsación; `Terminar sesión` con caja real de 44 px; barra de
+  sesión de 63 px; medidor semántico interno para separar progreso y cierre.
+- `src/pantallas/EntrenamientoHoy/EntrenamientoHoy.tsx`: el contenedor pasó a
+  `role="group"` y el medidor conserva `role="progressbar"`; el botón es ahora
+  hermano accesible del medidor sin alterar su callback.
+- Pruebas actualizadas en `EntrenamientoHoy.test.tsx` y
+  `src/pruebas/shellMovil.test.ts` para proteger la semántica, las cajas de
+  44 px y la affordance visual.
+
+### UI DISCREPANCIES FOUND
+
+- P2 steppers sin affordance visual y P2 `Terminar sesión` de 34 px:
+  **corregidos**.
+- P2 botón de cierre oculto para el árbol de accesibilidad iOS:
+  **corregido** con la separación de roles anterior.
+- No se encontró P0/P1 durante esta fase. No se cambió arquitectura ni se
+  añadió ninguna función.
+
+### Evidencia visual y táctil
+
+- Maestro CLI/MCP 2.10.0 ejecutado mediante el puente local; Chromium completó
+  `qa-movil`, el flujo de guardado/timer/corrección, navegación, cierre y
+  reentrada. El warning externo de CDP de Selenium no produjo fallos.
+- Maestro iOS ejecutó login, Ficha, steppers, Técnica, Calentamiento, guardado,
+  timer, `+30S`, `EDITAR`, Biblioteca, Historial, Perfil, `Terminar sesión` y
+  logout en el simulador `QA iPhone 16 Pro` (iOS 27.0,
+  `A57A612D-A009-4696-B64E-7664F32B8D70`). La inspección posterior mostró
+  `Terminar sesión` como botón hermano accesible. Una corrida monolítica tuvo
+  una aserción temporal tras `EDITAR`; el mismo paso pasó al añadir
+  `waitForAnimationToEnd`, por lo que no se clasificó como bug funcional.
+- Playwright midió los siete viewports y volvió a medir tras hacer scroll al
+  final. En todos: `document.scrollWidth === clientWidth`, solapamientos entre
+  capas fijas = 0 y, con el contenido desplazado, controles de contenido bajo
+  timer/progreso/navegación = 0.
+
+| Viewport | Documento | Steppers | Guardar | Timer +30S/Listo | Terminar | Barra progreso | Nav |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 320×800 | 320/320 | 44×44 | 44 px | 44 px | 114.34×44 | 320×63 | 48 px |
+| 375×667 | 375/375 | 44×44 | 44 px | 44 px | 114.34×44 | 375×63 | 48 px |
+| 390×844 | 390/390 | 44×44 | 44 px | 44 px | 114.34×44 | 390×63 | 48 px |
+| 402×874 | 402/402 | 44×44 | 44 px | 44 px | 114.34×44 | 402×63 | 48 px |
+| 430×874 | 430/430 | 44×44 | 44 px | 44 px | 114.34×44 | 430×63 | 48 px |
+| 768×900 | 768/768 | 44×44 | 44 px | 44 px | 114.34×44 | 768×63 | 48 px |
+| 1024×900 | 1024/1024 | 44×44 | 44 px | 44 px | 114.34×44 | 1024×63 | 48 px |
+
+Capturas fuera del repositorio:
+
+- Antes: `/tmp/sfm-ux-before-timer/390x844.png` y
+  `/tmp/sfm-ux-before-timer/320x800.png`.
+- Después: `/tmp/sfm-ux-after-timer-final-verified/390x844.png` y
+  `/tmp/sfm-ux-after-timer-final-verified/320x800.png`.
+- iOS después de la corrección semántica:
+  `/tmp/sfm-ios-after.png`.
+
+### Pruebas ejecutadas
+
+- `npm test` — **3 corridas consecutivas PASS**, 49 archivos y 574 tests en
+  cada corrida; no reapareció el fallo intermitente de `aria-valuenow`.
+- Suite enfocada (`EntrenamientoHoy` + `shellMovil`) — **130/130 PASS**.
+- `npm run lint` — **PASS**, 0 warnings.
+- `npm run build` — **PASS**, build Vite limpio.
+- `npm run test:movil` — **PASS** en Chromium/Maestro con fixture local.
+
+### Fuera de alcance y riesgo restante
+
+- No hay iPhone físico ni Safari físico verificable en este entorno; el objetivo
+  iOS fue un simulador. Safari físico, instalación PWA desde Safari,
+  standalone, persistencia PWA y una interacción posterior quedan
+  **NOT EXECUTED** y no se sustituyen por Chromium.
+- La UI Admin no se midió con una sesión real de Cloudflare Access; sólo se
+  validó código/contratos existentes.
+- La ergonomía final con un teléfono físico y el notch real requiere revisión
+  manual posterior.
+
+### Resultado
+
+- **Mobile UX polish:** **PASS** en Chromium y simulador iOS, con las
+  limitaciones indicadas.
+- **Estado de release:** **NOT READY FOR SANTIAGO** hasta cerrar Safari/iPhone
+  físico y la instalación PWA real. Esta fase no declara `READY`.
+
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
 

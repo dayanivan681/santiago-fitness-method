@@ -238,19 +238,25 @@ export function EntrenamientoHoy({
       {sesionDeHoy && !sesionDeHoy.completadaEn && (
         <div
           className="progreso-sesion"
-          role="progressbar"
-          aria-label="Progreso de la sesión"
-          aria-valuemin={0}
-          aria-valuemax={seriesObjetivo}
-          aria-valuenow={seriesHechas}
+          role="group"
+          aria-label="Progreso de la sesión y cierre"
         >
-          <span
-            className="progreso-sesion__relleno"
-            style={{ width: `${(seriesHechas / Math.max(1, seriesObjetivo)) * 100}%` }}
-          />
-          <span className="progreso-sesion__texto">
-            {seriesHechas} de {seriesObjetivo} series
-          </span>
+          <div
+            className="progreso-sesion__medidor"
+            role="progressbar"
+            aria-label="Progreso de la sesión"
+            aria-valuemin={0}
+            aria-valuemax={seriesObjetivo}
+            aria-valuenow={seriesHechas}
+          >
+            <span
+              className="progreso-sesion__relleno"
+              style={{ width: `${(seriesHechas / Math.max(1, seriesObjetivo)) * 100}%` }}
+            />
+            <span className="progreso-sesion__texto">
+              {seriesHechas} de {seriesObjetivo} series
+            </span>
+          </div>
           <button
             type="button"
             className="progreso-sesion__terminar"
