@@ -24,7 +24,10 @@ trabaja y lo publica antes de que el otro continúe.
   `/presentacion`, `/presentacion/`, `/presentacion/assets/*`,
   `/presentacion/media/*`. Los assets inexistentes no sirven el fallback privado.
   La respuesta pública no reenvía cookies a ASSETS ni emite cookies; CSP impide
-  conexiones y formularios. El iframe usa sandbox sin `allow-same-origin`.
+  conexiones y formularios. El iframe aísla layout y estado, no el origen:
+  preview usa Cloudflare Access y un origen opaco bloqueaba su carga. No existe
+  código de lectura/escritura del repositorio en la demo; tests verifican cero
+  fetch, cero Storage.setItem y cero indexedDB.open al registrar y navegar.
 - Demo en memoria: reutiliza TarjetaEjercicio/FilaSerie, HojaEjercicio, iconos,
   ProveedorDescanso/Descanso y lógica de correcciones reales. No importa el
   repositorio ni llama APIs. Historial es un resumen de actividad de demo;

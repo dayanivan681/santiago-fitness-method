@@ -1,3 +1,4 @@
+import 'fake-indexeddb/auto';
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Presentacion } from "./Presentacion";
@@ -33,13 +34,8 @@ describe("Presentación pública fiel", () => {
       /\bkg\b|Copia de seguridad|vídeo|sincronización entre dispositivos|Press militar/,
     );
     expect(screen.getAllByAltText(/Pantalla real de/)).toHaveLength(4);
-    expect(container.querySelector("iframe")).toHaveAttribute(
-      "sandbox",
-      "allow-scripts allow-top-navigation-by-user-activation",
-    );
-    expect(container.querySelector("iframe")).not.toHaveAttribute(
-      "allow-same-origin",
-    );
+    expect(container.querySelector("iframe")).toHaveAttribute("src", "/presentacion/?demo=1");
+    expect(container.querySelector("iframe")).toHaveAttribute("referrerpolicy", "no-referrer");
     expect(
       screen.getByRole("link", { name: /Abrir Santiago Fitness Method/ }),
     ).toHaveAttribute("href", "/");
@@ -48,6 +44,7 @@ describe("Presentación pública fiel", () => {
   it("guarda, arranca el timer, permite editar sin reiniciarlo y conserva al navegar", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const storageSpy = vi.spyOn(Storage.prototype, "setItem");
+    const databaseSpy = vi.spyOn(indexedDB, "open");
     render(<Demo />);
     fireEvent.click(
       screen.getByRole("button", {
@@ -94,6 +91,7 @@ describe("Presentación pública fiel", () => {
     ).toBeInTheDocument();
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(storageSpy).not.toHaveBeenCalled();
+    expect(databaseSpy).not.toHaveBeenCalled();
   });
 
   it("un calentamiento no inicia el descanso ni aparece como Última vez", async () => {

@@ -83,7 +83,7 @@ export function Presentacion() {
               <iframe
                 title="Demo interactiva de Santiago Fitness Method"
                 src="/presentacion/?demo=1"
-                sandbox="allow-scripts allow-top-navigation-by-user-activation"
+                referrerPolicy="no-referrer"
               />
             </div>
             <p className="landing-small">
