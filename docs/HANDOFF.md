@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T17:35:44.785Z
+- **Última sincronización:** 2026-09-02T17:39:59.072Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -649,6 +649,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T17:39:59.073Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** El acceso real del coach en /presentacion (/admin/) abre una pestaña nueva con target=_blank y rel=noopener noreferrer; se añadió regresión para todas las entradas /admin/ y se verificó el click en la landing compilada.
+- **Verificación:** npm test (591/591); npm run lint; npm run build; Browser local: atributo target/rel, click abre nueva pestaña y consola sin errores
+- **Siguiente:** Verificar el deployment de Git y probar el CTA publicado; la navegación Para el coach sigue siendo un ancla interna, no un login.
+
 
 ### 2026-09-02T17:35:44.786Z | codex | CLAIM
 - **Estado:** active

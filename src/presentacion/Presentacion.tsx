@@ -278,7 +278,12 @@ export function Presentacion() {
               </p>
             </li>
           </ol>
-          <a className="landing-secondary" href="/admin/">
+          <a
+            className="landing-secondary"
+            href="/admin/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Entrar como coach ↗
           </a>
         </section>

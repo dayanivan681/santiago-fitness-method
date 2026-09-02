@@ -41,6 +41,17 @@ describe("Presentación pública fiel", () => {
     ).toHaveAttribute("href", "/");
   });
 
+  it("abre el acceso del coach en una pestaña nueva", () => {
+    const { container } = render(<Presentacion />);
+    const coachLinks = container.querySelectorAll('a[href^="/admin/"]');
+
+    expect(coachLinks.length).toBeGreaterThan(0);
+    for (const link of coachLinks) {
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    }
+  });
+
   it("guarda, arranca el timer, permite editar sin reiniciarlo y conserva al navegar", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const storageSpy = vi.spyOn(Storage.prototype, "setItem");
