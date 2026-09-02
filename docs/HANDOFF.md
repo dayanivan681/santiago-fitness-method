@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T16:51:15.686Z
+- **Última sincronización:** 2026-09-02T17:18:01.260Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -52,9 +52,21 @@ trabaja y lo publica antes de que el otro continúe.
   La variable opcional de puerto evita interferir con otro servidor en 8788.
 - HTTP local: `node scripts/pruebas-presentacion.mjs` 18 checks PASS, incluidos
   landing/assets 200, app/assets/API 401, Admin 403 local sin Access y SW 200.
-- Evidencia antes/después y geometría: `/tmp/sfm-landing-6abIJd/evidence/`.
-- Pendiente antes de integrar: verificar deployment preview de esta rama y luego
-  el canónico de Git. No se cambió Cloudflare Access ni D1 remota.
+- Evidencia antes/después y geometría:
+  `/Users/dayanmacbookpro/Documents/Codex/2026-09-02/sfm-landing-qa/`.
+- Preview final `a3a3983b`, commit `ad0a79e`: PASS con sesión existente de
+  Cloudflare Access. Anónimo sigue detrás de Access (302). La primera corrida
+  encontró P1 teléfono vacío por iframe de origen opaco; corregido usando un
+  iframe del mismo origen sin almacenamiento/API, y revalidado guardar, Editar,
+  timer, Biblioteca, ficha, retorno y consola sin errores.
+- Canónico de Git `dce7feff`, commit `ad0a79e`: PASS. HTTP anónimo 18 checks
+  pasan: presentación y assets 200 sin cookies, app/JS/manifest/imagen/API 401,
+  Admin 302 a Access, SW 200. Guardar/Editar/timer también pasan en el dominio
+  canónico. La prueba permite la cookie de negociación propia de Access en
+  `/admin`; no la confunde con una cookie de la presentación.
+- Se integró por fast-forward a `main`, sin deploy manual. No se cambió
+  Cloudflare Access, datos reales de Santiago ni D1 remota. El estado de prueba
+  de D1 y los enlaces locales se eliminaron al terminar.
 - Esta fase no cambia el release del producto: iPhone físico y PWA siguen
   pendientes; no declara READY FOR SANTIAGO.
 
@@ -637,6 +649,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T17:18:01.261Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Landing público fiel, demo sin almacenamiento, capturas actuales y namespace de assets aislado; preview y canónico verificados
+- **Verificación:** npm test 590/590; npm run lint PASS; npm run build PASS; SFM_QA_PORT=8790 npm run test:movil PASS; 8 viewports; HTTP canónico 18/18; preview a3a3983b; production dce7feff
+- **Siguiente:** Revisión editorial del landing por el usuario; gates físicos/PWA del producto siguen pendientes
+
 
 ### 2026-09-02T16:51:15.687Z | codex | CLAIM
 - **Estado:** active

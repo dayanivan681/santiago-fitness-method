@@ -9,7 +9,8 @@ const results = []
 async function check(path, expected) {
   const response = await fetch(new URL(path, base), { redirect: 'manual' })
   assert.ok(expected.includes(response.status), `${path}: ${response.status}, esperado ${expected}`)
-  assert.equal(response.headers.get('set-cookie'), null, `${path}: no debe acuñar cookies`)
+  // Access may set its own handshake cookie on /admin; the public presentation must not.
+  if (path !== '/admin/') assert.ok(!response.headers.has('set-cookie'), `${path}: cookie inesperada`)
   results.push({ path, status: response.status })
   return response
 }
