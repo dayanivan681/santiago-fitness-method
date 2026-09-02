@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T02:57:46.258Z
+- **Última sincronización:** 2026-09-02T03:17:58.180Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -23,6 +23,71 @@ tocado ni incluido en esta configuración:
 
 El primer agente que adopte esos cambios debe revisarlos explícitamente y publicar su
 resultado. No se deben borrar ni sobrescribir para liberar el turno.
+
+## Turno de codex — QA final de gates físicos y regresión automatizada (2026-09-02)
+
+### Alcance y protección de datos
+
+- No se modificó código de producto ni `docs/cliente`.
+- La validación de escritura utilizó únicamente el cliente técnico `dayan-test` en
+  una D1 local (`pruebas-maestro/enlace-local.mjs`, `--local`).
+- Para el intento remoto se creó una invitación QA de un día para `dayan-test`; no
+  se consumió y se revocó al terminar. No se escribió ninguna invitación ni sesión
+  de `santiago`.
+- Verificación D1 posterior: una invitación de `santiago` sigue pendiente y sin
+  revocar; se observaron 6 sesiones activas preexistentes de `santiago`, sin cambios
+  realizados por este turno.
+
+### Pruebas automatizadas
+
+- `npm test` — **3 corridas consecutivas PASS**, 572/572 en cada corrida, código 0.
+  No reapareció `aria-valuenow`, `DatabaseClosedError`, `MaxListenersExceededWarning`
+  ni rechazos sin dueño.
+- `npm run lint` — PASS, 0 warnings.
+- `npm run build` — PASS, Vite compiló correctamente.
+- `maestro list-devices` — sólo Chromium local; todos los simuladores iOS aparecen
+  desconectados.
+- `maestro --udid chromium test pruebas-maestro/qa-movil.yaml` — PASS con fixture
+  local: entrada por enlace, Hoy, guardar serie, timer, `EDITAR`, Técnica,
+  Calentamiento, Biblioteca y retorno a Hoy. La ejecución fue en Chromium, no en
+  Safari/iPhone. Se observó sólo el warning externo de Selenium sobre CDP 152.
+- Screenshot de la corrida: `/Users/dayanmacbookpro/.maestro/tests/2026-09-01_225952/QA móvil del cliente/takeScreenshot/qa-movil.png`
+  (2400×1870, estado con timer y barra de sesión visibles). El artefacto queda fuera
+  del repositorio y no se versiona.
+
+### iPhone físico / Safari / PWA
+
+- **Dispositivo:** iPhone físico visible y activo mediante la aplicación macOS
+  `iPhone Mirroring`. El modelo y la versión de iOS no pudieron obtenerse de forma
+  verificable desde la interfaz; no se inventan.
+- **Safari físico:** **NOT EXECUTED**. El enlace QA se abrió y mostró “Tu acceso está
+  listo”, pero la interacción remota con `Entrar` no completó un login verificable ni
+  creó sesión; no se marcaron como PASS login, Hoy, Biblioteca, Historial, Perfil,
+  guardado, timer, `EDITAR`, navegación o logout en Safari.
+- **Maestro iOS:** **NOT EXECUTED**. `xcrun --find simctl` falla porque este Mac no
+  tiene `simctl`/Xcode developer tools, y Maestro no reporta un dispositivo iOS
+  conectado.
+- **Instalación PWA desde Safari (Añadir a pantalla de inicio, standalone,
+  persistencia y nueva interacción): NOT EXECUTED.** No se sustituyó por Chromium.
+
+### Resultado del turno
+
+- Regresión automatizada y fixture QA en Chromium: **PASS**.
+- Gate iPhone físico Safari: **NOT EXECUTED**.
+- Gate instalación y persistencia PWA: **NOT EXECUTED**.
+- **Estado global: NOT READY FOR SANTIAGO.** No se cambia a READY hasta repetir
+  login, recorrido completo, logout y PWA en Safari/iPhone físico, con screenshots y
+  versión de iOS registradas.
+
+### Riesgos restantes / siguiente acción
+
+- Falta una ejecución verificable sobre Safari del iPhone y la instalación PWA real;
+  el screenshot de Chromium no cubre geometría ni comportamiento de Safari iOS.
+- El warning de Selenium sobre CDP 152 no hizo fallar el flujo, pero conviene
+  actualizar/alinear el driver si se usa esta ruta automatizada en CI.
+- Próximo turno: conectar un objetivo iOS instrumentable (Maestro con Xcode/simulador
+  o un dispositivo físico compatible) y cerrar únicamente esos gates; no tocar
+  Santiago ni los PDFs del cliente.
 
 ## Protocolo
 
@@ -414,6 +479,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T03:17:58.183Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA final: npm test pasó 3 corridas consecutivas (572/572 cada una, sin aria-valuenow ni errores intermitentes); lint/build PASS; fixture dayan-test local y Maestro Chromium PASS. iPhone Mirroring fue detectado pero Safari físico y PWA no pudieron validarse de forma verificable; quedan NOT EXECUTED. Santiago no fue escrito y su invitación pendiente sigue intacta. Estado: NOT READY FOR SANTIAGO.
+- **Verificación:** npm test x3: 572/572 cada corrida; npm run lint; npm run build; maestro --udid chromium test pruebas-maestro/qa-movil.yaml; D1 remoto lectura/revocación QA
+- **Siguiente:** Ejecutar login, recorrido, logout y PWA en Safari de iPhone físico con screenshots y versión iOS; después revalidar gates antes de READY FOR SANTIAGO
+
 
 ### 2026-09-02T02:57:46.259Z | codex | CLAIM
 - **Estado:** active
