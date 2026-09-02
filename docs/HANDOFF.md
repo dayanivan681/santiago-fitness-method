@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T17:18:01.260Z
+- **Última sincronización:** 2026-09-02T17:35:44.785Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -649,6 +649,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T17:35:44.786Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Ajustar todas las entradas reales de acceso del coach en /presentacion para abrir una pestaña nueva y verificar el comportamiento
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-02T17:18:01.261Z | codex | PUBLISH
 - **Estado:** complete
