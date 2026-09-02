@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T01:14:57.513Z
+- **Última sincronización:** 2026-09-02T01:15:16.705Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T01:15:16.706Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA movil automatizado con Maestro sobre Chromium. Anadido pruebas-maestro/ con un flujo que recorre el cliente de punta a punta tocando los controles de verdad: enlace de acceso, guardar serie de trabajo, descanso automatico, reabrir con Editar, cambiar tecnica, marcar calentamiento y supervivencia del descanso al ir a Biblioteca y volver. 23 comandos en verde. Incluye enlace-local.mjs, que acuna la invitacion contra la D1 LOCAL para no crear invitaciones en la base real, y npm run test:movil. IMPORTANTE y documentado en el propio flujo y en su README: este flujo NO cubre la geometria de QA-MOB-01; se comprobo reintroduciendo el fallo a proposito y sigue pasando, porque Maestro desplaza el elemento a la vista antes de tocarlo y la ventana de Chromium no es un viewport de movil. Esa parte la protege shellMovil.test.ts, que si falla con el fallo reintroducido. Los simuladores de iOS siguen sin ejecutarse.
+- **Verificación:** maestro test pruebas-maestro/qa-movil.yaml 23/23 comandos; npm test 525/525; npm run lint 0 avisos; npm run build OK; verificado que el flujo NO detecta la regresion de QA-MOB-01 y que shellMovil.test.ts si la detecta
+- **Siguiente:** Simuladores iPhone 16 Pro e iPhone SE: NOT EXECUTED, sigue faltando Xcode. Maestro Cloud tiene esos modelos pero solo corre binarios nativos, y esto es una PWA: su unica plataforma web es chromium. La verificacion en Safari real necesita un iPhone fisico o instalar Xcode.
+
 
 ### 2026-09-02T01:14:57.514Z | claude-code | ADOPT
 - **Estado:** active
