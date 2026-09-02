@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T02:13:17.153Z
+- **Última sincronización:** 2026-09-02T02:45:19.871Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T02:45:19.872Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA independiente cliente ejecutado sin cambios de producto: Maestro local 23/23, UI IAB en 402x874/375x667/320x568/1024x844, navegación, días, ficha, técnica, calentamiento, timer, edición, historial, recarga, logout y enlace de un solo uso; producción/D1 solo lectura.
+- **Verificación:** npm test (572/572); npm run lint; npm run build; npm run test:movil (23/23); D1 remoto read-only (0 escrituras)
+- **Siguiente:** No READY FOR SANTIAGO todavía: falta validar Preview como Santiago sin escribir D1, Safari macOS/iOS y PWA instalada; considerar cierre explícito de esos gates.
+
 
 ### 2026-09-02T02:13:17.154Z | codex | CLAIM
 - **Estado:** active
