@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T01:53:55.615Z
+- **Última sincronización:** 2026-09-02T02:06:50.892Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T02:06:50.893Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Ajustes previos (95981ef) y Phase 1B (937d1dc). Ajustes: habia tres copias del formateador de series y las tres diferian; la de Historial se comia el sufijo /lado y ensenaba el peso de un lado como si fuera el total, y su resumen de sesion tomaba series[0] dando por hecho que el resto pesaba igual, asi que una subida a media sesion desaparecia. Unificado en describirSerie y resumirUltimaVez. Con mas de tres series de pesos distintos el resumen pasa a rango, porque detallarlas ocupaba tres lineas a 320px. Phase 1B: tras inspeccionar, el cierre de sesion ya estaba implementado y correcto —barra con role=progressbar, boton Terminar sesion, confirmacion, completadaEn, filtro del historial— y la creacion de sesion ya era idempotente por (fecha, dia). Lo unico que faltaba de la lista era el workout: el historial no decia en que dia del metodo fue cada sesion. Anadido. El resto del trabajo es de pruebas, como pedia el encargo.
+- **Verificación:** npm test 572/572 (49 ficheros, +19 en este turno); npm run lint 0 avisos; npm run build OK; npm run test:movil 23/23 COMPLETED; navegador a 320 (envoltorio con 5 pesos distintos: 2 lineas, sin desborde, sin scroll horizontal, sin tapar controles), 402x874 y 375x667 (ciclo completo guardar-progreso-terminar, historial con fecha, dia, series, peso y reps, cero solapes, cero filas bajo 44px)
+- **Siguiente:** Reporte de Phase 1B entregado. Esperar aprobacion antes de cualquier fase siguiente. Fixtures de QA sembrados en IndexedDB local y retirados; D1 remota sin tocar.
+
 
 ### 2026-09-02T01:53:55.616Z | claude-code | CLAIM
 - **Estado:** active
