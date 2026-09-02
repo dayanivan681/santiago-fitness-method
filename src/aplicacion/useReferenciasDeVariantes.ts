@@ -8,6 +8,7 @@
  */
 
 import { useLiveQuery } from 'dexie-react-hooks'
+import { describirSerie } from '../logica/ultimaVez'
 import { derivarReferencias } from '../datos/referencias'
 import type { Repositorio } from '../datos/repositorio'
 import type { RangoReps } from '../dominio/estimulo'
@@ -24,7 +25,11 @@ export function useReferenciasDeVariantes(
       variantes.map(async (variante) => {
         const historial = await repositorio.historialDeEjercicio(participanteId, variante.id)
         const { ultimaSesion } = derivarReferencias(variante.id, historial, variante, rango)
-        return [variante.id, describir(ultimaSesion[0], variante)] as const
+        const primera = ultimaSesion[0]
+        return [
+          variante.id,
+          primera ? describirSerie(primera, variante) : 'Sin historial',
+        ] as const
       }),
     )
     return new Map(pares)
@@ -33,20 +38,3 @@ export function useReferenciasDeVariantes(
   return referencias ?? new Map()
 }
 
-function describir(
-  serie: { readonly cargaTotalLb: number; readonly reps: number } | undefined,
-  ejercicio: Ejercicio,
-): string {
-  if (!serie) return 'Sin historial'
-
-  const base = ejercicio.pesoBaseMaquinaLb ?? 0
-  const registrado =
-    ejercicio.tipoCarga === 'porLado'
-      ? (serie.cargaTotalLb - base) / 2
-      : ejercicio.tipoCarga === 'discosAnadidos'
-        ? serie.cargaTotalLb - base
-        : serie.cargaTotalLb
-
-  const peso = Math.round(registrado * 100) / 100
-  return `${peso} lb × ${serie.reps}`
-}

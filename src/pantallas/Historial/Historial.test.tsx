@@ -112,3 +112,47 @@ describe('corregir una sesión ya completada (§19)', () => {
     })
   })
 })
+
+describe('el formato de peso es el mismo en toda la app', () => {
+  test('dice "lb/lado" cuando la carga es por lado', async () => {
+    // El press en Smith es de carga por lado. Su copia del formateador se
+    // comía el sufijo y enseñaba 45 —el peso de UN lado— como si fuera el
+    // total: leído así, el participante cargaría la mitad de lo que hizo.
+    render(<Historial repositorio={repositorio} />)
+
+    // Aparece en varios sitios (resumen y fila); basta con que ninguno use el
+    // formato viejo.
+    expect((await screen.findAllByText('45 lb/lado × 10')).length).toBeGreaterThan(0)
+    expect(screen.queryByText(/45\/lado lb/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/^45 lb × 10$/)).not.toBeInTheDocument()
+  })
+
+  test('la mejor referencia y la última sesión usan ese mismo formato', async () => {
+    render(<Historial repositorio={repositorio} />)
+    await screen.findByText('Mejor referencia')
+
+    // Aparece en el resumen y en la fila de la sesión.
+    expect((await screen.findAllByText(/45 lb\/lado × 10/)).length).toBeGreaterThan(1)
+  })
+
+  test('una sesión con pesos distintos los enseña todos, no sólo el primero', async () => {
+    // Arrange: la copia anterior tomaba series[0] y daba por hecho que el resto
+    // pesaba igual, así que una subida a media sesión desaparecía del resumen.
+    await repositorio.registrarSerie({
+      id: 'serie-2',
+      sesionId: 's1',
+      ejercicioId: PRESS_BANCA_15_SMITH.id,
+      numeroSerie: 2,
+      pesoRegistradoLb: 50,
+      repsRealizadas: 8,
+      rir: 1,
+      instante: '2026-07-01T10:05:00.000Z',
+    })
+
+    // Act
+    render(<Historial repositorio={repositorio} />)
+
+    // Assert
+    expect(await screen.findByText('45 × 10 · 50 × 8 lb/lado')).toBeInTheDocument()
+  })
+})

@@ -5,10 +5,10 @@
  */
 
 import { useState } from 'react'
+import { describirSerie, resumirUltimaVez } from '../../logica/ultimaVez'
 import { useHistorial } from '../../aplicacion/useHistorial'
 import { FilaSerie } from '../EntrenamientoHoy/FilaSerie'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
-import { aPesoRegistradoLb } from '../../dominio/carga'
 import { aComparable } from '../../dominio/serie'
 import { formatearRir } from '../../dominio/rir'
 import { calcularDescansos, formatearSegundos } from '../../logica/descanso'
@@ -72,7 +72,7 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
           <div className="resumen__tarjeta resumen__tarjeta--mejor">
             <span className="etiqueta-campo">Mejor referencia</span>
             <span className="resumen__valor">
-              {referencias?.mejor ? describir(referencias.mejor, ejercicio) : '—'}
+              {referencias?.mejor ? describirSerie(referencias.mejor, ejercicio) : '—'}
             </span>
             <span className="resumen__pie">
               {referencias?.mejor ? `RIR ${formatearRir(referencias.mejor.rir)}` : 'Sin marca'}
@@ -82,7 +82,7 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
             <span className="etiqueta-campo">Última sesión</span>
             <span className="resumen__valor">
               {referencias?.ultimaSesion[0]
-                ? describir(referencias.ultimaSesion[0], ejercicio)
+                ? describirSerie(referencias.ultimaSesion[0], ejercicio)
                 : '—'}
             </span>
             <span className="resumen__pie">
@@ -108,7 +108,7 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
               >
                 <span className="sesion__fecha">{formatearFecha(sesion.fecha)}</span>
                 <span className="sesion__cuerpo">
-                  <span className="sesion__series">{resumirSeries(sesion.series, ejercicio)}</span>
+                  <span className="sesion__series">{resumirUltimaVez(sesion.series.map((s) => aComparable(s, ejercicio)), ejercicio) ?? '—'}</span>
                   <span className="sesion__detalle">
                     {resumirDetalle(sesion.series)}
                     {sesion.sinTerminar && ' · sin terminar'}
@@ -178,12 +178,6 @@ function Veredicto({
   )
 }
 
-function resumirSeries(series: readonly SerieConFecha[], ejercicio: Ejercicio): string {
-  const peso = series[0]?.pesoRegistradoLb ?? 0
-  const porLado = ejercicio.tipoCarga === 'porLado' ? '/lado' : ''
-  const reps = series.map((serie) => serie.repsRealizadas).join(' · ')
-  return `${peso}${porLado} lb × ${reps}`
-}
 
 function resumirDetalle(series: readonly SerieConFecha[]): string {
   const rir = Math.min(...series.map((serie) => serie.rir))
@@ -196,10 +190,6 @@ function resumirDetalle(series: readonly SerieConFecha[]): string {
 }
 
 
-function describir(serie: SerieComparable, ejercicio: Ejercicio): string {
-  const peso = Math.round(aPesoRegistradoLb(serie.cargaTotalLb, ejercicio) * 100) / 100
-  return `${peso} lb × ${serie.reps}`
-}
 
 function formatearFecha(iso: string): string {
   const [, mes, dia] = iso.split('-')

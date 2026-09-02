@@ -4,9 +4,7 @@
  * y §25 (lo importante primero: plegado se ve el plan, desplegado se registra).
  */
 
-import { aPesoRegistradoLb } from '../../dominio/carga'
-import { formatearRir } from '../../dominio/rir'
-import { resumirUltimaVez } from '../../logica/ultimaVez'
+import { describirSerie, resumirUltimaVez } from '../../logica/ultimaVez'
 import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
 import { Miniatura } from '../../componentes/Miniatura'
 import { FilaSerie } from './FilaSerie'
@@ -140,7 +138,7 @@ export function TarjetaEjercicio({
               <div className="referencia referencia--mejor">
                 <span className="etiqueta-campo">Mejor referencia</span>
                 <span className="referencia__valor">
-                  {describir(referencias.mejor, ejercicio)}
+                  {describirSerie(referencias.mejor, ejercicio, { conRir: true })}
                 </span>
               </div>
             )}
@@ -239,9 +237,3 @@ function detalleDeSugerencia(sugerencia: Sugerencia, ejercicio: Ejercicio): stri
   return ''
 }
 
-function describir(serie: SerieComparable, ejercicio: Ejercicio): string {
-  const peso = Math.round(aPesoRegistradoLb(serie.cargaTotalLb, ejercicio) * 100) / 100
-  const porLado = ejercicio.tipoCarga === 'porLado' ? '/lado' : ''
-  // "135 lb/lado", no "135/lado lb": la unidad va entera, no partida.
-  return `${peso} lb${porLado} × ${serie.reps} · RIR ${formatearRir(serie.rir)}`
-}

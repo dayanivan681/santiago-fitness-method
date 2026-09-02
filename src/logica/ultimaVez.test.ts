@@ -62,3 +62,33 @@ describe('resumir la última vez', () => {
     expect(resumirUltimaVez([serie(85, 5)], POR_LADO)).toBe('42.5 lb/lado × 5')
   })
 })
+
+describe('sesiones largas con pesos distintos', () => {
+  it('a partir de cuatro series resume el recorrido en vez de listarlas', () => {
+    // Cinco series con pesos todos distintos se iban a tres líneas en un móvil
+    // de 320 px. El rango dice lo que importa —cuántas y de cuánto a cuánto—
+    // sin desbordarse.
+    const series = [serie(135, 12), serie(140, 11), serie(145, 10), serie(150, 9), serie(155, 8)]
+
+    expect(resumirUltimaVez(series, BARRA)).toBe('5 series · 135–155 lb')
+  })
+
+  it('tres o menos se siguen detallando, que es más informativo y cabe', () => {
+    const series = [serie(135, 10), serie(140, 8), serie(140, 6)]
+
+    expect(resumirUltimaVez(series, BARRA)).toBe('135 × 10 · 140 × 8 · 140 × 6 lb')
+  })
+
+  it('muchas series al mismo peso no necesitan rango: se agrupan', () => {
+    // El agrupado gana antes de llegar al rango, y es más claro.
+    const series = Array.from({ length: 5 }, () => serie(135, 10))
+
+    expect(resumirUltimaVez(series, BARRA)).toBe('5 × 135 lb × 10')
+  })
+
+  it('el rango respeta la carga por lado', () => {
+    const series = [serie(270, 12), serie(280, 11), serie(290, 10), serie(300, 9)]
+
+    expect(resumirUltimaVez(series, POR_LADO)).toBe('4 series · 135–150 lb/lado')
+  })
+})
