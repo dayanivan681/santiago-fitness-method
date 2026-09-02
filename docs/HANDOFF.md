@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T01:15:16.705Z
+- **Última sincronización:** 2026-09-02T01:29:48.238Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T01:29:48.240Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Phase 0: cerrar QA movil. Verificar QA-MOB-01 y QA-MOB-02 a 402x874 y 375x667, y reforzar las pruebas de regresion de geometria en shellMovil.test.ts
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-02T01:15:16.706Z | claude-code | PUBLISH
 - **Estado:** complete
