@@ -1,258 +1,347 @@
-import './presentacion.css'
+import { DIAS_DEMO, BIBLIOTECA_DEMO } from "./datos";
 
-const CAPTURAS = {
-  hoy: '/presentacion/hoy.png',
-  biblioteca: '/presentacion/biblioteca.png',
-  ficha: '/presentacion/ficha-ejercicio.png',
-  temporizador: '/presentacion/temporizador.png',
-  variantes: '/presentacion/variantes.png',
-} as const
-
-const FUNCIONES_ACTUALES = [
+const CAPTURAS = [
   {
-    nombre: 'Alta y perfil',
-    detalle:
-      'Crear un cliente y editar sus datos, objetivo, frecuencia, foto y restricciones desde la consola protegida.',
-    ubicacion: '/admin',
+    id: "hoy",
+    titulo: "Hoy",
+    texto: "Tu rutina, referencia y registro por serie en una misma pantalla.",
   },
   {
-    nombre: 'Programación de 4 días',
-    detalle:
-      'Editar Upper A, Lower A, Upper B y Lower B; añadir, quitar, reemplazar y reordenar entre 5 y 8 ejercicios.',
-    ubicacion: 'Coach/Admin → ficha del cliente',
+    id: "biblioteca",
+    titulo: "Biblioteca",
+    texto:
+      "Imágenes, equipos y filtros por músculo para encontrar cada ejercicio.",
   },
   {
-    nombre: 'Registro por serie',
-    detalle:
-      'Registrar peso, repeticiones, RIR, técnica y calentamiento; corregir una serie guardada y deshacer la corrección.',
-    ubicacion: 'Hoy',
+    id: "historial",
+    titulo: "Historial",
+    texto:
+      "Consulta tus sesiones y el registro independiente de cada variante.",
   },
   {
-    nombre: 'Referencias y progresión',
-    detalle:
-      'Separar la última sesión de la mejor referencia y mostrar una recomendación que el coach puede ajustar.',
-    ubicacion: 'Hoy e Historial',
+    id: "perfil",
+    titulo: "Perfil",
+    texto: "Tus datos, objetivo, medidas, fotos de progreso y volumen semanal.",
   },
-  {
-    nombre: 'Biblioteca de ejercicios',
-    detalle:
-      'Consultar imagen, equipo, tipo de carga, músculos, instrucción breve y alternativas equivalentes.',
-    ubicacion: 'Biblioteca y Ficha',
-  },
-  {
-    nombre: 'Progreso físico y volumen',
-    detalle:
-      'Guardar medidas y fotos con fecha, y revisar el volumen semanal por grupo muscular.',
-    ubicacion: 'Perfil',
-  },
-  {
-    nombre: 'Copia de seguridad',
-    detalle:
-      'Descargar o restaurar un archivo con las series, sesiones, fotos y progreso locales.',
-    ubicacion: 'Perfil',
-  },
-] as const
-
-const LIMITES_PILOTO = [
-  'El coach administra identidad y rutina en D1; series, sesiones, fotos y progreso siguen locales en el dispositivo.',
-  'La consola Coach/Admin está protegida por Cloudflare Access y el cliente entra por enlace de un solo uso.',
-  'La biblioteca tiene imágenes, pero todavía no incorpora vídeo.',
-  'No incluye chat, pagos, nutrición completa, redes sociales ni wearables.',
-] as const
+];
 
 export function Presentacion() {
   return (
-    <main className="presentacion">
-      <header className="presentacion__barra">
-        <a className="presentacion__marca" href="#inicio" aria-label="Santiago Fitness Method">
-          Santiago FM
+    <div className="landing" id="inicio">
+      <a className="landing-skip" href="#como-usar">
+        Saltar al contenido
+      </a>
+      <header className="landing-nav">
+        <a className="landing-brand" href="#inicio">
+          SANTIAGO<span>FITNESS METHOD</span>
         </a>
-        <nav className="presentacion__navegacion" aria-label="Contenido de la presentación">
-          <a href="#flujo">Cómo funciona</a>
-          <a href="#funciones">Funciones</a>
-          <a href="#limites">Límites actuales</a>
+        <nav aria-label="Presentación">
+          <a href="#pantallas">La app</a>
+          <a href="#coach">Para el coach</a>
+          <a className="landing-access" href="/">
+            Ya tengo acceso ↗
+          </a>
         </nav>
-        <a className="presentacion__boton presentacion__boton--compacto" href="/">
-          Abrir la app
-        </a>
       </header>
-
-      <section className="presentacion__hero" id="inicio">
-        <div className="presentacion__hero-texto">
-          <h1>
-            <span>Santiago</span>
-            <span>Fitness</span>
-            <span>Method</span>
-          </h1>
-          <p>
-            El participante entra, ve lo que le toca, ejecuta una serie, registra lo que hizo
-            y continúa. La aplicación conserva la información y utiliza ese entrenamiento
-            como referencia para el siguiente.
+      <main>
+        <section className="landing-hero">
+          <div className="landing-intro">
+            <p className="landing-eyebrow">TU ENTRENAMIENTO. CON DIRECCIÓN.</p>
+            <h1>
+              DISCIPLINA.
+              <br />
+              REGISTRO.
+              <br />
+              <span>RESULTADOS.</span>
+            </h1>
+            <p className="landing-lead">
+              Sabes qué hacer hoy. Registras lo que hiciste. Vuelves con una
+              referencia.
+            </p>
+            <p>
+              Santiago Fitness Method conecta la programación de tu coach con un
+              registro claro de cada serie.
+            </p>
+            <div className="landing-actions">
+              <a className="landing-primary" href="#como-usar">
+                Ver cómo usar la app ↓
+              </a>
+              <a className="landing-secondary" href="/">
+                Ya tengo acceso ↗
+              </a>
+            </div>
+            <p className="landing-small">
+              La aplicación es privada. Tu coach te envía un enlace; ábrelo y
+              pulsa Entrar para comenzar.
+            </p>
+          </div>
+          <div className="landing-demo">
+            <p className="landing-eyebrow">
+              PRUÉBALA AQUÍ · DATOS DE DEMOSTRACIÓN
+            </p>
+            <div className="landing-phone">
+              <iframe
+                title="Demo interactiva de Santiago Fitness Method"
+                src="/presentacion/?demo=1"
+                sandbox="allow-scripts allow-top-navigation-by-user-activation"
+              />
+            </div>
+            <p className="landing-small">
+              Toca un ejercicio, ajusta una serie y guárdala.
+              <br />
+              La demo se reinicia al recargar; no guarda datos reales.
+            </p>
+          </div>
+        </section>
+        <section className="landing-section" id="como-usar">
+          <div className="landing-section-heading">
+            <p className="landing-eyebrow">01 / ENTRENAR</p>
+            <h2>
+              MENOS BUSCAR.
+              <br />
+              MÁS ENTRENAR.
+            </h2>
+            <p>
+              El entrenamiento ya está preparado. Tú registras lo que realmente
+              haces.
+            </p>
+          </div>
+          <div className="landing-steps">
+            <article>
+              <span>01</span>
+              <h3>Abre tu día</h3>
+              <p>
+                Elige Upper A, Lower A, Upper B o Lower B. Consulta ejercicios,
+                series y rango de repeticiones.
+              </p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Registra tu serie</h3>
+              <p>
+                Ajusta peso en libras, repeticiones y RIR. Marca la técnica y,
+                si corresponde, el calentamiento.
+              </p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Descansa y continúa</h3>
+              <p>
+                Guardar una nueva serie de trabajo inicia el descanso. Puedes
+                añadir 30 segundos, pulsar Listo o editar la serie.
+              </p>
+            </article>
+            <article>
+              <span>04</span>
+              <h3>Cierra tu entrenamiento</h3>
+              <p>
+                Terminar sesión conserva lo registrado, incluso si quedan series
+                pendientes. Revísalo después en Historial.
+              </p>
+            </article>
+          </div>
+        </section>
+        <section className="landing-section" id="pantallas">
+          <div className="landing-section-heading">
+            <p className="landing-eyebrow">02 / LA APP REAL</p>
+            <h2>TODO EN SU SITIO.</h2>
+            <p>
+              Capturas de la aplicación actual con un perfil de demostración.
+              Sin datos de participantes reales.
+            </p>
+          </div>
+          <div className="landing-captures">
+            {CAPTURAS.map((item) => (
+              <figure key={item.id}>
+                <div className="landing-capture-frame">
+                  <img
+                    src={`/presentacion/media/capturas/${item.id}.png`}
+                    alt={`Pantalla real de ${item.titulo} con datos de demostración`}
+                    loading="lazy"
+                    width="390"
+                    height="844"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{item.titulo}</h3>
+                  <p>{item.texto}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+        <section className="landing-section landing-program">
+          <div className="landing-section-heading">
+            <p className="landing-eyebrow">03 / TU PROGRAMACIÓN</p>
+            <h2>
+              CUATRO DÍAS.
+              <br />
+              UN PLAN CLARO.
+            </h2>
+            <p>
+              Estas son las plantillas iniciales: cinco ejercicios por día. El
+              coach puede ajustar la programación entre cinco y ocho ejercicios.
+            </p>
+          </div>
+          <div className="landing-days">
+            {DIAS_DEMO.map((dia) => (
+              <article key={dia.slug}>
+                <h3>{dia.nombre}</h3>
+                <ol>
+                  {dia.ejercicios.map(({ ejercicio, slot }) => (
+                    <li key={ejercicio.id}>
+                      <span>{ejercicio.nombre}</span>
+                      <small>
+                        {slot.seriesObjetivo} series · {slot.repMin}–
+                        {slot.repMax} reps · {slot.descansoSegundos / 60}:00
+                        descanso
+                      </small>
+                    </li>
+                  ))}
+                </ol>
+              </article>
+            ))}
+          </div>
+          <p className="landing-small">
+            El peso es editable. Cuando corresponde a carga por lado, verás
+            lb/lado. Cada variante mantiene su propio historial.
           </p>
-          <div className="presentacion__acciones">
-            <a className="presentacion__boton" href="/">
-              Abrir la app actual
-            </a>
-            <a className="presentacion__enlace" href="#flujo">
-              Ver cómo se usa
+        </section>
+        <section className="landing-section landing-library">
+          <div>
+            <p className="landing-eyebrow">04 / BIBLIOTECA VISUAL</p>
+            <h2>
+              RECONOCE EL
+              <br />
+              EJERCICIO.
+            </h2>
+            <p>
+              {BIBLIOTECA_DEMO.length} ejercicios con imagen, equipo, músculo
+              principal y secundarios, tipo de carga e instrucciones breves.
+              Abre la ficha para consultar alternativas equivalentes.
+            </p>
+            <a className="landing-secondary" href="#inicio">
+              Explorar en la demo ↑
             </a>
           </div>
-        </div>
-
-        <figure className="presentacion__marco presentacion__marco--hero">
-          <img
-            src={CAPTURAS.hoy}
-            alt="Pantalla real de Entrenamiento de hoy con Upper A y el registro de series"
-          />
-          <figcaption>Captura real · Entrenamiento de hoy</figcaption>
-        </figure>
-      </section>
-
-      <section className="presentacion__flujo" id="flujo" aria-labelledby="titulo-flujo">
-        <div className="presentacion__introduccion">
-          <h2 id="titulo-flujo">Un ciclo entre coach, participante y registro</h2>
-          <p>
-            El coach prepara la identidad y la rutina en su consola protegida. El participante
-            entra por su enlace y sólo ve el entrenamiento, la biblioteca, su historial y su perfil.
-          </p>
-        </div>
-
-        <ol className="presentacion__pasos">
-          <li>
-            <span>01</span>
-            <h3>El coach prepara</h3>
+          <div className="landing-library-images">
+            {BIBLIOTECA_DEMO.slice(0, 4).map((e) => (
+              <figure key={e.id}>
+                <img
+                  src={e.imagen}
+                  alt={e.nombre}
+                  loading="lazy"
+                  width="320"
+                  height="220"
+                />
+                <figcaption>{e.nombre}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+        <section className="landing-section" id="coach">
+          <div className="landing-section-heading">
+            <p className="landing-eyebrow">05 / PARA EL COACH</p>
+            <h2>
+              PREPARA EL PLAN.
+              <br />
+              EL CLIENTE ENTRENA.
+            </h2>
             <p>
-              Da de alta al participante, edita su perfil y configura los ejercicios,
-              series, repeticiones, descanso y progresión de cada día.
+              El coach entra por la consola protegida con Cloudflare Access.
+              Allí administra perfiles, programación y acceso de cada cliente.
             </p>
-          </li>
-          <li>
-            <span>02</span>
-            <h3>El participante entrena</h3>
-            <p>
-              Abre Hoy, consulta la referencia disponible y registra lo que realmente hizo
-              en cada serie.
-            </p>
-          </li>
-          <li>
-            <span>03</span>
-            <h3>La app conserva</h3>
-            <p>
-              Guarda el historial por variante, mantiene separadas la última sesión y la
-              mejor referencia, y permite descargar una copia local.
-            </p>
-          </li>
-        </ol>
-      </section>
-
-      <section className="presentacion__recorrido" aria-labelledby="titulo-participante">
-        <div className="presentacion__texto-seccion">
-          <h2 id="titulo-participante">Cómo la usa el participante</h2>
-          <p>
-            El entrenamiento ya está definido. La pantalla muestra el ejercicio, el número
-            de series, el rango objetivo y la referencia disponible. La persona registra
-            peso, repeticiones y RIR; también puede marcar técnica y calentamiento.
-          </p>
-          <ul>
-            <li>El peso sigue siendo editable: la app no lo impone.</li>
-            <li>El descanso arranca solo al guardar una serie de trabajo.</li>
-            <li>La ficha se abre sin perder la serie que se está editando.</li>
-            <li>Una variante puede cambiarse sólo ese día o fijarse en la plantilla.</li>
-          </ul>
-        </div>
-        <figure className="presentacion__marco">
-          <img src={CAPTURAS.hoy} alt="Registro real de una serie en Entrenamiento de hoy" />
-          <figcaption>Hoy · registro por serie</figcaption>
-        </figure>
-      </section>
-
-      <section className="presentacion__triptico" aria-label="Controles durante el entrenamiento">
-        <figure className="presentacion__marco">
-          <img src={CAPTURAS.temporizador} alt="Temporizador de descanso con más 30 segundos y Listo" />
-          <figcaption>Temporizador de descanso</figcaption>
-        </figure>
-        <figure className="presentacion__marco">
-          <img src={CAPTURAS.variantes} alt="Selector real de variantes equivalentes" />
-          <figcaption>Cambio de variante</figcaption>
-        </figure>
-        <figure className="presentacion__marco">
-          <img src={CAPTURAS.ficha} alt="Ficha real de Press banca 15 grados Smith" />
-          <figcaption>Ficha del ejercicio</figcaption>
-        </figure>
-      </section>
-
-      <section className="presentacion__recorrido presentacion__recorrido--invertido" aria-labelledby="titulo-coach">
-        <div className="presentacion__texto-seccion">
-          <h2 id="titulo-coach">Cómo la usa el coach</h2>
-          <p>
-            Entra por Cloudflare Access a <code>/admin</code>, elige un cliente y abre su ficha.
-            Esa consola escribe el perfil y la programación en D1 para que el cliente los reciba
-            al recargar o abrir una nueva sesión.
-          </p>
-          <ul>
-            <li>Crear y seleccionar clientes; ver estado de sesiones y enlaces.</li>
-            <li>Añadir, quitar, reemplazar y reordenar ejercicios.</li>
-            <li>Editar series, repeticiones mínimas y máximas, y descanso.</li>
-            <li>Dejar la progresión automática o fijar una recomendación.</li>
-            <li>Generar/revocar enlaces y previsualizar al cliente con una sesión normal.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section className="presentacion__recorrido" aria-labelledby="titulo-biblioteca">
-        <div className="presentacion__texto-seccion">
-          <h2 id="titulo-biblioteca">Biblioteca visual y perfil</h2>
-          <p>
-            La biblioteca reúne 33 ejercicios y puede filtrarse por músculo. Cada ficha
-            muestra la información disponible para identificar y ejecutar el ejercicio.
-            En Perfil el participante consulta sus datos, medidas, fotos, volumen semanal y
-            copia local. Los cuatro días sólo se editan desde Coach/Admin.
-          </p>
-        </div>
-        <figure className="presentacion__marco">
-          <img src={CAPTURAS.biblioteca} alt="Biblioteca real con ejercicios e imágenes" />
-          <figcaption>Biblioteca · 33 ejercicios</figcaption>
-        </figure>
-      </section>
-
-      <section className="presentacion__funciones" id="funciones" aria-labelledby="titulo-funciones">
-        <div className="presentacion__introduccion">
-          <h2 id="titulo-funciones">Funciones disponibles hoy</h2>
-          <p>Este inventario corresponde a la versión actual de la aplicación.</p>
-        </div>
-        <div className="presentacion__tabla" role="list">
-          {FUNCIONES_ACTUALES.map((funcion) => (
-            <article key={funcion.nombre} className="presentacion__fila" role="listitem">
-              <h3>{funcion.nombre}</h3>
-              <p>{funcion.detalle}</p>
-              <span>{funcion.ubicacion}</span>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="presentacion__limites" id="limites" aria-labelledby="titulo-limites">
-        <div>
-          <h2 id="titulo-limites">Límites actuales del piloto</h2>
-          <p>
-            Estos puntos no se presentan como funciones porque todavía no forman parte del
-            producto actual.
-          </p>
-        </div>
-        <ul>
-          {LIMITES_PILOTO.map((limite) => (
-            <li key={limite}>{limite}</li>
-          ))}
-        </ul>
-      </section>
-
-      <footer className="presentacion__cierre">
-        <h2>Ver la versión actual</h2>
-        <p>Abre la aplicación y recorre el flujo real del piloto.</p>
-        <a className="presentacion__boton" href="/">
-          Abrir Santiago Fitness Method
+          </div>
+          <ol className="landing-coach-flow">
+            <li>
+              <span>01</span>
+              <h3>Clientes</h3>
+              <p>
+                Elige a quién gestionas y revisa si su programación está
+                completa.
+              </p>
+            </li>
+            <li>
+              <span>02</span>
+              <h3>Programa y Perfil</h3>
+              <p>
+                Abre un día y un ejercicio para ajustar series, repeticiones y
+                descanso. Mantén sus datos y limitaciones al día.
+              </p>
+            </li>
+            <li>
+              <span>03</span>
+              <h3>Acceso</h3>
+              <p>
+                Genera o revoca el enlace privado y abre la vista previa del
+                cliente.
+              </p>
+            </li>
+          </ol>
+          <a className="landing-secondary" href="/admin/">
+            Entrar como coach ↗
+          </a>
+        </section>
+        <section className="landing-section landing-practical">
+          <div>
+            <p className="landing-eyebrow">06 / ANTES DE EMPEZAR</p>
+            <h2>
+              TU APP.
+              <br />
+              TU DISPOSITIVO.
+            </h2>
+          </div>
+          <div>
+            <details open>
+              <summary>¿Cómo entro?</summary>
+              <p>
+                Abre el enlace privado que te envía tu coach. Verás la página
+                Entrar; el enlace se utiliza al pulsar ese botón. Si ya tienes
+                sesión, abre la app directamente.
+              </p>
+            </details>
+            <details>
+              <summary>¿Dónde se guarda mi entrenamiento?</summary>
+              <p>
+                El coach administra perfil y programación en la nube. Tus
+                series, sesiones, fotos y progreso siguen locales en el
+                dispositivo. Usa el mismo navegador y conserva sus datos.
+              </p>
+            </details>
+            <details>
+              <summary>¿Puedo abrirla desde la pantalla de inicio?</summary>
+              <p>
+                En Safari, usa Compartir → Añadir a pantalla de inicio.
+                Necesitas conexión para acceder a la aplicación. La instalación
+                y persistencia en iPhone físico siguen pendientes de validación
+                final.
+              </p>
+            </details>
+            <details>
+              <summary>¿Qué puedo probar aquí?</summary>
+              <p>
+                La demo permite registrar y editar series, usar el descanso,
+                consultar fichas y navegar. Historial muestra sólo tu actividad
+                de esta demo; Perfil explica su función. Las capturas muestran
+                las pantallas completas del producto.
+              </p>
+            </details>
+          </div>
+        </section>
+      </main>
+      <footer className="landing-footer">
+        <p className="landing-eyebrow">SANTIAGO FITNESS METHOD</p>
+        <h2>
+          LA PRÓXIMA SERIE
+          <br />
+          EMPIEZA AQUÍ.
+        </h2>
+        <a className="landing-primary" href="/">
+          Abrir Santiago Fitness Method ↗
         </a>
+        <p>Acceso privado mediante invitación de tu coach.</p>
+        <a href="#inicio">Volver al inicio ↑</a>
       </footer>
-    </main>
-  )
+    </div>
+  );
 }

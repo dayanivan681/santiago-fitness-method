@@ -13,6 +13,48 @@ trabaja y lo publica antes de que el otro continúe.
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
 - **Última sincronización:** 2026-09-02T16:51:15.686Z
 
+## Turno de codex — Landing fiel al producto (2026-09-02)
+
+- Implementación en `codex/presentacion-fiel`, desde una copia Git aislada en
+  `/tmp/sfm-landing-6abIJd/repo`. El turno se reclamó en `main` con el protocolo.
+  `entrega-diseno/` sigue sin adoptar; Downloads y `docs/cliente/` no se modificaron.
+- Fuentes: diseño HTML de Claude Design en Downloads, `shared/plantillas-base.ts`,
+  `BIBLIOTECA_INICIAL`, componentes actuales y los dos PDFs de `docs/cliente`.
+- `/presentacion` tiene entrada y build independientes. Allowlist exacta:
+  `/presentacion`, `/presentacion/`, `/presentacion/assets/*`,
+  `/presentacion/media/*`. Los assets inexistentes no sirven el fallback privado.
+  La respuesta pública no reenvía cookies a ASSETS ni emite cookies; CSP impide
+  conexiones y formularios. El iframe usa sandbox sin `allow-same-origin`.
+- Demo en memoria: reutiliza TarjetaEjercicio/FilaSerie, HojaEjercicio, iconos,
+  ProveedorDescanso/Descanso y lógica de correcciones reales. No importa el
+  repositorio ni llama APIs. Historial es un resumen de actividad de demo;
+  Perfil es explicativo y remite a la captura real, sin botones de logout falsos.
+- Cuatro capturas nuevas de producto a 390×844 en
+  `public/presentacion/media/capturas/`: Hoy, Biblioteca, Historial y Perfil.
+  Fixture anónimo local `Perfil de demostración`; fecha real de captura 2026-09-02,
+  una serie de ejemplo de 25 lb/lado para ilustrar Historial. Fixture eliminado.
+  No se usaron capturas antiguas, Santiago, nombres de QA ni fotos personales.
+- UI DISCREPANCIES FOUND: P2 área de Ficha invadida al envolver Cambiar variante
+  en el iframe; corregido sólo en CSS de demo. P2 título de paso desbordaba 3 px
+  a 320; pasos en una columna en ese ancho. P3 controles pequeños, fuentes ajenas,
+  kilos y datos ficticios del diseño reemplazados por controles/datos actuales.
+- QA local: ocho viewports 320×800, 375×667, 390×844, 402×874, 430×874,
+  768×900, 1024×900, 1200×900. Documento sin overflow; demo efectiva entre
+  276 y 400 px sin overflow y controles >=44 px. Ficha, cierre, steppers,
+  técnica/calentamiento, guardar, timer, +30s, Editar, tabs, filtro de Biblioteca,
+  terminar y cuatro días ejercitados en el navegador integrado. Consola limpia.
+- Pruebas: `npm test` 590/590 PASS; `npm run lint` PASS;
+  `npm run build` PASS, sin warnings; `SFM_QA_PORT=8790 npm run test:movil`
+  PASS en Maestro Chromium contra este build y D1 exclusivamente local.
+  La variable opcional de puerto evita interferir con otro servidor en 8788.
+- HTTP local: `node scripts/pruebas-presentacion.mjs` 18 checks PASS, incluidos
+  landing/assets 200, app/assets/API 401, Admin 403 local sin Access y SW 200.
+- Evidencia antes/después y geometría: `/tmp/sfm-landing-6abIJd/evidence/`.
+- Pendiente antes de integrar: verificar deployment preview de esta rama y luego
+  el canónico de Git. No se cambió Cloudflare Access ni D1 remota.
+- Esta fase no cambia el release del producto: iPhone físico y PWA siguen
+  pendientes; no declara READY FOR SANTIAGO.
+
 ## Turno de codex — Mobile UX polish + auditoría táctil (2026-09-02)
 
 ### Alcance y protección de datos

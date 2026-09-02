@@ -21,7 +21,7 @@ const argumento = (nombre, pordefecto) => {
 }
 
 const cliente = argumento('cliente', 'dayan-test')
-const puerto = argumento('puerto', '8788')
+const puerto = argumento('puerto', process.env.SFM_QA_PORT ?? '8788')
 const token = randomBytes(32).toString('base64url')
 const ahora = Math.floor(Date.now() / 1000)
 

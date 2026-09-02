@@ -40,9 +40,11 @@ import {
   paginaEntrar,
   paginaSesionCerrada,
 } from './lib/paginas'
+import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
 
 type Entorno = {
   readonly ACCESO: D1Database
+  readonly ASSETS: Fetcher
   readonly AUTH_MODE?: string
 }
 
@@ -78,6 +80,8 @@ const RUTA_SW = '/sw.js'
 export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   const { request, env, next } = contexto
   const url = new URL(request.url)
+
+  if (esRutaPresentacion(url.pathname)) return servirPresentacion(request, env.ASSETS)
 
   // Falla cerrado: sin variable, manda el middleware. Un despliegue mal
   // configurado deja a todo el mundo fuera, nunca a todo el mundo dentro.
