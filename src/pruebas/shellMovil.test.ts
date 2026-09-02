@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { medirPilaInferior } from './pilaInferior'
 
 /**
  * El contrato del armazón móvil (Fase 2).
@@ -189,27 +190,75 @@ describe("barras traslúcidas", () => {
  * QA-MOB-01 —que el cronómetro publique su altura— está en Descanso.test.tsx.
  */
 describe("el contenido reserva sitio para el cronómetro (QA-MOB-01)", () => {
-  const reservaDe = (selector: string) => {
-    const bloque = new RegExp(selector.replace(/[.-]/g, "\\$&") + "\\s*\\{[^}]*\\}").exec(css)?.[0] ?? ""
-    return /padding(?:-bottom)?:[^;]*/.exec(bloque)?.[0] ?? ""
-  }
+  /*
+   * Se calcula la geometría en vez de buscar texto en el CSS.
+   *
+   * El invariante: el hueco reservado al final del contenido tiene que llegar,
+   * como poco, al borde superior del cronómetro. Si se queda corto, la última
+   * serie guardada y su "Editar" caen debajo de la barra y el toque se lo lleva
+   * ella —que es literalmente lo que reportó QA-MOB-01, con "Editar" bien
+   * visible pero sordo al dedo.
+   *
+   * Los dos tamaños son los del contrato: iPhone 16 Pro con indicador de inicio
+   * e iPhone SE sin él.
+   */
+  const DISPOSITIVOS = [
+    { nombre: "iPhone 16 Pro", alto: 874, areaSegura: 34 },
+    { nombre: "iPhone SE", alto: 667, areaSegura: 0 },
+  ] as const
 
-  it("la pantalla sin barra de sesión cuenta con el cronómetro", () => {
-    expect(reservaDe(".contenido")).toContain("var(--alto-cronometro, 0px)")
+  /* 66 es el alto medido de la barra; 90 cubre el rótulo envuelto a 320 px. */
+  const ALTURAS_DEL_CRONOMETRO = [66, 90] as const
+
+  describe.each(DISPOSITIVOS)("$nombre", ({ alto, areaSegura }) => {
+    it.each(ALTURAS_DEL_CRONOMETRO)(
+      "con la barra de sesión y un cronómetro de %ipx, la reserva llega al cronómetro",
+      (altoCronometro) => {
+        const m = medirPilaInferior(css, { alto, areaSegura, altoCronometro, conBarraDeSesion: true })
+
+        expect(m.limiteDelContenido).toBeLessThanOrEqual(m.cronometroTop)
+      },
+    )
+
+    it.each(ALTURAS_DEL_CRONOMETRO)(
+      "sin barra de sesión y un cronómetro de %ipx, la reserva también llega",
+      (altoCronometro) => {
+        const m = medirPilaInferior(css, { alto, areaSegura, altoCronometro, conBarraDeSesion: false })
+
+        expect(m.limiteDelContenido).toBeLessThanOrEqual(m.cronometroTop)
+      },
+    )
+
+    it("las tres capas fijas se apilan sin pisarse", () => {
+      const m = medirPilaInferior(css, { alto, areaSegura, altoCronometro: 66, conBarraDeSesion: true })
+
+      // De abajo arriba: pestañas, barra de sesión, cronómetro.
+      expect(m.barraTop).toBeLessThan(m.pestanasTop)
+      expect(m.cronometroTop + 66).toBeLessThanOrEqual(m.barraTop!)
+    })
+
+    it("nada se dibuja por debajo del indicador de inicio", () => {
+      const m = medirPilaInferior(css, { alto, areaSegura, altoCronometro: 66, conBarraDeSesion: true })
+
+      expect(m.pestanasTop).toBeLessThanOrEqual(alto - areaSegura)
+    })
   })
 
-  it("la pantalla con barra de sesión también", () => {
-    // Regresión del hallazgo: reservaba 184 px mientras el borde superior del
-    // cronómetro caía en 160, así que 24 px de contenido —la última serie
-    // guardada y su Editar— quedaban debajo y el toque se lo llevaba la barra.
-    expect(reservaDe(".contenido--con-barra")).toContain("var(--alto-cronometro, 0px)")
+  it("sin descanso en marcha la reserva se encoge, sin dejar hueco muerto", () => {
+    const conCrono = medirPilaInferior(css, { alto: 874, areaSegura: 34, altoCronometro: 66, conBarraDeSesion: true })
+    const sinCrono = medirPilaInferior(css, { alto: 874, areaSegura: 34, altoCronometro: 0, conBarraDeSesion: true })
+
+    expect(sinCrono.limiteDelContenido - conCrono.limiteDelContenido).toBe(66)
   })
 
-  it("la reserva deja holgura por encima del borde del cronómetro", () => {
-    // El cronómetro se apoya 8 px por encima de lo que tenga debajo; la reserva
-    // suma bastante más que eso, además de su altura.
-    expect(css).toContain("bottom: calc(var(--sobre-barra-sesion) + 8px)")
-    expect(reservaDe(".contenido--con-barra")).toContain("var(--sobre-barra-sesion) + 58px")
+  it("la reserva sigue derivándose de los tokens, no de números sueltos", () => {
+    // 73, 81, 134 y 184 eran las sumas escritas a mano que se descuadraban en
+    // cuanto se tocaba cualquiera de las tres capas.
+    const reglas = [".contenido", ".contenido--con-barra", ".descanso", ".descanso--sin-barra", ".progreso-sesion"]
+    for (const regla of reglas) {
+      const cuerpo = new RegExp(regla.replace(/[.-]/g, "\\$&") + "\\s*\\{[^}]*\\}").exec(css)?.[0] ?? ""
+      expect(cuerpo).not.toMatch(/(?:bottom|padding[^:]*):[^;]*\b(?:73|81|134|184)px/)
+    }
   })
 })
 

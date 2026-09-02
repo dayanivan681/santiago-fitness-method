@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T01:29:48.238Z
+- **Última sincronización:** 2026-09-02T01:35:26.885Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T01:35:26.887Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Phase 0 cerrada. QA-MOB-01 y QA-MOB-02 ya estaban corregidos en 4718eac; se verifican de nuevo en navegador a 402x874 con area segura de 34 (iPhone 16 Pro, tamano que no se habia probado antes) y a 375x667 (iPhone SE): cero controles atrapados, EDITAR 69x44 visible entero y recibiendo el toque, marcas 66x45 y 52x45, cero solapes entre cronometro, barra y navegacion, y cero series bajo el cronometro en el tope del scroll. El trabajo nuevo es de pruebas: src/pruebas/pilaInferior.ts modela la pila inferior leyendo los tokens del CSS y calculando donde cae cada capa, asi que shellMovil.test.ts pasa de comparar cadenas a comprobar el invariante con numeros (la reserva del contenido tiene que llegar al borde superior del cronometro) en los dos dispositivos, con y sin barra de sesion, y con cronometro de 66 y de 90px. Anadida ademas una prueba que impide volver a 73/81/134/184 escritos a mano.
+- **Verificación:** npm test 536/536 (48 ficheros, +11); npm run lint 0 avisos; npm run build OK; npm run test:movil 23/23 comandos COMPLETED; regresiones reproducidas a proposito: quitar la reserva del cronometro falla 9 pruebas, volver a 73/184 falla 6, devolver la marca al -6px simetrico falla 2, y restaurado vuelve a 47/47 en el fichero
+- **Siguiente:** Phase 1 cuando se apruebe. Sigue pendiente y sin ejecutar: Safari iOS Simulator, PWA instalada e iPhone fisico. Maestro cubre las interacciones reales sobre Chromium pero no la geometria, y esta documentado en el propio flujo.
+
 
 ### 2026-09-02T01:29:48.240Z | claude-code | CLAIM
 - **Estado:** active
