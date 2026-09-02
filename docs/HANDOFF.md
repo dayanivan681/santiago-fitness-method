@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T05:11:58.865Z
+- **Última sincronización:** 2026-09-02T16:51:15.686Z
 
 ## Turno de codex — Mobile UX polish + auditoría táctil (2026-09-02)
 
@@ -592,6 +592,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T16:51:15.687Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Landing público fiel al producto, demo aislada y QA de acceso
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-02T05:11:58.866Z | codex | PUBLISH
 - **Estado:** complete
