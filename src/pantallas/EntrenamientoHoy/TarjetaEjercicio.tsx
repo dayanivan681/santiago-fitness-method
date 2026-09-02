@@ -6,6 +6,7 @@
 
 import { aPesoRegistradoLb } from '../../dominio/carga'
 import { formatearRir } from '../../dominio/rir'
+import { resumirUltimaVez } from '../../logica/ultimaVez'
 import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
 import { Miniatura } from '../../componentes/Miniatura'
 import { FilaSerie } from './FilaSerie'
@@ -126,11 +127,13 @@ export function TarjetaEjercicio({
           {/* §7 y §9: última sesión y mejor referencia son dos datos distintos. */}
           <div className="referencias">
             <div className="referencia">
-              <span className="etiqueta-campo">Última sesión</span>
+              <span className="etiqueta-campo">Última vez</span>
+              {/* Todas las series de la última sesión, no sólo la primera: en un
+                  ejercicio de cuatro, la primera es la menos representativa. */}
               <span className="referencia__valor">
-                {referencias.ultimaSesion.length > 0
-                  ? describir(referencias.ultimaSesion[0], ejercicio)
-                  : '—'}
+                {resumirUltimaVez(referencias.ultimaSesion, ejercicio) ?? (
+                  <span className="referencia__vacio">Sin historial</span>
+                )}
               </span>
             </div>
             {referencias.mejor && (
@@ -226,7 +229,7 @@ function detalleDeSugerencia(sugerencia: Sugerencia, ejercicio: Ejercicio): stri
   }
 
   if (sugerencia.tipo === 'subirCarga') {
-    const carga = `${sugerencia.pesoRegistradoSugeridoLb}${porLado} lb (+${sugerencia.incrementoRegistradoLb}${porLado})`
+    const carga = `${sugerencia.pesoRegistradoSugeridoLb} lb${porLado} (+${sugerencia.incrementoRegistradoLb}${porLado})`
     // §11: en hipertrofia se reinicia en el rango bajo al subir el peso.
     return sugerencia.repsObjetivo === undefined
       ? `Objetivo: ${carga}.`
@@ -239,5 +242,6 @@ function detalleDeSugerencia(sugerencia: Sugerencia, ejercicio: Ejercicio): stri
 function describir(serie: SerieComparable, ejercicio: Ejercicio): string {
   const peso = Math.round(aPesoRegistradoLb(serie.cargaTotalLb, ejercicio) * 100) / 100
   const porLado = ejercicio.tipoCarga === 'porLado' ? '/lado' : ''
-  return `${peso}${porLado} lb × ${serie.reps} · RIR ${formatearRir(serie.rir)}`
+  // "135 lb/lado", no "135/lado lb": la unidad va entera, no partida.
+  return `${peso} lb${porLado} × ${serie.reps} · RIR ${formatearRir(serie.rir)}`
 }

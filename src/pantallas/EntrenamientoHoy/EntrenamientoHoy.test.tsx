@@ -110,7 +110,7 @@ describe('referencia del entrenamiento anterior (§7)', () => {
 
     // Assert: §9 — con una sola sesión, última y mejor coinciden pero se
     // muestran por separado porque son datos distintos.
-    expect(await screen.findAllByText('45/lado lb × 5 · RIR 2')).not.toHaveLength(0)
+    expect(await screen.findAllByText('45 lb/lado × 5 · RIR 2')).not.toHaveLength(0)
     expect(screen.getByText('Mejor referencia')).toBeInTheDocument()
   })
 
@@ -124,7 +124,7 @@ describe('referencia del entrenamiento anterior (§7)', () => {
 
     // Assert
     expect(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)).toHaveTextContent('45')
-    expect(screen.getAllByText(/Anterior: 45\/lado lb × 5 · RIR 2/)).toHaveLength(4)
+    expect(screen.getAllByText(/Anterior: 45 lb\/lado × 5 · RIR 2/)).toHaveLength(4)
 
     // Nada queda registrado mientras no se confirme
     expect(await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
@@ -629,7 +629,7 @@ describe('la recomendación dice cuánto, no sólo qué (§6)', () => {
     await abrirUpperA()
 
     // Assert: §13 y §17 — el Smith sube 5 lb totales, 2.5 por lado
-    expect(await screen.findByText(/Objetivo: 47\.5\/lado lb \(\+2\.5\/lado\)/)).toBeInTheDocument()
+    expect(await screen.findByText(/Objetivo: 47\.5 lb\/lado \(\+2\.5\/lado\)/)).toBeInTheDocument()
   })
 
   test('sin referencia no inventa ningún número', async () => {
@@ -1120,5 +1120,169 @@ describe('teclado móvil (Fase 2)', () => {
       'inputmode',
       'numeric',
     )
+  })
+})
+
+describe('Última vez (Phase 1A)', () => {
+  /** Varias series de una misma sesión anterior, con el peso que se le pase. */
+  async function sembrarSesionDe(
+    fecha: string,
+    series: readonly { peso: number; reps: number; calentamiento?: boolean }[],
+    ejercicioId: string = PRESS_BANCA_15_SMITH.id,
+  ) {
+    const sesionId = `sesion-${fecha}-${ejercicioId}`
+    await repositorio.crearSesion({
+      id: sesionId,
+      participanteId,
+      plantillaDiaId: idDeDia(participanteId, 'upper-a'),
+      fecha,
+    })
+    await Promise.all(
+      series.map((s, indice) =>
+        repositorio.registrarSerie({
+          id: `${sesionId}-${indice}`,
+          sesionId,
+          ejercicioId,
+          numeroSerie: indice + 1,
+          pesoRegistradoLb: s.peso,
+          repsRealizadas: s.reps,
+          rir: 2,
+          esCalentamiento: s.calentamiento,
+        }),
+      ),
+    )
+  }
+
+  const ultimaVez = async () => {
+    const bloque = (await screen.findByText('Última vez')).parentElement!
+    return within(bloque).getByText(/.+/, { selector: '.referencia__valor, .referencia__vacio' })
+  }
+
+  test('sin historial lo dice, en vez de inventarse un guion', async () => {
+    // Antes ponía "—", que se lee como un dato que falta y no como "aún no hay".
+    await abrirUpperA()
+
+    expect(await screen.findByText('Sin historial')).toBeInTheDocument()
+  })
+
+  test('con una ejecución anterior muestra peso y repeticiones', async () => {
+    // Arrange
+    await sembrarSesionAnterior()
+
+    // Act
+    await abrirUpperA()
+
+    // Assert: 45 lb por lado, tal como se cargó la barra.
+    expect(await screen.findByText('45 lb/lado × 5')).toBeInTheDocument()
+  })
+
+  test('con varias series iguales las agrupa', async () => {
+    await sembrarSesionDe('2026-01-05', [
+      { peso: 45, reps: 5 },
+      { peso: 45, reps: 5 },
+      { peso: 45, reps: 5 },
+    ])
+
+    await abrirUpperA()
+
+    expect(await screen.findByText('3 × 45 lb/lado × 5')).toBeInTheDocument()
+  })
+
+  test('con repeticiones que caen las lista, que es lo informativo', async () => {
+    await sembrarSesionDe('2026-01-05', [
+      { peso: 45, reps: 5 },
+      { peso: 45, reps: 5 },
+      { peso: 45, reps: 3 },
+    ])
+
+    await abrirUpperA()
+
+    expect(await screen.findByText('45 lb/lado × 5, 5, 3')).toBeInTheDocument()
+  })
+
+  test('el calentamiento de la sesión anterior no cuenta como referencia', async () => {
+    // §20–21: se guarda, pero no es la marca de nada.
+    await sembrarSesionDe('2026-01-05', [
+      { peso: 20, reps: 10, calentamiento: true },
+      { peso: 45, reps: 5 },
+    ])
+
+    await abrirUpperA()
+
+    expect(await screen.findByText('45 lb/lado × 5')).toBeInTheDocument()
+    expect(screen.queryByText(/20 lb\/lado/)).not.toBeInTheDocument()
+  })
+
+  test('sólo la última sesión, no una mezcla de todas', async () => {
+    // Arrange: dos sesiones distintas del mismo ejercicio
+    await sembrarSesionDe('2026-01-05', [{ peso: 40, reps: 8 }])
+    await sembrarSesionDe('2026-01-12', [{ peso: 45, reps: 5 }])
+
+    // Act
+    await abrirUpperA()
+
+    // Assert
+    expect(await screen.findByText('45 lb/lado × 5')).toBeInTheDocument()
+    expect(screen.queryByText(/40 lb\/lado/)).not.toBeInTheDocument()
+  })
+
+  test('un borrador sin guardar no es una ejecución anterior', async () => {
+    // Los borradores viven en otra tabla justamente para esto.
+    await repositorio.guardarBorrador({
+      id: idDeLaPrimeraSerie(),
+      participanteId,
+      fecha: fechaDeHoy(),
+      plantillaDiaId: idDeDia(participanteId, 'upper-a'),
+      orden: 1,
+      numeroSerie: 1,
+      pesoRegistradoLb: 999,
+      repsRealizadas: 99,
+      rir: 0,
+      guardadoEn: new Date().toISOString(),
+    })
+
+    await abrirUpperA()
+
+    // El borrador SÍ vuelve a la serie editable de hoy —para eso existe— pero
+    // no puede colarse como referencia de la sesión anterior.
+    expect(await screen.findByText('Sin historial')).toBeInTheDocument()
+    const bloque = (await screen.findByText('Última vez')).parentElement!
+    expect(within(bloque).queryByText(/999/)).not.toBeInTheDocument()
+  })
+
+  test('lo guardado hoy tampoco: la sesión de hoy no es su propia referencia', async () => {
+    // Arrange
+    await sembrarSesionAnterior()
+    await abrirUpperA()
+    expect(await screen.findByText('45 lb/lado × 5')).toBeInTheDocument()
+
+    // Act: se guarda una serie de hoy con otro peso
+    await userEvent.click(screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`))
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    // Assert: "Última vez" sigue mirando a la sesión anterior
+    await waitFor(async () => {
+      expect(await ultimaVez()).toHaveTextContent('45 lb/lado × 5')
+    })
+  })
+
+  test('la referencia es de la variante, no del movimiento', async () => {
+    // §16: cada variante conserva su propio historial. Lo levantado en otra
+    // máquina no puede aparecer como referencia de ésta.
+    await sembrarSesionDe('2026-01-05', [{ peso: 80, reps: 6 }], 'press-banca-plano-barra')
+
+    await abrirUpperA()
+
+    expect(await screen.findByText('Sin historial')).toBeInTheDocument()
+    expect(screen.queryByText(/80 lb/)).not.toBeInTheDocument()
+  })
+
+  test('es sólo lectura: no hay nada que tocar en el bloque', async () => {
+    await sembrarSesionAnterior()
+    await abrirUpperA()
+
+    const bloque = (await screen.findByText('Última vez')).parentElement!
+    expect(within(bloque).queryByRole('button')).not.toBeInTheDocument()
+    expect(within(bloque).queryByRole('textbox')).not.toBeInTheDocument()
   })
 })

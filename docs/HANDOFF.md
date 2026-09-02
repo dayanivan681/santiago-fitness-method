@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T01:40:03.076Z
+- **Última sincronización:** 2026-09-02T01:49:58.667Z
 
 Hay cambios sin commit que existían antes de instalar este protocolo. No se han
 tocado ni incluido en esta configuración:
@@ -414,6 +414,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-02T01:49:58.668Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Phase 1A Last Performance. Tras inspeccionar el modelo: NO hizo falta cambiarlo ni migrar nada. series y borradores ya son tablas distintas —un borrador no puede colarse— y useEntrenamiento ya filtraba la fecha de hoy del historial, asi que la sesion actual nunca es su propia referencia. Lo que faltaba era la presentacion: la tarjeta ensenaba ultimaSesion[0], o sea la PRIMERA serie de la ultima sesion, que en un ejercicio de cuatro es la menos representativa, y el vacio se dibujaba como un guion. Anadido src/logica/ultimaVez.ts, que resume todas las series de la ultima sesion eligiendo formato segun lo que vario: '3 x 135 lb x 10' si todo igual, '135 lb x 10, 10, 8' con mismo peso, y '135 x 10 · 140 x 8 lb' con pesos distintos. El vacio pasa a decir 'Sin historial'. Adyacente: corregida la unidad malformada '135/lado lb' a '135 lb/lado' en los tres sitios de la tarjeta donde aparecia, porque quedaba al lado del formato nuevo y se leia como un fallo introducido.
+- **Verificación:** npm test 553/553 (49 ficheros, +17); npm run lint 0 avisos; npm run build OK; npm run test:movil 23/23 COMPLETED; navegador a 402x874 con area segura 34 y a 375x667: Ultima vez correcta, bloque de solo lectura (0 elementos interactivos), sin desborde, cronometro activo, EDITAR 69x44 visible entero y recibiendo el toque, cero solapes; ida a Biblioteca, Historial y Perfil y vuelta conserva el valor
+- **Siguiente:** Phase 1B cuando se apruebe. Fixture de QA sembrado en IndexedDB local y retirado al terminar; D1 remota no se toco en ningun momento: Santiago sigue con 4 rutinas y 1 invitacion pendiente.
+
 
 ### 2026-09-02T01:40:03.077Z | claude-code | CLAIM
 - **Estado:** active

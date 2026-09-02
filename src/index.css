@@ -632,6 +632,14 @@ button,
 
 .referencia__valor {
   font: 600 13px/1 'Barlow', sans-serif;
+  /* El resumen de varias series puede no caber en una línea a 320 px. */
+  line-height: 1.25;
+}
+
+/* "Sin historial" es ausencia de dato, no un dato: se dice más bajo. */
+.referencia__vacio {
+  font-weight: 500;
+  color: var(--texto-42);
 }
 
 .referencia--mejor .referencia__valor {

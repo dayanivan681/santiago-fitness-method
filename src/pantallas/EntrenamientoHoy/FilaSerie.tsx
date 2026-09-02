@@ -416,7 +416,7 @@ export function FilaSerie({
       <div className="serie__pie">
         <span className="serie__anterior">
           {referencia
-            ? `Anterior: ${pesoDeReferencia}${porLado ? '/lado' : ''} lb × ${referencia.reps} · RIR ${formatearRir(referencia.rir)}`
+            ? `Anterior: ${pesoDeReferencia} lb${porLado ? '/lado' : ''} × ${referencia.reps} · RIR ${formatearRir(referencia.rir)}`
             : 'Primera vez con este ejercicio'}
         </span>
         {hecha ? (
