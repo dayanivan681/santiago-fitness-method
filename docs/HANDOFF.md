@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T19:39:46.284Z
+- **Última sincronización:** 2026-09-04T19:55:19.840Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T19:55:19.841Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Cerrado el bypass de prueba que exponía la app y /api/cliente sin sesión. Eliminados PUBLIC_TEST_MODE, AUTH_MODE y /consola; el middleware exige sfm_sesion fuera de las excepciones públicas, la API deriva la identidad únicamente de la sesión, /admin exige la cabecera de Cloudflare Access y el match de ruta es segment-aware. Restaurada en Cloudflare la política existente Cliente y coach sobre santiago-fitness-method.pages.dev/admin y *.santiago-fitness-method.pages.dev, sin tocar los destinos; el cliente canónico entra por /access?t=... sin Access. docs/cliente y D1 remota permanecen intactos.
+- **Verificación:** npm test: 622/622; npm run lint; npm run build; pruebas de acceso 38/38; roles 11/11; admin UI 14/14; QA 13/13; presentación PASS; probes canónicos: cliente/API/estáticos 401, /access sin Access, /sw.js y /presentacion públicos, /admin 302 Access, previews 302 Access; revisor independiente PASS
+- **Siguiente:** Ninguno
+
 
 ### 2026-09-04T19:39:46.284Z | codex | ADOPT
 - **Estado:** active
