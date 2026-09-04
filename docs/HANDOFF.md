@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T03:27:47.814Z
+- **Última sincronización:** 2026-09-04T03:33:50.177Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -676,6 +676,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T03:33:50.178Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Phase 3A.5: revision documental de R01-R25
+- **Cambios:** Creados docs/BIBLIOTECA-FASE-3A5-REVISION.md y CSV independiente. 25 expedientes con nombres/paginas/grupos/subcategorias y preguntas concretas. 24 NEEDS_COACH_REVIEW + 1 ALIAS media pendiente; 0 casos completos alta confianza; 11 casos con distinciones parciales seguras. Total provisional 293 sin fusiones nuevas. NOT READY FOR PHASE 3B. Datasets 3A, 33 IDs, once mappings, codigo, UI, PDF y D1 intactos.
+- **Verificación:** Readback y contraste directo con PDF PASS, incluyendo encabezados continuados; comparacion byte-identica de datasets/PDF con b783b5d; diff produccion vacio. npm test 602/602 PASS; npm run lint PASS; npm run build PASS. Intermitencia Perfil previa no reaparece, no diagnosticada ni corregida.
+- **Siguiente:** Esperar revision humana de preguntas R01-R25 y aprobacion explicita. No importar Phase 3B. Corregir resumenes de decision solo tras aprobacion, sin resolver implicitamente los once IDs historicos.
+
 
 ### 2026-09-04T03:27:47.814Z | codex | CLAIM
 - **Estado:** active
