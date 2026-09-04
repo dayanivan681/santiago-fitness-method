@@ -8,6 +8,11 @@
  */
 
 import { PLANTILLAS_BASE, type EstimuloBase } from '../../shared/plantillas-base'
+import {
+  EJERCICIOS_BASE,
+  IDS_DE_EJERCICIOS,
+  type EjercicioBase,
+} from '../../shared/ejercicios-base'
 
 export type Estimulo = EstimuloBase
 export type Progresion = 'mantener' | 'subirReps' | 'subirCarga' | 'revisarReducir'
@@ -48,42 +53,15 @@ export type RutinaCloud = {
 
 type Entorno = { readonly ACCESO: D1Database }
 
-/** Catálogo pequeño y estable para el formulario del coach. */
-export const CATALOGO_EJERCICIOS: readonly { id: string; nombre: string }[] = [
-  { id: 'press-banca-15-smith', nombre: 'Press banca 15° Smith' },
-  { id: 'press-inclinado-convergente', nombre: 'Press inclinado convergente' },
-  { id: 'press-banca-barra', nombre: 'Press banca plano con barra' },
-  { id: 'press-banca-mancuernas', nombre: 'Press banca plano con mancuernas' },
-  { id: 'press-pecho-convergente', nombre: 'Press pecho convergente' },
-  { id: 'pec-deck', nombre: 'Pec deck (aperturas en máquina)' },
-  { id: 'fondos-triceps', nombre: 'Fondos en paralelas (tríceps)' },
-  { id: 'extension-triceps-polea', nombre: 'Extensión de tríceps en polea' },
-  { id: 'press-frances-barra-z', nombre: 'Press francés con barra Z' },
-  { id: 'elevacion-lateral-mancuernas', nombre: 'Elevación lateral' },
-  { id: 'elevacion-lateral-polea', nombre: 'Elevación lateral en polea' },
-  { id: 'lat-pulldown-maquina', nombre: 'Lat pulldown' },
-  { id: 'jalon-agarre-cerrado', nombre: 'Jalón agarre cerrado' },
-  { id: 'dominadas', nombre: 'Dominadas' },
-  { id: 'remo-barra', nombre: 'Remo con barra' },
-  { id: 'remo-sentado-cable', nombre: 'Remo sentado en polea' },
-  { id: 'remo-mancuerna', nombre: 'Remo con mancuerna a una mano' },
-  { id: 'curl-barra', nombre: 'Curl con barra' },
-  { id: 'curl-mancuernas', nombre: 'Curl con mancuernas' },
-  { id: 'curl-martillo', nombre: 'Curl martillo' },
-  { id: 'hip-thrust-barra', nombre: 'Hip thrust con barra' },
-  { id: 'sentadilla-barra', nombre: 'Sentadilla con barra' },
-  { id: 'prensa', nombre: 'Prensa de piernas' },
-  { id: 'hack-squat', nombre: 'Hack squat' },
-  { id: 'extension-cuadriceps', nombre: 'Extensión de cuádriceps' },
-  { id: 'zancadas-mancuernas', nombre: 'Zancadas con mancuernas' },
-  { id: 'peso-muerto-rumano', nombre: 'Peso muerto rumano' },
-  { id: 'curl-femoral-tumbado', nombre: 'Curl femoral tumbado' },
-  { id: 'curl-femoral-sentado', nombre: 'Curl femoral sentado' },
-  { id: 'patada-gluteo-polea', nombre: 'Patada de glúteo en polea' },
-  { id: 'abduccion-maquina', nombre: 'Abducción en máquina' },
-  { id: 'elevacion-talones-pie', nombre: 'Elevación de talones de pie' },
-  { id: 'elevacion-talones-sentado', nombre: 'Elevación de talones sentado' },
-]
+/**
+ * Catálogo para el formulario del coach.
+ *
+ * Derivado, no copiado. Antes eran 33 pares id/nombre escritos a mano aquí y
+ * otros 33 en la biblioteca del cliente, sincronizados por disciplina: si
+ * divergían, el coach podía programar un ejercicio que al participante le
+ * desaparecía del día, o el día quedaba INCOMPLETE sin decir por qué.
+ */
+export const CATALOGO_EJERCICIOS: readonly EjercicioBase[] = EJERCICIOS_BASE
 
 export type EstadoDiaProgramacion = {
   nombre: string
@@ -101,8 +79,6 @@ export type EstadoProgramacion = {
 }
 
 export type CampoPerfilPendiente = 'edad' | 'estatura' | 'peso' | 'objetivo' | 'notas'
-
-const IDS_DE_EJERCICIOS = new Set(CATALOGO_EJERCICIOS.map((ejercicio) => ejercicio.id))
 
 /**
  * Gate de release genérico: exactamente cuatro días, cada uno con 5–8 slots
@@ -150,7 +126,20 @@ export function evaluarEstadoProgramacion(rutinas: readonly RutinaCloud[]): Esta
     if (coincidencias.length > 1) detalle = `${dia.nombre}: día duplicado`
     else if (!cantidadValida) detalle = `${dia.nombre}: ${ejercicios} ejercicios`
     else if (ejerciciosValidos !== ejercicios) {
-      detalle = `${dia.nombre}: ${ejerciciosValidos}/${ejercicios} ejercicios válidos`
+      /*
+       * Decir CUÁL falla, no sólo cuántos.
+       *
+       * Un id fuera del catálogo bloquea el día para siempre y con él la
+       * generación de enlaces. Con un "3/5 válidos" a secas no hay forma de
+       * saber qué ejercicio arreglar; nombrarlo convierte un callejón sin
+       * salida en algo accionable.
+       */
+      const desconocidos = rutina.slots
+        .filter((slot) => !IDS_DE_EJERCICIOS.has(slot.ejercicioId))
+        .map((slot) => slot.ejercicioId)
+      detalle = desconocidos.length
+        ? `${dia.nombre}: ejercicio fuera del catálogo (${desconocidos.join(', ')})`
+        : `${dia.nombre}: ${ejerciciosValidos}/${ejercicios} ejercicios válidos`
     }
     return { nombre: dia.nombre, orden: dia.orden, ejercicios, ejerciciosValidos, completo, detalle }
   })

@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { describe, test, expect, beforeEach } from 'vitest'
 import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../repositorioLocal'
-import { sembrar } from './index'
+import { crearDiasIniciales, sembrar } from './index'
 import { BIBLIOTECA_INICIAL, PRESS_BANCA_15_SMITH, SENTADILLA_BARRA } from './biblioteca'
 
 let repositorio: RepositorioLocal
@@ -50,6 +50,35 @@ describe('biblioteca (§15, §23)', () => {
 })
 
 describe('sembrar (§13, §23, §27)', () => {
+  test('renombrar conserva historial, plantilla y calibración tras dos arranques', async () => {
+    const id = 'press-banca-15-smith'
+    await repositorio.guardarEjercicio({
+      ...PRESS_BANCA_15_SMITH, id, nombre: 'Press banca 15° Smith',
+      pesoBaseMaquinaLb: 15, incrementoMinimoLb: 2.5,
+    })
+    await repositorio.crearSesion({
+      id: 'sesion-legacy', participanteId: 'qa-nombres',
+      plantillaDiaId: 'upper-a', fecha: '2026-09-01',
+    })
+    await repositorio.registrarSerie({
+      id: 'serie-legacy', sesionId: 'sesion-legacy', ejercicioId: id,
+      numeroSerie: 1, pesoRegistradoLb: 45, repsRealizadas: 5, rir: 2,
+    })
+    const antes = await repositorio.historialDeEjercicio('qa-nombres', id)
+    await crearDiasIniciales(repositorio, 'qa-nombres')
+    const plantillas = await repositorio.listarPlantillas('qa-nombres')
+
+    await sembrar(repositorio)
+    await sembrar(repositorio)
+
+    expect(await repositorio.historialDeEjercicio('qa-nombres', id)).toEqual(antes)
+    expect(await repositorio.listarPlantillas('qa-nombres')).toEqual(plantillas)
+    expect(await repositorio.obtenerEjercicio(id)).toMatchObject({
+      id, nombre: 'Press inclinado bajo (15°) en Smith',
+      angulo: '15°', pesoBaseMaquinaLb: 15, incrementoMinimoLb: 2.5,
+    })
+  })
+
   test('carga la biblioteca completa la primera vez', async () => {
     await sembrar(repositorio)
 

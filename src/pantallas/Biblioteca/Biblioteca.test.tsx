@@ -21,7 +21,7 @@ async function abrir() {
 
 async function abrirFicha(nombre: string) {
   await abrir()
-  await userEvent.click(await screen.findByRole('button', { name: new RegExp(nombre) }))
+  await userEvent.click(await screen.findByRole('button', { name: (texto) => texto.includes(nombre) }))
   return screen.findByRole('dialog', { name: nombre })
 }
 
@@ -38,7 +38,7 @@ describe('la biblioteca no muestra datos de nadie (§15)', () => {
 describe('ficha completa del ejercicio (punto H)', () => {
   test('reúne los seis datos que pide el cliente', async () => {
     // Arrange + Act
-    const hoja = await abrirFicha('Press banca 15° Smith')
+    const hoja = await abrirFicha('Press inclinado bajo (15°) en Smith')
 
     // Assert: equipo, tipo de carga, músculo principal, secundarios,
     // instrucciones breves y alternativas equivalentes
@@ -58,24 +58,24 @@ describe('ficha completa del ejercicio (punto H)', () => {
 
   test('las alternativas salen del patrón de movimiento, sin incluirse a sí mismo', async () => {
     // §16 y §23: la equivalencia ya la define `movimiento`; no hay lista aparte.
-    const hoja = await abrirFicha('Press banca 15° Smith')
+    const hoja = await abrirFicha('Press inclinado bajo (15°) en Smith')
 
-    expect(within(hoja).getByRole('button', { name: 'Press banca plano con barra' })).toBeInTheDocument()
+    expect(within(hoja).getByRole('button', { name: 'Press de banca plano con barra' })).toBeInTheDocument()
     expect(
-      within(hoja).queryByRole('button', { name: 'Press banca 15° Smith' }),
+      within(hoja).queryByRole('button', { name: 'Press inclinado bajo (15°) en Smith' }),
     ).not.toBeInTheDocument()
   })
 
   test('se salta de una equivalente a otra sin cerrar la hoja', async () => {
     // Comparar variantes es justo lo que se hace delante de la máquina.
-    const hoja = await abrirFicha('Press banca 15° Smith')
+    const hoja = await abrirFicha('Press inclinado bajo (15°) en Smith')
 
     await userEvent.click(
-      within(hoja).getByRole('button', { name: 'Press banca plano con barra' }),
+      within(hoja).getByRole('button', { name: 'Press de banca plano con barra' }),
     )
 
     expect(
-      await screen.findByRole('dialog', { name: 'Press banca plano con barra' }),
+      await screen.findByRole('dialog', { name: 'Press de banca plano con barra' }),
     ).toBeInTheDocument()
   })
 
@@ -98,7 +98,7 @@ describe('ficha completa del ejercicio (punto H)', () => {
 
 describe('la ficha se comporta como un diálogo móvil (Fase 2)', () => {
   test('se anuncia como modal', async () => {
-    const hoja = await abrirFicha('Press banca 15° Smith')
+    const hoja = await abrirFicha('Press inclinado bajo (15°) en Smith')
 
     expect(hoja).toHaveAttribute('aria-modal', 'true')
   })
@@ -106,14 +106,14 @@ describe('la ficha se comporta como un diálogo móvil (Fase 2)', () => {
   test('el foco entra en la hoja al abrirla', async () => {
     // Sin esto, quien navega con teclado o lector se queda en la página de
     // detrás y no se entera de que hay una ficha abierta.
-    const hoja = await abrirFicha('Press banca 15° Smith')
+    const hoja = await abrirFicha('Press inclinado bajo (15°) en Smith')
 
     expect(hoja.contains(document.activeElement)).toBe(true)
   })
 
   test('Escape la cierra, como cualquier diálogo', async () => {
     // Arrange
-    await abrirFicha('Press banca 15° Smith')
+    await abrirFicha('Press inclinado bajo (15°) en Smith')
 
     // Act
     await userEvent.keyboard('{Escape}')
@@ -125,7 +125,7 @@ describe('la ficha se comporta como un diálogo móvil (Fase 2)', () => {
   test('el foco vuelve al ejercicio desde el que se abrió', async () => {
     // Arrange
     await abrir()
-    const tarjeta = await screen.findByRole('button', { name: /Press banca 15° Smith/ })
+    const tarjeta = await screen.findByRole('button', { name: /Press inclinado bajo \(15°\) en Smith/ })
     await userEvent.click(tarjeta)
     await screen.findByRole('dialog')
 

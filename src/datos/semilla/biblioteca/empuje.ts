@@ -4,12 +4,13 @@
  */
 
 import type { Ejercicio } from '../../../dominio/tipos'
+import { nombreDe } from '../../../../shared/ejercicios-base'
 import { BARRA_OLIMPICA, BARRA_Z, DISCOS_POR_LADO, MANCUERNAS, PESO_CORPORAL, STACK } from './cargas'
 
 export const PRESS_BANCA_15_SMITH: Ejercicio = {
   id: 'press-banca-15-smith',
   movimiento: 'press-pecho',
-  nombre: 'Press banca 15° Smith',
+  nombre: nombreDe('press-banca-15-smith'),
   equipo: 'smith',
   angulo: '15°',
   imagen: '/ejercicios/press-banca-15-smith.jpg',
@@ -25,7 +26,7 @@ export const PRESS_BANCA_15_SMITH: Ejercicio = {
 export const PRESS_INCLINADO_CONVERGENTE: Ejercicio = {
   id: 'press-inclinado-convergente',
   movimiento: 'press-pecho',
-  nombre: 'Press inclinado convergente',
+  nombre: nombreDe('press-inclinado-convergente'),
   equipo: 'convergente',
   angulo: 'inclinado',
   imagen: '/ejercicios/press-inclinado-convergente.jpg',
@@ -39,7 +40,7 @@ export const PRESS_INCLINADO_CONVERGENTE: Ejercicio = {
 export const PRESS_BANCA_BARRA: Ejercicio = {
   id: 'press-banca-barra',
   movimiento: 'press-pecho',
-  nombre: 'Press banca plano con barra',
+  nombre: nombreDe('press-banca-barra'),
   equipo: 'barraLibre',
   angulo: 'plano',
   imagen: '/ejercicios/press-banca-barra.jpg',
@@ -52,7 +53,7 @@ export const PRESS_BANCA_BARRA: Ejercicio = {
 export const PRESS_BANCA_MANCUERNAS: Ejercicio = {
   id: 'press-banca-mancuernas',
   movimiento: 'press-pecho',
-  nombre: 'Press banca plano con mancuernas',
+  nombre: nombreDe('press-banca-mancuernas'),
   equipo: 'mancuernas',
   angulo: 'plano',
   imagen: '/ejercicios/press-banca-mancuernas.jpg',
@@ -65,7 +66,7 @@ export const PRESS_BANCA_MANCUERNAS: Ejercicio = {
 export const PRESS_PECHO_CONVERGENTE: Ejercicio = {
   id: 'press-pecho-convergente',
   movimiento: 'press-pecho',
-  nombre: 'Press pecho convergente',
+  nombre: nombreDe('press-pecho-convergente'),
   equipo: 'convergente',
   angulo: 'plano',
   imagen: '/ejercicios/press-pecho-convergente.jpg',
@@ -78,7 +79,7 @@ export const PRESS_PECHO_CONVERGENTE: Ejercicio = {
 export const PEC_DECK: Ejercicio = {
   id: 'pec-deck',
   movimiento: 'apertura-pecho',
-  nombre: 'Pec deck (aperturas en máquina)',
+  nombre: nombreDe('pec-deck'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/pec-deck.jpg',
   explicacionCorta: 'Aperturas sentado. Juntar los brazos al frente sin encoger los hombros.',
@@ -90,7 +91,7 @@ export const PEC_DECK: Ejercicio = {
 export const FONDOS_TRICEPS: Ejercicio = {
   id: 'fondos-triceps',
   movimiento: 'extension-triceps',
-  nombre: 'Fondos en paralelas (tríceps)',
+  nombre: nombreDe('fondos-triceps'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/fondos-triceps.jpg',
   explicacionCorta: 'Torso vertical y codos pegados para cargar el tríceps. Peso corporal o lastre.',
@@ -102,7 +103,7 @@ export const FONDOS_TRICEPS: Ejercicio = {
 export const EXTENSION_TRICEPS_POLEA: Ejercicio = {
   id: 'extension-triceps-polea',
   movimiento: 'extension-triceps',
-  nombre: 'Extensión de tríceps en polea',
+  nombre: nombreDe('extension-triceps-polea'),
   equipo: 'cable',
   imagen: '/ejercicios/extension-triceps-polea.jpg',
   explicacionCorta: 'Codos fijos al costado. Sólo se mueve el antebrazo.',
@@ -114,7 +115,7 @@ export const EXTENSION_TRICEPS_POLEA: Ejercicio = {
 export const PRESS_FRANCES: Ejercicio = {
   id: 'press-frances-barra-z',
   movimiento: 'extension-triceps',
-  nombre: 'Press francés con barra Z',
+  nombre: nombreDe('press-frances-barra-z'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/press-frances.jpg',
   explicacionCorta: 'Tumbado, bajar la barra hacia la frente manteniendo los codos quietos.',
@@ -126,7 +127,7 @@ export const PRESS_FRANCES: Ejercicio = {
 export const ELEVACION_LATERAL_MANCUERNAS: Ejercicio = {
   id: 'elevacion-lateral-mancuernas',
   movimiento: 'elevacion-lateral',
-  nombre: 'Elevación lateral',
+  nombre: nombreDe('elevacion-lateral-mancuernas'),
   equipo: 'mancuernas',
   imagen: '/ejercicios/elevacion-lateral-mancuernas.jpg',
   explicacionCorta:
@@ -139,7 +140,7 @@ export const ELEVACION_LATERAL_MANCUERNAS: Ejercicio = {
 export const ELEVACION_LATERAL_POLEA: Ejercicio = {
   id: 'elevacion-lateral-polea',
   movimiento: 'elevacion-lateral',
-  nombre: 'Elevación lateral en polea',
+  nombre: nombreDe('elevacion-lateral-polea'),
   equipo: 'cable',
   imagen: '/ejercicios/elevacion-lateral-polea.jpg',
   explicacionCorta: 'Tensión constante en todo el recorrido, al contrario que con mancuernas.',

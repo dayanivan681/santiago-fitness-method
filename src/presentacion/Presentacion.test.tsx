@@ -59,12 +59,12 @@ describe("Presentación pública fiel", () => {
     render(<Demo />);
     fireEvent.click(
       screen.getByRole("button", {
-        name: "Subir peso de la serie 1 de Press banca 15° Smith",
+        name: "Subir peso de la serie 1 de Press inclinado bajo (15°) en Smith",
       }),
     );
     fireEvent.click(
       screen.getByRole("button", {
-        name: "Guardar la serie 1 de Press banca 15° Smith",
+        name: "Guardar la serie 1 de Press inclinado bajo (15°) en Smith",
       }),
     );
     const timer = await screen.findByRole("status", {
@@ -75,12 +75,12 @@ describe("Presentación pública fiel", () => {
     expect(within(timer).getByText("3:30")).toBeInTheDocument();
     fireEvent.click(
       screen.getByRole("button", {
-        name: "Editar la serie 1 de Press banca 15° Smith",
+        name: "Editar la serie 1 de Press inclinado bajo (15°) en Smith",
       }),
     );
     fireEvent.click(
       screen.getByRole("button", {
-        name: "Guardar la serie 1 de Press banca 15° Smith",
+        name: "Guardar la serie 1 de Press inclinado bajo (15°) en Smith",
       }),
     );
     expect(within(timer).getByText("3:30")).toBeInTheDocument();
@@ -109,16 +109,16 @@ describe("Presentación pública fiel", () => {
     render(<Demo />);
     fireEvent.click(
       screen.getByRole("button", {
-        name: "Marcar la serie 1 de Press banca 15° Smith como calentamiento",
+        name: "Marcar la serie 1 de Press inclinado bajo (15°) en Smith como calentamiento",
       }),
     );
     fireEvent.click(
       screen.getByRole("button", {
-        name: "Guardar la serie 1 de Press banca 15° Smith",
+        name: "Guardar la serie 1 de Press inclinado bajo (15°) en Smith",
       }),
     );
     await screen.findByRole("button", {
-      name: "Editar la serie 1 de Press banca 15° Smith",
+      name: "Editar la serie 1 de Press inclinado bajo (15°) en Smith",
     });
     expect(
       screen.queryByRole("status", { name: "Temporizador de descanso" }),

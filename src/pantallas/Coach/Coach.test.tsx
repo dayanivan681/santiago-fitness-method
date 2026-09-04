@@ -202,7 +202,7 @@ describe('limitaciones conectadas con la programación (punto G)', () => {
     await screen.findByText(/El perfil dice evitar/)
 
     // Act
-    await userEvent.click(screen.getByRole('button', { name: 'Jalón agarre cerrado' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Lat pulldown agarre cerrado neutro' }))
 
     // Assert: se asigna la alternativa y el aviso desaparece
     await waitFor(async () => {

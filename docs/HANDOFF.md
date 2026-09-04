@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
+- **Owner:** codex
 - **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T02:25:51.127Z
+- **Última sincronización:** 2026-09-04T02:54:08.084Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -648,7 +648,42 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 
 ## Registro de turnos
 
+### Continuación de biblioteca maestra por Codex
+
+El usuario solicitó retomar el trabajo dejado por Claude. Se revisaron los seis
+archivos pendientes del claim `90dd707`; se libera el owner anterior únicamente
+para registrar la adopción explícita de Codex con `handoff:adopt`. No se publican
+los nombres supuestos del borrador: primero se completaron las correcciones y QA.
+
+- Alcance: fases 1–2; catálogo compartido de 33 ids, nomenclatura verificable y
+  prueba de paridad Coach/Cliente. Detalle en `docs/BIBLIOTECA-FASES-1-2.md`.
+- Se mantienen genéricos 11 ejercicios cuya variante no identifica el código.
+  El Smith sigue a 15°; las equivalencias dudosas requieren confirmación del coach.
+- Compatibilidad: una prueba de arranque doble conserva historial, plantilla y
+  calibración mientras actualiza el nombre. Otra fija los 33 ids publicados.
+- `npm test`: 602/602 PASS, 51 archivos; lint y build PASS.
+- Playwright con Chrome local aislado: demo compilada en
+  `http://127.0.0.1:4174/presentacion/?demo=1`, a 320×844, 390×844 y 1024×844.
+  Hoy → Ficha → cerrar → subir peso → Guardar → timer → Editar → Biblioteca → Hoy:
+  PASS; sin overflow horizontal ni errores de consola; capturas revisadas.
+- Evidencia: `/var/folders/5t/93khy91x7w948nr90vf7bl140000gn/T/sfm-biblioteca-qa-ivSAcW/`.
+  Browser plugin no disponible en esta sesión; se usó Playwright instalado con
+  Chrome porque el CLI no respondió y el Chromium empaquetado no estaba instalado.
+- La prueba visual ejercita componentes reales reutilizados en la demo. No es
+  una nueva corrida autenticada Admin/Cliente ni Safari/iPhone/PWA.
+- Sin escrituras D1 remotas, sin cambios en Santiago ni en `docs/cliente`.
+  Las capturas estáticas del landing conservan la nomenclatura de su fecha;
+  queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
+
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T02:54:08.085Z | codex | ADOPT
+- **Estado:** active
+- **Tarea:** Retomar y completar biblioteca maestra fases 1-2 de Claude: catalogo compartido, nombres verificados y compatibilidad de historial
+- **Cambios adoptados:** docs/HANDOFF.md, functions/lib/roles.ts, src/datos/semilla/biblioteca/empuje.ts, src/datos/semilla/biblioteca/pierna.ts, src/datos/semilla/biblioteca/traccion.ts, src/datos/semilla/semilla.test.ts, src/pantallas/Biblioteca/Biblioteca.test.tsx, src/pantallas/Coach/Coach.test.tsx, src/pantallas/EntrenamientoHoy/EntrenamientoHoy.test.tsx, src/pantallas/Historial/Historial.test.tsx, src/presentacion/Presentacion.test.tsx, docs/BIBLIOTECA-FASES-1-2.md, shared/ejercicios-base.test.ts, shared/ejercicios-base.ts
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-09-04T02:25:51.128Z | claude-code | CLAIM
 - **Estado:** active

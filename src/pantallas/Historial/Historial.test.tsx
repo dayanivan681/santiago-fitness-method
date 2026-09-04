@@ -13,7 +13,7 @@ import { PRESS_BANCA_15_SMITH } from '../../datos/semilla/biblioteca'
 let repositorio: RepositorioLocal
 let participanteId: string
 
-const PRESS = 'Press banca 15° Smith'
+const PRESS = 'Press inclinado bajo (15°) en Smith'
 
 beforeEach(async () => {
   repositorio = new RepositorioLocal(baseDePrueba(`prueba-hist-${crypto.randomUUID()}`))

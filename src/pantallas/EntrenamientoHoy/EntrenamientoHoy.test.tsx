@@ -20,7 +20,7 @@ import { PRESS_BANCA_15_SMITH } from '../../datos/semilla/biblioteca'
 let repositorio: RepositorioLocal
 let participanteId: string
 
-const PRESS = 'Press banca 15° Smith'
+const PRESS = 'Press inclinado bajo (15°) en Smith'
 
 /** Sesión anterior: 45 lb por lado × 5 reps con RIR 2 en el press de banca. */
 async function sembrarSesionAnterior(fecha = '2026-01-05') {
@@ -85,10 +85,10 @@ describe('el entrenamiento ya viene cargado (§3)', () => {
 
     // §29: los cinco ejercicios, con Military Press ya retirado
     expect(screen.getByText(PRESS)).toBeInTheDocument()
-    expect(screen.getByText('Press inclinado convergente')).toBeInTheDocument()
+    expect(screen.getByText('Press convergente inclinado')).toBeInTheDocument()
     expect(screen.getByText('Lat pulldown')).toBeInTheDocument()
     expect(screen.getByText('Hip thrust con barra')).toBeInTheDocument()
-    expect(screen.getByText('Elevación lateral')).toBeInTheDocument()
+    expect(screen.getByText('Elevación lateral con mancuernas')).toBeInTheDocument()
     expect(screen.queryByText(/Military Press/i)).not.toBeInTheDocument()
   })
 
@@ -184,7 +184,7 @@ describe('cambiar la variante asignada (§16, §23)', () => {
 
     // Assert: otras variantes del press de pecho, cada una con su historial
     expect(await screen.findByText('Variante asignada')).toBeInTheDocument()
-    expect(screen.getByText('Press banca plano con barra')).toBeInTheDocument()
+    expect(screen.getByText('Press de banca plano con barra')).toBeInTheDocument()
     expect(screen.getAllByText('Historial propio').length).toBeGreaterThan(1)
   })
 
@@ -196,7 +196,7 @@ describe('cambiar la variante asignada (§16, §23)', () => {
 
     // Act
     await userEvent.click(screen.getAllByRole('button', { name: 'Cambiar variante' })[0])
-    await userEvent.click(await screen.findByText('Press banca plano con barra'))
+    await userEvent.click(await screen.findByText('Press de banca plano con barra'))
 
     // Assert: hoy se entrena la otra, la plantilla sigue con la suya.
     // Se comprueba con la hoja ya cerrada: dentro también hay un "Sólo hoy",
@@ -217,7 +217,7 @@ describe('cambiar la variante asignada (§16, §23)', () => {
     // Act
     await userEvent.click(screen.getAllByRole('button', { name: 'Cambiar variante' })[0])
     await userEvent.click(await screen.findByRole('button', { name: 'Fijar en la plantilla' }))
-    await userEvent.click(screen.getByText('Press banca plano con barra'))
+    await userEvent.click(screen.getByText('Press de banca plano con barra'))
 
     // Assert: cambia el ejercicio, se conserva todo lo demás
     await waitFor(async () => {
@@ -236,7 +236,7 @@ describe('cambiar la variante asignada (§16, §23)', () => {
     // Arrange: hoy se cambió a otra
     await abrirUpperA()
     await userEvent.click(screen.getAllByRole('button', { name: 'Cambiar variante' })[0])
-    await userEvent.click(await screen.findByText('Press banca plano con barra'))
+    await userEvent.click(await screen.findByText('Press de banca plano con barra'))
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       expect(screen.getByText('Sólo hoy')).toBeInTheDocument()
@@ -847,7 +847,7 @@ describe('el ejercicio terminado se pliega y pasa el turno', () => {
       ).not.toBeInTheDocument(),
     )
     expect(
-      screen.getByLabelText('Guardar la serie 1 de Press inclinado convergente'),
+      screen.getByLabelText('Guardar la serie 1 de Press convergente inclinado'),
     ).toBeInTheDocument()
   })
 
@@ -856,7 +856,7 @@ describe('el ejercicio terminado se pliega y pasa el turno', () => {
     await completarElPrimerEjercicio()
 
     await waitFor(() => {
-      const resumen = screen.getByRole('button', { name: new RegExp(PRESS) })
+      const resumen = screen.getByRole('button', { name: (texto) => texto.includes(PRESS) })
       expect(resumen).toHaveTextContent('4/4')
       expect(resumen).toHaveTextContent('Completo')
     })
@@ -870,7 +870,7 @@ describe('el ejercicio terminado se pliega y pasa el turno', () => {
     )
 
     // Act
-    await userEvent.click(screen.getByRole('button', { name: new RegExp(PRESS) }))
+    await userEvent.click(screen.getByRole('button', { name: (texto) => texto.includes(PRESS) }))
 
     // Assert
     expect(await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)).toBeInTheDocument()
@@ -1042,7 +1042,7 @@ describe('ficha del ejercicio desde el entrenamiento (fases 4 y 5)', () => {
 
       const ficha = await screen.findByRole('dialog', { name: PRESS })
       expect(
-        within(ficha).getAllByRole('button', { name: 'Press banca plano con barra' }),
+        within(ficha).getAllByRole('button', { name: 'Press de banca plano con barra' }),
       ).toHaveLength(1)
       expect(errorDeConsola.mock.calls.flat().join(' ')).not.toContain(
         'Encountered two children with the same key',

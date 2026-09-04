@@ -5,12 +5,13 @@
  */
 
 import type { Ejercicio } from '../../../dominio/tipos'
+import { nombreDe } from '../../../../shared/ejercicios-base'
 import { BARRA_OLIMPICA, DISCOS_POR_LADO, MANCUERNAS, STACK } from './cargas'
 
 export const HIP_THRUST_BARRA: Ejercicio = {
   id: 'hip-thrust-barra',
   movimiento: 'extension-cadera',
-  nombre: 'Hip thrust con barra',
+  nombre: nombreDe('hip-thrust-barra'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/hip-thrust-barra.jpg',
   explicacionCorta:
@@ -23,7 +24,7 @@ export const HIP_THRUST_BARRA: Ejercicio = {
 export const SENTADILLA_BARRA: Ejercicio = {
   id: 'sentadilla-barra',
   movimiento: 'sentadilla',
-  nombre: 'Sentadilla con barra',
+  nombre: nombreDe('sentadilla-barra'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/sentadilla-barra.jpg',
   explicacionCorta: 'Bajar con la espalda neutra hasta romper la paralela si la movilidad lo permite.',
@@ -35,7 +36,7 @@ export const SENTADILLA_BARRA: Ejercicio = {
 export const PRENSA: Ejercicio = {
   id: 'prensa',
   movimiento: 'sentadilla',
-  nombre: 'Prensa de piernas',
+  nombre: nombreDe('prensa'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/prensa.jpg',
   explicacionCorta: 'No despegar la cadera del respaldo al bajar. No bloquear las rodillas arriba.',
@@ -47,7 +48,7 @@ export const PRENSA: Ejercicio = {
 export const HACK_SQUAT: Ejercicio = {
   id: 'hack-squat',
   movimiento: 'sentadilla',
-  nombre: 'Hack squat',
+  nombre: nombreDe('hack-squat'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/hack-squat.jpg',
   explicacionCorta: 'Espalda pegada al respaldo. Bajada controlada, sin rebotar abajo.',
@@ -59,7 +60,7 @@ export const HACK_SQUAT: Ejercicio = {
 export const EXTENSION_CUADRICEPS: Ejercicio = {
   id: 'extension-cuadriceps',
   movimiento: 'extension-rodilla',
-  nombre: 'Extensión de cuádriceps',
+  nombre: nombreDe('extension-cuadriceps'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/extension-cuadriceps.jpg',
   explicacionCorta: 'Estirar del todo arriba y aguantar un instante antes de bajar.',
@@ -71,7 +72,7 @@ export const EXTENSION_CUADRICEPS: Ejercicio = {
 export const ZANCADAS_MANCUERNAS: Ejercicio = {
   id: 'zancadas-mancuernas',
   movimiento: 'sentadilla',
-  nombre: 'Zancadas con mancuernas',
+  nombre: nombreDe('zancadas-mancuernas'),
   equipo: 'mancuernas',
   imagen: '/ejercicios/zancadas-mancuernas.jpg',
   explicacionCorta: 'Paso largo y torso vertical. Empujar con el talón de la pierna delantera.',
@@ -83,7 +84,7 @@ export const ZANCADAS_MANCUERNAS: Ejercicio = {
 export const PESO_MUERTO_RUMANO: Ejercicio = {
   id: 'peso-muerto-rumano',
   movimiento: 'bisagra-cadera',
-  nombre: 'Peso muerto rumano',
+  nombre: nombreDe('peso-muerto-rumano'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/peso-muerto-rumano.jpg',
   explicacionCorta: 'Llevar la cadera atrás con las piernas casi rectas. Parar cuando tire el femoral.',
@@ -95,7 +96,7 @@ export const PESO_MUERTO_RUMANO: Ejercicio = {
 export const CURL_FEMORAL_TUMBADO: Ejercicio = {
   id: 'curl-femoral-tumbado',
   movimiento: 'curl-femoral',
-  nombre: 'Curl femoral tumbado',
+  nombre: nombreDe('curl-femoral-tumbado'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/curl-femoral-tumbado.jpg',
   explicacionCorta: 'Cadera pegada al banco. Subir el talón hacia el glúteo sin despegar.',
@@ -107,7 +108,7 @@ export const CURL_FEMORAL_TUMBADO: Ejercicio = {
 export const CURL_FEMORAL_SENTADO: Ejercicio = {
   id: 'curl-femoral-sentado',
   movimiento: 'curl-femoral',
-  nombre: 'Curl femoral sentado',
+  nombre: nombreDe('curl-femoral-sentado'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/curl-femoral-sentado.jpg',
   explicacionCorta: 'Con la cadera flexionada el femoral trabaja más estirado que tumbado.',
@@ -119,7 +120,7 @@ export const CURL_FEMORAL_SENTADO: Ejercicio = {
 export const PATADA_GLUTEO_POLEA: Ejercicio = {
   id: 'patada-gluteo-polea',
   movimiento: 'extension-cadera',
-  nombre: 'Patada de glúteo en polea',
+  nombre: nombreDe('patada-gluteo-polea'),
   equipo: 'cable',
   imagen: '/ejercicios/patada-gluteo-polea.jpg',
   explicacionCorta: 'Llevar la pierna atrás sin arquear la zona lumbar. Apretar arriba.',
@@ -131,7 +132,7 @@ export const PATADA_GLUTEO_POLEA: Ejercicio = {
 export const ABDUCCION_MAQUINA: Ejercicio = {
   id: 'abduccion-maquina',
   movimiento: 'abduccion-cadera',
-  nombre: 'Abducción en máquina',
+  nombre: nombreDe('abduccion-maquina'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/abduccion-maquina.jpg',
   explicacionCorta: 'Abrir las piernas contra la resistencia. Inclinar el torso al frente aísla más.',
@@ -143,7 +144,7 @@ export const ABDUCCION_MAQUINA: Ejercicio = {
 export const ELEVACION_TALONES_PIE: Ejercicio = {
   id: 'elevacion-talones-pie',
   movimiento: 'gemelo',
-  nombre: 'Elevación de talones de pie',
+  nombre: nombreDe('elevacion-talones-pie'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/elevacion-talones-pie.jpg',
   explicacionCorta: 'Recorrido completo: bajar el talón del todo y subir hasta la punta.',
@@ -155,7 +156,7 @@ export const ELEVACION_TALONES_PIE: Ejercicio = {
 export const ELEVACION_TALONES_SENTADO: Ejercicio = {
   id: 'elevacion-talones-sentado',
   movimiento: 'gemelo',
-  nombre: 'Elevación de talones sentado',
+  nombre: nombreDe('elevacion-talones-sentado'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/elevacion-talones-sentado.jpg',
   explicacionCorta: 'Con la rodilla doblada trabaja más el sóleo que de pie.',

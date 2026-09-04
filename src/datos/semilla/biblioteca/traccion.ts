@@ -5,12 +5,13 @@
  */
 
 import type { Ejercicio } from '../../../dominio/tipos'
+import { nombreDe } from '../../../../shared/ejercicios-base'
 import { BARRA_OLIMPICA, MANCUERNAS, PESO_CORPORAL, STACK } from './cargas'
 
 export const LAT_PULLDOWN: Ejercicio = {
   id: 'lat-pulldown-maquina',
   movimiento: 'jalon-vertical',
-  nombre: 'Lat pulldown',
+  nombre: nombreDe('lat-pulldown-maquina'),
   equipo: 'maquinaTradicional',
   imagen: '/ejercicios/lat-pulldown-maquina.jpg',
   explicacionCorta:
@@ -24,7 +25,7 @@ export const LAT_PULLDOWN: Ejercicio = {
 export const JALON_AGARRE_CERRADO: Ejercicio = {
   id: 'jalon-agarre-cerrado',
   movimiento: 'jalon-vertical',
-  nombre: 'Jalón agarre cerrado',
+  nombre: nombreDe('jalon-agarre-cerrado'),
   equipo: 'cable',
   imagen: '/ejercicios/jalon-agarre-cerrado.jpg',
   explicacionCorta: 'Agarre estrecho y neutro. Más recorrido y algo más de bíceps que el ancho.',
@@ -36,7 +37,7 @@ export const JALON_AGARRE_CERRADO: Ejercicio = {
 export const DOMINADAS: Ejercicio = {
   id: 'dominadas',
   movimiento: 'jalon-vertical',
-  nombre: 'Dominadas',
+  nombre: nombreDe('dominadas'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/dominadas.jpg',
   explicacionCorta: 'Peso corporal o lastre. Subir hasta pasar la barbilla sin dar impulso.',
@@ -48,7 +49,7 @@ export const DOMINADAS: Ejercicio = {
 export const REMO_BARRA: Ejercicio = {
   id: 'remo-barra',
   movimiento: 'remo-horizontal',
-  nombre: 'Remo con barra',
+  nombre: nombreDe('remo-barra'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/remo-barra.jpg',
   explicacionCorta: 'Torso inclinado y espalda neutra. Llevar la barra al abdomen bajo.',
@@ -60,7 +61,7 @@ export const REMO_BARRA: Ejercicio = {
 export const REMO_SENTADO_CABLE: Ejercicio = {
   id: 'remo-sentado-cable',
   movimiento: 'remo-horizontal',
-  nombre: 'Remo sentado en polea',
+  nombre: nombreDe('remo-sentado-cable'),
   equipo: 'cable',
   imagen: '/ejercicios/remo-sentado-cable.jpg',
   explicacionCorta: 'Pecho alto y quieto. Tirar con los codos, no con las manos.',
@@ -72,7 +73,7 @@ export const REMO_SENTADO_CABLE: Ejercicio = {
 export const REMO_MANCUERNA: Ejercicio = {
   id: 'remo-mancuerna',
   movimiento: 'remo-horizontal',
-  nombre: 'Remo con mancuerna a una mano',
+  nombre: nombreDe('remo-mancuerna'),
   equipo: 'mancuernas',
   imagen: '/ejercicios/remo-mancuerna.jpg',
   explicacionCorta: 'Apoyado en el banco. Subir la mancuerna hacia la cadera sin rotar el torso.',
@@ -84,7 +85,7 @@ export const REMO_MANCUERNA: Ejercicio = {
 export const CURL_BARRA: Ejercicio = {
   id: 'curl-barra',
   movimiento: 'curl-biceps',
-  nombre: 'Curl con barra',
+  nombre: nombreDe('curl-barra'),
   equipo: 'barraLibre',
   imagen: '/ejercicios/curl-barra.jpg',
   explicacionCorta: 'Codos pegados al cuerpo. Subir sin balancear la espalda.',
@@ -96,7 +97,7 @@ export const CURL_BARRA: Ejercicio = {
 export const CURL_MANCUERNAS: Ejercicio = {
   id: 'curl-mancuernas',
   movimiento: 'curl-biceps',
-  nombre: 'Curl con mancuernas',
+  nombre: nombreDe('curl-mancuernas'),
   equipo: 'mancuernas',
   imagen: '/ejercicios/curl-mancuernas.jpg',
   explicacionCorta: 'Supinar al subir. Bajar controlado hasta estirar del todo.',
@@ -108,7 +109,7 @@ export const CURL_MANCUERNAS: Ejercicio = {
 export const CURL_MARTILLO: Ejercicio = {
   id: 'curl-martillo',
   movimiento: 'curl-biceps',
-  nombre: 'Curl martillo',
+  nombre: nombreDe('curl-martillo'),
   equipo: 'mancuernas',
   imagen: '/ejercicios/curl-martillo.jpg',
   explicacionCorta: 'Agarre neutro, palmas enfrentadas. Carga más el braquial.',
