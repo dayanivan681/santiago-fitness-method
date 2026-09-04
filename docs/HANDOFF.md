@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T02:54:08.084Z
+- **Última sincronización:** 2026-09-04T02:54:22.126Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -676,6 +676,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T02:54:22.127Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Completadas fases 1-2 de biblioteca retomadas de Claude: fuente unica Coach/Cliente para 33 ejercicios, nombres alineados con el PDF sin suponer 11 variantes, ids e historiales preservados; diagnostico de ids desconocidos y regresion de actualizacion local.
+- **Verificación:** npm test 602/602; npm run lint; npm run build; Playwright demo local Chrome 320/390/1024: ficha, guardar, timer, Editar, Biblioteca y retorno; consola limpia y sin overflow
+- **Siguiente:** Confirmar 11 variantes pendientes antes de ampliar catalogo; recapturar capturas estaticas del landing; gates fisicos iPhone/PWA siguen pendientes.
+
 
 ### 2026-09-04T02:54:08.085Z | codex | ADOPT
 - **Estado:** active
