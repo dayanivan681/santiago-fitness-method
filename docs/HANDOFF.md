@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T18:49:27.774Z
+- **Última sincronización:** 2026-09-04T19:39:46.284Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T19:39:46.284Z | codex | ADOPT
+- **Estado:** active
+- **Tarea:** Cerrar el bypass de prueba y separar el acceso del cliente por enlace privado del panel coach protegido por Cloudflare Access
+- **Cambios adoptados:** docs/ACCESO.md, docs/PUBLIC-TEST-MODE.md, functions/_middleware.ts, functions/admin/[[ruta]].ts, functions/api/cliente.ts, functions/lib/modoPrueba.test.ts, functions/lib/modoPrueba.ts, scripts/pruebas-acceso.mjs, scripts/pruebas-admin-ui.mjs, scripts/pruebas-modo-prueba.mjs, wrangler.toml
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-09-04T18:49:27.775Z | claude-code | PUBLISH
 - **Estado:** complete

@@ -23,7 +23,6 @@
  */
 
 import { crearInvitacion } from '../lib/invitacion'
-import { modoPruebaAbierta } from '../lib/modoPrueba'
 import { crearCabeceraDeCookie, crearSesion, VIDA_DE_SESION } from '../lib/sesion'
 import { clienteQaBloqueado, filtrarClientesQa, qaHabilitado } from '../lib/qa'
 import {
@@ -54,7 +53,6 @@ type Entorno = {
   readonly ACCESO: D1Database
   /** "true" sólo en preview y desarrollo. Ver functions/lib/qa.ts. */
   readonly SHOW_QA_CLIENTS?: string
-  readonly PUBLIC_TEST_MODE?: string
 }
 
 const CABECERA_DE_ACCESS = 'Cf-Access-Jwt-Assertion'
@@ -827,7 +825,12 @@ function json(body: unknown, status: number, extras: HeadersInit = {}): Response
   })
 }
 
-async function atenderApi(request: Request, db: D1Database, path: string, mostrarQa: boolean): Promise<Response> {
+async function atenderApi(
+  request: Request,
+  db: D1Database,
+  path: string,
+  mostrarQa: boolean,
+): Promise<Response> {
   if (request.method !== 'GET') return json({ error: 'Método no permitido' }, 405, { Allow: 'GET' })
   if (path === '/admin/api/clientes') {
     return json({ clients: filtrarClientesQa(await listarPerfiles(db), mostrarQa) }, 200)
@@ -858,7 +861,7 @@ function peticionInvalida(mensaje: string): Response {
   return pagina(
     `${barra('Petición no válida', 'Coach / Admin', ruta({}))}
      <div class="tarjeta tarjeta--aviso" role="alert"><h3>${escapar(mensaje)}</h3></div>
-     <a class="cta cta--suave" href="/admin/">Volver a clientes</a>`,
+     <a class="cta cta--suave" href="${escapar(ruta({}))}">Volver a clientes</a>`,
     400,
   )
 }
@@ -868,7 +871,7 @@ function noEncontrado(mensaje = 'Cliente no encontrado'): Response {
     `${barra(mensaje, 'Coach / Admin', ruta({}))}
      <div class="tarjeta vacio"><h3>${escapar(mensaje)}</h3>
      <p>No se sirve la aplicación del cliente bajo /admin.</p></div>
-     <a class="cta cta--suave" href="/admin/">Volver a clientes</a>`,
+     <a class="cta cta--suave" href="${escapar(ruta({}))}">Volver a clientes</a>`,
     404,
   )
 }
@@ -926,15 +929,7 @@ async function atenderGet(url: URL, db: D1Database, mostrarQa: boolean): Promise
 }
 
 export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
-  /*
-   * En prueba abierta la consola se abre sin la cabecera de Access.
-   *
-   * Ojo: Cloudflare Access se ejecuta ANTES que esta función. Mientras siga
-   * delante de /admin, esta condición no llega a evaluarse y el coach seguirá
-   * viendo el OTP. Quitarlo es un cambio de panel, no de código
-   * (docs/PUBLIC-TEST-MODE.md).
-   */
-  if (!modoPruebaAbierta(env) && !request.headers.get(CABECERA_DE_ACCESS)) {
+  if (!request.headers.get(CABECERA_DE_ACCESS)) {
     return pagina(
       `${barra('No autorizado', 'Coach / Admin')}
        <div class="tarjeta vacio"><h3>No autorizado</h3>

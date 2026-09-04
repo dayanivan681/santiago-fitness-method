@@ -11,9 +11,9 @@
  * React no participa. La app no sabe que esto existe y no maneja ningún token.
  *
  * OJO: el proyecto está conectado a Git y el hostname sirve el despliegue
- * canónico, que sale de un push. `AUTH_MODE` sólo cuenta si está commiteado;
- * un `wrangler pages deploy` a mano crea un despliegue más reciente que nunca
- * llega a servirse.
+ * canónico, que sale de un push. La autenticación no tiene un interruptor de
+ * bypass en variables de entorno: un despliegue mal configurado debe fallar
+ * cerrado, nunca abrir el sitio.
  */
 
 import {
@@ -41,13 +41,10 @@ import {
   paginaSesionCerrada,
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
-import { modoPruebaAbierta } from './lib/modoPrueba'
 
 type Entorno = {
   readonly ACCESO: D1Database
   readonly ASSETS: Fetcher
-  readonly AUTH_MODE?: string
-  readonly PUBLIC_TEST_MODE?: string
 }
 
 /** Rutas que gestiona el propio middleware. */
@@ -85,15 +82,11 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
 
   if (esRutaPresentacion(url.pathname)) return servirPresentacion(request, env.ASSETS)
 
-  // Falla cerrado: sin variable, manda el middleware. Un despliegue mal
-  // configurado deja a todo el mundo fuera, nunca a todo el mundo dentro.
-  const modo = env.AUTH_MODE ?? 'magic'
-
-  if (modo === 'access') return next()
-
   if (url.pathname === RUTA_SW) return atenderServiceWorker(next)
 
-  if (url.pathname.startsWith(PREFIJO_ADMIN)) return next()
+  // Sólo el segmento `/admin` pertenece a Access. No dejar pasar prefijos como
+  // `/administrator` o `/adminish` por accidente.
+  if (url.pathname === PREFIJO_ADMIN || url.pathname.startsWith(`${PREFIJO_ADMIN}/`)) return next()
 
   if (url.pathname === RUTA_ACCESO) return atenderAcceso(request, env)
 
@@ -202,11 +195,10 @@ async function atenderSalir(request: Request, env: Entorno): Promise<Response> {
   // La previsualización del coach usa la misma sesión que un participante,
   // pero deja una salida inequívoca al panel. El marcador no concede ningún
   // permiso: sólo permite limpiar la sesión y volver a pedir Cloudflare Access.
-  const volverAlAdmin =
-    new URL(request.url).searchParams.get('volver') === 'admin' &&
-    leerCookieConNombre(request, 'sfm_preview') === '1'
-  if (volverAlAdmin) {
-    const cabeceras = new Headers({ Location: '/admin/', 'Cache-Control': 'no-store' })
+  const pedidoVolver = new URL(request.url).searchParams.get('volver') === 'admin'
+  const destino = pedidoVolver && leerCookieConNombre(request, 'sfm_preview') === '1' ? '/admin/' : null
+  if (destino) {
+    const cabeceras = new Headers({ Location: destino, 'Cache-Control': 'no-store' })
     cabeceras.append('Set-Cookie', cabeceraDeCookieBorrada())
     cabeceras.append('Set-Cookie', cookieDePreviewBorrada())
     return new Response(null, {
@@ -245,15 +237,6 @@ async function atenderApp(
   env: Entorno,
   next: () => Promise<Response>,
 ): Promise<Response> {
-  /*
-   * En prueba abierta la app se sirve sin sesión.
-   *
-   * Se comprueba aquí y no antes para que el resto de la puerta siga en pie:
-   * /access sigue consumiendo invitaciones y /salir sigue revocando, así que
-   * apagar la variable devuelve el comportamiento anterior sin tocar nada más.
-   */
-  if (modoPruebaAbierta(env)) return next()
-
   const cookie = leerCookie(request)
   if (!cookie) return paginaAccesoRequerido()
 

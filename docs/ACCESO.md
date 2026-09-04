@@ -4,16 +4,14 @@ El cambio está hecho. Quién autentica qué:
 
 | Ruta | Autentica |
 |---|---|
+| `santiago-fitness-method.pages.dev/access` y `/presentacion` | Público; el primero sólo muestra/consume enlaces válidos y el segundo es la presentación |
 | `santiago-fitness-method.pages.dev/*` | El middleware, con enlace privado. **Sin Cloudflare a la vista.** |
 | `santiago-fitness-method.pages.dev/admin/*` | Cloudflare Access con OTP, sólo el coach |
-| `*.santiago-fitness-method.pages.dev` (previews) | Cloudflare Access con OTP |
 
-El interruptor sigue siendo `AUTH_MODE` en `wrangler.toml`.
-
-| Valor | Quién autentica |
-|---|---|
-| `magic` | Manda el middleware: cookie de sesión o 401. **Producción ahora.** |
-| `access` | El middleware deja pasar. Sólo para volver atrás, y ya no basta: Access ya no cubre la raíz. |
+No existe un interruptor de entorno para saltarse el middleware. Fuera de las
+excepciones públicas indicadas, una cookie `sfm_sesion` válida es obligatoria.
+Un despliegue mal configurado falla cerrado: nunca convierte la aplicación en
+pública por una variable antigua.
 
 **Aviso importante.** El proyecto está conectado a Git y el hostname sirve el
 despliegue **canónico**, que sale de un push. Un `wrangler pages deploy` a mano
@@ -115,29 +113,26 @@ disponible para inspeccionar estados incompletos.
 
 ## Vuelta atrás
 
-Para devolver todo a Cloudflare Access hacen falta **dos** cambios, y en este
-orden — al revés dejaría la app abierta unos segundos:
-
-1. En la aplicación de Access, quitar el `admin` del campo *Path* de la primera
-   destinación, para que vuelva a cubrir el hostname entero.
-2. `AUTH_MODE = "access"` en `wrangler.toml`, commit y push.
-
-Si sólo hiciera falta cerrar deprisa, el paso 1 basta: Access vuelve a estar
-delante y el middleware sigue exigiendo sesión por debajo.
+Si hubiera que bloquear temporalmente también al participante, se puede ampliar
+la aplicación de Cloudflare Access al hostname completo desde su panel. El
+middleware seguirá exigiendo la sesión por debajo; no hay una variable de
+entorno que lo desactive.
 
 ## Configuración vigente en Cloudflare
 
 | | |
 |---|---|
 | Aplicación de Access | **Santiago Fitness Method** |
-| Destinos | `santiago-fitness-method.pages.dev` y `*.santiago-fitness-method.pages.dev` |
+| Destino previsto | `santiago-fitness-method.pages.dev/admin` (y descendientes) |
 | Política | `Cliente y coach` · Allow · lista explícita de correos |
 | Método de entrada | One-time PIN |
 | Sesión | 1 semana, heredada por la política |
 | Base D1 | `santiago-acceso` · `7cb38489-4054-45e9-94d9-aad9c9f533f5` |
 
-El comodín se añadió para cerrar un agujero real: las URLs de despliegue servían
-la app entera con HTTP 200 y sin login.
+Las URLs de previews no deben depender de una política que cubra el sitio
+principal: el middleware de cada despliegue sigue protegiendo la aplicación y
+el panel `/admin` conserva la puerta de Access. Revisar por separado cualquier
+dominio personalizado o preview que se quiera restringir.
 
 ## El cliente técnico de QA
 

@@ -540,6 +540,23 @@ const COMO_COACH = { 'Cf-Access-Jwt-Assertion': 'simulado' }
   )
 }
 
+// ---- ADMIN-2b · prefijos parecidos no abren la consola ---------------------
+{
+  const rutas = ['/consola/', '/administrator/', '/adminish/']
+  const respuestas = await Promise.all(
+    rutas.map(async (r) => {
+      const x = await pedir(r, { headers: COMO_COACH })
+      return { r, estado: x.status, html: await x.text() }
+    }),
+  )
+
+  comprobar(
+    'ADMIN-2b', 'Prefijos alternativos no sirven la consola ni la SPA',
+    respuestas.every((x) => x.estado === 401 && !x.html.includes('Coach / Admin') && !x.html.includes('assets/index-')),
+    respuestas.map((x) => `${x.r}=${x.estado}`).join(', '),
+  )
+}
+
 // ---- ADMIN-3 · Probar como cliente crea una sesión normal ------------------
 //
 // "Probar como cliente" abre una sesión sobre el cliente QA, y el cliente QA no

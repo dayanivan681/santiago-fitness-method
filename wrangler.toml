@@ -2,36 +2,14 @@ name = "santiago-fitness-method"
 compatibility_date = "2026-05-01"
 pages_build_output_dir = "dist"
 
-# La autenticación por enlace privado vive en functions/_middleware.ts.
-#
-# AUTH_MODE decide quién manda:
-#   "access"  el middleware deja pasar; autentica Cloudflare Access (situación actual)
-#   "magic"   manda el middleware: cookie de sesión o 401
-#
-# Si la variable falta, el middleware asume "magic" y cierra. Fallar cerrado es
-# lo único aceptable en una puerta: un despliegue mal configurado deja a todo el
-# mundo fuera, nunca a todo el mundo dentro.
+# La autenticación por enlace privado vive en functions/_middleware.ts. No hay
+# una variable de entorno que pueda saltarse esa puerta: el participante siempre
+# necesita una sesión válida y `/admin` siempre pasa por Cloudflare Access.
 
 [vars]
-# Manda el middleware. Cloudflare Access ya sólo cubre /admin y los despliegues
-# de rama, así que ésta es la única puerta de la app: no la pongas en "access"
-# sin devolver antes Access al hostname completo, o la app quedaría abierta.
-#
-# Ojo: el proyecto está conectado a Git y el hostname sirve el despliegue
-# canónico, que sale de un push. Esta variable sólo cuenta si está commiteada.
-AUTH_MODE = "magic"
-
 # El cliente técnico `dayan-test` sólo se enseña fuera de producción. La fila se
 # conserva en D1 —preview usa la misma base—, sólo se oculta. Ver functions/lib/qa.ts.
 SHOW_QA_CLIENTS = "false"
-
-# Prueba abierta: puentea la autenticación de cliente y consola durante la fase
-# de pruebas con Santiago. "true" ABRE LA APLICACIÓN a cualquiera que sepa la
-# URL; es temporal y deliberado. Cualquier otro valor la deja cerrada.
-#
-# Ojo: esto no basta para /admin. Cloudflare Access se ejecuta antes que las
-# funciones, así que además hay que quitarlo del panel. Ver docs/PUBLIC-TEST-MODE.md.
-PUBLIC_TEST_MODE = "true"
 
 [[d1_databases]]
 binding = "ACCESO"
@@ -41,9 +19,7 @@ database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
 # Los despliegues de rama son el banco de pruebas del sistema nuevo antes del
 # cambio en producción. Cloudflare Access sigue delante de ellos.
 [env.preview.vars]
-AUTH_MODE = "magic"
 SHOW_QA_CLIENTS = "true"
-PUBLIC_TEST_MODE = "true"
 
 [[env.preview.d1_databases]]
 binding = "ACCESO"

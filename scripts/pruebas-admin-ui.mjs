@@ -141,7 +141,6 @@ if (HAY_EJERCICIOS) {
   const revisados = await Promise.all(
     niveles.map(async ([ruta, esperado]) => {
       const { cuerpo } = await html(ruta)
-      // El href viene escapado en el HTML; se compara la URL real.
       const atras = (cuerpo.match(/class="atras" href="([^"]+)"/)?.[1] ?? '').replace(/&amp;/g, '&')
       return { ruta, atras, ok: atras.includes(esperado.replace(/"$/, '')) }
     }),
@@ -355,22 +354,16 @@ const DESECHABLE = `qa-baja-${Date.now()}`
     `baja=${baja.status} ficha=${ficha.status} api=${api.status}`,
   )
 
-  // La cookie sólo se puede juzgar con la puerta puesta. Con PUBLIC_TEST_MODE
-  // encendido la app abre igual, así que afirmar aquí sería un falso verde.
   const puerta = await fetch(`${BASE_URL}/`, { redirect: 'manual' })
-  if (puerta.status === 200) {
-    console.log('  \x1b[33mOMITIDO\x1b[0m  UI-14 necesita la app cerrada (PUBLIC_TEST_MODE=false).')
-  } else {
-    const conCookie = await fetch(`${BASE_URL}/`, {
-      redirect: 'manual',
-      headers: { Cookie: cookie ?? '' },
-    })
-    comprobar(
-      'UI-14', 'La sesión que tenía el cliente eliminado deja de abrir la app',
-      Boolean(cookie) && conCookie.status === 401,
-      `cookie=${Boolean(cookie)} con-cookie=${conCookie.status}`,
-    )
-  }
+  const conCookie = await fetch(`${BASE_URL}/`, {
+    redirect: 'manual',
+    headers: { Cookie: cookie ?? '' },
+  })
+  comprobar(
+    'UI-14', 'La sesión que tenía el cliente eliminado deja de abrir la app',
+    Boolean(cookie) && puerta.status === 401 && conCookie.status === 401,
+    `puerta=${puerta.status} cookie=${Boolean(cookie)} con-cookie=${conCookie.status}`,
+  )
 }
 
 const fallos = resultados.filter((r) => !r.ok)
