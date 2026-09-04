@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T20:23:30.472Z
+- **Última sincronización:** 2026-09-04T20:23:32.720Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T20:23:32.721Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Configuración temporal activada y verificada en producción: Cloudflare protege sólo el comodín de previews; la variable protegida COACH_ACCESS_TEMPORARY_UNTIL permite /admin del dominio canónico sin OTP hasta 2026-09-05T20:00:00Z UTC. /admin y su API responden 200; raíz, API de cliente, JS, manifest y presentación mantienen sus fronteras esperadas. Se abrió Santiago sólo para lectura.
+- **Verificación:** Cloudflare UI: destino santiago-fitness-method.pages.dev/admin retirado y *.santiago-fitness-method.pages.dev conservado; secret Pages registrado; producción /admin 200, /admin/api/clientes 200, / 401, /api/cliente 401, asset 401, /presentacion 200, /sw.js 200, preview /admin 302; npm test 627/627 en dos corridas finales consecutivas tras una corrida intermitente aislada; npm run lint; npm run build; SFM_QA_PORT=8791 npm run test:movil PASS
+- **Siguiente:** Antes de que venza, retirar COACH_ACCESS_TEMPORARY_UNTIL y volver a añadir el destino canónico /admin en Cloudflare Access; confirmar /admin 302 OTP y mantener cliente sin cambios
+
 
 ### 2026-09-04T20:23:30.473Z | codex | CLAIM
 - **Estado:** active
