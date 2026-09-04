@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T18:48:37.955Z
+- **Última sincronización:** 2026-09-04T18:49:27.774Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T18:49:27.775Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Modo edicion en la lista de clientes: 'Editar lista' pone un aspa de 44x44 en cada fila, el aspa lleva a una pantalla de confirmacion y solo el POST de esa pantalla escribe. archivarCliente() apaga 'activo' --la columna estaba en el esquema sin que nadie la escribiera-- y revoca invitaciones pendientes y sesiones vivas en el mismo lote; la programacion se conserva, asi que la baja se deshace con UPDATE clientes SET activo=1. En modo edicion la fila deja de ser enlace para que abrir y eliminar no compartan linea. crear-cliente distingue ahora un identificador ocupado de uno archivado. Migracion 0006 (sin aplicar) deja la lista en Santiago + Cliente nuevo
+- **Verificación:** npm test 634/634 (12 nuevas); npm run lint 0; npm run build OK; admin-ui 14/14 con dayan-test y con santiago; roles 11/11; acceso 37/37; qa 13/13; modo-prueba 6/6. Regresiones reproducidas a proposito: quitando la revocacion de sesiones fallan archivarCliente.test.ts y UI-14. QA visual 390 y 320: sin scroll horizontal, 0 elementos fuera, aspa 44x44
+- **Siguiente:** Aplicar migrations/0006_lista_de_clientes.sql con npm run d1:migrar-lista (bloqueado aqui por el classifier). Sigue pendiente la politica Bypass de Cloudflare Zero Trust para abrir /admin
+
 
 ### 2026-09-04T18:48:37.956Z | claude-code | ADOPT
 - **Estado:** active
