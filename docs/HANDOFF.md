@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T03:19:15.341Z
+- **Última sincronización:** 2026-09-04T03:27:47.814Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -676,6 +676,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T03:27:47.814Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Phase 3A.5: revisar 25 solapamientos; solo documentacion, sin cambiar datasets ni implementar
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-04T03:19:15.342Z | codex | PUBLISH
 - **Estado:** complete
