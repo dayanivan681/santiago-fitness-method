@@ -16,6 +16,7 @@ import type {
   Sustitucion,
 } from '../dominio/tipos'
 import type { SerieConFecha } from './referencias'
+import type { IdentidadCatalogo } from '../../shared/catalogo-maestro'
 
 export interface Repositorio {
   obtenerParticipante(id: string): Promise<Participante | undefined>
@@ -45,6 +46,15 @@ export interface Repositorio {
   listarEjercicios(): Promise<Ejercicio[]>
   obtenerEjercicio(id: string): Promise<Ejercicio | undefined>
   guardarEjercicio(ejercicio: Ejercicio): Promise<void>
+
+  /**
+   * Identidades de la biblioteca maestra. No son fichas programables todavía:
+   * sus metadatos opcionales se conservan separados para que la UI actual de
+   * 33 ejercicios no pueda seleccionarlas accidentalmente.
+   */
+  listarIdentidadesCatalogo(): Promise<IdentidadCatalogo[]>
+  obtenerIdentidadCatalogo(id: string): Promise<IdentidadCatalogo | undefined>
+  guardarIdentidadCatalogo(identidad: IdentidadCatalogo): Promise<void>
 
   /** Los días de un participante concreto (§23, §28). */
   listarPlantillas(participanteId: string): Promise<PlantillaDia[]>

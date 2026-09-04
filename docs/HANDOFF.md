@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T03:43:44.701Z
+- **Última sincronización:** 2026-09-04T04:02:28.131Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T04:02:28.132Z | codex | ADOPT
+- **Estado:** active
+- **Tarea:** Phase 3B.1: foundation catalog segura e importación idempotente; preservar los 33 ejercicios y excluir decisiones pendientes
+- **Cambios adoptados:** src/datos/esquema.ts, src/datos/repositorio.ts, src/datos/repositorioLocal.ts, src/datos/semilla/index.ts, src/datos/semilla/semilla.test.ts, docs/BIBLIOTECA-FASE-3B1-MANIFEST.csv, shared/catalogo-maestro.test.ts, shared/catalogo-maestro.ts
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-09-04T03:43:44.702Z | codex | PUBLISH
 - **Estado:** complete

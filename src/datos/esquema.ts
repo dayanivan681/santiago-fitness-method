@@ -16,11 +16,14 @@ import type {
   Sesion,
   Sustitucion,
 } from '../dominio/tipos'
+import type { IdentidadCatalogo } from '../../shared/catalogo-maestro'
 import { plantillasIniciales } from './semilla/plantillas'
 
 export class BaseDatosSantiago extends Dexie {
   participantes!: EntityTable<Participante, 'id'>
   ejercicios!: EntityTable<Ejercicio, 'id'>
+  /** Identidades de la biblioteca maestra aún no activadas como fichas. */
+  identidadesCatalogo!: EntityTable<IdentidadCatalogo, 'id'>
   plantillas!: EntityTable<PlantillaDia, 'id'>
   sesiones!: EntityTable<Sesion, 'id'>
   series!: EntityTable<SerieRegistrada, 'id'>
@@ -161,6 +164,14 @@ export class BaseDatosSantiago extends Dexie {
           )
         }
       })
+
+    // v10: fundación de la Biblioteca Maestra. Es una tabla aparte de
+    // `ejercicios`: las identidades nuevas todavía no tienen imagen, carga ni
+    // explicación suficientes para ser programables. El upgrade no toca filas
+    // existentes; la semilla idempotente añade sólo el conjunto seguro.
+    this.version(10).stores({
+      identidadesCatalogo: 'id, referenciaCanonica, estado',
+    })
   }
 }
 

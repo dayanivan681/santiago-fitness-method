@@ -10,6 +10,7 @@ import type { Ejercicio } from '../../dominio/tipos'
 import type { Repositorio } from '../repositorio'
 import { BIBLIOTECA_INICIAL } from './biblioteca'
 import { plantillasIniciales } from './plantillas'
+import { CATALOGO_MAESTRO_SEGURO } from '../../../shared/catalogo-maestro'
 
 // Lo necesitan las pantallas y las pruebas para localizar un día concreto.
 export { idDeDia } from './plantillas'
@@ -23,6 +24,7 @@ export { idDeDia } from './plantillas'
  */
 export async function sembrar(repositorio: Repositorio): Promise<void> {
   await sincronizarBiblioteca(repositorio)
+  await sincronizarCatalogoMaestro(repositorio)
 }
 
 /**
@@ -69,6 +71,23 @@ async function sincronizarBiblioteca(repositorio: Repositorio): Promise<void> {
 
     if (!equivalen(guardado, actualizado)) {
       await repositorio.guardarEjercicio(actualizado)
+    }
+  }
+}
+
+/**
+ * Importa únicamente la fundación segura del catálogo maestro.
+ *
+ * `put` hace la operación idempotente por el ID determinístico. No se mezcla
+ * con `ejercicios`: una identidad sin ficha operativa completa no puede entrar
+ * en el selector del coach ni generar una rutina incompleta. El guardado de
+ * una identidad no cambia plantillas, sesiones, series ni calibraciones.
+ */
+async function sincronizarCatalogoMaestro(repositorio: Repositorio): Promise<void> {
+  for (const identidad of CATALOGO_MAESTRO_SEGURO) {
+    const guardada = await repositorio.obtenerIdentidadCatalogo(identidad.id)
+    if (!guardada || JSON.stringify(guardada) !== JSON.stringify(identidad)) {
+      await repositorio.guardarIdentidadCatalogo(identidad)
     }
   }
 }

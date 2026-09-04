@@ -6,6 +6,7 @@ import { baseDePrueba } from '../../pruebas/base'
 import { RepositorioLocal } from '../repositorioLocal'
 import { crearDiasIniciales, sembrar } from './index'
 import { BIBLIOTECA_INICIAL, PRESS_BANCA_15_SMITH, SENTADILLA_BARRA } from './biblioteca'
+import { CATALOGO_MAESTRO_SEGURO } from '../../../shared/catalogo-maestro'
 
 let repositorio: RepositorioLocal
 
@@ -167,5 +168,33 @@ describe('sembrar (§13, §23, §27)', () => {
     expect(guardado?.movimiento).toBe('press-pecho')
     expect(guardado?.pesoBaseMaquinaLb).toBe(15)
     expect(guardado?.incrementoMinimoLb).toBe(2.5)
+  })
+
+  test('importa sólo la fundación maestra segura y la repite sin duplicar', async () => {
+    await sembrar(repositorio)
+    await sembrar(repositorio)
+
+    const identidades = await repositorio.listarIdentidadesCatalogo()
+    expect(identidades).toHaveLength(CATALOGO_MAESTRO_SEGURO.length)
+    expect(new Set(identidades.map((identidad) => identidad.id)).size).toBe(
+      CATALOGO_MAESTRO_SEGURO.length,
+    )
+    expect(identidades.map((identidad) => identidad.id).sort()).toEqual(
+      CATALOGO_MAESTRO_SEGURO.map((identidad) => identidad.id).sort(),
+    )
+    // La tabla de identidades no alimenta el selector de las 33 fichas operativas.
+    expect(await repositorio.listarEjercicios()).toHaveLength(BIBLIOTECA_INICIAL.length)
+  })
+
+  test('una repetición actualiza metadata sin cambiar el ID de una identidad', async () => {
+    await sembrar(repositorio)
+    const original = CATALOGO_MAESTRO_SEGURO[0]
+    await repositorio.guardarIdentidadCatalogo({ ...original, nombre: 'Etiqueta temporal' })
+
+    await sembrar(repositorio)
+
+    const restaurada = await repositorio.obtenerIdentidadCatalogo(original.id)
+    expect(restaurada?.id).toBe(original.id)
+    expect(restaurada?.nombre).toBe(original.nombre)
   })
 })

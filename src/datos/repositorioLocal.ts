@@ -16,6 +16,7 @@ import type {
   Sesion,
   Sustitucion,
 } from '../dominio/tipos'
+import type { IdentidadCatalogo } from '../../shared/catalogo-maestro'
 
 export class RepositorioLocal implements Repositorio {
   private readonly db: BaseDatosSantiago
@@ -69,6 +70,18 @@ export class RepositorioLocal implements Repositorio {
 
   async guardarEjercicio(ejercicio: Ejercicio): Promise<void> {
     await this.db.ejercicios.put(ejercicio)
+  }
+
+  listarIdentidadesCatalogo(): Promise<IdentidadCatalogo[]> {
+    return this.db.identidadesCatalogo.toArray()
+  }
+
+  obtenerIdentidadCatalogo(id: string): Promise<IdentidadCatalogo | undefined> {
+    return this.db.identidadesCatalogo.get(id)
+  }
+
+  async guardarIdentidadCatalogo(identidad: IdentidadCatalogo): Promise<void> {
+    await this.db.identidadesCatalogo.put(identidad)
   }
 
   /** §28 fija la secuencia de la rotación, así que se ordena explícitamente. */
