@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-02T17:54:57.148Z
+- **Última sincronización:** 2026-09-04T02:25:51.127Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -649,6 +649,14 @@ funcionando. Los pasos están en `docs/DESPLIEGUE.md`.
 ## Registro de turnos
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T02:25:51.128Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Biblioteca maestra fases 1-2: fuente unica de nombres, catalogo derivado, prueba de paridad y renombrado a la nomenclatura del PDF
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-02T17:54:57.149Z | codex | PUBLISH
 - **Estado:** complete
