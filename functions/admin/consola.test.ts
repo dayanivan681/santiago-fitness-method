@@ -69,3 +69,48 @@ describe('ergonomía táctil', () => {
     expect(CSS).toContain('prefers-reduced-motion')
   })
 })
+
+/**
+ * Quitar un cliente de la lista.
+ *
+ * El riesgo de esta pantalla no es que no funcione, es que funcione de más: un
+ * dedo en un móvil sobre una lista donde abrir y eliminar están a diez píxeles.
+ * Lo que se fija aquí son las tres decisiones que lo evitan.
+ */
+describe('eliminar cliente', () => {
+  it('el botón de quitar ocupa los 44px de toque completos', () => {
+    // El aspa mide 15px. Sin tamaño propio, el área tocable sería la del glifo.
+    expect(CSS).toMatch(/\.quitar\{[^}]*width:var\(--toque\)/)
+    expect(CSS).toMatch(/\.quitar\{[^}]*height:var\(--toque\)/)
+  })
+
+  it('el aspa no sale subrayada', () => {
+    // Es un <a>, así que hereda el subrayado del navegador: sin esto el glifo
+    // aparece tachado por una raya que parece parte del icono.
+    expect(CSS).toMatch(/\.quitar\{[^}]*text-decoration:none/)
+  })
+
+  it('la fila en modo edición deja de ser un enlace', () => {
+    // Con la fila enlazada, el dedo tendría dos destinos pegados en la misma
+    // línea: abrir el cliente y borrarlo.
+    const modoEdicion = CONSOLA.slice(
+      CONSOLA.indexOf('if (editando) {'),
+      CONSOLA.indexOf('aria-label="Eliminar'),
+    )
+    expect(modoEdicion).toContain('<div class="fila">')
+    expect(modoEdicion).not.toContain('<a class="fila"')
+  })
+
+  it('la baja sólo ocurre por POST, nunca siguiendo un enlace', () => {
+    // Un GET destructivo lo dispara cualquier precarga del navegador. El aspa
+    // lleva a preguntar; sólo el formulario de la confirmación escribe.
+    expect(CONSOLA).toMatch(
+      /<form method="POST"><input type="hidden" name="accion" value="eliminar-cliente">/,
+    )
+    expect(CONSOLA).not.toMatch(/<a[^>]*accion=eliminar/)
+  })
+
+  it('el aspa lleva a la pantalla de confirmación, no a la acción', () => {
+    expect(CONSOLA).toMatch(/<a class="quitar" href="\$\{escapar\(ruta\(\{ cliente: perfil\.id, confirmar: 'eliminar' \}\)\)\}"/)
+  })
+})

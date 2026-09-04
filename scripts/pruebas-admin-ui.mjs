@@ -307,6 +307,72 @@ if (HAY_EJERCICIOS) {
   )
 }
 
+// ---- UI-12 · quitar un cliente es un modo, y pregunta antes --------------
+//
+// Se hace sobre un cliente de usar y tirar: la baja corta accesos, y probarla
+// sobre alguien real dejaría a esa persona fuera de la app.
+const DESECHABLE = `qa-baja-${Date.now()}`
+{
+  await post({ accion: 'crear-cliente', cliente_id: DESECHABLE, nombre: 'QA Baja' })
+
+  const normal = await html('/admin/')
+  const editando = await html('/admin/?modo=editar')
+  const confirmacion = await html(`/admin/?cliente=${DESECHABLE}&confirmar=eliminar`)
+
+  comprobar(
+    'UI-12', 'El aspa aparece sólo en modo edición y lleva a confirmar, no a borrar',
+    normal.cuerpo.includes('QA Baja') &&
+      !normal.cuerpo.includes('class="quitar"') &&
+      editando.cuerpo.includes('class="quitar"') &&
+      editando.cuerpo.includes(`confirmar=eliminar`) &&
+      confirmacion.status === 200 &&
+      confirmacion.cuerpo.includes('¿Eliminar') &&
+      confirmacion.cuerpo.includes('eliminar-cliente'),
+    `lista=${normal.status} editar=${editando.status} confirmar=${confirmacion.status}`,
+  )
+}
+
+// ---- UI-13 · la baja saca de la lista y corta el acceso -------------------
+{
+  // Sesión viva antes de la baja: es lo que tiene que dejar de valer.
+  const previa = await post({ accion: 'previsualizar', cliente_id: DESECHABLE })
+  const cookie = (previa.headers.getSetCookie?.() ?? [])
+    .map((valor) => valor.split(';')[0])
+    .find((valor) => valor.startsWith('sfm_sesion='))
+
+  const baja = await post({ accion: 'eliminar-cliente', cliente_id: DESECHABLE })
+
+  const lista = await html('/admin/')
+  const ficha = await html(`/admin/?cliente=${DESECHABLE}`)
+  const api = await pedir(`/admin/api/clientes/${DESECHABLE}`)
+
+  comprobar(
+    'UI-13', 'Al eliminar, el cliente sale de la lista y su ficha deja de existir',
+    baja.status === 303 &&
+      !lista.cuerpo.includes('QA Baja') &&
+      ficha.status === 404 &&
+      api.status === 404,
+    `baja=${baja.status} ficha=${ficha.status} api=${api.status}`,
+  )
+
+  // La cookie sólo se puede juzgar con la puerta puesta. Con PUBLIC_TEST_MODE
+  // encendido la app abre igual, así que afirmar aquí sería un falso verde.
+  const puerta = await fetch(`${BASE_URL}/`, { redirect: 'manual' })
+  if (puerta.status === 200) {
+    console.log('  \x1b[33mOMITIDO\x1b[0m  UI-14 necesita la app cerrada (PUBLIC_TEST_MODE=false).')
+  } else {
+    const conCookie = await fetch(`${BASE_URL}/`, {
+      redirect: 'manual',
+      headers: { Cookie: cookie ?? '' },
+    })
+    comprobar(
+      'UI-14', 'La sesión que tenía el cliente eliminado deja de abrir la app',
+      Boolean(cookie) && conCookie.status === 401,
+      `cookie=${Boolean(cookie)} con-cookie=${conCookie.status}`,
+    )
+  }
+}
+
 const fallos = resultados.filter((r) => !r.ok)
 console.log(`\n${resultados.length - fallos.length}/${resultados.length} correctas\n`)
 process.exit(fallos.length === 0 ? 0 : 1)

@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T18:24:19.626Z
+- **Última sincronización:** 2026-09-04T18:48:37.955Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T18:48:37.956Z | claude-code | ADOPT
+- **Estado:** active
+- **Tarea:** Eliminar clientes desde la consola movil y dejar la lista en Santiago + Cliente nuevo
+- **Cambios adoptados:** functions/admin/[[ruta]].ts, functions/admin/consola.test.ts, functions/lib/roles.ts, package.json, scripts/pruebas-admin-ui.mjs, functions/lib/archivarCliente.test.ts, migrations/0006_lista_de_clientes.sql
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-09-04T18:24:19.626Z | claude-code | PUBLISH
 - **Estado:** complete

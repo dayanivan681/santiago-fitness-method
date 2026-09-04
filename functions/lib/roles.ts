@@ -470,6 +470,62 @@ export async function crearPerfil(db: D1Database, perfil: PerfilCloud): Promise<
   }
 }
 
+/**
+ * Da de baja a un cliente.
+ *
+ * No borra: apaga `activo`, que es por lo que ya filtran `listarPerfiles` y
+ * `obtenerPerfil`. La columna estaba en el esquema desde el principio sin que
+ * nadie la escribiera; esto es lo que faltaba para usarla.
+ *
+ * Se conserva la programación a propósito. Un toque de más en el móvil no puede
+ * destruir cuatro días de trabajo, y devolver a alguien a la lista es un
+ * `UPDATE clientes SET activo = 1` desde la consola de D1.
+ *
+ * Lo que sí se corta de raíz es el acceso: invitaciones pendientes y sesiones
+ * vivas quedan revocadas en el mismo lote. Un cliente "eliminado" que siguiera
+ * entrando con la cookie que ya tenía haría de esta función una mentira.
+ *
+ * Las tres sentencias van en un `batch` porque son una sola decisión: si la
+ * baja se aplicara sin la revocación, el resultado sería exactamente el estado
+ * peligroso que esto existe para impedir.
+ */
+export async function archivarCliente(db: D1Database, id: string): Promise<void> {
+  const ahora = Math.floor(Date.now() / 1000)
+  await db.batch([
+    db
+      .prepare('UPDATE clientes SET activo = 0, actualizado_en = ?1 WHERE id = ?2')
+      .bind(ahora, id),
+    db
+      .prepare(
+        `UPDATE invitaciones SET revocada_en = ?1
+          WHERE cliente_id = ?2 AND consumida_en IS NULL AND revocada_en IS NULL`,
+      )
+      .bind(ahora, id),
+    db
+      .prepare('UPDATE sesiones SET revocada_en = ?1 WHERE cliente_id = ?2 AND revocada_en IS NULL')
+      .bind(ahora, id),
+  ])
+}
+
+/**
+ * Si el identificador ya está ocupado, activo o dado de baja.
+ *
+ * `crearPerfil` hace un INSERT desnudo, así que reutilizar un id termina en un
+ * error de constraint de SQLite delante del coach. Preguntar antes permite
+ * decir cuál de los dos casos es, que son remedios distintos.
+ */
+export async function estadoDelIdentificador(
+  db: D1Database,
+  id: string,
+): Promise<'libre' | 'activo' | 'archivado'> {
+  const fila = await db
+    .prepare('SELECT activo FROM clientes WHERE id = ?1')
+    .bind(id)
+    .first<{ activo: number }>()
+  if (!fila) return 'libre'
+  return fila.activo === 1 ? 'activo' : 'archivado'
+}
+
 export function perfilDeSesion(perfil: PerfilCloud): PerfilCloud {
   return { ...perfil, ejerciciosEvitados: [...perfil.ejerciciosEvitados] }
 }

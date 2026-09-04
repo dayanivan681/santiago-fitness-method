@@ -9,6 +9,7 @@
  * aparece sólo cuando se pide.
  *
  *   /admin/                                        ¿A quién gestiono?
+ *   /admin/?modo=editar                            Quitar clientes de la lista
  *   /admin/?cliente=X&seccion=programa             ¿Qué quiero gestionar?
  *   …&seccion=programa&dia=N                       ¿Qué día?
  *   …&seccion=programa&dia=N&ejercicio=O           ¿Qué ejercicio?
@@ -26,11 +27,13 @@ import { modoPruebaAbierta } from '../lib/modoPrueba'
 import { crearCabeceraDeCookie, crearSesion, VIDA_DE_SESION } from '../lib/sesion'
 import { clienteQaBloqueado, filtrarClientesQa, qaHabilitado } from '../lib/qa'
 import {
+  archivarCliente,
   asegurarDatosIniciales,
   CATALOGO_EJERCICIOS,
   camposPendientesPerfil,
   crearPerfil,
   crearSlotCloud,
+  estadoDelIdentificador,
   evaluarEstadoProgramacion,
   guardarPerfil,
   guardarRutina,
@@ -273,6 +276,12 @@ function pagina(cuerpo: string, estado = 200): Response {
    border:1px solid var(--borde);border-radius:10px;padding:13px;
    font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.5;color:#ffd9d6}
  .vacio{text-align:center;padding:30px 16px;color:var(--tenue)}
+ /* Quitar de una lista: cuadrado de toque completo, sin depender del icono.
+    El simbolo mide 14px; el area que responde al dedo, 44. */
+ .quitar{display:inline-flex;align-items:center;justify-content:center;flex:none;
+   width:var(--toque);height:var(--toque);padding:0;margin:0;border-radius:11px;
+   background:transparent;border:1px solid rgba(229,53,43,.5);color:#ffaaa4;
+   font:inherit;font-size:22px;line-height:1;cursor:pointer;text-decoration:none}
  .acciones-menores{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
  .acciones-menores form{flex:1;min-width:140px}
  .acciones-menores .cta{margin-top:0}
@@ -356,7 +365,12 @@ async function contarAcceso(db: D1Database, clienteId: string): Promise<{ sesion
 
 // ── pantalla: clientes ──────────────────────────────────────────────────────
 
-async function pantallaClientes(db: D1Database, mostrarQa: boolean, aviso: string | null): Promise<Response> {
+async function pantallaClientes(
+  db: D1Database,
+  mostrarQa: boolean,
+  aviso: string | null,
+  editando: boolean,
+): Promise<Response> {
   // El filtro va en el servidor: esconderlo con CSS dejaría el cliente técnico
   // dentro del HTML que se manda al navegador.
   const perfiles = filtrarClientesQa(await listarPerfiles(db), mostrarQa)
@@ -364,6 +378,18 @@ async function pantallaClientes(db: D1Database, mostrarQa: boolean, aviso: strin
   const filas = await Promise.all(
     perfiles.map(async (perfil) => {
       const estado = evaluarEstadoProgramacion(await listarRutinas(db, perfil.id))
+
+      // En modo edición la fila deja de ser un enlace. Si siguiera siéndolo,
+      // el dedo tendría dos destinos a la vez —abrir y eliminar— pegados en la
+      // misma línea, que es como se borra un cliente sin querer.
+      if (editando) {
+        return `<div class="fila">
+          <span class="fila__cuerpo"><span class="fila__titulo">${escapar(perfil.nombre)}</span>
+          <span class="fila__detalle">${escapar(resumenPrograma(estado))}</span></span>
+          <a class="quitar" href="${escapar(ruta({ cliente: perfil.id, confirmar: 'eliminar' }))}"
+            aria-label="Eliminar ${escapar(perfil.nombre)}">×</a></div>`
+      }
+
       // Sin cliente_id ni contadores de sesión: aquí sólo se decide a quién abrir.
       return `<a class="fila" href="${escapar(ruta({ cliente: perfil.id, seccion: 'programa' }))}">
         <span class="fila__cuerpo"><span class="fila__titulo">${escapar(perfil.nombre)}</span>
@@ -377,13 +403,55 @@ async function pantallaClientes(db: D1Database, mostrarQa: boolean, aviso: strin
     : `<div class="tarjeta vacio"><h3>Todavía no hay clientes</h3>
        <p>Crea el primero para empezar a programarle sus días.</p></div>`
 
+  // Mismo gesto que reordenar un día: un modo que se entra y se sale, en vez de
+  // un botón de borrar siempre presente al lado del nombre.
+  const editar = filas.length
+    ? editando
+      ? `<a class="cta cta--suave" href="${escapar(ruta({}))}">Listo</a>`
+      : `<a class="cta cta--suave" href="${escapar(ruta({ modo: 'editar' }))}">Editar lista</a>`
+    : ''
+
   return pagina(
     `${barra('Coach / Admin', 'Santiago Fitness Method')}
      <div class="cinta"></div>
      ${avisoDe(aviso)}
      <h2>Clientes</h2>
+     ${editando ? '<p>Toca × para quitar a alguien de la lista.</p>' : ''}
      ${lista}
-     <a class="cta" href="${escapar(ruta({ nuevo: true }))}">+ Cliente</a>`,
+     ${editando ? editar : `<a class="cta" href="${escapar(ruta({ nuevo: true }))}">+ Cliente</a>${editar}`}`,
+  )
+}
+
+/**
+ * Confirmación de la baja.
+ *
+ * Pantalla propia y no un `confirm()`: la consola no lleva JavaScript, y aquí
+ * hay sitio para decir de verdad qué se pierde y qué no. Se enseña lo que se
+ * corta —el acceso— junto a lo que se conserva —la programación—, porque las
+ * dos mitades cambian la decisión.
+ */
+async function pantallaEliminarCliente(db: D1Database, perfil: PerfilCloud): Promise<Response> {
+  const conteo = await contarAcceso(db, perfil.id)
+  const estado = evaluarEstadoProgramacion(await listarRutinas(db, perfil.id))
+
+  const acceso = conteo.sesiones
+    ? conteo.sesiones > 1
+      ? `Pierde las ${conteo.sesiones} sesiones que tiene abiertas.`
+      : 'Pierde la sesión con la que entra ahora mismo.'
+    : conteo.invitaciones
+      ? 'Su invitación pendiente deja de servir.'
+      : 'No tiene ningún acceso abierto.'
+
+  return pagina(
+    `${barra('Eliminar cliente', 'Clientes', ruta({ modo: 'editar' }))}
+     <div class="tarjeta tarjeta--aviso"><h3>¿Eliminar a ${escapar(perfil.nombre)}?</h3>
+     <p>Desaparece de la lista y se le corta el acceso a la app. ${escapar(acceso)}</p>
+     <p>Su programación (${escapar(resumenPrograma(estado))}) se conserva, así que
+     esto se puede deshacer.</p></div>
+     <form method="POST"><input type="hidden" name="accion" value="eliminar-cliente">
+     <input type="hidden" name="cliente_id" value="${escapar(perfil.id)}">
+     <button type="submit" class="cta cta--peligro">Sí, eliminar</button></form>
+     <a class="cta cta--suave" href="${escapar(ruta({ modo: 'editar' }))}">Cancelar</a>`,
   )
 }
 
@@ -819,11 +887,14 @@ async function atenderGet(url: URL, db: D1Database, mostrarQa: boolean): Promise
   if (url.searchParams.get('nuevo') === '1') return pantallaNuevoCliente()
 
   const clienteId = url.searchParams.get('cliente')
-  if (!clienteId) return pantallaClientes(db, mostrarQa, aviso)
+  if (!clienteId) return pantallaClientes(db, mostrarQa, aviso, url.searchParams.get('modo') === 'editar')
   if (!idSeguro(clienteId) || clienteQaBloqueado(clienteId, mostrarQa)) return noEncontrado()
 
   const perfil = await obtenerPerfil(db, clienteId)
   if (!perfil) return noEncontrado()
+
+  // La baja se confirma antes de cualquier escritura: este GET sólo pregunta.
+  if (url.searchParams.get('confirmar') === 'eliminar') return pantallaEliminarCliente(db, perfil)
 
   const seccion = seccionDe(url.searchParams.get('seccion'))
 
@@ -904,6 +975,17 @@ export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
       const nombre = String(formulario.get('nombre') ?? '').trim()
       if (!idSeguro(id) || !nombre) {
         return pantallaNuevoCliente('El nombre y el identificador son obligatorios, y el identificador sólo admite minúsculas, números y guiones.')
+      }
+      // Sin esto, reutilizar un identificador termina en el error de constraint
+      // de SQLite delante del coach, que no dice cuál de los dos casos es.
+      const ocupado = await estadoDelIdentificador(env.ACCESO, id)
+      if (ocupado === 'activo') {
+        return pantallaNuevoCliente(`Ya hay un cliente con el identificador «${id}». Elige otro.`)
+      }
+      if (ocupado === 'archivado') {
+        return pantallaNuevoCliente(
+          `El identificador «${id}» es de un cliente eliminado y su programación sigue guardada. Elige otro para no mezclarlas.`,
+        )
       }
       await crearPerfil(env.ACCESO, {
         id,
@@ -1070,6 +1152,14 @@ export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
          <p>Caduca el ${escapar(caduca)}. Cópialo ahora; después sólo queda su huella en D1.</p>
          <div class="enlace-generado">${escapar(enlace)}</div></div>`,
       )
+    }
+
+    if (accion === 'eliminar-cliente') {
+      const perfil = await obtenerPerfil(env.ACCESO, clienteId)
+      if (!perfil) return noEncontrado()
+      await archivarCliente(env.ACCESO, clienteId)
+      // Se vuelve a la lista normal, no al modo edición: la tarea terminó.
+      return redirigir(ruta({ aviso: `${perfil.nombre} ya no está en la lista` }))
     }
 
     if (accion === 'revocar-enlaces') {
