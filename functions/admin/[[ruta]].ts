@@ -22,6 +22,7 @@
  */
 
 import { crearInvitacion } from '../lib/invitacion'
+import { modoPruebaAbierta } from '../lib/modoPrueba'
 import { crearCabeceraDeCookie, crearSesion, VIDA_DE_SESION } from '../lib/sesion'
 import { clienteQaBloqueado, filtrarClientesQa, qaHabilitado } from '../lib/qa'
 import {
@@ -50,6 +51,7 @@ type Entorno = {
   readonly ACCESO: D1Database
   /** "true" sólo en preview y desarrollo. Ver functions/lib/qa.ts. */
   readonly SHOW_QA_CLIENTS?: string
+  readonly PUBLIC_TEST_MODE?: string
 }
 
 const CABECERA_DE_ACCESS = 'Cf-Access-Jwt-Assertion'
@@ -853,7 +855,15 @@ async function atenderGet(url: URL, db: D1Database, mostrarQa: boolean): Promise
 }
 
 export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
-  if (!request.headers.get(CABECERA_DE_ACCESS)) {
+  /*
+   * En prueba abierta la consola se abre sin la cabecera de Access.
+   *
+   * Ojo: Cloudflare Access se ejecuta ANTES que esta función. Mientras siga
+   * delante de /admin, esta condición no llega a evaluarse y el coach seguirá
+   * viendo el OTP. Quitarlo es un cambio de panel, no de código
+   * (docs/PUBLIC-TEST-MODE.md).
+   */
+  if (!modoPruebaAbierta(env) && !request.headers.get(CABECERA_DE_ACCESS)) {
     return pagina(
       `${barra('No autorizado', 'Coach / Admin')}
        <div class="tarjeta vacio"><h3>No autorizado</h3>

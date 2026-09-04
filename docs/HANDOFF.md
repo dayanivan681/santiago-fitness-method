@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T17:59:13.812Z
+- **Última sincronización:** 2026-09-04T18:24:19.626Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T18:24:19.626Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PUBLIC_TEST_MODE puentea la autenticacion del cliente y de la consola sin borrar nada. Un solo interruptor en functions/lib/modoPrueba.ts, leido desde _middleware.ts, api/cliente.ts y admin/[[ruta]].ts. Falla cerrado: solo el texto exacto 'true' abre. La identidad del cliente sigue decidiendose en el servidor (santiago), asi que el navegador no puede elegirla. Invitaciones, cookie sfm_sesion, revocacion y /salir intactos. Cloudflare Access sigue delante de /admin y hay que quitarlo a mano: instrucciones en docs/PUBLIC-TEST-MODE.md
+- **Verificación:** npm test 622/622; npm run lint 0; npm run build OK; modoPrueba.test.ts 12/12; scripts/pruebas-modo-prueba.mjs 8/8 con la bandera encendida y 6/6 apagada; roles 11/11; acceso 37/37; admin-ui 11/11; qa 13/13; QA manual admin+cliente y responsive 320/390/1024
+- **Siguiente:** Santiago debe crear la politica Bypass en Cloudflare Zero Trust (docs/PUBLIC-TEST-MODE.md, seccion TESTING). Sin eso el OTP sigue delante de /admin. Al terminar las pruebas, seccion AFTER para restaurar
+
 
 ### 2026-09-04T17:59:13.814Z | claude-code | CLAIM
 - **Estado:** active

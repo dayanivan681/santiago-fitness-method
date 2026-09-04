@@ -41,11 +41,13 @@ import {
   paginaSesionCerrada,
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
+import { modoPruebaAbierta } from './lib/modoPrueba'
 
 type Entorno = {
   readonly ACCESO: D1Database
   readonly ASSETS: Fetcher
   readonly AUTH_MODE?: string
+  readonly PUBLIC_TEST_MODE?: string
 }
 
 /** Rutas que gestiona el propio middleware. */
@@ -243,6 +245,15 @@ async function atenderApp(
   env: Entorno,
   next: () => Promise<Response>,
 ): Promise<Response> {
+  /*
+   * En prueba abierta la app se sirve sin sesión.
+   *
+   * Se comprueba aquí y no antes para que el resto de la puerta siga en pie:
+   * /access sigue consumiendo invitaciones y /salir sigue revocando, así que
+   * apagar la variable devuelve el comportamiento anterior sin tocar nada más.
+   */
+  if (modoPruebaAbierta(env)) return next()
+
   const cookie = leerCookie(request)
   if (!cookie) return paginaAccesoRequerido()
 

@@ -25,6 +25,14 @@ AUTH_MODE = "magic"
 # conserva en D1 —preview usa la misma base—, sólo se oculta. Ver functions/lib/qa.ts.
 SHOW_QA_CLIENTS = "false"
 
+# Prueba abierta: puentea la autenticación de cliente y consola durante la fase
+# de pruebas con Santiago. "true" ABRE LA APLICACIÓN a cualquiera que sepa la
+# URL; es temporal y deliberado. Cualquier otro valor la deja cerrada.
+#
+# Ojo: esto no basta para /admin. Cloudflare Access se ejecuta antes que las
+# funciones, así que además hay que quitarlo del panel. Ver docs/PUBLIC-TEST-MODE.md.
+PUBLIC_TEST_MODE = "true"
+
 [[d1_databases]]
 binding = "ACCESO"
 database_name = "santiago-acceso"
@@ -35,6 +43,7 @@ database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
 [env.preview.vars]
 AUTH_MODE = "magic"
 SHOW_QA_CLIENTS = "true"
+PUBLIC_TEST_MODE = "true"
 
 [[env.preview.d1_databases]]
 binding = "ACCESO"
