@@ -1,0 +1,300 @@
+﻿source_entry_id,source_order,source_section,source_subcategory,source_name_exact,source_page,source_order_in_subcategory,canonical_ref_proposed,consolidation,related_review_cases,identity_ambiguous,needs_human_review
+S001,1,PECHO,Peso libre - barra y mancuernas,Press de banca plano con barra,3,1,C001,,"[""R13""]",true,true
+S002,2,PECHO,Peso libre - barra y mancuernas,Press inclinado con barra,3,2,C002,,"[""R13""]",true,true
+S003,3,PECHO,Peso libre - barra y mancuernas,Press declinado con barra,3,3,C003,,"[""R13""]",true,true
+S004,4,PECHO,Peso libre - barra y mancuernas,Press plano con mancuernas,3,4,C004,,"[""R13""]",true,true
+S005,5,PECHO,Peso libre - barra y mancuernas,Press inclinado con mancuernas,3,5,C005,,"[""R13""]",true,true
+S006,6,PECHO,Peso libre - barra y mancuernas,Press declinado con mancuernas,3,6,C006,,"[""R13""]",true,true
+S007,7,PECHO,Peso libre - barra y mancuernas,Press con mancuernas agarre neutro,3,7,C007,,"[""R13""]",true,true
+S008,8,PECHO,Peso libre - barra y mancuernas,Press alternado con mancuernas,3,8,C008,,"[""R13""]",true,true
+S009,9,PECHO,Peso libre - barra y mancuernas,Floor press con barra,3,9,C009,,[],false,true
+S010,10,PECHO,Peso libre - barra y mancuernas,Floor press con mancuernas,3,10,C010,,[],false,true
+S011,11,PECHO,Peso libre - barra y mancuernas,Squeeze press con mancuernas,3,11,C011,,[],false,true
+S012,12,PECHO,Peso libre - barra y mancuernas,Aperturas planas con mancuernas,3,12,C012,,[],false,true
+S013,13,PECHO,Peso libre - barra y mancuernas,Aperturas inclinadas con mancuernas,3,13,C013,,[],false,true
+S014,14,PECHO,Peso libre - barra y mancuernas,Pullover con mancuerna,3,14,C014,,[],false,true
+S015,15,PECHO,Smith,Press plano en Smith,3,1,C015,,[],false,true
+S016,16,PECHO,Smith,Press inclinado en Smith,3,2,C016,,"[""R11""]",true,true
+S017,17,PECHO,Smith,Press declinado en Smith,3,3,C017,,[],false,true
+S018,18,PECHO,Smith,Press de banca agarre cerrado en Smith,3,4,C018,,"[""R04""]",true,true
+S019,19,PECHO,Smith,Floor press en Smith,3,5,C019,,[],false,true
+S020,20,PECHO,Smith,Press inclinado bajo (15-30°) en Smith,3,6,C020,,"[""R11""]",true,true
+S021,21,PECHO,Máquinas,Press de pecho horizontal selectorizado,3,1,C021,,[],false,true
+S022,22,PECHO,Máquinas,Press de pecho vertical selectorizado,3,2,C022,,[],false,true
+S023,23,PECHO,Máquinas,Press de pecho convergente horizontal,3,3,C023,,"[""R12""]",true,true
+S024,24,PECHO,Máquinas,Press convergente inclinado,3,4,C024,,"[""R12""]",true,true
+S025,25,PECHO,Máquinas,Press convergente declinado,3,5,C025,,"[""R12""]",true,true
+S026,26,PECHO,Máquinas,Press unilateral convergente,3,6,C026,,"[""R12""]",true,true
+S027,27,PECHO,Máquinas,Press de pecho con discos (plate-loaded),3,7,C027,,"[""R12""]",true,true
+S028,28,PECHO,Máquinas,Pec deck / fly de pecho,3,8,C028,,[],false,true
+S029,29,PECHO,Máquinas,Fly convergente en máquina,3,9,C029,,[],false,true
+S030,30,PECHO,Cable / polea,Press de pecho de pie en cable,3,1,C030,,[],false,true
+S031,31,PECHO,Cable / polea,Press unilateral de pecho en cable,4,2,C031,,[],false,true
+S032,32,PECHO,Cable / polea,Press inclinado en cable,4,3,C032,,[],false,true
+S033,33,PECHO,Cable / polea,Press declinado en cable,4,4,C033,,[],false,true
+S034,34,PECHO,Cable / polea,Cruce de poleas alto a bajo,4,5,C034,,[],false,true
+S035,35,PECHO,Cable / polea,Cruce de poleas medio,4,6,C035,,[],false,true
+S036,36,PECHO,Cable / polea,Cruce de poleas bajo a alto,4,7,C036,,[],false,true
+S037,37,PECHO,Cable / polea,Fly unilateral en cable,4,8,C037,,[],false,true
+S038,38,PECHO,Cable / polea,Fly acostado en cable,4,9,C038,,[],false,true
+S039,39,PECHO,Cable / polea,Fly inclinado en cable,4,10,C039,,[],false,true
+S040,40,PECHO,Cable / polea,Cable squeeze press,4,11,C040,,[],false,true
+S041,41,PECHO,Peso corporal,Push-up tradicional,4,1,C041,,[],false,true
+S042,42,PECHO,Peso corporal,Push-up con manos elevadas,4,2,C042,,[],false,true
+S043,43,PECHO,Peso corporal,Push-up con pies elevados,4,3,C043,,[],false,true
+S044,44,PECHO,Peso corporal,Push-up agarre ancho,4,4,C044,,[],false,true
+S045,45,PECHO,Peso corporal,Push-up diamante,4,5,C045,,[],false,true
+S046,46,PECHO,Peso corporal,Push-up con pausa,4,6,C046,,[],false,true
+S047,47,PECHO,Peso corporal,Fondos en paralelas con énfasis en pecho,4,7,C047,,"[""V03""]",false,true
+S048,48,ESPALDA,Jalones verticales,Dominada pronada,5,1,C048,,"[""R14""]",true,true
+S049,49,ESPALDA,Jalones verticales,Dominada supinada / chin-up,5,2,C049,,"[""R14""]",true,true
+S050,50,ESPALDA,Jalones verticales,Dominada agarre neutro,5,3,C050,,"[""R14""]",true,true
+S051,51,ESPALDA,Jalones verticales,Dominada asistida,5,4,C051,,"[""R14""]",true,true
+S052,52,ESPALDA,Jalones verticales,Lat pulldown agarre ancho,5,5,C052,,[],true,true
+S053,53,ESPALDA,Jalones verticales,Lat pulldown agarre medio,5,6,C053,,[],true,true
+S054,54,ESPALDA,Jalones verticales,Lat pulldown agarre cerrado neutro,5,7,C054,,[],true,true
+S055,55,ESPALDA,Jalones verticales,Lat pulldown supinado,5,8,C055,,[],true,true
+S056,56,ESPALDA,Jalones verticales,Jalón unilateral en polea alta,5,9,C056,,[],false,true
+S057,57,ESPALDA,Jalones verticales,Jalón arrodillado unilateral,5,10,C057,,[],true,true
+S058,58,ESPALDA,Jalones verticales,Pulldown convergente plate-loaded,5,11,C058,,"[""R15""]",true,true
+S059,59,ESPALDA,Jalones verticales,Pulldown unilateral convergente,5,12,C059,,"[""R15""]",true,true
+S060,60,ESPALDA,Remos - peso libre,Remo con barra inclinado,5,1,C060,,[],false,true
+S061,61,ESPALDA,Remos - peso libre,Remo Pendlay,5,2,C061,,[],true,true
+S062,62,ESPALDA,Remos - peso libre,Remo con mancuerna a una mano,5,3,C062,,[],false,true
+S063,63,ESPALDA,Remos - peso libre,Remo con dos mancuernas,5,4,C063,,[],false,true
+S064,64,ESPALDA,Remos - peso libre,Remo pecho apoyado con mancuernas,5,5,C064,,"[""R07""]",true,true
+S065,65,ESPALDA,Remos - peso libre,Seal row con barra,5,6,C065,,[],false,true
+S066,66,ESPALDA,Remos - peso libre,Meadows row,5,7,C066,,[],true,true
+S067,67,ESPALDA,Remos - peso libre,Remo landmine / T-bar,5,8,C067,,[],false,true
+S068,68,ESPALDA,Remos - peso libre,Remo T-bar pecho apoyado,5,9,C068,,[],false,true
+S069,69,ESPALDA,Remos - máquina/cable,Remo sentado en cable agarre neutro,5,1,C069,,"[""R16""]",true,true
+S070,70,ESPALDA,Remos - máquina/cable,Remo sentado en cable agarre ancho,5,2,C070,,"[""R16""]",true,true
+S071,71,ESPALDA,Remos - máquina/cable,Remo sentado unilateral en cable,5,3,C071,,"[""R16""]",true,true
+S072,72,ESPALDA,Remos - máquina/cable,Remo alto en cable,5,4,C072,,"[""R06""]",true,true
+S073,73,ESPALDA,Remos - máquina/cable,Remo bajo en cable,5,5,C073,,[],false,true
+S074,74,ESPALDA,Remos - máquina/cable,Remo máquina selectorizada,5,6,C074,,"[""R17""]",true,true
+S075,75,ESPALDA,Remos - máquina/cable,Remo convergente plate-loaded,5,7,C075,,"[""R17""]",true,true
+S076,76,ESPALDA,Remos - máquina/cable,Remo divergente plate-loaded,5,8,C076,,"[""R17""]",true,true
+S077,77,ESPALDA,Remos - máquina/cable,Remo unilateral en máquina,5,9,C077,,"[""R17""]",true,true
+S078,78,ESPALDA,Remos - máquina/cable,Remo pecho apoyado en máquina,5,10,C078,,"[""R07"",""R17""]",true,true
+S079,79,ESPALDA,Remos - máquina/cable,High row convergente,5,11,C079,,[],false,true
+S080,80,ESPALDA,Remos - máquina/cable,Low row convergente,6,12,C080,,[],false,true
+S081,81,ESPALDA,Extensión/hombro y espalda alta,Pullover en máquina,6,1,C081,,[],false,true
+S082,82,ESPALDA,Extensión/hombro y espalda alta,Straight-arm pulldown con barra,6,2,C082,,"[""R05""]",true,true
+S083,83,ESPALDA,Extensión/hombro y espalda alta,Straight-arm pulldown con cuerda,6,3,C083,,"[""R05""]",true,true
+S084,84,ESPALDA,Extensión/hombro y espalda alta,Pullover en cable,6,4,C084,,"[""R05""]",true,true
+S085,85,ESPALDA,Extensión/hombro y espalda alta,Face pull,6,5,C085,,"[""R02""]",true,true
+S086,86,ESPALDA,Extensión/hombro y espalda alta,Reverse fly en máquina,6,6,C086,,"[""R03"",""V01""]",true,true
+S087,87,ESPALDA,Extensión/hombro y espalda alta,Reverse fly en cable,6,7,C087,D01,"[""V01""]",false,true
+S088,88,ESPALDA,Extensión/hombro y espalda alta,Encogimiento con barra,6,8,C088,,[],false,true
+S089,89,ESPALDA,Extensión/hombro y espalda alta,Encogimiento con mancuernas,6,9,C089,,[],false,true
+S090,90,ESPALDA,Extensión/hombro y espalda alta,Encogimiento en Smith,6,10,C090,,[],false,true
+S091,91,ESPALDA,Extensión/hombro y espalda alta,Encogimiento en máquina,6,11,C091,,[],false,true
+S092,92,ESPALDA,Extensión/hombro y espalda alta,Rack pull,6,12,C092,,[],true,true
+S093,93,ESPALDA,Extensión/hombro y espalda alta,Peso muerto convencional,6,13,C093,,[],true,true
+S094,94,HOMBROS,Press,Press militar con barra de pie,7,1,C094,,[],false,true
+S095,95,HOMBROS,Press,Press militar con barra sentado,7,2,C095,,[],false,true
+S096,96,HOMBROS,Press,Press con mancuernas sentado,7,3,C096,,[],false,true
+S097,97,HOMBROS,Press,Press con mancuernas de pie,7,4,C097,,[],false,true
+S098,98,HOMBROS,Press,Arnold press,7,5,C098,,[],true,true
+S099,99,HOMBROS,Press,Press de hombro en Smith,7,6,C099,,[],false,true
+S100,100,HOMBROS,Press,Press militar en máquina selectorizada,7,7,C100,,[],false,true
+S101,101,HOMBROS,Press,Press convergente de hombro plate-loaded,7,8,C101,,[],false,true
+S102,102,HOMBROS,Press,Press unilateral de hombro en máquina,7,9,C102,,[],false,true
+S103,103,HOMBROS,Press,Landmine press unilateral,7,10,C103,,[],false,true
+S104,104,HOMBROS,Deltoide lateral,Elevación lateral con mancuernas,7,1,C104,,"[""R18""]",true,true
+S105,105,HOMBROS,Deltoide lateral,Elevación lateral sentado,7,2,C105,,"[""R18""]",true,true
+S106,106,HOMBROS,Deltoide lateral,Elevación lateral inclinada,7,3,C106,,"[""R08"",""R18""]",true,true
+S107,107,HOMBROS,Deltoide lateral,Elevación lateral unilateral en cable,7,4,C107,,"[""R08"",""V08""]",true,true
+S108,108,HOMBROS,Deltoide lateral,Elevación lateral bilateral en cable,7,5,C108,,"[""V08""]",false,true
+S109,109,HOMBROS,Deltoide lateral,Elevación lateral en máquina,7,6,C109,,[],false,true
+S110,110,HOMBROS,Deltoide lateral,Lean-away cable lateral raise,7,7,C110,,"[""R08""]",true,true
+S111,111,HOMBROS,Deltoide posterior / estabilidad,Pájaros con mancuernas,7,1,C111,,"[""V01""]",false,true
+S112,112,HOMBROS,Deltoide posterior / estabilidad,Reverse pec deck,7,2,C112,,"[""R03""]",true,true
+S113,113,HOMBROS,Deltoide posterior / estabilidad,Reverse fly en cable,7,3,C087,D01,"[""V01""]",false,true
+S114,114,HOMBROS,Deltoide posterior / estabilidad,Face pull con cuerda,7,4,C114,,"[""R02""]",true,true
+S115,115,HOMBROS,Deltoide posterior / estabilidad,Remo alto para deltoide posterior con cable,7,5,C115,,"[""R06""]",true,true
+S116,116,HOMBROS,Deltoide posterior / estabilidad,Remo pecho apoyado codos abiertos,7,6,C116,,"[""R07""]",true,true
+S117,117,HOMBROS,Deltoide posterior / estabilidad,Y-raise con mancuernas,7,7,C117,,[],false,true
+S118,118,HOMBROS,Deltoide posterior / estabilidad,Y-raise en cable,7,8,C118,,[],false,true
+S119,119,HOMBROS,Deltoide posterior / estabilidad,Rotación externa en cable,7,9,C119,,[],false,true
+S120,120,HOMBROS,Deltoide posterior / estabilidad,Rotación externa con banda,7,10,C120,,[],false,true
+S121,121,HOMBROS,Deltoide anterior / otros,Elevación frontal con mancuernas,7,1,C121,,[],false,true
+S122,122,HOMBROS,Deltoide anterior / otros,Elevación frontal con disco,7,2,C122,,[],false,true
+S123,123,HOMBROS,Deltoide anterior / otros,Elevación frontal en cable,7,3,C123,,[],false,true
+S124,124,HOMBROS,Deltoide anterior / otros,Upright row con cable,8,4,C124,,[],false,true
+S125,125,HOMBROS,Deltoide anterior / otros,Upright row con barra EZ,8,5,C125,,[],false,true
+S126,126,BÍCEPS,Peso libre,Curl con barra recta,9,1,C126,,"[""V07""]",false,true
+S127,127,BÍCEPS,Peso libre,Curl con barra EZ,9,2,C127,,"[""V07""]",false,true
+S128,128,BÍCEPS,Peso libre,Curl alterno con mancuernas,9,3,C128,,"[""V07""]",false,true
+S129,129,BÍCEPS,Peso libre,Curl simultáneo con mancuernas,9,4,C129,,"[""V07""]",false,true
+S130,130,BÍCEPS,Peso libre,Curl martillo,9,5,C130,D06,"[""V02""]",true,true
+S131,131,BÍCEPS,Peso libre,Curl martillo cruzado,9,6,C131,,"[""V02""]",true,true
+S132,132,BÍCEPS,Peso libre,Curl inclinado con mancuernas,9,7,C132,,[],false,true
+S133,133,BÍCEPS,Peso libre,Curl concentración,9,8,C133,,[],true,true
+S134,134,BÍCEPS,Peso libre,Spider curl con barra EZ,9,9,C134,,[],false,true
+S135,135,BÍCEPS,Peso libre,Spider curl con mancuernas,9,10,C135,,[],false,true
+S136,136,BÍCEPS,Peso libre,Preacher curl con barra EZ,9,11,C136,,[],false,true
+S137,137,BÍCEPS,Peso libre,Preacher curl con mancuerna unilateral,9,12,C137,,[],false,true
+S138,138,BÍCEPS,Peso libre,Zottman curl,9,13,C138,,[],true,true
+S139,139,BÍCEPS,Cable / máquina,Curl en polea baja con barra recta,9,1,C139,,[],false,true
+S140,140,BÍCEPS,Cable / máquina,Curl en polea baja con barra EZ,9,2,C140,,[],false,true
+S141,141,BÍCEPS,Cable / máquina,Curl en cable con cuerda,9,3,C141,,[],false,true
+S142,142,BÍCEPS,Cable / máquina,Curl unilateral en cable,9,4,C142,,[],false,true
+S143,143,BÍCEPS,Cable / máquina,Bayesian cable curl,9,5,C143,,[],false,true
+S144,144,BÍCEPS,Cable / máquina,High cable curl / doble bíceps,9,6,C144,,[],false,true
+S145,145,BÍCEPS,Cable / máquina,Preacher curl en máquina,9,7,C145,,"[""R19""]",true,true
+S146,146,BÍCEPS,Cable / máquina,Curl de bíceps en máquina selectorizada,9,8,C146,,"[""R19""]",true,true
+S147,147,BÍCEPS,Cable / máquina,Curl unilateral en máquina,9,9,C147,,"[""R19""]",true,true
+S148,148,TRÍCEPS,Press y peso libre,Press de banca agarre cerrado,10,1,C148,,[],true,true
+S149,149,TRÍCEPS,Press y peso libre,Press cerrado en Smith,10,2,C149,,"[""R04""]",true,true
+S150,150,TRÍCEPS,Press y peso libre,JM press con barra,10,3,C150,,[],false,true
+S151,151,TRÍCEPS,Press y peso libre,Extensión acostado con barra EZ / skull crusher,10,4,C151,,[],false,true
+S152,152,TRÍCEPS,Press y peso libre,Extensión acostado con mancuernas,10,5,C152,,[],false,true
+S153,153,TRÍCEPS,Press y peso libre,Extensión sobre cabeza con mancuerna a dos manos,10,6,C153,,[],false,true
+S154,154,TRÍCEPS,Press y peso libre,Extensión unilateral sobre cabeza con mancuerna,10,7,C154,,[],false,true
+S155,155,TRÍCEPS,Press y peso libre,Kickback con mancuerna,10,8,C155,,[],false,true
+S156,156,TRÍCEPS,Press y peso libre,Fondos en paralelas con énfasis en tríceps,10,9,C156,,"[""V03""]",false,true
+S157,157,TRÍCEPS,Press y peso libre,Fondos en banco,10,10,C157,,[],false,true
+S158,158,TRÍCEPS,Cable / máquina,Pushdown con barra recta,10,1,C158,,"[""V11""]",true,true
+S159,159,TRÍCEPS,Cable / máquina,Pushdown con barra V,10,2,C159,,"[""V11""]",true,true
+S160,160,TRÍCEPS,Cable / máquina,Pushdown con cuerda,10,3,C160,,"[""V11""]",true,true
+S161,161,TRÍCEPS,Cable / máquina,Pushdown unilateral agarre neutro,10,4,C161,,"[""V11""]",true,true
+S162,162,TRÍCEPS,Cable / máquina,Pushdown unilateral supinado,10,5,C162,,"[""V11""]",true,true
+S163,163,TRÍCEPS,Cable / máquina,Extensión sobre cabeza con cuerda,10,6,C163,,[],true,true
+S164,164,TRÍCEPS,Cable / máquina,Extensión sobre cabeza con barra en cable,10,7,C164,,[],false,true
+S165,165,TRÍCEPS,Cable / máquina,Extensión unilateral sobre cabeza en cable,10,8,C165,,[],false,true
+S166,166,TRÍCEPS,Cable / máquina,Cross-body cable extension,10,9,C166,,[],false,true
+S167,167,TRÍCEPS,Cable / máquina,Kickback en cable,10,10,C167,,[],false,true
+S168,168,TRÍCEPS,Cable / máquina,Dip machine / fondos asistidos en máquina,10,11,C168,,"[""R20""]",true,true
+S169,169,TRÍCEPS,Cable / máquina,Extensión de tríceps en máquina,10,12,C169,,[],false,true
+S170,170,CUÁDRICEPS,Sentadillas / peso libre,Back squat barra alta,11,1,C170,,"[""V06""]",false,true
+S171,171,CUÁDRICEPS,Sentadillas / peso libre,Back squat barra baja,11,2,C171,,"[""V06""]",false,true
+S172,172,CUÁDRICEPS,Sentadillas / peso libre,Front squat,11,3,C172,,"[""V06""]",true,true
+S173,173,CUÁDRICEPS,Sentadillas / peso libre,Goblet squat,11,4,C173,,[],true,true
+S174,174,CUÁDRICEPS,Sentadillas / peso libre,Zercher squat,11,5,C174,,[],true,true
+S175,175,CUÁDRICEPS,Sentadillas / peso libre,Sentadilla con talones elevados,11,6,C175,,[],true,true
+S176,176,CUÁDRICEPS,Sentadillas / peso libre,Split squat,11,7,C176,,[],true,true
+S177,177,CUÁDRICEPS,Sentadillas / peso libre,Bulgarian split squat,11,8,C177,,"[""V05""]",true,true
+S178,178,CUÁDRICEPS,Sentadillas / peso libre,Walking lunge,11,9,C178,,[],true,true
+S179,179,CUÁDRICEPS,Sentadillas / peso libre,Reverse lunge,11,10,C179,,"[""V05""]",true,true
+S180,180,CUÁDRICEPS,Sentadillas / peso libre,Forward lunge,11,11,C180,,[],true,true
+S181,181,CUÁDRICEPS,Sentadillas / peso libre,Step-up,11,12,C181,,"[""V05""]",true,true
+S182,182,CUÁDRICEPS,Máquinas / Smith,Hack squat,11,1,C182,,[],true,true
+S183,183,CUÁDRICEPS,Máquinas / Smith,Pendulum squat,11,2,C183,,[],true,true
+S184,184,CUÁDRICEPS,Máquinas / Smith,V-squat,11,3,C184,,[],true,true
+S185,185,CUÁDRICEPS,Máquinas / Smith,Sentadilla convergente plate-loaded,11,4,C185,,[],false,true
+S186,186,CUÁDRICEPS,Máquinas / Smith,Smith back squat,11,5,C186,,"[""R21""]",true,true
+S187,187,CUÁDRICEPS,Máquinas / Smith,Smith front squat,11,6,C187,,[],false,true
+S188,188,CUÁDRICEPS,Máquinas / Smith,Smith squat con pies adelantados,11,7,C188,,"[""R21""]",true,true
+S189,189,CUÁDRICEPS,Máquinas / Smith,Smith split squat,11,8,C189,,[],false,true
+S190,190,CUÁDRICEPS,Máquinas / Smith,Smith Bulgarian split squat,11,9,C190,,[],false,true
+S191,191,CUÁDRICEPS,Máquinas / Smith,Leg press 45°,11,10,C191,,"[""R22""]",true,true
+S192,192,CUÁDRICEPS,Máquinas / Smith,Leg press horizontal,11,11,C192,,"[""R22""]",true,true
+S193,193,CUÁDRICEPS,Máquinas / Smith,Leg press vertical,11,12,C193,,"[""R22""]",true,true
+S194,194,CUÁDRICEPS,Máquinas / Smith,Leg press unilateral,11,13,C194,,"[""R22""]",true,true
+S195,195,CUÁDRICEPS,Máquinas / Smith,Extensión de cuádriceps bilateral,11,14,C195,,"[""V08""]",true,true
+S196,196,CUÁDRICEPS,Máquinas / Smith,Extensión de cuádriceps unilateral,11,15,C196,,"[""V08""]",true,true
+S197,197,FEMORALES,Bisagra de cadera,Peso muerto rumano con barra,12,1,C197,,"[""R23""]",true,true
+S198,198,FEMORALES,Bisagra de cadera,Peso muerto rumano con mancuernas,12,2,C198,,"[""R23""]",true,true
+S199,199,FEMORALES,Bisagra de cadera,Peso muerto rumano en Smith,12,3,C199,,"[""R23""]",true,true
+S200,200,FEMORALES,Bisagra de cadera,Peso muerto piernas rígidas,12,4,C200,,"[""R23""]",true,true
+S201,201,FEMORALES,Bisagra de cadera,Good morning con barra,12,5,C201,,[],false,true
+S202,202,FEMORALES,Bisagra de cadera,Good morning en Smith,12,6,C202,,[],false,true
+S203,203,FEMORALES,Bisagra de cadera,Peso muerto unilateral con mancuerna,12,7,C203,,[],false,true
+S204,204,FEMORALES,Bisagra de cadera,Peso muerto rumano unilateral en cable,12,8,C204,,[],false,true
+S205,205,FEMORALES,Bisagra de cadera,Cable pull-through,12,9,C205,D02,[],false,true
+S206,206,FEMORALES,Flexión de rodilla,Curl femoral sentado,12,1,C206,,[],true,true
+S207,207,FEMORALES,Flexión de rodilla,Curl femoral acostado,12,2,C207,,[],true,true
+S208,208,FEMORALES,Flexión de rodilla,Curl femoral de pie unilateral,12,3,C208,,[],true,true
+S209,209,FEMORALES,Flexión de rodilla,Curl femoral arrodillado unilateral,12,4,C209,,[],true,true
+S210,210,FEMORALES,Flexión de rodilla,Curl femoral con fitball,12,5,C210,,[],false,true
+S211,211,FEMORALES,Flexión de rodilla,Nordic hamstring curl,12,6,C211,,[],true,true
+S212,212,FEMORALES,Flexión de rodilla,Sliding leg curl,12,7,C212,,[],true,true
+S213,213,GLÚTEOS,Extensión de cadera,Hip thrust con barra,13,1,C213,,"[""R24""]",true,true
+S214,214,GLÚTEOS,Extensión de cadera,Hip thrust en Smith,13,2,C214,,"[""R24""]",true,true
+S215,215,GLÚTEOS,Extensión de cadera,Hip thrust en máquina plate-loaded,13,3,C215,,"[""R24""]",true,true
+S216,216,GLÚTEOS,Extensión de cadera,Hip thrust en máquina selectorizada,13,4,C216,,"[""R24""]",true,true
+S217,217,GLÚTEOS,Extensión de cadera,Hip thrust unilateral,13,5,C217,,"[""R24""]",true,true
+S218,218,GLÚTEOS,Extensión de cadera,Glute bridge con barra,13,6,C218,,[],false,true
+S219,219,GLÚTEOS,Extensión de cadera,Glute bridge en Smith,13,7,C219,,[],false,true
+S220,220,GLÚTEOS,Extensión de cadera,Cable pull-through,13,8,C205,D02,[],false,true
+S221,221,GLÚTEOS,Extensión de cadera,Back extension 45° con énfasis en glúteos,13,9,C221,,"[""V04""]",true,true
+S222,222,GLÚTEOS,Extensión de cadera,Reverse hyperextension,13,10,C222,,[],true,true
+S223,223,GLÚTEOS,Patadas / aislamiento,Patada de glúteo en cable,13,1,C223,,[],false,true
+S224,224,GLÚTEOS,Patadas / aislamiento,Patada de glúteo en máquina,13,2,C224,,[],false,true
+S225,225,GLÚTEOS,Patadas / aislamiento,Patada diagonal en cable,13,3,C225,,[],false,true
+S226,226,GLÚTEOS,Patadas / aislamiento,Extensión de cadera de pie en máquina,13,4,C226,,[],false,true
+S227,227,GLÚTEOS,Patadas / aislamiento,Donkey kick con banda,13,5,C227,,[],false,true
+S228,228,GLÚTEOS,Abducción / glúteo medio,Abducción de cadera sentado en máquina,13,1,C228,,[],false,true
+S229,229,GLÚTEOS,Abducción / glúteo medio,Abducción de cadera de pie en cable,13,2,C229,,[],false,true
+S230,230,GLÚTEOS,Abducción / glúteo medio,Abducción lateral acostado,13,3,C230,,[],true,true
+S231,231,GLÚTEOS,Abducción / glúteo medio,Lateral band walk,13,4,C231,,[],false,true
+S232,232,GLÚTEOS,Abducción / glúteo medio,Monster walk,13,5,C232,,[],true,true
+S233,233,GLÚTEOS,Abducción / glúteo medio,Step-down lateral,13,6,C233,,[],true,true
+S234,234,GLÚTEOS,Abducción / glúteo medio,Hip hike,13,7,C234,,[],true,true
+S235,235,GLÚTEOS,Compuestos con énfasis glúteo,Sumo squat,13,1,C235,D03,"[""V10""]",true,true
+S236,236,GLÚTEOS,Compuestos con énfasis glúteo,Sumo deadlift,13,2,C236,,"[""V10""]",true,true
+S237,237,GLÚTEOS,Compuestos con énfasis glúteo,Bulgarian split squat torso inclinado,13,3,C237,,"[""V05""]",true,true
+S238,238,GLÚTEOS,Compuestos con énfasis glúteo,Reverse lunge paso largo,13,4,C238,,"[""V05""]",true,true
+S239,239,GLÚTEOS,Compuestos con énfasis glúteo,Step-up alto,13,5,C239,,"[""V05""]",true,true
+S240,240,GLÚTEOS,Compuestos con énfasis glúteo,Leg press pies altos y abiertos,13,6,C240,,"[""R22""]",true,true
+S241,241,ADUCTORES / CADERA,Aductores,Aducción de cadera en máquina,14,1,C241,,[],false,true
+S242,242,ADUCTORES / CADERA,Aductores,Aducción de cadera de pie en cable,14,2,C242,,[],false,true
+S243,243,ADUCTORES / CADERA,Aductores,Copenhagen plank,14,3,C243,,[],true,true
+S244,244,ADUCTORES / CADERA,Aductores,Sumo squat,14,4,C235,D03,"[""V10""]",true,true
+S245,245,ADUCTORES / CADERA,Aductores,Lateral lunge,14,5,C245,,[],true,true
+S246,246,ADUCTORES / CADERA,Aductores,Cossack squat,14,6,C246,,[],true,true
+S247,247,ADUCTORES / CADERA,Flexores de cadera,Elevación de rodilla en cable,14,1,C247,,[],false,true
+S248,248,ADUCTORES / CADERA,Flexores de cadera,Marcha con banda,14,2,C248,,[],false,true
+S249,249,ADUCTORES / CADERA,Flexores de cadera,Elevación de rodillas colgado,14,3,C249,D04,"[""V09""]",true,true
+S250,250,ADUCTORES / CADERA,Flexores de cadera,Step-up con impulso de rodilla,14,4,C250,,"[""V05""]",true,true
+S251,251,PANTORRILLAS / TIBIAL,Pantorrillas,Standing calf raise en máquina,15,1,C251,,"[""R25""]",true,true
+S252,252,PANTORRILLAS / TIBIAL,Pantorrillas,Seated calf raise,15,2,C252,,"[""R25""]",true,true
+S253,253,PANTORRILLAS / TIBIAL,Pantorrillas,Calf raise en leg press,15,3,C253,,"[""R25""]",true,true
+S254,254,PANTORRILLAS / TIBIAL,Pantorrillas,Calf raise en Smith,15,4,C254,,"[""R25""]",true,true
+S255,255,PANTORRILLAS / TIBIAL,Pantorrillas,Calf raise con mancuernas,15,5,C255,,"[""R25""]",true,true
+S256,256,PANTORRILLAS / TIBIAL,Pantorrillas,Calf raise unilateral,15,6,C256,,"[""R25""]",true,true
+S257,257,PANTORRILLAS / TIBIAL,Pantorrillas,Donkey calf raise,15,7,C257,,"[""R25""]",true,true
+S258,258,PANTORRILLAS / TIBIAL,Tibial anterior,Tibialis raise contra pared,15,1,C258,,[],false,true
+S259,259,PANTORRILLAS / TIBIAL,Tibial anterior,Tibialis raise en máquina,15,2,C259,,[],false,true
+S260,260,PANTORRILLAS / TIBIAL,Tibial anterior,Dorsiflexión con banda,15,3,C260,,[],false,true
+S261,261,CORE / ABDOMINALES,Flexión / elevaciones,Crunch en máquina,16,1,C261,,[],false,true
+S262,262,CORE / ABDOMINALES,Flexión / elevaciones,Crunch en cable arrodillado,16,2,C262,,[],false,true
+S263,263,CORE / ABDOMINALES,Flexión / elevaciones,Crunch en fitball,16,3,C263,,[],false,true
+S264,264,CORE / ABDOMINALES,Flexión / elevaciones,Reverse crunch,16,4,C264,,[],true,true
+S265,265,CORE / ABDOMINALES,Flexión / elevaciones,Elevación de rodillas en silla romana,16,5,C265,,"[""V09""]",false,true
+S266,266,CORE / ABDOMINALES,Flexión / elevaciones,Elevación de piernas en silla romana,16,6,C266,,"[""V09""]",false,true
+S267,267,CORE / ABDOMINALES,Flexión / elevaciones,Elevación de rodillas colgado,16,7,C249,D04,"[""V09""]",true,true
+S268,268,CORE / ABDOMINALES,Flexión / elevaciones,Elevación de piernas colgado,16,8,C268,,"[""V09""]",true,true
+S269,269,CORE / ABDOMINALES,Flexión / elevaciones,Sit-up declinado,16,9,C269,,[],true,true
+S270,270,CORE / ABDOMINALES,Anti-extensión / estabilidad,Plank,16,1,C270,,"[""V12""]",true,true
+S271,271,CORE / ABDOMINALES,Anti-extensión / estabilidad,RKC plank,16,2,C271,,"[""V12""]",true,true
+S272,272,CORE / ABDOMINALES,Anti-extensión / estabilidad,Body saw,16,3,C272,,[],true,true
+S273,273,CORE / ABDOMINALES,Anti-extensión / estabilidad,Dead bug,16,4,C273,,[],true,true
+S274,274,CORE / ABDOMINALES,Anti-extensión / estabilidad,Ab wheel rollout,16,5,C274,,[],false,true
+S275,275,CORE / ABDOMINALES,Anti-extensión / estabilidad,Stability-ball rollout,16,6,C275,,[],false,true
+S276,276,CORE / ABDOMINALES,Anti-extensión / estabilidad,Hollow body hold,16,7,C276,,[],true,true
+S277,277,CORE / ABDOMINALES,Anti-rotación / oblicuos,Pallof press,16,1,C277,,"[""R09""]",true,true
+S278,278,CORE / ABDOMINALES,Anti-rotación / oblicuos,Pallof press arrodillado,16,2,C278,,"[""R09""]",true,true
+S279,279,CORE / ABDOMINALES,Anti-rotación / oblicuos,Cable chop alto a bajo,16,3,C279,,"[""R10""]",true,true
+S280,280,CORE / ABDOMINALES,Anti-rotación / oblicuos,Cable lift bajo a alto,16,4,C280,,"[""R10""]",true,true
+S281,281,CORE / ABDOMINALES,Anti-rotación / oblicuos,Wood chop,16,5,C281,,"[""R10""]",true,true
+S282,282,CORE / ABDOMINALES,Anti-rotación / oblicuos,Side plank,16,6,C282,,"[""V12""]",true,true
+S283,283,CORE / ABDOMINALES,Anti-rotación / oblicuos,Suitcase carry,16,7,C283,D05,[],true,true
+S284,284,CORE / ABDOMINALES,Anti-rotación / oblicuos,Farmer carry bilateral,16,8,C284,,"[""R01""]",true,true
+S285,285,CORE / ABDOMINALES,Extensión lumbar,Back extension 45°,16,1,C285,,"[""V04""]",true,true
+S286,286,CORE / ABDOMINALES,Extensión lumbar,Back extension horizontal,16,2,C286,,"[""V04""]",true,true
+S287,287,CORE / ABDOMINALES,Extensión lumbar,Bird dog,16,3,C287,,[],true,true
+S288,288,CORE / ABDOMINALES,Extensión lumbar,Superman,16,4,C288,,[],true,true
+S289,289,ANTEBRAZOS / AGARRE,Flexión/extensión,Wrist curl con barra,17,1,C289,,[],false,true
+S290,290,ANTEBRAZOS / AGARRE,Flexión/extensión,Reverse wrist curl con barra,17,2,C290,,[],false,true
+S291,291,ANTEBRAZOS / AGARRE,Flexión/extensión,Wrist curl con mancuernas,17,3,C291,,[],false,true
+S292,292,ANTEBRAZOS / AGARRE,Flexión/extensión,Reverse curl con barra EZ,17,4,C292,,[],false,true
+S293,293,ANTEBRAZOS / AGARRE,Flexión/extensión,Reverse curl en cable,17,5,C293,,[],false,true
+S294,294,ANTEBRAZOS / AGARRE,Flexión/extensión,Hammer curl,17,6,C130,D06,"[""V02""]",true,true
+S295,295,ANTEBRAZOS / AGARRE,Agarre,Farmer carry,17,1,C295,,"[""R01""]",true,true
+S296,296,ANTEBRAZOS / AGARRE,Agarre,Suitcase carry,17,2,C283,D05,[],true,true
+S297,297,ANTEBRAZOS / AGARRE,Agarre,Plate pinch hold,17,3,C297,,[],false,true
+S298,298,ANTEBRAZOS / AGARRE,Agarre,Dead hang,17,4,C298,,[],true,true
+S299,299,ANTEBRAZOS / AGARRE,Agarre,Barbell hold,17,5,C299,,[],false,true

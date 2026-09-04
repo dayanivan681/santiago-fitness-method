@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T03:02:20.790Z
+- **Última sincronización:** 2026-09-04T03:19:15.341Z
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -676,6 +676,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T03:19:15.342Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Phase 3A: analisis documental de Biblioteca Maestra; sin importacion
+- **Cambios:** Entrega docs/BIBLIOTECA-FASE-3A-ANALISIS.md y cinco CSV: 299 entradas trazables, 293 propuestas conservadoras (5 pares exactos + 1 semantico), 25 casos de solapamiento pendientes, mapping de 33 IDs con 21 exactos + 1 verificable y 11 sin asignar; 45 opciones coach; modelo minimo, riesgos, rollback y archivos futuros 3B. Solo documentacion: codigo, IDs, docs/cliente, Santiago y D1 sin cambios.
+- **Verificación:** CSV readback PASS: cobertura unica 299/293, 33 IDs, referencias, JSON, metricas y SHA PDF. npm test primera corrida 601/602: Perfil.test.tsx:104 notas fuera del DOM; segunda corrida sin cambios 602/602. Intermitencia registrada, no diagnosticada ni corregida. npm run lint PASS; npm run build PASS. Diff produccion/docs-cliente vacio.
+- **Siguiente:** Esperar aprobacion explicita de Phase 3B; no importar catalogo. Revisar decisiones y once ambiguedades con coach. Investigar aparte intermitencia de Perfil antes de gate de estabilidad.
+
 
 ### 2026-09-04T03:02:20.791Z | codex | CLAIM
 - **Estado:** active
