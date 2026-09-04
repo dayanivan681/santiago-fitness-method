@@ -10,12 +10,13 @@ del participante ni la protección del panel del coach.
   `/access?t=…`. El enlace crea una sesión de siete días en D1 y la cookie se
   valida en cada petición.
 - El coach entra en `/admin/` mediante Cloudflare Access. La función de Pages
-  exige además la cabecera que Access inyecta.
+  exige además la cabecera que Access inyecta. Las previews y URLs hash siguen
+  bajo Access para no dejar despliegues antiguos expuestos.
 - No existe una segunda entrada como `/consola/`.
 
-La separación permite que el participante abra su enlace sin pasar por
-Cloudflare Access, mientras el panel administrativo sigue detrás de la puerta
-del coach.
+La separación permite que el participante abra su enlace en el dominio canónico
+sin pasar por Cloudflare Access, mientras el panel administrativo y los
+despliegues de preview siguen detrás de la puerta del coach.
 
 ## Verificación
 

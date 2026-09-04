@@ -7,11 +7,14 @@ El cambio está hecho. Quién autentica qué:
 | `santiago-fitness-method.pages.dev/access` y `/presentacion` | Público; el primero sólo muestra/consume enlaces válidos y el segundo es la presentación |
 | `santiago-fitness-method.pages.dev/*` | El middleware, con enlace privado. **Sin Cloudflare a la vista.** |
 | `santiago-fitness-method.pages.dev/admin/*` | Cloudflare Access con OTP, sólo el coach |
+| `*.santiago-fitness-method.pages.dev/*` (previews y URLs hash) | Cloudflare Access con OTP; protege despliegues que no son el dominio canónico |
 
 No existe un interruptor de entorno para saltarse el middleware. Fuera de las
 excepciones públicas indicadas, una cookie `sfm_sesion` válida es obligatoria.
 Un despliegue mal configurado falla cerrado: nunca convierte la aplicación en
-pública por una variable antigua.
+pública por una variable antigua. `/sw.js` es una excepción técnica adicional:
+solo contiene la migración/autodestrucción del service worker y no datos ni
+secretos.
 
 **Aviso importante.** El proyecto está conectado a Git y el hostname sirve el
 despliegue **canónico**, que sale de un push. Un `wrangler pages deploy` a mano
@@ -123,16 +126,17 @@ entorno que lo desactive.
 | | |
 |---|---|
 | Aplicación de Access | **Santiago Fitness Method** |
-| Destino previsto | `santiago-fitness-method.pages.dev/admin` (y descendientes) |
+| Destinos | `santiago-fitness-method.pages.dev/admin` (y descendientes) + `*.santiago-fitness-method.pages.dev` |
 | Política | `Cliente y coach` · Allow · lista explícita de correos |
 | Método de entrada | One-time PIN |
 | Sesión | 1 semana, heredada por la política |
 | Base D1 | `santiago-acceso` · `7cb38489-4054-45e9-94d9-aad9c9f533f5` |
 
-Las URLs de previews no deben depender de una política que cubra el sitio
-principal: el middleware de cada despliegue sigue protegiendo la aplicación y
-el panel `/admin` conserva la puerta de Access. Revisar por separado cualquier
-dominio personalizado o preview que se quiera restringir.
+El comodín se conserva para proteger las URLs hash de Pages, que permanecen
+visitables aunque cambie el despliegue canónico. No cubre el dominio canónico
+sin subdominio, por lo que un participante puede abrir `/access?t=…` y entrar
+sin pasar por Cloudflare Access. Revisar por separado cualquier dominio
+personalizado que se añada.
 
 ## El cliente técnico de QA
 

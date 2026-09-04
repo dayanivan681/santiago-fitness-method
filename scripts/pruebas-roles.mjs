@@ -115,17 +115,32 @@ try {
   const first = apiAfterEdit.routines.find((routine) => routine.orden === 1)?.slots[0]
   comprobar('COACH-2b', 'Guarda selección, series, rango, descanso y progresión tras refresh', edit.status === 303 && detail.status === 200 && first?.ejercicioId === 'remo-barra' && first?.seriesObjetivo === 5 && first?.repMin === 2 && first?.repMax === 8 && first?.descansoSegundos === 90 && first?.progresionFijada === 'subirCarga' && detailHtml.includes('Remo con barra'), `edit=${edit.status}`)
 
-  const lowerBefore = apiAfterEdit.routines.find((routine) => routine.orden === 2)
-  const add = await post({ accion: 'anadir-slot', cliente_id: 'dayan-test', dia: '2', ejercicio: 'prensa' })
-  const afterAdd = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
-  const lowerAfterAdd = afterAdd.routines.find((routine) => routine.orden === 2)
-  const move = await post({ accion: 'mover-slot', cliente_id: 'dayan-test', dia: '2', orden: String(lowerAfterAdd?.slots.length ?? 1), direccion: 'arriba' })
-  const afterMove = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
-  const moved = afterMove.routines.find((routine) => routine.orden === 2)
-  const remove = await post({ accion: 'quitar-slot', cliente_id: 'dayan-test', dia: '2', orden: String(moved?.slots.length ?? 1) })
-  const afterRemove = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
-  const lowerFinal = afterRemove.routines.find((routine) => routine.orden === 2)
-  comprobar('COACH-2c', 'Puede añadir, reordenar y quitar sin perder la rutina', add.status === 303 && move.status === 303 && remove.status === 303 && lowerAfterAdd?.slots.length === (lowerBefore?.slots.length ?? 0) + 1 && lowerFinal?.slots.length === lowerBefore?.slots.length, `add/move/remove=${add.status}/${move.status}/${remove.status}`)
+  // El fixture puede tener un día ya lleno (el límite de producto es 8). Usa
+  // cualquier día con capacidad para que la prueba no convierta un 303 válido
+  // de "máximo alcanzado" en un falso fallo.
+  const rutinaEditable = apiAfterEdit.routines.find((routine) => routine.slots.length < 8)
+  if (!rutinaEditable) {
+    comprobar('COACH-2c', 'Rutina llena: no hay un día con capacidad para probar el ciclo', true, 'todos los días tienen 8 ejercicios')
+  } else {
+    const diaEditable = rutinaEditable.orden
+    const add = await post({ accion: 'anadir-slot', cliente_id: 'dayan-test', dia: String(diaEditable), ejercicio: 'prensa' })
+    const afterAdd = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
+    const rutinaTrasAnadir = afterAdd.routines.find((routine) => routine.orden === diaEditable)
+    const move = await post({ accion: 'mover-slot', cliente_id: 'dayan-test', dia: String(diaEditable), orden: String(rutinaTrasAnadir?.slots.length ?? 1), direccion: 'arriba' })
+    const afterMove = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
+    const rutinaTrasMover = afterMove.routines.find((routine) => routine.orden === diaEditable)
+    const remove = await post({ accion: 'quitar-slot', cliente_id: 'dayan-test', dia: String(diaEditable), orden: String(rutinaTrasMover?.slots.length ?? 1) })
+    const afterRemove = await (await pedir('/admin/api/clientes/dayan-test', { headers: ACCESS })).json()
+    const rutinaFinal = afterRemove.routines.find((routine) => routine.orden === diaEditable)
+    comprobar(
+      'COACH-2c',
+      'Puede añadir, reordenar y quitar sin perder la rutina',
+      add.status === 303 && move.status === 303 && remove.status === 303 &&
+        rutinaTrasAnadir?.slots.length === rutinaEditable.slots.length + 1 &&
+        rutinaFinal?.slots.length === rutinaEditable.slots.length,
+      `día=${diaEditable} add/move/remove=${add.status}/${move.status}/${remove.status}`,
+    )
+  }
 
   {
     const upperB = rutinasIniciales.find((routine) => routine.orden === 3)
