@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T04:02:28.131Z
+- **Última sincronización:** 2026-09-04T04:10:13.439Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T04:10:13.439Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Phase 3B.1 implementada: catálogo maestro seguro de 123 identidades en tabla Dexie local separada, manifest auditable de 293 filas, seed idempotente y pruebas de alias/metadata; 33 IDs, historial, plantillas y D1 remota preservados.
+- **Verificación:** npm test 610/610; npm run lint PASS; npm run build PASS; manifest 123/102/68; seed/migración local PASS; docs/cliente sin cambios
+- **Siguiente:** Detenerse para revisión de Santiago; no iniciar Phase 3B.2.
+
 
 ### 2026-09-04T04:02:28.132Z | codex | ADOPT
 - **Estado:** active

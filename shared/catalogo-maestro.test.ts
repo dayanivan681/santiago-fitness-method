@@ -11,6 +11,7 @@ import {
 
 /** CSV pequeño, sin dependencia adicional, para auditar el manifest generado. */
 function leerCsv(texto: string): string[][] {
+  texto = texto.replace(/^\uFEFF/, '')
   const filas: string[][] = []
   let fila: string[] = []
   let celda = ''
@@ -48,6 +49,11 @@ describe('fundación de la Biblioteca Maestra (§3B.1)', () => {
   const posicion = (nombre: string) => encabezados.indexOf(nombre)
   const valor = (fila: string[], nombre: string) => fila[posicion(nombre)]
   const filas = manifest.slice(1)
+  const catalogo3a = leerCsv(
+    readFileSync(resolve(process.cwd(), 'docs/BIBLIOTECA-FASE-3A-CATALOGO.csv'), 'utf8'),
+  )
+  const encabezados3a = catalogo3a[0]
+  const valor3a = (fila: string[], nombre: string) => fila[encabezados3a.indexOf(nombre)]
 
   it('mantiene una versión y un ID determinístico por identidad segura', () => {
     expect(CATALOGO_MAESTRO_VERSION).toBe('phase3b1-pdf-2a482961')
@@ -91,5 +97,59 @@ describe('fundación de la Biblioteca Maestra (§3B.1)', () => {
   it('no reutiliza ninguno de los 33 IDs operativos', () => {
     const existentes = new Set(EJERCICIOS_BASE.map((ejercicio) => ejercicio.id))
     expect([...IDS_CATALOGO_MAESTRO_SEGURO].some((id) => existentes.has(id))).toBe(false)
+  })
+
+  it('conserva la metadata y procedencia del CSV de Phase 3A', () => {
+    for (const identidad of CATALOGO_MAESTRO_SEGURO) {
+      const fila = catalogo3a
+        .slice(1)
+        .find((candidata) => valor3a(candidata, 'canonical_ref') === identidad.referenciaCanonica)
+      expect(fila).toBeDefined()
+      if (!fila) continue
+
+      expect(identidad.nombre).toBe(
+        valor3a(fila, 'canonical_name_es') || valor3a(fila, 'canonical_label_source'),
+      )
+      expect(identidad.gruposMusculares).toEqual(JSON.parse(valor3a(fila, 'muscle_groups')))
+      expect(identidad.equipos).toEqual(JSON.parse(valor3a(fila, 'equipment')))
+      expect(identidad.accesorios).toEqual(JSON.parse(valor3a(fila, 'equipment_accessories')))
+      expect(identidad.patrones).toEqual(JSON.parse(valor3a(fila, 'pattern')))
+      expect(identidad.entradasFuente).toEqual(JSON.parse(valor3a(fila, 'source_entries')))
+      expect(identidad.paginasFuente).toEqual(JSON.parse(valor3a(fila, 'source_pages')))
+
+      const nombreEs = valor3a(fila, 'canonical_name_es')
+      const nombreEn = valor3a(fila, 'possible_name_en')
+      if (nombreEs) expect(identidad.nombreEs).toBe(nombreEs)
+      else expect(identidad.nombreEs).toBeUndefined()
+      if (nombreEn) expect(identidad.nombreEn).toBe(nombreEn)
+      else expect(identidad.nombreEn).toBeUndefined()
+
+      const lateralidad = valor3a(fila, 'laterality')
+      if (lateralidad) expect(identidad.lateralidad).toBe(lateralidad)
+      else expect(identidad.lateralidad).toBeUndefined()
+
+      const compuesto = valor3a(fila, 'compound_isolation')
+      if (compuesto) expect(identidad.compuestoAislamiento).toBe(compuesto)
+      else expect(identidad.compuestoAislamiento).toBeUndefined()
+    }
+  })
+
+  it('no convierte aliases pendientes en una fusión silenciosa', () => {
+    // Un alias adicional necesita la decisión del coach: no basta con que la
+    // etiqueta aparezca junto a otra en una celda del PDF.
+    expect(CATALOGO_MAESTRO_SEGURO.every((identidad) => identidad.aliases.length === 0)).toBe(true)
+
+    for (const fila of catalogo3a.slice(1)) {
+      const aliases = JSON.parse(valor3a(fila, 'aliases') || '[]') as string[]
+      const etiqueta = valor3a(fila, 'canonical_label_source')
+      const aliasesAdicionales = aliases.filter((alias) => alias !== etiqueta)
+      if (aliasesAdicionales.length === 0) continue
+
+      const filaManifest = filas.find(
+        (candidata) => valor(candidata, 'canonical_ref') === valor3a(fila, 'canonical_ref'),
+      )
+      expect(valor(filaManifest ?? [], 'classification')).not.toBe('SAFE_TO_IMPORT')
+      expect(valor(filaManifest ?? [], 'catalog_id')).toBe('')
+    }
   })
 })
