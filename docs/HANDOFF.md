@@ -7,11 +7,56 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T03:36:33.218Z
+- **Última sincronización:** 2026-09-04T03:43:44.701Z
+
+## Phase 3A.6 — Coach Decision Pack
+
+- Entrega para Santiago: `docs/BIBLIOTECA-COACH-DECISION-PACK.md`.
+  Mapa interno: `docs/BIBLIOTECA-COACH-DECISION-MAP.csv`. Sólo documentación;
+  ninguna respuesta elegida, ninguna fusión ni importación ejecutada.
+- Fuentes: fases 1–2, análisis 3A, revisión 3A.5 (Markdown y CSV), mapping de los
+  once históricos y PDF original completo. La fuente prevalece sobre resúmenes:
+  no se añade pronación a ancho/medio ni se confunde prensa vertical/unilateral.
+- Se revisaron 11 casos históricos y los 25 R01–R25. Resultado: **48 unidades de
+  respuesta**, 11 históricas A1–A11 y 37 de biblioteca B1–B37. Cada unidad define
+  el significado de un nombre o su relación con otro; los espacios de equipo,
+  postura o ejecución aclaran esa elección, no son fusiones implícitas adicionales.
+  No se cuentan las 295 opciones como decisiones. Ningún caso quedó sin pregunta.
+- Consolidación: B7 pregunta una sola vez por la máquina de pecho apoyado de
+  R07/R17; B12 pregunta una sola vez por la elevación inclinada de R08/R18.
+  Las relaciones diferentes siguen separadas (p. ej. B8 codos abiertos y B9
+  remo unilateral). Los expedientes con varios nombres ambiguos se desglosan;
+  de ahí que 25 casos originen 37 preguntas, no 25 preguntas artificialmente amplias.
+- Familias compartidas con historial: A2/B13, A4/B21, A5/B23–B25 y A9/B30–B31
+  usan referencias a una descripción única. A confirma si describe registros
+  anteriores; B sólo define el catálogo. No se aplica B a historia por defecto.
+- Prioridad: **0 REQUIRED BEFORE 3B; 48 CAN DEFER** para un lote que excluya
+  cambios dependientes de estas respuestas. No es aprobación de importar las
+  293 propuestas. `blocks_phase_3b=false` distingue el bloqueo global de
+  `blocks_affected_change=true`: antes de activar/vincular esa variante concreta
+  sí hace falta resolverla; otros ejercicios seguros no quedan bloqueados.
+- «Mantener genérico» es una respuesta intencional distinta de «dejar pendiente».
+  En existentes: conservar ID/historial sin mapping específico. En nuevos:
+  registrar intención de familia, sin asumir metadata ni convertirla por defecto
+  en ejercicio ejecutable. Excluir del lote concreto hasta aprobar representación
+  de familias; no fusionar fuentes, historiales o cargas.
+- CSV: una fila por opción, H01–H11 como referencias documentales de los once
+  históricos; R01–R25 conservan la numeración original. `answer` y `answer_details`
+  vacíos. Registrar respuesta literal sólo en la opción elegida y sus aclaraciones;
+  conservar el resto vacío. Dependencias por opción, no obligatorias para elegir
+  genérico/pendiente. Si «Otro», detalles incompletos o respuestas contradictorias
+  dejan dudas, pedir aclaración; nunca interpretar el silencio como aprobación.
+- Verificación: readback 48 decisiones, 11 IDs históricos, 25 casos R cubiertos,
+  opciones genérico/Otro/pendiente y referencias válidas; documentos fuente,
+  datasets y PDF byte-idénticos a `5186968`; diff de producción vacío.
+  `npm test` 602/602 PASS; lint PASS; build app/presentación PASS. La intermitencia
+  de Perfil anterior no reapareció en esta corrida, sin afirmar que esté corregida.
+- Los 33 IDs, las 293 propuestas, UI, D1 y `docs/cliente` permanecen intactos.
+  Próximo paso: enviar el cuestionario y esperar respuestas. No ejecutar Phase 3B.
 
 ## Turno de codex — Landing fiel al producto (2026-09-02)
 
@@ -676,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T03:43:44.702Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Phase 3A.6: Coach Decision Pack sin implementacion
+- **Cambios:** Creados BIBLIOTECA-COACH-DECISION-PACK.md para Santiago y DECISION-MAP.csv interno. 11 casos historicos y 25 casos R revisados: 48 decisiones unicas (11 historicas, 37 nuevas), 0 REQUIRED globales y 48 CAN DEFER excluyendo cambios dependientes. R07/R17 y R08/R18 consolidados sin juntar decisiones distintas; 295 opciones sin responder, generico/Otro/pendiente y efectos explicitos. Handoff documenta conteo y politica de dependencias. Ningun caso sin pregunta; no se alteraron 293 propuestas, datasets, IDs, UI, codigo, D1 ni PDFs.
+- **Verificación:** Readback PASS: 48 preguntas, 11 IDs pendientes, cobertura R01-R25, opciones y dependencias validas, respuestas vacias. Fuentes/datasets/PDF byte-identicos a 5186968; diff produccion vacio; git diff --check PASS. npm test 602/602 PASS; npm run lint PASS; npm run build PASS.
+- **Siguiente:** Enviar cuestionario a Santiago y esperar respuestas. No Phase 3B, no aplicar equivalencias ni mappings automaticamente. Un lote futuro requiere aprobacion expresa y exclusion de cambios pendientes.
+
 
 ### 2026-09-04T03:36:33.219Z | codex | CLAIM
 - **Estado:** active
