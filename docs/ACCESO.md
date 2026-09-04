@@ -6,13 +6,14 @@ El cambio está hecho. Quién autentica qué:
 |---|---|
 | `santiago-fitness-method.pages.dev/access` y `/presentacion` | Público; el primero sólo muestra/consume enlaces válidos y el segundo es la presentación |
 | `santiago-fitness-method.pages.dev/*` | El middleware, con enlace privado. **Sin Cloudflare a la vista.** |
-| `santiago-fitness-method.pages.dev/admin/*` | Cloudflare Access con OTP, sólo el coach |
+| `santiago-fitness-method.pages.dev/admin/*` | Apertura temporal sin OTP hasta la fecha documentada; después, Cloudflare Access |
 | `*.santiago-fitness-method.pages.dev/*` (previews y URLs hash) | Cloudflare Access con OTP; protege despliegues que no son el dominio canónico |
 
-No existe un interruptor de entorno para saltarse el middleware. Fuera de las
-excepciones públicas indicadas, una cookie `sfm_sesion` válida es obligatoria.
-Un despliegue mal configurado falla cerrado: nunca convierte la aplicación en
-pública por una variable antigua. `/sw.js` es una excepción técnica adicional:
+No existe un interruptor de entorno para saltarse el middleware del cliente.
+Fuera de las excepciones públicas indicadas, una cookie `sfm_sesion` válida es
+obligatoria. Un despliegue mal configurado falla cerrado: nunca convierte la
+aplicación ni sus APIs en públicas por una variable antigua. `/sw.js` es una
+excepción técnica adicional:
 solo contiene la migración/autodestrucción del service worker y no datos ni
 secretos.
 
@@ -24,17 +25,28 @@ sólo cuenta si está commiteada. Este malentendido ya costó una prueba fallida
 Si la variable falta, el middleware asume `magic` y cierra. Fallar cerrado es lo
 único aceptable en una puerta.
 
+### Excepción temporal del panel del coach
+
+Para esta ventana operativa el panel `/admin` del hostname canónico puede abrirse
+sin OTP hasta `2026-09-05T20:00:00Z` (UTC). La excepción no afecta `/`, `/access`,
+las APIs, los assets, los ejercicios ni los previews; tampoco crea una sesión de
+cliente. Al vencer, `/admin` vuelve a responder cerrado incluso si alguien
+intenta falsificar la cabecera de Access. Para restaurar el flujo normal antes
+del vencimiento hay que retirar `COACH_ACCESS_TEMPORARY_UNTIL` y volver a añadir
+el destino `/admin` en la aplicación de Cloudflare Access.
+
 ## Cómo entra cada uno
 
 **Cliente** — enlace privado → botón *Entrar* → app. Nunca ve Cloudflare, ni
 escribe correo, ni crea cuenta.
 
-**Coach** — Cloudflare Access con OTP en `/admin`, su consola propia. Desde ahí
-puede listar clientes, abrir su ficha, editar perfil y rutina (días, ejercicios,
-orden, series, rango, descanso y progresión), generar/revocar enlaces y
-*Previsualizar cliente*. La previsualización crea la misma sesión normal que el
-enlace mágico; no existe bypass permanente. `Salir de vista previa` revoca esa
-sesión y vuelve a pedir `/admin/` a Access.
+**Coach** — durante la ventana operativa actual puede entrar directamente a
+`/admin`; al terminar, la ruta vuelve al flujo normal de Cloudflare Access con
+OTP. Desde la consola puede listar clientes, abrir su ficha, editar perfil y
+rutina (días, ejercicios, orden, series, rango, descanso y progresión),
+generar/revocar enlaces y *Previsualizar cliente*. La previsualización crea la
+misma sesión normal que el enlace mágico; no existe bypass permanente. `Salir de
+vista previa` revoca esa sesión y vuelve a pedir `/admin/` a Access.
 
 Nada bajo `/admin` sirve aplicación de cliente. Antes no existía función para esa
 ruta y Cloudflare Pages caía en su reserva de página única: servía la SPA, que

@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T20:10:31.227Z
+- **Última sincronización:** 2026-09-04T20:21:16.758Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-04T20:21:16.759Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Excepción temporal y caducable para que el coach entre sin OTP sólo en /admin del hostname canónico; Cloudflare conserva protegido el comodín de previews y cliente/API/assets siguen cerrados. Vence 2026-09-05T20:00:00Z UTC.
+- **Verificación:** npm test (627/627; una corrida previa intermitente de Perfil y dos posteriores PASS); npm run lint; npm run build; SFM_QA_PORT=8791 npm run test:movil; smoke local canónico /admin 200 sin cabecera, / y APIs/assets 401, /presentacion 200
+- **Siguiente:** Cuando termine la ventana, quitar COACH_ACCESS_TEMPORARY_UNTIL y volver a añadir santiago-fitness-method.pages.dev/admin en Cloudflare Access
+
 
 ### 2026-09-04T20:10:31.227Z | codex | CLAIM
 - **Estado:** active

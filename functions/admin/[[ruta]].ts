@@ -1,8 +1,10 @@
 /**
  * Consola del Coach/Admin, pensada para el móvil.
  *
- * `/admin/*` nunca cae en la SPA del participante. Cloudflare Access es la
- * primera puerta y esta función exige además la cabecera que Access inyecta.
+ * `/admin/*` nunca cae en la SPA del participante. Normalmente Cloudflare
+ * Access es la primera puerta y esta función exige además su cabecera. Hay una
+ * excepción operativa, acotada al hostname canónico y a una fecha de caducidad,
+ * para que el coach pueda trabajar sin OTP durante una ventana controlada.
  *
  * La organización es por pantallas, no por formularios apilados: cada una
  * responde a una sola pregunta y enseña resúmenes antes que campos. El detalle
@@ -22,6 +24,7 @@
  * pierde el contexto.
  */
 
+import { estadoAccesoCoachTemporal } from '../lib/accesoCoachTemporal'
 import { crearInvitacion } from '../lib/invitacion'
 import { crearCabeceraDeCookie, crearSesion, VIDA_DE_SESION } from '../lib/sesion'
 import { clienteQaBloqueado, filtrarClientesQa, qaHabilitado } from '../lib/qa'
@@ -53,6 +56,8 @@ type Entorno = {
   readonly ACCESO: D1Database
   /** "true" sólo en preview y desarrollo. Ver functions/lib/qa.ts. */
   readonly SHOW_QA_CLIENTS?: string
+  /** ISO-8601; excepción sólo para el hostname canónico y hasta ese instante. */
+  readonly COACH_ACCESS_TEMPORARY_UNTIL?: string
 }
 
 const CABECERA_DE_ACCESS = 'Cf-Access-Jwt-Assertion'
@@ -929,7 +934,14 @@ async function atenderGet(url: URL, db: D1Database, mostrarQa: boolean): Promise
 }
 
 export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
-  if (!request.headers.get(CABECERA_DE_ACCESS)) {
+  const accesoTemporal = estadoAccesoCoachTemporal(request, env)
+  const tieneAccess = Boolean(request.headers.get(CABECERA_DE_ACCESS))
+
+  // La excepción temporal ignora Access sólo mientras está activa. Si ya
+  // venció, se cierra incluso ante una cabecera falsificada; para volver al
+  // flujo normal hay que retirar la variable y reactivar la aplicación de
+  // Cloudflare Access.
+  if (accesoTemporal === 'caducado' || (accesoTemporal !== 'activo' && !tieneAccess)) {
     return pagina(
       `${barra('No autorizado', 'Coach / Admin')}
        <div class="tarjeta vacio"><h3>No autorizado</h3>

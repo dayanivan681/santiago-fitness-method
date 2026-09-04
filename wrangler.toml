@@ -3,13 +3,20 @@ compatibility_date = "2026-05-01"
 pages_build_output_dir = "dist"
 
 # La autenticación por enlace privado vive en functions/_middleware.ts. No hay
-# una variable de entorno que pueda saltarse esa puerta: el participante siempre
-# necesita una sesión válida y `/admin` siempre pasa por Cloudflare Access.
+# una variable de entorno que pueda saltarse esa puerta del participante. La
+# única excepción temporal afecta exclusivamente a /admin y está acotada por
+# fecha; el cliente y todos los assets siguen cerrados por el middleware.
 
 [vars]
 # El cliente técnico `dayan-test` sólo se enseña fuera de producción. La fila se
 # conserva en D1 —preview usa la misma base—, sólo se oculta. Ver functions/lib/qa.ts.
 SHOW_QA_CLIENTS = "false"
+
+# Apertura temporal del panel para el coach, sin OTP, sólo en el hostname
+# canónico y hasta este instante UTC. Al vencer, la función vuelve a cerrar la
+# ruta incluso si recibe una cabecera inventada. Para restaurar Access antes,
+# elimina esta variable y vuelve a añadir el destino /admin en Cloudflare.
+COACH_ACCESS_TEMPORARY_UNTIL = "2026-09-05T20:00:00Z"
 
 [[d1_databases]]
 binding = "ACCESO"
@@ -20,6 +27,8 @@ database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
 # cambio en producción. Cloudflare Access sigue delante de ellos.
 [env.preview.vars]
 SHOW_QA_CLIENTS = "true"
+# Nunca abrir el panel de un preview por esta excepción.
+COACH_ACCESS_TEMPORARY_UNTIL = ""
 
 [[env.preview.d1_databases]]
 binding = "ACCESO"
