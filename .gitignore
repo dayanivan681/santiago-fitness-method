@@ -31,3 +31,6 @@ dist-ssr
 # Capturas que dejan las corridas de Maestro
 *.png
 !public/**/*.png
+
+# Material de entrega puntual para diseño: capturas y copias de public/
+entrega-diseno/
