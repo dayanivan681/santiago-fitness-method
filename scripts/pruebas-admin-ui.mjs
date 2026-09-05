@@ -82,8 +82,10 @@ if (!HAY_EJERCICIOS) {
       !cuerpo.includes('cliente_id:') &&
       !cuerpo.includes('Sesiones activas') &&
       !cuerpo.includes('Invitaciones pendientes') &&
-      cuerpo.includes('Buscar clientes') &&
-      cuerpo.includes('Añadir cliente'),
+      cuerpo.includes('Buscar') &&
+      // Crear y editar siguen estando, ahora como acciones de la barra.
+      cuerpo.includes('nuevo=1') &&
+      cuerpo.includes('modo=editar'),
     `status=${status}`,
   )
 }
@@ -93,10 +95,13 @@ if (!HAY_EJERCICIOS) {
   const { status, cuerpo } = await html(`${base}&seccion=programa`)
 
   comprobar(
-    'UI-2', 'El hub abre en Programa, con días y sin campos de ejercicio',
+    'UI-2', 'El detalle del cliente lleva sus días y no abre campos de ejercicio',
     status === 200 &&
-      cuerpo.includes('aria-current="page"') &&
       cuerpo.includes('Upper A') &&
+      // Perfil y Acceso son filas del objeto, no pestañas de una barra inferior.
+      cuerpo.includes("seccion=perfil") &&
+      cuerpo.includes("seccion=acceso") &&
+      !cuerpo.includes('nav-cliente') &&
       !cuerpo.includes('name="series"') &&
       !cuerpo.includes('name="descanso"'),
     `status=${status}`,
@@ -126,7 +131,8 @@ if (HAY_EJERCICIOS) {
     'UI-3B', 'Añadir abre el catálogo actual con búsqueda, sin el select largo',
     completa.status === 200 &&
       completa.cuerpo.includes('Buscar ejercicios') &&
-      completa.cuerpo.includes('33 resultados del catálogo actual') &&
+      // El recuento de resultados era copia de buscador web y desapareció.
+      !completa.cuerpo.includes('resultados del catálogo actual') &&
       completa.cuerpo.includes('value="anadir-slot"') &&
       !completa.cuerpo.includes('<select name="ejercicio"') &&
       filtrada.status === 200 &&
@@ -158,16 +164,23 @@ if (HAY_EJERCICIOS) {
     ...(HAY_EJERCICIOS ? [[`${base}&seccion=programa&dia=1&ejercicio=1`, `dia=1"`]] : []),
     [`${base}&seccion=perfil&grupo=datos`, `seccion=perfil"`],
   ]
+  // La salida no siempre es una flecha: en un modo tarea —editar un ejercicio,
+  // editar un grupo del perfil— es «Cancelar». Lo que se comprueba es a dónde
+  // lleva, que es lo que importa para la jerarquía, no con qué se pinta.
   const revisados = await Promise.all(
     niveles.map(async ([ruta, esperado]) => {
       const { cuerpo } = await html(ruta)
-      const atras = (cuerpo.match(/class="atras" href="([^"]+)"/)?.[1] ?? '').replace(/&amp;/g, '&')
+      const salida =
+        cuerpo.match(/class="atras" href="([^"]+)"/)?.[1] ??
+        cuerpo.match(/class="barra__accion" href="([^"]+)">Cancelar</)?.[1] ??
+        ''
+      const atras = salida.replace(/&amp;/g, '&')
       return { ruta, atras, ok: atras.includes(esperado.replace(/"$/, '')) }
     }),
   )
 
   comprobar(
-    'UI-5', 'Ejercicio → Día → Programa → Clientes: cada atrás sube un nivel',
+    'UI-5', 'Ejercicio → Día → Programa → Clientes: cada salida sube un nivel',
     revisados.every((r) => r.ok),
     revisados.filter((r) => !r.ok).map((r) => `${r.ruta} → ${r.atras}`).join(' | '),
   )
@@ -185,9 +198,9 @@ if (HAY_EJERCICIOS) {
       // En el editor el borrado es un enlace, no un submit inmediato.
       !editor.cuerpo.includes('value="quitar-slot"') &&
       editor.cuerpo.includes('confirmar=quitar') &&
-      // Y sólo la pantalla de confirmación lleva el POST.
+      // Y sólo la hoja de confirmación lleva el POST.
       confirmacion.cuerpo.includes('value="quitar-slot"') &&
-      confirmacion.cuerpo.includes('Sí, quitar'),
+      confirmacion.cuerpo.includes('class="hoja"'),
     'el borrado no está detrás de confirmación',
   )
 }
@@ -302,7 +315,7 @@ if (HAY_EJERCICIOS) {
     comprobar(
       'UI-10', 'Con la programación incompleta el enlace sigue bloqueado',
       acceso.cuerpo.includes('disabled') &&
-        acceso.cuerpo.includes('INCOMPLETE') &&
+        acceso.cuerpo.includes('Incompleta') &&
         intento.status === 409 &&
         restaurado,
       `acceso=${acceso.status} generar=${intento.status} restaurado=${restaurado}`,
@@ -339,13 +352,15 @@ const DESECHABLE = `qa-baja-${Date.now()}`
   const confirmacion = await html(`/admin/?cliente=${DESECHABLE}&confirmar=eliminar`)
 
   comprobar(
-    'UI-12', 'El aspa aparece sólo en modo edición y lleva a confirmar, no a borrar',
+    'UI-12', 'Eliminar aparece sólo en modo edición y lleva a confirmar, no a borrar',
     normal.cuerpo.includes('QA Baja') &&
-      !normal.cuerpo.includes('class="quitar"') &&
-      editando.cuerpo.includes('class="quitar"') &&
-      editando.cuerpo.includes(`confirmar=eliminar`) &&
+      // Fuera del modo edición no hay ningún camino a la baja.
+      !normal.cuerpo.includes('confirmar=eliminar') &&
+      editando.cuerpo.includes('confirmar=eliminar') &&
+      // La fila entera lleva a confirmar: un solo destino por línea.
+      editando.cuerpo.includes('class="fila fila--peligro"') &&
       confirmacion.status === 200 &&
-      confirmacion.cuerpo.includes('¿Eliminar') &&
+      confirmacion.cuerpo.includes('class="hoja"') &&
       confirmacion.cuerpo.includes('eliminar-cliente'),
     `lista=${normal.status} editar=${editando.status} confirmar=${confirmacion.status}`,
   )
@@ -383,6 +398,126 @@ const DESECHABLE = `qa-baja-${Date.now()}`
     'UI-14', 'La sesión que tenía el cliente eliminado deja de abrir la app',
     Boolean(cookie) && puerta.status === 401 && conCookie.status === 401,
     `puerta=${puerta.status} cookie=${Boolean(cookie)} con-cookie=${conCookie.status}`,
+  )
+}
+
+// ---- M1.1 · composición de app, no de página ------------------------------
+//
+// Las pruebas de arriba comprueban la arquitectura de información. Éstas
+// comprueban lo que M1 no logró: que la composición deje de leerse como una web
+// bien adaptada. Son medibles a propósito, porque «se siente como app» no lo es.
+{
+  const pantallas = [
+    ['Clientes', '/admin/'],
+    ['Cliente', `${base}&seccion=programa`],
+    ['Día', `${base}&seccion=programa&dia=1`],
+    ['Editor', `${base}&seccion=programa&dia=1&ejercicio=1`],
+    ['Acceso', `${base}&seccion=acceso`],
+  ]
+  const vistas = await Promise.all(
+    pantallas.map(async ([nombre, ruta]) => ({ nombre, ...(await html(ruta)) })),
+  )
+
+  // Un título que sale en la barra y otra vez debajo es de página web: la barra
+  // dice dónde estás, el título grande dice qué es esto, y no son lo mismo.
+  const duplicados = vistas.filter(({ cuerpo }) => {
+    const enBarra = cuerpo.match(/class="barra__titulo">([^<]+)</)?.[1]?.trim()
+    if (!enBarra) return false
+    const grandes = [...cuerpo.matchAll(/class="(?:titulo|objeto__titulo)">([^<]+)</g)].map((m) => m[1].trim())
+    return grandes.includes(enBarra)
+  })
+
+  comprobar(
+    'M-1', 'Ninguna pantalla repite su título en la barra y en el cuerpo',
+    duplicados.length === 0,
+    duplicados.map((v) => v.nombre).join(', '),
+  )
+
+  // Cuenta de acciones visibles. No es un número mágico: es el techo que
+  // obligó a mover lo secundario a la hoja. Antes Acceso tenía cuatro botones
+  // apilados y el editor dos al final del scroll más uno destructivo.
+  const MAXIMO = 4
+  const cuenta = vistas.map(({ nombre, cuerpo }) => {
+    const botones = (cuerpo.match(/<button\b/g) ?? []).length
+    const acciones = (cuerpo.match(/class="(?:cta|barra__accion)[^"]*"/g) ?? []).length
+    // El submit oculto de la búsqueda no lo ve nadie.
+    const ocultos = (cuerpo.match(/class="visualmente-oculto"/g) ?? []).length
+    return { nombre, total: botones + acciones - ocultos }
+  })
+
+  comprobar(
+    'M-2', `Ninguna pantalla enseña más de ${MAXIMO} acciones a la vez`,
+    cuenta.every((c) => c.total <= MAXIMO),
+    cuenta.map((c) => `${c.nombre}=${c.total}`).join(' '),
+  )
+
+  // El contenedor apilado es el otro delator: tarjeta dentro de tarjeta.
+  comprobar(
+    'M-3', 'No queda ninguna tarjeta anidada en ninguna pantalla',
+    vistas.every(({ cuerpo }) => !cuerpo.includes('class="tarjeta')),
+    vistas.filter((v) => v.cuerpo.includes('class="tarjeta')).map((v) => v.nombre).join(', '),
+  )
+}
+
+// ---- M-4 · las acciones secundarias viven en una hoja ---------------------
+{
+  const detalle = await html(`${base}&seccion=programa`)
+  const conHoja = await html(`${base}&seccion=programa&hoja=acciones`)
+
+  comprobar(
+    'M-4', 'La hoja de acciones es una ruta y guarda lo secundario y lo destructivo',
+    // Sin la hoja, el detalle no ofrece ni revocar ni eliminar.
+    !detalle.cuerpo.includes('revocar-enlaces') &&
+      !detalle.cuerpo.includes('confirmar=eliminar') &&
+      detalle.cuerpo.includes('hoja=acciones') &&
+      // Con la hoja, están las dos y la pantalla de debajo sigue ahí.
+      conHoja.cuerpo.includes('class="hoja"') &&
+      conHoja.cuerpo.includes('confirmar=eliminar') &&
+      conHoja.cuerpo.includes('Upper A'),
+    `detalle=${detalle.status} hoja=${conHoja.status}`,
+  )
+}
+
+// ---- M-5 · cambiar el ejercicio de un slot sin desplegables ---------------
+if (HAY_EJERCICIOS) {
+  const antes = await (await pedir(`/admin/api/clientes/${CLIENTE}`)).json()
+  const original = antes.routines.find((r) => r.orden === 1)?.slots[0]
+  const picker = await html(`${base}&seccion=programa&dia=1&ejercicio=1&modo=cambiar`)
+
+  const otro = picker.cuerpo.includes('Sentadilla con barra')
+  const cambio = await post({
+    accion: 'cambiar-ejercicio',
+    cliente_id: CLIENTE,
+    dia: '1',
+    orden: '1',
+    ejercicio: 'sentadilla-barra',
+  })
+  const despues = await (await pedir(`/admin/api/clientes/${CLIENTE}`)).json()
+  const slot = despues.routines.find((r) => r.orden === 1)?.slots[0]
+
+  // Se restaura: esta suite no debe dejar cambiada la programación de nadie.
+  await post({
+    accion: 'cambiar-ejercicio',
+    cliente_id: CLIENTE,
+    dia: '1',
+    orden: '1',
+    ejercicio: original.ejercicioId,
+  })
+  const final = await (await pedir(`/admin/api/clientes/${CLIENTE}`)).json()
+  const restaurado = final.routines.find((r) => r.orden === 1)?.slots[0]
+
+  comprobar(
+    'M-5', 'El ejercicio se cambia desde la biblioteca buscable, conservando la prescripción',
+    picker.status === 200 &&
+      otro &&
+      cambio.status === 303 &&
+      slot.ejercicioId === 'sentadilla-barra' &&
+      // Cambiar el ejercicio no toca series, reps ni descanso.
+      slot.seriesObjetivo === original.seriesObjetivo &&
+      slot.repMin === original.repMin &&
+      slot.descansoSegundos === original.descansoSegundos &&
+      restaurado.ejercicioId === original.ejercicioId,
+    `picker=${picker.status} cambio=${cambio.status} ahora=${slot?.ejercicioId} restaurado=${restaurado?.ejercicioId}`,
   )
 }
 

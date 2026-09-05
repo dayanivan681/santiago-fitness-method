@@ -75,7 +75,7 @@ try {
     const html = await root.text()
     const nested = await pedir('/admin/ruta-desconocida', { headers: ACCESS })
     const nestedHtml = await nested.text()
-    comprobar('COACH-1', 'Consola admin y ruta anidada no sirven la SPA', root.status === 200 && html.includes('>Clientes</h1>') && html.includes('Buscar clientes') && html.includes('Santiago') && html.includes('Cliente de prueba 1') && nested.status === 404 && !nestedHtml.includes('assets/index-'), `root=${root.status} nested=${nested.status}`)
+    comprobar('COACH-1', 'Consola admin y ruta anidada no sirven la SPA', root.status === 200 && html.includes('class="titulo">Clientes<') && html.includes('Buscar') && html.includes('Santiago') && html.includes('Cliente de prueba 1') && nested.status === 404 && !nestedHtml.includes('assets/index-'), `root=${root.status} nested=${nested.status}`)
   }
 
   {
@@ -92,8 +92,12 @@ try {
       'PROFILE-1',
       'Admin marca los cinco placeholders de Santiago',
       santiago.status === 200 &&
-        html.includes('Datos del perfil pendientes de confirmar') &&
-        ['Edad: Pendiente de confirmar', 'Estatura: Pendiente de confirmar', 'Peso: Pendiente de confirmar', 'Objetivo: Pendiente de confirmar', 'Notas del coach: Pendiente de confirmar'].every((texto) => html.includes(texto)),
+        // Los cinco campos sin confirmar se agrupan en tres filas —datos
+        // personales reúne edad, estatura y peso—, cada una con su marca, y el
+        // pie explica de dónde vienen. La tarjeta de alerta que repetía la
+        // lista campo por campo desapareció por redundante.
+        (html.match(/class="pendiente">Sin confirmar</g) ?? []).length === 3 &&
+        html.includes('vienen de la semilla inicial'),
       `status=${santiago.status}`,
     )
   }
@@ -157,7 +161,8 @@ try {
       'READY-1',
       'INCOMPLETE identifica el día y deshabilita/bloquea invitaciones',
       detalle.status === 200 &&
-        detalleHtml.includes('INCOMPLETE') &&
+        detalleHtml.includes('Incompleta') &&
+        // Sigue diciendo QUÉ día falta: sin eso el bloqueo sería mudo.
         detalleHtml.includes('Upper B: 4 ejercicios') &&
         detalleHtml.includes('disabled') &&
         bloqueada.status === 409 &&
@@ -169,10 +174,20 @@ try {
     sql(`UPDATE rutinas SET slots_json='${restaurada}', actualizado_en=unixepoch() WHERE cliente_id='dayan-test' AND orden=3;`)
     const lista = await pedir('/admin/?cliente=dayan-test&seccion=acceso', { headers: ACCESS })
     const listaHtml = await lista.text()
+    // La insignia READY vive en el detalle del cliente, que es donde se mira.
+    const ficha = await pedir('/admin/?cliente=dayan-test&seccion=programa', { headers: ACCESS })
+    const fichaHtml = await ficha.text()
     comprobar(
       'READY-2',
       'READY se recupera al completar 4 días de 5–8 ejercicios',
-      lista.status === 200 && listaHtml.includes('insignia--ready">READY') && listaHtml.includes('Upper A: 5') && listaHtml.includes('Lower B: 5'),
+      // El reparto por días vive ahora en el detalle del cliente, donde cada
+      // día lista sus ejercicios; Acceso sólo dice si la programación está lista.
+      lista.status === 200 &&
+        listaHtml.includes('Lista') &&
+        // El botón bloqueado se identifica por su motivo, no por la palabra
+        // «disabled»: ésa también aparece en el CSS incrustado de la página.
+        !listaHtml.includes('aria-describedby="motivo-bloqueo"') &&
+        fichaHtml.includes('insignia--ready">READY'),
       `status=${lista.status}`,
     )
   }
@@ -180,7 +195,7 @@ try {
   const link = await post({ accion: 'generar-enlace', cliente_id: 'dayan-test' })
   const linkHtml = await link.text()
   const revoke = await post({ accion: 'revocar-enlaces', cliente_id: 'dayan-test' })
-  comprobar('COACH-3', 'Genera y revoca enlaces del cliente QA', link.status === 200 && linkHtml.includes('Enlace de un solo uso listo') && revoke.status === 303, `link=${link.status} revoke=${revoke.status}`)
+  comprobar('COACH-3', 'Genera y revoca enlaces del cliente QA', link.status === 200 && linkHtml.includes('Enlace de un solo uso') && revoke.status === 303, `link=${link.status} revoke=${revoke.status}`)
 
   const antesSesiones = Number(sql("SELECT COUNT(*) AS n FROM sesiones WHERE cliente_id='dayan-test' AND revocada_en IS NULL AND expira_en > unixepoch();")[0].results[0].n)
   const preview = await post({ accion: 'previsualizar', cliente_id: 'dayan-test' })

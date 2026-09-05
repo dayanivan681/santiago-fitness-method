@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-05T03:25:10.629Z
+- **Última sincronización:** 2026-09-05T03:58:06.711Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-05T03:58:06.712Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Segunda pasada del Admin, sobre composicion y no sobre breakpoints. Hoja de estilos unificada: la version anterior eran la base original mas un bloque M1 sobrescribiendola, y esa pelea era parte del problema. Fuera el kicker de marca de cada barra, fuera .tarjeta (contenedor que se anidaba), fuera el contenedor centrado en movil. Un unico contenedor, .grupo, con filas dentro y separadores finos. El detalle del cliente pasa de tres pestanas en barra inferior --dentro del detalle, mientras la raiz no tenia ninguna-- a una pantalla de objeto con dos grupos y una sola accion visible; lo secundario y lo destructivo viven en una hoja inferior que es una ruta (?hoja=acciones), asi que 'atras' la cierra. El editor de ejercicio deja de ser un formulario: modo tarea con Cancelar/Guardar en la barra y parametros en filas con el valor a la derecha; el select de 33 opciones se sustituye por la misma biblioteca buscable que se usa para anadir (accion nueva cambiar-ejercicio, conserva la prescripcion). Busqueda sin boton de lupa aparte. Transiciones de navegacion entre documentos y estado pulsado en cada fila. Acciones visibles por pantalla: 1 a 3
+- **Verificación:** npm test 642/642 (25 en consola.test.ts, reescrita); lint 0; build OK; admin-ui 20/20 con dayan-test y con santiago (M-1..M-5 nuevas); acceso 38/38; roles 11/11; qa 13/13; Maestro movil 22/22. QA visual a 320, 390, 430, 768 y 1024: sin scroll horizontal, 0 elementos fuera de marco, ningun control por debajo de 44px. Corregido un fallo propio: .marco con animation-fill-mode both conservaba una matriz identidad y se volvia el bloque contenedor de la hoja fixed, que salia recortada
+- **Siguiente:** M2 Cliente. Queda fuera a proposito el retorno persistente de 'Probar como cliente' (seccion 14 del encargo): la banda 'Vista de Santiago / Volver al Coach' vive en la app del cliente, que esta fase no toca. El ida y vuelta funciona: previsualizar 303 a /, y /salir?volver=admin devuelve a /admin/
+
 
 ### 2026-09-05T03:25:10.629Z | claude-code | CLAIM
 - **Estado:** active
