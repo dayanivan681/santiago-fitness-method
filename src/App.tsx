@@ -119,7 +119,13 @@ export function App() {
     // descanso no se detiene porque el participante mire la biblioteca entre
     // serie y serie. Al colgar de App, cambiar de pestaña no lo desmonta.
     <ProveedorDescanso>
-    <div className="app">
+    <div className={vistaPrevia ? 'app app--vista-previa' : 'app'}>
+      {vistaPrevia && (
+        <aside className="vista-previa" aria-label="Vista previa del cliente">
+          <span>Vista previa</span>
+          <a href="/salir?volver=admin">Volver al Coach</a>
+        </aside>
+      )}
       {seccion === 'hoy' && (
         <EntrenamientoHoy memoriaDia={diaDeHoy} memoriaAbierta={ejercicioAbierto} />
       )}

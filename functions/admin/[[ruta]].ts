@@ -14,6 +14,7 @@
  *   /admin/?modo=editar                            Quitar clientes de la lista
  *   /admin/?cliente=X&seccion=programa             ¿Qué quiero gestionar?
  *   …&seccion=programa&dia=N                       ¿Qué día?
+ *   …&seccion=programa&dia=N&modo=anadir            ¿Qué ejercicio añado?
  *   …&seccion=programa&dia=N&ejercicio=O           ¿Qué ejercicio?
  *   …&seccion=perfil[&grupo=G]                     ¿Qué datos del cliente?
  *   …&seccion=acceso                               ¿Cómo entra este cliente?
@@ -123,6 +124,10 @@ function nombreEjercicio(id: string): string {
   return CATALOGO_EJERCICIOS.find((ejercicio) => ejercicio.id === id)?.nombre ?? id
 }
 
+function normalizarBusqueda(valor: string): string {
+  return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('es')
+}
+
 function minutos(segundos: number): string {
   const minuto = Math.floor(segundos / 60)
   const resto = segundos % 60
@@ -153,6 +158,7 @@ function ruta(params: {
   confirmar?: string
   nuevo?: boolean
   aviso?: string
+  q?: string
 }): string {
   const busqueda = new URLSearchParams()
   if (params.cliente) busqueda.set('cliente', params.cliente)
@@ -164,8 +170,27 @@ function ruta(params: {
   if (params.confirmar) busqueda.set('confirmar', params.confirmar)
   if (params.nuevo) busqueda.set('nuevo', '1')
   if (params.aviso) busqueda.set('aviso', params.aviso)
+  if (params.q) busqueda.set('q', params.q)
   const cadena = busqueda.toString()
   return cadena ? `/admin/?${cadena}` : '/admin/'
+}
+
+type NombreIcono = 'volver' | 'chevron' | 'buscar' | 'sumar' | 'programa' | 'perfil' | 'acceso' | 'arriba' | 'abajo'
+
+/** Iconos SVG propios: consistentes, accesibles por su etiqueta contenedora y sin fuentes propietarias. */
+function icono(nombre: NombreIcono): string {
+  const trazos: Readonly<Record<NombreIcono, string>> = {
+    volver: '<path d="M19 12H5m6-6-6 6 6 6"/>',
+    chevron: '<path d="m9 6 6 6-6 6"/>',
+    buscar: '<circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/>',
+    sumar: '<path d="M12 5v14M5 12h14"/>',
+    programa: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/>',
+    perfil: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-4 3-6 7-6s6.3 2 7 6"/>',
+    acceso: '<path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/>',
+    arriba: '<path d="m6 15 6-6 6 6"/>',
+    abajo: '<path d="m6 9 6 6 6-6"/>',
+  }
+  return `<svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${trazos[nombre]}</svg>`
 }
 
 // ── plantilla ───────────────────────────────────────────────────────────────
@@ -176,6 +201,7 @@ function pagina(cuerpo: string, estado = 200): Response {
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b0c0d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0c0d'/%3E%3Cpath d='M8 16h16M16 8v16' stroke='%23e5352b' stroke-width='3'/%3E%3C/svg%3E">
 <title>Coach/Admin · Santiago Fitness Method</title>
 <style>
  *{box-sizing:border-box}
@@ -300,6 +326,107 @@ function pagina(cuerpo: string, estado = 200): Response {
    .cta{max-width:320px}
  }
  @media(prefers-reduced-motion:reduce){button:active,.fila:active{transform:none}}
+ /* Phase M1: lenguaje de producto móvil. Conserva la estructura SSR y reduce
+    el chrome visual sin ocultar desbordes ni alterar la lógica. */
+ :root{--superficie:#121416;--elevada:#181a1d;--s1:4px;--s2:8px;--s3:12px;
+   --s4:16px;--s5:24px;--s6:32px;--tenue:#a2a3a5;--apagado:#717276}
+ html{background:var(--fondo);color-scheme:dark}
+ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+   line-height:1.45}
+ a,button{transition:opacity 180ms ease,transform 180ms ease,background-color 180ms ease}
+ .marco{padding-bottom:calc(104px + var(--abajo))}
+ .icono{display:block;width:22px;height:22px;fill:none;stroke:currentColor;
+   stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ .barra{z-index:10;background:rgba(11,12,13,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+   margin-bottom:var(--s5);padding-top:calc(var(--s2) + var(--arriba));padding-bottom:var(--s2)}
+ .barra__fila{gap:var(--s3);min-height:52px}
+ .barra__texto{min-width:0;flex:1}
+ .atras,.barra__accion{display:inline-flex;align-items:center;justify-content:center;
+   min-width:var(--toque);min-height:var(--toque);color:var(--texto);text-decoration:none;flex:none}
+ .barra__accion{gap:6px;margin-left:auto;margin-right:-8px;padding:0 8px;color:var(--rojo);font-size:15px;font-weight:650}
+ .barra__titulo{font-weight:720;font-size:21px;letter-spacing:-.015em;text-transform:none}
+ .barra__contexto{letter-spacing:.11em;margin:0 0 1px}
+ h2{font-size:13px;letter-spacing:.1em;font-weight:650;margin:var(--s5) 0 var(--s2)}
+ h3{letter-spacing:-.01em}
+ .cinta{display:none}
+ .objeto{padding:0 0 var(--s4);border-bottom:1px solid var(--borde);margin-bottom:var(--s4)}
+ .objeto__titulo{font-size:22px;line-height:1.2;letter-spacing:-.02em;margin:0 0 var(--s1)}
+ .objeto__detalle{color:var(--tenue);font-size:14px;margin:0}
+ .resumen-cabecera{display:flex;align-items:center;gap:var(--s3);min-height:52px;
+   padding:0 0 var(--s3);border-bottom:1px solid var(--borde);margin-bottom:var(--s4)}
+ .resumen-cabecera>span:first-child{flex:1;min-width:0}
+ .grupo-lista{border-top:1px solid var(--borde);border-bottom:1px solid var(--borde)}
+ .fila{min-height:68px;padding:var(--s3) var(--s1);margin:0;background:transparent;
+   border:0;border-bottom:1px solid var(--borde);border-radius:0;font:inherit;cursor:pointer}
+ .grupo-lista>.fila:last-child{border-bottom:0}
+ .grupo-lista>form:last-child .fila{border-bottom:0}
+ .fila__titulo{font-weight:650;line-height:1.28}
+ .fila__orden{display:flex;align-items:center;justify-content:center;width:28px;height:28px;
+   border-radius:9px;background:var(--superficie);font-size:12px;color:var(--tenue)}
+ .fila__flecha{display:flex;align-items:center;justify-content:center;font-size:inherit}
+ .fila--seleccion{min-height:60px}
+ .fila--seleccion .fila__flecha{width:var(--toque);height:var(--toque);
+   border:1px solid var(--borde-fuerte);border-radius:50%;color:var(--rojo)}
+ .insignia{padding:5px 9px;font-weight:750;letter-spacing:.09em}
+ .nav-cliente{position:fixed;z-index:12;left:50%;bottom:0;transform:translateX(-50%);
+   display:flex;width:100%;max-width:560px;padding:var(--s2) calc(var(--s4) + var(--lado-der))
+   calc(var(--s2) + var(--abajo)) calc(var(--s4) + var(--lado-izq));border-top:1px solid var(--borde);
+   background:rgba(11,12,13,.97);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+ .nav-cliente a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+   gap:2px;min-height:52px;color:var(--apagado);text-decoration:none;font-size:11px;font-weight:600}
+ .nav-cliente a[aria-current="page"]{color:var(--rojo)}
+ .nav-cliente .icono{width:21px;height:21px}
+ .tarjeta{background:var(--superficie);padding:var(--s4);margin-bottom:var(--s3)}
+ .cta,button.cta{gap:var(--s2);min-height:48px;padding:var(--s3) var(--s4);
+   font-size:14px;font-weight:720;letter-spacing:.035em;text-transform:none;margin-top:var(--s4)}
+ .cta--texto,button.cta--texto{background:transparent;color:var(--tenue);border:0}
+ button:active:not(:disabled),.fila:active{transform:scale(.985)}
+ .busqueda{display:flex;align-items:center;gap:var(--s2);margin:0 0 var(--s4)}
+ .busqueda__campo{position:relative;flex:1;min-width:0}
+ .busqueda__campo .icono{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+   color:var(--apagado);pointer-events:none}
+ .busqueda input{padding-left:44px}
+ .busqueda button{display:flex;align-items:center;justify-content:center;flex:none;width:var(--toque);
+   height:var(--toque);padding:0;border-radius:11px;border:1px solid var(--borde-fuerte);
+   background:var(--superficie);color:var(--texto);font:inherit;cursor:pointer}
+ .enlace-texto{display:inline-flex;align-items:center;min-height:var(--toque);
+   color:var(--tenue);text-decoration:none;font-size:14px}
+ .campo{margin-bottom:var(--s4)}
+ .campo span,.etiqueta{letter-spacing:.08em}
+ input,select,textarea{min-height:48px;background:var(--superficie);border-radius:11px;
+   padding:12px 13px}
+ input::placeholder{color:var(--apagado)}
+ textarea{min-height:112px}
+ .pareja{gap:var(--s3)}
+ .acciones-formulario{position:sticky;z-index:7;bottom:0;display:grid;
+   grid-template-columns:minmax(0,1fr) minmax(0,1.55fr);gap:var(--s2);
+   margin:var(--s5) calc(-1 * var(--s4)) 0;padding:var(--s3) var(--s4) calc(var(--s3) + var(--abajo));
+   background:rgba(11,12,13,.97);border-top:1px solid var(--borde);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+ .acciones-formulario .cta{margin:0;max-width:none}
+ .quitar,.boton-icono{display:inline-flex;align-items:center;justify-content:center;flex:none;
+   width:var(--toque);height:var(--toque);padding:0;margin:0;border-radius:11px;
+   background:transparent;border:1px solid var(--borde-fuerte);color:var(--texto);
+   font:inherit;line-height:1;cursor:pointer;text-decoration:none}
+ .quitar{border-color:rgba(229,53,43,.5);color:#ffaaa4;font-size:22px}
+ .acciones-lista{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-top:var(--s3)}
+ @media(min-width:760px){
+   .marco{padding-bottom:104px}
+   .rejilla-dias{column-gap:var(--s5);gap:0;border:0}
+   .rejilla-dias>*{border-top:1px solid var(--borde)}
+   .rejilla-dias>.fila:nth-last-child(-n+2){border-bottom:1px solid var(--borde)}
+   .nav-cliente{max-width:820px;padding-left:var(--s5);padding-right:var(--s5)}
+   .acciones-formulario{margin-left:0;margin-right:0;border:1px solid var(--borde);
+     border-radius:14px;bottom:var(--s4);padding:var(--s3)}
+ }
+ @media(max-width:350px){
+   .marco{padding-left:calc(var(--s3) + var(--lado-izq));padding-right:calc(var(--s3) + var(--lado-der))}
+   .barra{margin-left:calc(-1 * (var(--s3) + var(--lado-izq)));margin-right:calc(-1 * (var(--s3) + var(--lado-der)))}
+   .acciones-formulario{position:static;margin-left:calc(-1 * var(--s3));margin-right:calc(-1 * var(--s3));padding-left:var(--s3);padding-right:var(--s3)}
+   .pareja{grid-template-columns:minmax(0,1fr)}
+   .fila__detalle{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+ }
+ @media(prefers-reduced-motion:reduce){
+   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style></head><body><main class="marco">${cuerpo}</main></body></html>`,
     {
       status: estado,
@@ -315,13 +442,28 @@ function pagina(cuerpo: string, estado = 200): Response {
  * vuelta es el mismo se haya llegado como se haya llegado: ejercicio → día →
  * programa → clientes.
  */
-function barra(titulo: string, contexto: string, atras?: string): string {
+function barra(titulo: string, contexto: string, atras?: string, accion = ''): string {
   const volver = atras
-    ? `<a class="atras" href="${escapar(atras)}" aria-label="Volver">←</a>`
+    ? `<a class="atras" href="${escapar(atras)}" aria-label="Volver">${icono('volver')}</a>`
     : ''
   return `<header class="barra"><div class="barra__fila">${volver}
-    <div style="min-width:0"><p class="barra__contexto">${escapar(contexto)}</p>
-    <h1 class="barra__titulo">${escapar(titulo)}</h1></div></div></header>`
+    <div class="barra__texto"><p class="barra__contexto">${escapar(contexto)}</p>
+    <h1 class="barra__titulo">${escapar(titulo)}</h1></div>${accion}</div></header>`
+}
+
+function flecha(): string {
+  return `<span class="fila__flecha" aria-hidden="true">${icono('chevron')}</span>`
+}
+
+function formularioBusqueda(valor: string, ocultos: Readonly<Record<string, string>>, etiqueta: string): string {
+  const campos = Object.entries(ocultos)
+    .map(([nombre, contenido]) => `<input type="hidden" name="${escapar(nombre)}" value="${escapar(contenido)}">`)
+    .join('')
+  return `<form class="busqueda" method="GET" action="/admin/" role="search">
+    ${campos}<label class="busqueda__campo"><span class="etiqueta" style="position:absolute;clip:rect(0 0 0 0)">${escapar(etiqueta)}</span>
+    ${icono('buscar')}<input type="search" name="q" value="${escapar(valor)}" placeholder="${escapar(etiqueta)}"
+      autocomplete="off" enterkeyhint="search" aria-label="${escapar(etiqueta)}"></label>
+    <button type="submit" aria-label="Buscar">${icono('buscar')}</button></form>`
 }
 
 function avisoDe(mensaje: string | null): string {
@@ -373,10 +515,15 @@ async function pantallaClientes(
   mostrarQa: boolean,
   aviso: string | null,
   editando: boolean,
+  consulta: string,
 ): Promise<Response> {
   // El filtro va en el servidor: esconderlo con CSS dejaría el cliente técnico
   // dentro del HTML que se manda al navegador.
-  const perfiles = filtrarClientesQa(await listarPerfiles(db), mostrarQa)
+  const visibles = filtrarClientesQa(await listarPerfiles(db), mostrarQa)
+  const termino = normalizarBusqueda(consulta)
+  const perfiles = termino
+    ? visibles.filter((perfil) => normalizarBusqueda(perfil.nombre).includes(termino))
+    : visibles
 
   const filas = await Promise.all(
     perfiles.map(async (perfil) => {
@@ -397,31 +544,36 @@ async function pantallaClientes(
       return `<a class="fila" href="${escapar(ruta({ cliente: perfil.id, seccion: 'programa' }))}">
         <span class="fila__cuerpo"><span class="fila__titulo">${escapar(perfil.nombre)}</span>
         <span class="fila__detalle">${escapar(resumenPrograma(estado))}</span></span>
-        ${insignia(estado.ready)}<span class="fila__flecha" aria-hidden="true">›</span></a>`
+        ${insignia(estado.ready)}${flecha()}</a>`
     }),
   )
 
   const lista = filas.length
-    ? filas.join('')
-    : `<div class="tarjeta vacio"><h3>Todavía no hay clientes</h3>
-       <p>Crea el primero para empezar a programarle sus días.</p></div>`
+    ? `<div class="grupo-lista">${filas.join('')}</div>`
+    : consulta
+      ? `<div class="vacio"><h3>Sin resultados</h3><p>No encontramos un cliente con ese nombre.</p></div>`
+      : `<div class="vacio"><h3>Todavía no hay clientes</h3>
+         <p>Crea el primero para empezar a programarle sus días.</p></div>`
 
   // Mismo gesto que reordenar un día: un modo que se entra y se sale, en vez de
   // un botón de borrar siempre presente al lado del nombre.
-  const editar = filas.length
+  const editar = visibles.length
     ? editando
-      ? `<a class="cta cta--suave" href="${escapar(ruta({}))}">Listo</a>`
-      : `<a class="cta cta--suave" href="${escapar(ruta({ modo: 'editar' }))}">Editar lista</a>`
+      ? `<a class="enlace-texto" href="${escapar(ruta({}))}">Terminar edición</a>`
+      : `<a class="enlace-texto" href="${escapar(ruta({ modo: 'editar' }))}">Editar lista</a>`
     : ''
 
+  const accion = editando
+    ? `<a class="barra__accion" href="${escapar(ruta({}))}">Listo</a>`
+    : `<a class="barra__accion" href="${escapar(ruta({ nuevo: true }))}" aria-label="Crear cliente">${icono('sumar')}</a>`
+
   return pagina(
-    `${barra('Coach / Admin', 'Santiago Fitness Method')}
-     <div class="cinta"></div>
+    `${barra('Clientes', 'Coach', undefined, accion)}
      ${avisoDe(aviso)}
-     <h2>Clientes</h2>
+     ${editando ? '' : formularioBusqueda(consulta, {}, 'Buscar clientes')}
      ${editando ? '<p>Toca × para quitar a alguien de la lista.</p>' : ''}
      ${lista}
-     ${editando ? editar : `<a class="cta" href="${escapar(ruta({ nuevo: true }))}">+ Cliente</a>${editar}`}`,
+     <div class="acciones-lista">${editar}${editando ? '' : `<a class="enlace-texto" href="${escapar(ruta({ nuevo: true }))}">${icono('sumar')} Añadir cliente</a>`}</div>`,
   )
 }
 
@@ -465,13 +617,16 @@ function pantallaNuevoCliente(error = ''): Response {
      <form method="POST">
        <input type="hidden" name="accion" value="crear-cliente">
        <label class="campo"><span>Nombre</span>
-         <input name="nombre" required autocomplete="off" autocapitalize="words"></label>
+         <input name="nombre" required autocomplete="name" autocapitalize="words" enterkeyhint="next"></label>
        <label class="campo"><span>Identificador</span>
          <input name="cliente_id" required pattern="[a-z0-9][a-z0-9_-]{1,40}"
            autocomplete="off" autocapitalize="none" spellcheck="false"
-           aria-describedby="ayuda-id"></label>
+           enterkeyhint="done" aria-describedby="ayuda-id"></label>
        <p id="ayuda-id">Sólo minúsculas, números y guiones. No se puede cambiar después.</p>
-       <button type="submit" class="cta">Crear cliente</button>
+       <div class="acciones-formulario">
+         <a class="cta cta--texto" href="${escapar(ruta({}))}">Cancelar</a>
+         <button type="submit" class="cta">Crear cliente</button>
+       </div>
      </form>`,
     error ? 400 : 200,
   )
@@ -480,15 +635,15 @@ function pantallaNuevoCliente(error = ''): Response {
 // ── pantalla: hub del cliente ───────────────────────────────────────────────
 
 function navegacionCliente(clienteId: string, seccion: Seccion): string {
-  const enlaces: readonly [Seccion, string][] = [
-    ['programa', 'Programa'],
-    ['perfil', 'Perfil'],
-    ['acceso', 'Acceso'],
+  const enlaces: readonly [Seccion, string, NombreIcono][] = [
+    ['programa', 'Programa', 'programa'],
+    ['perfil', 'Perfil', 'perfil'],
+    ['acceso', 'Acceso', 'acceso'],
   ]
-  return `<nav class="segmentado" aria-label="Secciones del cliente">${enlaces
+  return `<nav class="nav-cliente" aria-label="Secciones del cliente">${enlaces
     .map(
-      ([id, etiqueta]) =>
-        `<a href="${escapar(ruta({ cliente: clienteId, seccion: id }))}"${seccion === id ? ' aria-current="page"' : ''}>${etiqueta}</a>`,
+      ([id, etiqueta, nombreIcono]) =>
+        `<a href="${escapar(ruta({ cliente: clienteId, seccion: id }))}"${seccion === id ? ' aria-current="page"' : ''}>${icono(nombreIcono)}<span>${etiqueta}</span></a>`,
     )
     .join('')}</nav>`
 }
@@ -502,12 +657,12 @@ function seccionPrograma(perfil: PerfilCloud, rutinas: readonly RutinaCloud[], e
         <span class="fila__cuerpo"><span class="fila__titulo">${escapar(rutina.nombre)}</span>
         <span class="fila__detalle">${rutina.slots.length} ejercicios${previa ? ` · ${escapar(previa)}` : ''}</span></span>
         ${diaEstado && !diaEstado.completo ? '<span class="insignia insignia--incompleta">INCOMPLETE</span>' : ''}
-        <span class="fila__flecha" aria-hidden="true">›</span></a>`
+        ${flecha()}</a>`
     })
     .join('')
 
   return `<h2>Programa</h2>
-    <div class="rejilla-dias">${dias || '<p>No hay días configurados.</p>'}</div>`
+    <div class="grupo-lista rejilla-dias">${dias || '<p>No hay días configurados.</p>'}</div>`
 }
 
 function seccionPerfil(perfil: PerfilCloud, pendientes: readonly string[]): string {
@@ -531,7 +686,7 @@ function seccionPerfil(perfil: PerfilCloud, pendientes: readonly string[]): stri
       ([id, titulo, valor, pendiente]) => `<a class="fila" href="${escapar(ruta({ cliente: perfil.id, seccion: 'perfil', grupo: id }))}">
       <span class="fila__cuerpo"><span class="fila__titulo">${escapar(titulo)}${pendiente ? '<span class="pendiente">Sin confirmar</span>' : ''}</span>
       <span class="fila__detalle">${escapar(valor)}</span></span>
-      <span class="fila__flecha" aria-hidden="true">›</span></a>`,
+      ${flecha()}</a>`,
     )
     .join('')
 
@@ -543,7 +698,7 @@ function seccionPerfil(perfil: PerfilCloud, pendientes: readonly string[]): stri
          .join('')}</ul></div>`
     : ''
 
-  return `<h2>Perfil</h2>${avisoPendiente}${filas}`
+  return `<h2>Perfil</h2>${avisoPendiente}<div class="grupo-lista">${filas}</div>`
 }
 
 const NOMBRE_CAMPO_PENDIENTE: Readonly<Record<string, string>> = {
@@ -595,17 +750,17 @@ function seccionAcceso(
     : ''
 
   return `<h2>Acceso</h2>
-    <div class="tarjeta"><h3>${escapar(situacion)}</h3>
-      <p>Programación: ${estado.ready ? 'lista' : 'incompleta'}.</p>${insignia(estado.ready)}${reparto}</div>
+    <section class="tarjeta"><h3>${escapar(situacion)}</h3>
+      <p>Programación: ${estado.ready ? 'lista' : 'incompleta'}.</p>${insignia(estado.ready)}${reparto}</section>
     ${enlaceNuevo}
     ${generar}
     <div class="subordinada">
       <h2>Vista previa</h2>
-      <div class="tarjeta"><h3>Ver como ${escapar(perfil.nombre)}</h3>
+      <section class="tarjeta"><h3>Probar como cliente</h3>
         <p>Mira exactamente lo que verá este cliente.</p>
         <form method="POST"><input type="hidden" name="accion" value="previsualizar">
         <input type="hidden" name="cliente_id" value="${escapar(perfil.id)}">
-        <button type="submit" class="cta cta--suave">Ver como ${escapar(perfil.nombre)}</button></form></div>
+        <button type="submit" class="cta cta--suave">Probar como ${escapar(perfil.nombre)}</button></form></section>
       ${revocar}
     </div>`
 }
@@ -630,16 +785,53 @@ async function pantallaHub(
 
   return pagina(
     `${barra(perfil.nombre, 'Cliente', ruta({}))}
-     <div class="tarjeta" style="display:flex;align-items:center;gap:12px">
-       <span style="flex:1">${escapar(resumenPrograma(estado))}</span>${insignia(estado.ready)}</div>
-     ${navegacionCliente(perfil.id, seccion)}
+     <div class="resumen-cabecera"><span>${escapar(resumenPrograma(estado))}</span>${insignia(estado.ready)}</div>
      ${avisoDe(aviso)}
-     ${cuerpo}`,
+     ${cuerpo}
+     ${navegacionCliente(perfil.id, seccion)}`,
     estadoHttp,
   )
 }
 
 // ── pantalla: día ───────────────────────────────────────────────────────────
+
+function pantallaBiblioteca(perfil: PerfilCloud, rutina: RutinaCloud, consulta: string): Response {
+  const volver = ruta({ cliente: perfil.id, seccion: 'programa', dia: rutina.orden })
+  const termino = normalizarBusqueda(consulta)
+  const resultados = termino
+    ? CATALOGO_EJERCICIOS.filter((ejercicio) => normalizarBusqueda(ejercicio.nombre).includes(termino))
+    : CATALOGO_EJERCICIOS
+
+  const filas = resultados
+    .map(
+      (ejercicio) => `<form method="POST">
+        <input type="hidden" name="accion" value="anadir-slot">
+        <input type="hidden" name="cliente_id" value="${escapar(perfil.id)}">
+        <input type="hidden" name="dia" value="${rutina.orden}">
+        <input type="hidden" name="ejercicio" value="${escapar(ejercicio.id)}">
+        <button type="submit" class="fila fila--seleccion">
+          <span class="fila__cuerpo"><span class="fila__titulo">${escapar(ejercicio.nombre)}</span></span>
+          <span class="fila__flecha" aria-hidden="true">${icono('sumar')}</span>
+        </button></form>`,
+    )
+    .join('')
+
+  const contenido = filas
+    ? `<div class="grupo-lista">${filas}</div>`
+    : `<div class="vacio"><h3>Sin resultados</h3><p>Prueba con otro nombre de ejercicio.</p></div>`
+
+  return pagina(
+    `${barra('Añadir ejercicio', rutina.nombre, volver)}
+     ${formularioBusqueda(consulta, {
+       cliente: perfil.id,
+       seccion: 'programa',
+       dia: String(rutina.orden),
+       modo: 'anadir',
+     }, 'Buscar ejercicios')}
+     <p>${resultados.length} ${resultados.length === 1 ? 'resultado' : 'resultados'} del catálogo actual</p>
+     ${contenido}`,
+  )
+}
 
 function pantallaDia(
   perfil: PerfilCloud,
@@ -663,13 +855,13 @@ function pantallaDia(
              ${desactivado ? 'disabled' : ''}>${simbolo}</button></form>`
         return `<div class="fila"><span class="fila__orden">${slot.orden}</span>
           <span class="fila__cuerpo"><span class="fila__titulo">${escapar(nombreEjercicio(slot.ejercicioId))}</span></span>
-          <span style="display:flex;gap:6px">${mover('arriba', '↑', indice === 0)}${mover('abajo', '↓', indice === rutina.slots.length - 1)}</span></div>`
+          <span style="display:flex;gap:6px">${mover('arriba', icono('arriba'), indice === 0)}${mover('abajo', icono('abajo'), indice === rutina.slots.length - 1)}</span></div>`
       }
       return `<a class="fila" href="${escapar(ruta({ cliente: perfil.id, seccion: 'programa', dia: rutina.orden, ejercicio: slot.orden }))}">
         <span class="fila__orden">${slot.orden}</span>
         <span class="fila__cuerpo"><span class="fila__titulo">${escapar(nombreEjercicio(slot.ejercicioId))}</span>
         <span class="fila__detalle">${escapar(resumenSlot(slot))}</span></span>
-        <span class="fila__flecha" aria-hidden="true">›</span></a>`
+        ${flecha()}</a>`
     })
     .join('')
 
@@ -678,14 +870,7 @@ function pantallaDia(
 
   const anadir =
     rutina.slots.length < MAX_EJERCICIOS
-      ? `<form method="POST"><input type="hidden" name="accion" value="anadir-slot">
-         <input type="hidden" name="cliente_id" value="${escapar(perfil.id)}">
-         <input type="hidden" name="dia" value="${rutina.orden}">
-         <label class="campo"><span>Añadir ejercicio</span>
-         <select name="ejercicio" required><option value="">Elegir…</option>
-         ${CATALOGO_EJERCICIOS.map((ejercicio) => `<option value="${escapar(ejercicio.id)}">${escapar(ejercicio.nombre)}</option>`).join('')}
-         </select></label>
-         <button type="submit" class="cta">+ Añadir ejercicio</button></form>`
+      ? `<a class="cta" href="${escapar(ruta({ cliente: perfil.id, seccion: 'programa', dia: rutina.orden, modo: 'anadir' }))}">${icono('sumar')}Añadir ejercicio</a>`
       : '<p>Máximo de 8 ejercicios alcanzado.</p>'
 
   const reordenar = rutina.slots.length > 1
@@ -697,8 +882,10 @@ function pantallaDia(
   return pagina(
     `${barra(rutina.nombre, perfil.nombre, volver)}
      ${avisoDe(aviso)}
-     <h2>${rutina.slots.length} ejercicios</h2>
-     ${filas || vacio}
+     <div class="objeto"><h2 style="margin-top:0">Programa</h2>
+       <h3 class="objeto__titulo">${escapar(rutina.nombre)}</h3>
+       <p class="objeto__detalle">${rutina.slots.length} ejercicios</p></div>
+     ${filas ? `<div class="grupo-lista">${filas}</div>` : vacio}
      ${reordenando ? reordenar : `${anadir}${reordenar}`}`,
   )
 }
@@ -742,7 +929,10 @@ function pantallaEjercicio(
     .join('')
 
   return pagina(
-    `${barra(`Ejercicio ${slot.orden}`, rutina.nombre, volver)}
+    `${barra('Editar ejercicio', `${rutina.nombre} · ${slot.orden}`, volver)}
+     <div class="objeto"><h2 style="margin-top:0">Ejercicio</h2>
+       <h3 class="objeto__titulo">${escapar(nombreEjercicio(slot.ejercicioId))}</h3>
+       <p class="objeto__detalle">${escapar(resumenSlot(slot))}</p></div>
      <form method="POST">
        <input type="hidden" name="accion" value="guardar-slot">
        <input type="hidden" name="cliente_id" value="${escapar(perfil.id)}">
@@ -750,18 +940,21 @@ function pantallaEjercicio(
        <input type="hidden" name="orden" value="${slot.orden}">
        <label class="campo"><span>Ejercicio</span><select name="ejercicio">${opcionesEjercicio}</select></label>
        <label class="campo"><span>Series</span>
-         <input type="number" inputmode="numeric" name="series" min="1" max="20" value="${slot.seriesObjetivo}"></label>
+         <input type="number" inputmode="numeric" enterkeyhint="next" name="series" min="1" max="20" value="${slot.seriesObjetivo}"></label>
        <div class="pareja">
          <label class="campo"><span>Reps mínimas</span>
-           <input type="number" inputmode="numeric" name="rep_min" min="1" max="100" value="${slot.repMin}"></label>
+           <input type="number" inputmode="numeric" enterkeyhint="next" name="rep_min" min="1" max="100" value="${slot.repMin}"></label>
          <label class="campo"><span>Reps máximas</span>
-           <input type="number" inputmode="numeric" name="rep_max" min="1" max="100" value="${slot.repMax}"></label>
+           <input type="number" inputmode="numeric" enterkeyhint="next" name="rep_max" min="1" max="100" value="${slot.repMax}"></label>
        </div>
        <label class="campo"><span>Descanso (segundos)</span>
-         <input type="number" inputmode="numeric" name="descanso" min="0" max="3600" step="15" value="${slot.descansoSegundos}"></label>
+         <input type="number" inputmode="numeric" enterkeyhint="next" name="descanso" min="0" max="3600" step="15" value="${slot.descansoSegundos}"></label>
        <label class="campo"><span>Estímulo</span><select name="estimulo">${opcionesEstimulo}</select></label>
        <label class="campo"><span>Progresión</span><select name="progresion">${opcionesProgresion}</select></label>
-       <button type="submit" class="cta">Guardar cambios</button>
+       <div class="acciones-formulario">
+         <a class="cta cta--texto" href="${escapar(volver)}">Cancelar</a>
+         <button type="submit" class="cta">Guardar cambios</button>
+       </div>
      </form>
      <div class="subordinada">
        <a class="cta cta--peligro" href="${escapar(ruta({ cliente: perfil.id, seccion: 'programa', dia: rutina.orden, ejercicio: slot.orden, confirmar: 'quitar' }))}">Quitar del día</a>
@@ -777,7 +970,7 @@ function pantallaGrupoPerfil(perfil: PerfilCloud, grupo: GrupoPerfil, pendientes
 
   const campos =
     grupo === 'datos'
-      ? `<label class="campo"><span>Nombre</span><input name="nombre" value="${escapar(perfil.nombre)}" required></label>
+      ? `<label class="campo"><span>Nombre</span><input name="nombre" value="${escapar(perfil.nombre)}" required autocomplete="name" enterkeyhint="next"></label>
          <label class="campo"><span>Sexo</span><select name="sexo">
            <option value="masculino"${perfil.sexo === 'masculino' ? ' selected' : ''}>Masculino</option>
            <option value="femenino"${perfil.sexo === 'femenino' ? ' selected' : ''}>Femenino</option></select></label>
@@ -798,9 +991,9 @@ function pantallaGrupoPerfil(perfil: PerfilCloud, grupo: GrupoPerfil, pendientes
            <input name="objetivo" value="${escapar(perfil.objetivo)}"></label>`
         : grupo === 'limitaciones'
           ? `<label class="campo"><span>Limitaciones</span>
-             <textarea name="limitaciones">${escapar(perfil.limitaciones)}</textarea></label>`
+             <textarea name="limitaciones" autocomplete="off">${escapar(perfil.limitaciones)}</textarea></label>`
           : `<label class="campo"><span>Notas del coach ${marca('notas')}</span>
-             <textarea name="notas">${escapar(perfil.notas)}</textarea></label>`
+             <textarea name="notas" autocomplete="off">${escapar(perfil.notas)}</textarea></label>`
 
   const titulos: Readonly<Record<GrupoPerfil, string>> = {
     datos: 'Datos personales',
@@ -816,7 +1009,10 @@ function pantallaGrupoPerfil(perfil: PerfilCloud, grupo: GrupoPerfil, pendientes
        <input type="hidden" name="cliente_id" value="${escapar(perfil.id)}">
        <input type="hidden" name="grupo" value="${grupo}">
        ${campos}
-       <button type="submit" class="cta">Guardar cambios</button>
+       <div class="acciones-formulario">
+         <a class="cta cta--texto" href="${escapar(volver)}">Cancelar</a>
+         <button type="submit" class="cta">Guardar cambios</button>
+       </div>
      </form>`,
   )
 }
@@ -895,7 +1091,15 @@ async function atenderGet(url: URL, db: D1Database, mostrarQa: boolean): Promise
   if (url.searchParams.get('nuevo') === '1') return pantallaNuevoCliente()
 
   const clienteId = url.searchParams.get('cliente')
-  if (!clienteId) return pantallaClientes(db, mostrarQa, aviso, url.searchParams.get('modo') === 'editar')
+  if (!clienteId) {
+    return pantallaClientes(
+      db,
+      mostrarQa,
+      aviso,
+      url.searchParams.get('modo') === 'editar',
+      url.searchParams.get('q') ?? '',
+    )
+  }
   if (!idSeguro(clienteId) || clienteQaBloqueado(clienteId, mostrarQa)) return noEncontrado()
 
   const perfil = await obtenerPerfil(db, clienteId)
@@ -919,6 +1123,13 @@ async function atenderGet(url: URL, db: D1Database, mostrarQa: boolean): Promise
     if (!Number.isInteger(dia)) return noEncontrado('Día no encontrado')
     const rutina = await obtenerRutina(db, clienteId, dia)
     if (!rutina) return noEncontrado('Día no encontrado')
+
+    if (url.searchParams.get('modo') === 'anadir') {
+      if (rutina.slots.length >= MAX_EJERCICIOS) {
+        return redirigir(ruta({ cliente: clienteId, seccion: 'programa', dia, aviso: 'Máximo de 8 ejercicios' }))
+      }
+      return pantallaBiblioteca(perfil, rutina, url.searchParams.get('q') ?? '')
+    }
 
     const ordenEjercicio = url.searchParams.get('ejercicio')
     if (ordenEjercicio) {

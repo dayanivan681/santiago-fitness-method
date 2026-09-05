@@ -1298,8 +1298,13 @@ describe('cierre de sesión (Phase 1B)', () => {
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
 
     const progreso = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
-    expect(progreso).toHaveAttribute('aria-valuenow', '1')
-    expect(progreso).toHaveTextContent('1 de 16 series')
+    // Crear la sesión y registrar su primera serie son dos escrituras. La
+    // consulta reactiva puede observar brevemente la sesión todavía en 0 antes
+    // de recibir la serie; esperamos el estado final que prometió Guardar.
+    await waitFor(() => {
+      expect(progreso).toHaveAttribute('aria-valuenow', '1')
+      expect(progreso).toHaveTextContent('1 de 16 series')
+    })
   })
 
   test('la serie guardada se distingue de la pendiente', async () => {

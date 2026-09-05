@@ -82,7 +82,8 @@ if (!HAY_EJERCICIOS) {
       !cuerpo.includes('cliente_id:') &&
       !cuerpo.includes('Sesiones activas') &&
       !cuerpo.includes('Invitaciones pendientes') &&
-      cuerpo.includes('+ Cliente'),
+      cuerpo.includes('Buscar clientes') &&
+      cuerpo.includes('Añadir cliente'),
     `status=${status}`,
   )
 }
@@ -111,8 +112,27 @@ if (HAY_EJERCICIOS) {
     status === 200 &&
       /\d+ series · \d+–\d+ reps · \d+:\d\d/.test(cuerpo) &&
       !cuerpo.includes('name="series"') &&
-      cuerpo.includes('+ Añadir ejercicio'),
+      cuerpo.includes('Añadir ejercicio'),
     `status=${status}`,
+  )
+}
+
+// ---- UI-3B · añadir usa una biblioteca móvil buscable --------------------
+if (HAY_EJERCICIOS) {
+  const completa = await html(`${base}&seccion=programa&dia=1&modo=anadir`)
+  const filtrada = await html(`${base}&seccion=programa&dia=1&modo=anadir&q=Smith`)
+
+  comprobar(
+    'UI-3B', 'Añadir abre el catálogo actual con búsqueda, sin el select largo',
+    completa.status === 200 &&
+      completa.cuerpo.includes('Buscar ejercicios') &&
+      completa.cuerpo.includes('33 resultados del catálogo actual') &&
+      completa.cuerpo.includes('value="anadir-slot"') &&
+      !completa.cuerpo.includes('<select name="ejercicio"') &&
+      filtrada.status === 200 &&
+      filtrada.cuerpo.includes('Press inclinado bajo (15°) en Smith') &&
+      !filtrada.cuerpo.includes('Peso muerto rumano con barra'),
+    `completa=${completa.status} filtrada=${filtrada.status}`,
   )
 }
 

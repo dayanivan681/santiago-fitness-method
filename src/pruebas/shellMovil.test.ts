@@ -19,6 +19,7 @@ const leer = (ruta: string) => readFileSync(resolve(raiz, ruta), 'utf8')
 const manifest = JSON.parse(leer('public/manifest.webmanifest'))
 const indexHtml = leer('index.html')
 const css = leer('src/index.css')
+const app = leer('src/App.tsx')
 const sw = leer('public/sw.js')
 
 describe('manifest instalable', () => {
@@ -157,6 +158,20 @@ describe('movimiento y toque', () => {
 
   it('la hoja no arrastra la página de detrás al llegar al final', () => {
     expect(css).toMatch(/\.hoja__panel\s*\{[^}]*overscroll-behavior: contain/)
+  })
+})
+
+describe('vista previa del coach', () => {
+  it('mantiene un regreso explícito al Admin desde cualquier sección', () => {
+    expect(app).toContain('Vista previa del cliente')
+    expect(app).toContain('Volver al Coach')
+    expect(app).toContain('href="/salir?volver=admin"')
+    expect(css).toMatch(/\.vista-previa\s*\{[^}]*position:\s*fixed/)
+  })
+
+  it('respeta el notch y ofrece 44 px reales de toque', () => {
+    expect(css).toMatch(/\.vista-previa\s*\{[^}]*safe-area-inset-top/)
+    expect(css).toMatch(/\.vista-previa a\s*\{[^}]*min-height:\s*44px/)
   })
 })
 

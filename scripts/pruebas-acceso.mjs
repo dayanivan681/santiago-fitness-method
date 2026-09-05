@@ -520,8 +520,8 @@ const COMO_COACH = { 'Cf-Access-Jwt-Assertion': 'simulado' }
   comprobar(
     'ADMIN-1', 'Ninguna ruta de /admin sirve la SPA del cliente',
     respuestas[0].estado === 200 && respuestas[1].estado === 200 &&
-      respuestas[0].html.includes('Coach / Admin') &&
-      respuestas[1].html.includes('Coach / Admin') &&
+      respuestas[0].html.includes('>Clientes</h1>') &&
+      respuestas[1].html.includes('>Clientes</h1>') &&
       respuestas.slice(2).every((x) => x.estado === 404) &&
       respuestas.every((x) => !x.html.includes('assets/index-')),
     respuestas.map((x) => `${x.r}=${x.estado}`).join(', '),

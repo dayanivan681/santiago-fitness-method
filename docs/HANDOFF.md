@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-04T20:50:15.123Z
+- **Última sincronización:** 2026-09-05T03:12:03.306Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-05T03:12:03.307Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Phase M1: experiencia móvil Coach/Admin con búsqueda, navegación inferior contextual, catálogo buscable al añadir, formularios táctiles, regreso persistente desde preview y evidencia antes/después
+- **Verificación:** npm test (632/632, tres corridas); npm run lint; npm run build; npm run test:movil; test:roles 11/11; admin-ui 15/15; acceso 38/38; QA visual 45 pantallas
+- **Siguiente:** Verificar el deployment canónico; no iniciar M2 sin una fase nueva
+
 
 ### 2026-09-04T20:50:15.124Z | codex | CLAIM
 - **Estado:** active

@@ -58,15 +58,41 @@ describe('el desbordamiento no se tapa', () => {
 })
 
 describe('ergonomía táctil', () => {
-  it('define el tamaño mínimo de toque en 44px y lo usa en la navegación', () => {
+  it('define el tamaño mínimo de toque en 44px y la navegación supera ese mínimo', () => {
     expect(CSS).toContain('--toque:44px')
-    // Las pestañas de sección llegaron a medir 40px; que salgan de la variable
-    // impide que vuelva a pasar por un número suelto.
-    expect(CSS).toMatch(/\.segmentado a\{[^}]*min-height:var\(--toque\)/)
+    expect(CSS).toMatch(/\.nav-cliente a\{[^}]*min-height:52px/)
   })
 
   it('respeta prefers-reduced-motion', () => {
     expect(CSS).toContain('prefers-reduced-motion')
+  })
+
+  it('usa una fuente de sistema y navegación inferior sólo para el cliente abierto', () => {
+    expect(CSS).toContain('font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif')
+    expect(CSS).toMatch(/\.nav-cliente\{[^}]*position:fixed/)
+    expect(CSS).toMatch(/\.nav-cliente a\{[^}]*min-height:52px/)
+    expect(CONSOLA).toContain("['programa', 'Programa', 'programa']")
+    expect(CONSOLA).toContain("['perfil', 'Perfil', 'perfil']")
+    expect(CONSOLA).toContain("['acceso', 'Acceso', 'acceso']")
+  })
+
+  it('mantiene las acciones de formulario al alcance del pulgar', () => {
+    expect(CSS).toMatch(/\.acciones-formulario\{[^}]*position:sticky/)
+    expect(CSS).toMatch(/\.acciones-formulario\{[^}]*bottom:0/)
+    expect(CONSOLA).toContain('<div class="acciones-formulario">')
+  })
+})
+
+describe('biblioteca móvil existente', () => {
+  it('reemplaza el select largo de añadir por una pantalla buscable del catálogo actual', () => {
+    const dia = CONSOLA.slice(CONSOLA.indexOf('function pantallaDia('), CONSOLA.indexOf('// ── pantalla: ejercicio'))
+    const biblioteca = CONSOLA.slice(CONSOLA.indexOf('function pantallaBiblioteca('), CONSOLA.indexOf('function pantallaDia('))
+
+    expect(dia).toContain("modo: 'anadir'")
+    expect(dia).not.toContain('<select name="ejercicio" required>')
+    expect(biblioteca).toContain("CATALOGO_EJERCICIOS.filter")
+    expect(biblioteca).toContain("'Buscar ejercicios'")
+    expect(biblioteca).toContain('value="anadir-slot"')
   })
 })
 
