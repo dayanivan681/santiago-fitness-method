@@ -22,7 +22,7 @@
     "invitar": "node scripts/invitar.mjs",
     "d1:migrar": "wrangler d1 execute santiago-acceso --remote --file=migrations/0001_acceso.sql",
     "d1:migrar-roles": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0002_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0003_seed_qa_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0004_seed_santiago_routines.sql",
-    "d1:migrar-lista": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0006_lista_de_clientes.sql",
+    "d1:migrar-lista": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0007_lista_de_clientes.sql",
   "d1:migrar-santiago": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0004_seed_santiago_routines.sql",
     "test:movil": "node pruebas-maestro/enlace-local.mjs > /tmp/sfm-enlace.txt && maestro test pruebas-maestro/qa-movil.yaml -e ENLACE=$(cat /tmp/sfm-enlace.txt)"
   },

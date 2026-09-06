@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-06T15:27:09.224Z
+- **Última sincronización:** 2026-09-06T15:29:19.916Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-06T15:29:19.916Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Migracion 0007, aplicada en la D1 de produccion. Santiago vuelve a la lista con sus 4 dias y 20 ejercicios intactos: la baja de las pruebas archiva y no borra, asi que era un UPDATE. Su acceso NO se restaura a proposito --revivir una invitacion revocada seria una puerta trasera--, el coach le genera un enlace nuevo. cliente-1 pasa a llamarse 'Cliente nuevo': ya tenia los cuatro dias vacios, asi que renombrarlo evita crear otra fila para lo mismo. ivanprueba y cliente1 se quedan archivados por decision explicita del dueno frente a borrarlos. dayan-test sin tocar. Se elimina la 0006, que nunca se aplico y hoy crearia un sexto cliente que nadie quiere; d1:migrar-lista apunta a la 0007
+- **Verificación:** migracion aplicada (changed_db, 2 filas escritas); D1 verificada: visibles santiago y cliente-1, archivados ivanprueba y cliente1; front end /admin y /admin/api/clientes devuelven exactamente Santiago y Cliente nuevo; ficha de Santiago 200. npm test 645/645; lint 0; build OK
+- **Siguiente:** Generar el enlace de acceso de Santiago desde /admin -> Santiago -> Acceso: el anterior quedo revocado al darlo de baja
+
 
 ### 2026-09-06T15:27:09.225Z | claude-code | CLAIM
 - **Estado:** active
