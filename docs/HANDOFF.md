@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-06T15:18:16.193Z
+- **Última sincronización:** 2026-09-06T15:19:49.518Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-06T15:19:49.519Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** COACH_ACCESS_TEMPORARY_UNTIL pasa de 2026-09-05 a 2099-12-31: la excepción deja de vencer, por decisión explícita del dueño del producto. El mecanismo no cambia --sigue acotado al hostname canónico y sigue fallando cerrado ante cualquier valor inválido-- sólo la fecha. El comentario de wrangler.toml dice que es deliberado y qué queda expuesto mientras tanto. Preview sigue en cadena vacía: nunca se abre el panel de un despliegue de rama. Prueba nueva sobre la configuración desplegada: una fecha ya vencida es siempre un error, porque el estado caducado cierra /admin para todos, incluido un coach que sí pase el OTP de Access; reproducida a propósito con la fecha anterior y falla
+- **Verificación:** npm test 645/645 (3 nuevas en accesoCoachTemporal.test.ts); lint 0; build OK
+- **Siguiente:** Para cerrar: añadir de nuevo el destino /admin en Cloudflare Zero Trust y sólo después dejar la variable vacía. El orden importa: al vaciarla la ruta queda cerrada para todos hasta que Access esté delante
+
 
 ### 2026-09-06T15:18:16.194Z | claude-code | CLAIM
 - **Estado:** active

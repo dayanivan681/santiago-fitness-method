@@ -12,11 +12,22 @@ pages_build_output_dir = "dist"
 # conserva en D1 —preview usa la misma base—, sólo se oculta. Ver functions/lib/qa.ts.
 SHOW_QA_CLIENTS = "false"
 
-# Apertura temporal del panel para el coach, sin OTP, sólo en el hostname
-# canónico y hasta este instante UTC. Al vencer, la función vuelve a cerrar la
-# ruta incluso si recibe una cabecera inventada. Para restaurar Access antes,
-# elimina esta variable y vuelve a añadir el destino /admin en Cloudflare.
-COACH_ACCESS_TEMPORARY_UNTIL = "2026-09-05T20:00:00Z"
+# Apertura del panel para el coach, sin OTP, sólo en el hostname canónico y
+# hasta este instante UTC. Al vencer, la función vuelve a cerrar la ruta incluso
+# si recibe una cabecera inventada.
+#
+# ATENCIÓN: la fecha es de 2099, o sea que NO vence. Es una decisión explícita
+# del dueño del producto —«déjalo abierto indefinidamente por ahora»— y no un
+# descuido ni un valor de prueba que se quedó puesto.
+#
+# Mientras esté así, /admin y /admin/api/clientes están abiertos a cualquiera
+# que sepa la URL: perfiles completos de los clientes, y la consola desde la que
+# se generan enlaces de acceso a la app del participante.
+#
+# Para cerrarlo: vuelve a añadir el destino /admin en Cloudflare Zero Trust y
+# deja esta variable vacía. El orden importa, porque en cuanto se vacía la
+# variable la ruta queda cerrada para todos hasta que Access esté delante.
+COACH_ACCESS_TEMPORARY_UNTIL = "2099-12-31T00:00:00Z"
 
 [[d1_databases]]
 binding = "ACCESO"
