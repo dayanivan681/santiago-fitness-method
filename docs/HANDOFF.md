@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-06T15:29:19.916Z
+- **Última sincronización:** 2026-09-06T15:39:21.309Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-06T15:39:21.310Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Acceso público temporal fijo para cliente-1, sin selector de identidad del navegador ni cambios a Admin/D1
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-06T15:29:19.916Z | claude-code | PUBLISH
 - **Estado:** complete
