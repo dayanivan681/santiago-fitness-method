@@ -343,17 +343,51 @@ if (HAY_EJERCICIOS) {
 //
 // Se hace sobre un cliente de usar y tirar: la baja corta accesos, y probarla
 // sobre alguien real dejaría a esa persona fuera de la app.
-const DESECHABLE = `qa-baja-${Date.now()}`
+let DESECHABLE = ''
+let ID_INTENTO_IMPUESTO = ''
 {
-  await post({ accion: 'crear-cliente', cliente_id: DESECHABLE, nombre: 'QA Baja' })
+  const formulario = await html('/admin/?nuevo=1')
+  const alta = await post({ accion: 'crear-cliente', nombre: 'QA Baja' })
+  const ubicacion = alta.headers.get('Location') ?? ''
+  DESECHABLE = new URL(ubicacion, BASE_URL).searchParams.get('cliente') ?? ''
+
+  // Mismo nombre y un cliente_id inyectado: el nombre no colisiona y el valor
+  // del navegador no puede imponer ni reutilizar la identidad de Santiago.
+  const intentoImpuesto = await post({ accion: 'crear-cliente', cliente_id: 'santiago', nombre: 'QA Baja' })
+  ID_INTENTO_IMPUESTO = new URL(
+    intentoImpuesto.headers.get('Location') ?? '',
+    BASE_URL,
+  ).searchParams.get('cliente') ?? ''
+
+  const renombre = await post({
+    accion: 'guardar-perfil',
+    cliente_id: DESECHABLE,
+    grupo: 'datos',
+    nombre: 'QA Baja renombrado',
+  })
+  const trasRenombre = await (await pedir(`/admin/api/clientes/${DESECHABLE}`)).json()
 
   const normal = await html('/admin/')
   const editando = await html('/admin/?modo=editar')
   const confirmacion = await html(`/admin/?cliente=${DESECHABLE}&confirmar=eliminar`)
 
   comprobar(
-    'UI-12', 'Eliminar aparece sólo en modo edición y lleva a confirmar, no a borrar',
-    normal.cuerpo.includes('QA Baja') &&
+    'UI-12', 'El alta oculta el id, lo genera en servidor y eliminar exige confirmación',
+    formulario.status === 200 &&
+      formulario.cuerpo.includes('name="nombre"') &&
+      !formulario.cuerpo.includes('name="cliente_id"') &&
+      !/Identificador|nombre-corto|UUID|slug/i.test(formulario.cuerpo) &&
+      alta.status === 303 &&
+      /^cliente-[0-9a-f]{32}$/.test(DESECHABLE) &&
+      intentoImpuesto.status === 303 &&
+      /^cliente-[0-9a-f]{32}$/.test(ID_INTENTO_IMPUESTO) &&
+      ID_INTENTO_IMPUESTO !== DESECHABLE &&
+      ID_INTENTO_IMPUESTO !== 'santiago' &&
+      DESECHABLE !== 'santiago' &&
+      renombre.status === 303 &&
+      trasRenombre.profile?.id === DESECHABLE &&
+      trasRenombre.profile?.nombre === 'QA Baja renombrado' &&
+      normal.cuerpo.includes('QA Baja renombrado') &&
       // Fuera del modo edición no hay ningún camino a la baja.
       !normal.cuerpo.includes('confirmar=eliminar') &&
       editando.cuerpo.includes('confirmar=eliminar') &&
@@ -362,7 +396,7 @@ const DESECHABLE = `qa-baja-${Date.now()}`
       confirmacion.status === 200 &&
       confirmacion.cuerpo.includes('class="hoja"') &&
       confirmacion.cuerpo.includes('eliminar-cliente'),
-    `lista=${normal.status} editar=${editando.status} confirmar=${confirmacion.status}`,
+    `form=${formulario.status} alta=${alta.status} id=${DESECHABLE} impuesto=${ID_INTENTO_IMPUESTO} renombre=${renombre.status} lista=${normal.status} editar=${editando.status} confirmar=${confirmacion.status}`,
   )
 }
 
@@ -383,7 +417,7 @@ const DESECHABLE = `qa-baja-${Date.now()}`
   comprobar(
     'UI-13', 'Al eliminar, el cliente sale de la lista y su ficha deja de existir',
     baja.status === 303 &&
-      !lista.cuerpo.includes('QA Baja') &&
+      !lista.cuerpo.includes(`cliente=${DESECHABLE}`) &&
       ficha.status === 404 &&
       api.status === 404,
     `baja=${baja.status} ficha=${ficha.status} api=${api.status}`,
@@ -394,11 +428,25 @@ const DESECHABLE = `qa-baja-${Date.now()}`
     redirect: 'manual',
     headers: { Cookie: cookie ?? '' },
   })
+  const conCookieApi = await fetch(`${BASE_URL}/api/cliente`, {
+    redirect: 'manual',
+    headers: { Cookie: cookie ?? '' },
+  })
+  const identidadVisible = conCookieApi.status === 200
+    ? (await conCookieApi.json()).profile?.id
+    : null
   comprobar(
-    'UI-14', 'La sesión que tenía el cliente eliminado deja de abrir la app',
-    Boolean(cookie) && puerta.status === 401 && conCookie.status === 401,
-    `puerta=${puerta.status} cookie=${Boolean(cookie)} con-cookie=${conCookie.status}`,
+    'UI-14', 'La sesión del cliente eliminado no vuelve a mostrar su identidad',
+    Boolean(cookie) &&
+      (
+        (puerta.status === 401 && conCookie.status === 401 && conCookieApi.status === 401) ||
+        (puerta.status === 200 && conCookie.status === 200 && conCookieApi.status === 200 && identidadVisible !== DESECHABLE)
+      ),
+    `puerta=${puerta.status} cookie=${Boolean(cookie)} con-cookie=${conCookie.status} api=${conCookieApi.status} identidad=${identidadVisible}`,
   )
+
+  // La segunda alta sólo existía para probar la frontera del navegador.
+  await post({ accion: 'eliminar-cliente', cliente_id: ID_INTENTO_IMPUESTO })
 }
 
 // ---- M1.1 · composición de app, no de página ------------------------------

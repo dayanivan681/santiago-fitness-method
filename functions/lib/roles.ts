@@ -436,7 +436,7 @@ export async function guardarPerfil(db: D1Database, perfil: PerfilCloud): Promis
 
 export async function crearPerfil(db: D1Database, perfil: PerfilCloud): Promise<void> {
   const ahora = Math.floor(Date.now() / 1000)
-  await db
+  const alta = db
     .prepare(
       `INSERT INTO clientes
         (id, nombre, sexo, edad, estatura_cm, peso_corporal_lb, objetivo,
@@ -458,16 +458,19 @@ export async function crearPerfil(db: D1Database, perfil: PerfilCloud): Promise<
       JSON.stringify(perfil.ejerciciosEvitados),
       ahora,
     )
-    .run()
-  for (const dia of DIAS_CLOUD_POR_DEFECTO) {
-    await db
+
+  const dias = DIAS_CLOUD_POR_DEFECTO.map((dia) =>
+    db
       .prepare(
         `INSERT INTO rutinas (id, cliente_id, nombre, orden, slots_json, actualizado_en)
          VALUES (?1, ?2, ?3, ?4, '[]', ?5)`,
       )
       .bind(`${perfil.id}|${dia.slug}`, perfil.id, dia.nombre, dia.orden, ahora)
-      .run()
-  }
+  )
+
+  // Cliente y cuatro días nacen juntos. `batch` es transaccional en D1: una
+  // colisión o fallo intermedio no puede dejar un perfil a medias.
+  await db.batch([alta, ...dias])
 }
 
 /**

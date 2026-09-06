@@ -26,6 +26,7 @@
  */
 
 import { estadoAccesoCoachTemporal } from '../lib/accesoCoachTemporal'
+import { crearPerfilConIdAutomatico } from '../lib/clienteId'
 import { crearInvitacion } from '../lib/invitacion'
 import { crearCabeceraDeCookie, crearSesion, VIDA_DE_SESION } from '../lib/sesion'
 import { clienteQaBloqueado, filtrarClientesQa, qaHabilitado } from '../lib/qa'
@@ -34,9 +35,7 @@ import {
   asegurarDatosIniciales,
   CATALOGO_EJERCICIOS,
   camposPendientesPerfil,
-  crearPerfil,
   crearSlotCloud,
-  estadoDelIdentificador,
   evaluarEstadoProgramacion,
   guardarPerfil,
   guardarRutina,
@@ -782,12 +781,7 @@ function pantallaNuevoCliente(error = ''): Response {
        ${grupo(
          `<label class="fila fila--campo"><span class="fila__etiqueta">Nombre</span>
             <input class="fila__entrada fila__entrada--ancha" name="nombre" required
-              autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Nombre"></label>
-          <label class="fila fila--campo"><span class="fila__etiqueta">Identificador</span>
-            <input class="fila__entrada fila__entrada--ancha" name="cliente_id" required
-              pattern="[a-z0-9][a-z0-9_-]{1,40}" autocomplete="off" autocapitalize="none"
-              spellcheck="false" enterkeyhint="done" placeholder="nombre-corto"></label>`,
-         { pie: 'El identificador sólo admite minúsculas, números y guiones, y no se puede cambiar después.' },
+              autocomplete="name" autocapitalize="words" enterkeyhint="done" placeholder="Nombre"></label>`,
        )}
      </form>`,
     error ? 400 : 200,
@@ -1480,7 +1474,9 @@ export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
   // el destino real se resuelve antes de mirar si está permitido. Sin esto, la
   // impersonación de QA seguiría abierta en producción por la puerta de atrás.
   const destino =
-    accion === 'probar'
+    accion === 'crear-cliente'
+      ? ''
+      : accion === 'probar'
       ? CLIENTE_DE_PRUEBA
       : String(formulario.get('cliente_id') ?? '') || (accion === 'previsualizar' ? CLIENTE_DE_PRUEBA : '')
 
@@ -1488,36 +1484,30 @@ export const onRequest: PagesFunction<Entorno> = async ({ request, env }) => {
 
   try {
     if (accion === 'crear-cliente') {
-      const id = String(formulario.get('cliente_id') ?? '').trim().toLowerCase()
       const nombre = String(formulario.get('nombre') ?? '').trim()
-      if (!idSeguro(id) || !nombre) {
-        return pantallaNuevoCliente('El nombre y el identificador son obligatorios, y el identificador sólo admite minúsculas, números y guiones.')
+      if (!nombre) {
+        return pantallaNuevoCliente('Escribe el nombre del cliente.')
       }
-      // Sin esto, reutilizar un identificador termina en el error de constraint
-      // de SQLite delante del coach, que no dice cuál de los dos casos es.
-      const ocupado = await estadoDelIdentificador(env.ACCESO, id)
-      if (ocupado === 'activo') {
-        return pantallaNuevoCliente(`Ya hay un cliente con el identificador «${id}». Elige otro.`)
+
+      try {
+        const perfil = await crearPerfilConIdAutomatico(env.ACCESO, {
+          nombre,
+          sexo: 'masculino',
+          edad: 30,
+          estaturaCm: 175.26,
+          pesoCorporalLb: 175,
+          objetivo: 'Pendiente de confirmar',
+          frecuenciaEntrenamiento: 4,
+          limitaciones: '',
+          notas: '',
+          ejerciciosEvitados: [],
+        })
+        return redirigir(ruta({ cliente: perfil.id, seccion: 'programa', aviso: 'Cliente creado' }))
+      } catch (error) {
+        // El detalle queda en logs para diagnóstico, nunca delante del coach.
+        console.error('No se pudo crear el cliente.', error)
+        return pantallaNuevoCliente('No pudimos crear el cliente. Intenta nuevamente.')
       }
-      if (ocupado === 'archivado') {
-        return pantallaNuevoCliente(
-          `El identificador «${id}» es de un cliente eliminado y su programación sigue guardada. Elige otro para no mezclarlas.`,
-        )
-      }
-      await crearPerfil(env.ACCESO, {
-        id,
-        nombre,
-        sexo: 'masculino',
-        edad: 30,
-        estaturaCm: 175.26,
-        pesoCorporalLb: 175,
-        objetivo: 'Pendiente de confirmar',
-        frecuenciaEntrenamiento: 4,
-        limitaciones: '',
-        notas: '',
-        ejerciciosEvitados: [],
-      })
-      return redirigir(ruta({ cliente: id, seccion: 'programa', aviso: 'Cliente creado' }))
     }
 
     const clienteId = String(formulario.get('cliente_id') ?? '')

@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-06T16:49:35.289Z
+- **Última sincronización:** 2026-09-06T17:03:05.041Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-06T17:03:05.042Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Genera IDs opacos cliente-UUID exclusivamente en servidor, ignora cliente_id del navegador, crea perfil y cuatro días atómicamente, y elimina el campo técnico del formulario
+- **Verificación:** npm test (666/666); npm run lint; npm run build; roles 11/11; admin UI 20/20; QA 13/13; acceso 38/38; npm run test:movil PASS; viewports 320/390/430/1024 sin overflow ni targets menores de 44px
+- **Siguiente:** Esperar deployment canónico y revalidar formulario, creación y estado OPEN sin escribir en producción
+
 
 ### 2026-09-06T16:49:35.290Z | codex | CLAIM
 - **Estado:** active
