@@ -34,6 +34,17 @@ interface Props {
   /** La última serie efectiva de hoy: lo que se está levantando ahora mismo. */
   readonly partida?: SerieRegistrada
   readonly conEtiquetas: boolean
+  /**
+   * Series que aún no tocan.
+   *
+   * Cuatro bloques de steppers idénticos uno debajo de otro son un formulario,
+   * no un entrenamiento: sólo se abre la que toca ahora y las demás esperan en
+   * una línea. Se abren tocándolas, porque a veces se registra fuera de orden.
+   *
+   * La fila sigue montada, así que el borrador y el arrastre del peso desde la
+   * serie anterior funcionan igual estén abiertas o no.
+   */
+  readonly colapsada?: boolean
   /** Sin ella no hay autosave: es lo que identifica el hueco que se teclea. */
   readonly claveDeBorrador?: Omit<ClaveDeBorrador, 'numeroSerie'>
   readonly repositorio?: Repositorio
@@ -50,6 +61,7 @@ export function FilaSerie({
   referencia,
   partida,
   conEtiquetas,
+  colapsada = false,
   claveDeBorrador,
   repositorio,
   onGuardar,
@@ -70,6 +82,7 @@ export function FilaSerie({
   const repsDePartida = partida?.repsRealizadas ?? referencia?.reps ?? repMin
 
   const [editando, setEditando] = useState(false)
+  const [desplegada, setDesplegada] = useState(false)
   const [peso, setPeso] = useState(registrada?.pesoRegistradoLb ?? pesoDePartida)
   // Las reps también arrancan en la referencia: con el rango de fuerza (1–5),
   // empezar en el mínimo obligaría a pulsar cuatro veces cada serie.
@@ -220,6 +233,26 @@ export function FilaSerie({
 
   const etiqueta = `serie ${numeroSerie} de ${ejercicio.nombre}`
 
+  // Una serie registrada nunca se colapsa por aquí: ya se pinta compacta y su
+  // botón «Editar» tiene que seguir a la vista.
+  if (colapsada && !hecha && !desplegada) {
+    return (
+      <button
+        type="button"
+        className="serie serie--pendiente"
+        onClick={() => setDesplegada(true)}
+        aria-label={`Abrir la ${etiqueta}`}
+      >
+        <span className="serie__titulo">Serie {numeroSerie}</span>
+        {/* Con `×` chocaría literalmente con el formato de «Última vez», y no
+            son lo mismo: esto es de dónde parte, aquello es lo que se hizo. */}
+        <span className="serie__pendiente-valor">
+          {peso} lb{porLado ? '/lado' : ''} · {reps} reps
+        </span>
+      </button>
+    )
+  }
+
   return (
     <div className={hecha ? 'serie serie--hecha' : 'serie'}>
       <div className="serie__cabecera">
@@ -302,13 +335,24 @@ export function FilaSerie({
               className="valor valor--edicion"
               aria-label={`Peso de la ${etiqueta}`}
               autoFocus
+              /* La tecla de retorno dice «siguiente», no «hecho»: después del
+                 peso vienen las reps, y hasta ahora Enter sólo cerraba el campo
+                 y dejaba al participante volviendo a tocar la pantalla. */
+              enterKeyHint="next"
               value={peso}
               onChange={(e) => cambiarPeso(Number(e.target.value))}
               onBlur={() => {
                 cambiarPeso((p) => Math.max(0, redondear(p)))
                 setEditandoPeso(false)
               }}
-              onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter') return
+                e.preventDefault()
+                e.currentTarget.blur()
+                // El campo de reps entra con `autoFocus`, así que abrirlo es
+                // encadenar el foco sin tocar nada.
+                setEditandoReps(true)
+              }}
             />
           ) : (
             <div className="paso">
@@ -355,13 +399,21 @@ export function FilaSerie({
               className="valor valor--edicion"
               aria-label={`Reps de la ${etiqueta}`}
               autoFocus
+              /* Aquí sí se termina: peso → reps → guardar, sin cerrar y volver
+                 a abrir el teclado entre medias. */
+              enterKeyHint="done"
               value={reps}
               onChange={(e) => cambiarReps(Number(e.target.value))}
               onBlur={() => {
                 cambiarReps((r) => Math.max(1, Math.round(r)))
                 setEditandoReps(false)
               }}
-              onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter') return
+                e.preventDefault()
+                e.currentTarget.blur()
+                void guardar()
+              }}
             />
           ) : (
             <div className="paso">

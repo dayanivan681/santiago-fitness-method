@@ -2215,3 +2215,545 @@ button,
   outline: var(--foco-grosor) solid var(--foco-color);
   outline-offset: 3px;
 }
+
+/* ═══ Phase M2 · superficies de la app del participante ══════════════════════
+ *
+ * Capa de composición, no un tema nuevo: convive con lo que ya existe y va
+ * sustituyendo a `.panel` y `.ejercicio` pantalla por pantalla. El objetivo es
+ * que una pantalla sea
+ *
+ *   pantalla → sección → filas
+ *
+ * y no
+ *
+ *   pantalla → tarjeta → tarjeta → campos → botones,
+ *
+ * que es lo que hacía que la app se leyera como una web bien adaptada.
+ *
+ * Lo que NO se toca aquí, porque está fijado por `src/pruebas/pilaInferior.ts`:
+ * `.contenido`, `.contenido--con-barra`, `.descanso`, `.descanso--sin-barra` y
+ * los tokens de la pila inferior. Todo lo de abajo son selectores nuevos.
+ */
+:root {
+  --grupo: #141618;
+  --grupo-toque: #1c1f22;
+  /* Sangrado de una lista que llega al borde, desde dentro de `.contenido`. */
+  --sangra-izq: calc(-14px - var(--lado-seguro-izq));
+  --sangra-der: calc(-14px - var(--lado-seguro-der));
+}
+
+/* Título de pantalla raíz. Grande y sin kicker: la marca no hace falta una vez
+   dentro, y repetirla en cada cabecera era de sitio web. */
+.pantalla {
+  margin: 2px 0 18px;
+}
+.pantalla__titulo {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+.pantalla__sub {
+  margin: 6px 0 0;
+  color: var(--texto-60);
+  font-size: 15px;
+}
+
+/* Sección agrupada: el único contenedor de esta capa, y no se anida. */
+.grupo {
+  background: var(--grupo);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+.grupo + .grupo,
+.grupo__titulo {
+  margin-top: 22px;
+}
+/* A sangre: una lista larga gana al llegar al borde de la pantalla. */
+.grupo--pleno {
+  margin-left: var(--sangra-izq);
+  margin-right: var(--sangra-der);
+  border-radius: 0;
+}
+.grupo__titulo {
+  margin-bottom: 8px;
+  padding: 0 2px;
+  color: var(--texto-42);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.grupo--pleno + .grupo__titulo,
+.grupo__titulo:first-child {
+  margin-top: 0;
+}
+.grupo__pie {
+  margin: 8px 2px 0;
+  color: var(--texto-42);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Fila: el elemento que más se repite. Toda la fila es el objetivo del dedo. */
+.fila {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  transition: background-color var(--mov-toque) var(--mov-curva);
+}
+.fila::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--borde-tenue);
+}
+.grupo > .fila:last-child::after,
+.grupo > form:last-child .fila::after {
+  display: none;
+}
+button.fila,
+a.fila {
+  cursor: pointer;
+}
+button.fila:active,
+a.fila:active {
+  background: var(--grupo-toque);
+}
+.fila__cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+.fila__titulo {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.fila__detalle {
+  display: block;
+  margin-top: 2px;
+  color: var(--texto-60);
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fila__valor {
+  flex: none;
+  color: var(--texto-60);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.fila__flecha {
+  display: flex;
+  align-items: center;
+  flex: none;
+  color: var(--texto-35);
+}
+.fila__miniatura {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 11px;
+  object-fit: cover;
+  background: var(--hundido);
+}
+/* Una fila que ejecuta en vez de navegar: se distingue por el color, no por
+   meter un botón con borde dentro de la lista. */
+.fila--accion .fila__titulo {
+  color: var(--rojo);
+}
+.fila--centro {
+  justify-content: center;
+}
+
+/* Acción principal de una pantalla. Una sola, y sólo cuando no cabe como fila. */
+.accion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--positivo);
+  color: #0b0c0d;
+  border: 0;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    opacity var(--mov-toque) var(--mov-curva),
+    transform var(--mov-toque) var(--mov-curva);
+}
+.accion:active {
+  opacity: 0.75;
+  transform: scale(0.99);
+}
+.accion--suave {
+  background: var(--grupo);
+  color: var(--texto);
+}
+
+/* Búsqueda: un solo campo. El par campo + botón de lupa es un formulario web. */
+.busca {
+  position: relative;
+  margin: 0 0 14px;
+}
+.busca__icono {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: var(--texto-35);
+  pointer-events: none;
+}
+.busca input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px 10px 38px;
+  background: var(--grupo);
+  border: 0;
+  border-radius: 12px;
+  color: var(--texto);
+  font: inherit;
+  /* 16px o iOS hace zoom al enfocar. */
+  font-size: 16px;
+}
+.busca input::placeholder {
+  color: var(--texto-35);
+}
+.busca input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ── Modo entrenamiento ──────────────────────────────────────────────────────
+ *
+ * Cabecera contextual propia: dice de qué día es y por dónde vas, y nada más.
+ * No repite la marca ni el nombre de la app, que era lo que hacía que cada
+ * pantalla arrancara como la portada de un sitio.
+ */
+.entreno__barra {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) calc(8px + var(--lado-seguro-der)) 10px
+    calc(8px + var(--lado-seguro-izq));
+  background: rgba(11, 12, 13, 0.9);
+  /* Prefijado primero: al minificar, con el estándar delante se pierde. */
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  backdrop-filter: saturate(180%) blur(18px);
+  box-shadow: 0 1px 0 var(--borde-tenue);
+}
+.entreno__salir,
+.entreno__mas {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  background: none;
+  border: 0;
+  color: var(--texto);
+  font: inherit;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.entreno__mas {
+  font-size: 17px;
+  letter-spacing: 0.06em;
+}
+.entreno__salir:active,
+.entreno__mas:active {
+  opacity: 0.45;
+}
+.entreno__contexto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  text-align: center;
+}
+.entreno__dia {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.entreno__paso {
+  color: var(--texto-50);
+  font-size: 12px;
+}
+
+/* El ejercicio en curso: el nombre manda y lo demás es apoyo en texto, no en
+   cajas. Antes cada dato iba en su propio recuadro con borde. */
+.entreno__ejercicio {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.entreno__identidad {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.entreno__nombre {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.14;
+}
+.entreno__plan {
+  margin: 0;
+  color: var(--texto-60);
+  font-size: 14px;
+}
+.entreno__objetivo {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  color: var(--texto-60);
+  font-size: 14px;
+}
+.entreno__objetivo-valor {
+  color: var(--texto);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.entreno__series {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.entreno__acciones {
+  display: flex;
+  gap: 18px;
+  padding-top: 2px;
+}
+
+/* Serie que todavía no toca: una línea con su punto de partida. Se abre al
+   tocarla. Cuatro bloques de steppers abiertos a la vez eran un formulario. */
+.serie--pendiente {
+  display: flex;
+  /* `.serie` apila en columna; aquí la línea es una sola fila. */
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  color: var(--texto-50);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.serie--pendiente .serie__titulo {
+  color: var(--texto-60);
+}
+.serie__pendiente-valor {
+  font-variant-numeric: tabular-nums;
+}
+.serie--pendiente:active {
+  background: var(--relleno-alto);
+}
+
+/* Referencias en línea: apoyo para decidir el peso, no fichas con borde. */
+.referencias {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.referencia {
+  display: block;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  font-size: 14px;
+}
+.referencia .etiqueta-campo {
+  display: inline;
+  margin: 0;
+}
+.referencia__valor {
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+.referencia__vacio {
+  color: var(--texto-42);
+}
+
+/* Serie ya registrada: una línea.
+ *
+ * Los campos siguen siendo los mismos `<output>` —con sus etiquetas, que es
+ * como las lee un lector de pantalla y como las encuentran las pruebas—, sólo
+ * que puestos en fila. Guardada, una serie es un dato, no un formulario: lo
+ * único que se puede hacer con ella es corregirla. */
+.serie--hecha {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.serie--hecha .serie__cabecera {
+  flex: none;
+}
+.serie--hecha .serie__campos {
+  flex: 1;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 14px;
+}
+.serie--hecha .campo {
+  flex: none;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 5px;
+}
+.serie--hecha .valor {
+  min-height: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  font-size: 15px;
+}
+/* La etiqueta se queda, en pequeño: «0 1 2» sin ella no dice nada. */
+.serie--hecha .etiqueta-campo {
+  display: inline;
+  margin: 0;
+}
+/* «Primera vez con este ejercicio» ya no aporta nada una vez guardada. */
+.serie--hecha .serie__anterior {
+  display: none;
+}
+.serie--hecha .serie__pie {
+  flex: none;
+  margin-top: 0;
+}
+
+/* Historial: dos datos en dos líneas, no en dos tarjetas. */
+.resumen__linea {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+.resumen__linea .etiqueta-campo {
+  display: inline;
+  margin: 0;
+}
+.resumen__linea .resumen__valor {
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+.resumen__linea .resumen__pie {
+  color: var(--texto-42);
+}
+/* La sesión del historial usa el lenguaje de filas, pero conserva su reparto
+   en tres columnas: fecha, resumen y veredicto. */
+.fila.sesion {
+  align-items: center;
+}
+.fila.sesion .sesion__cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.acciones-medicion {
+  display: flex;
+  gap: 8px;
+}
+.acciones-medicion .boton-guardar {
+  flex: 1;
+}
+
+/* Perfil: los paneles pierden el borde y se leen como secciones agrupadas.
+   El contenedor dentro del contenedor era lo que más se notaba aquí. */
+.panel {
+  background: var(--grupo);
+  border: 0;
+}
+.medicion {
+  background: rgba(255, 255, 255, 0.035);
+  border: 0;
+}
+
+/* La barra de sesión era el único elemento fijo a sangre completa: en una
+   tableta se estiraba de lado a lado mientras las pestañas y el cronómetro
+   seguían centrados en 520px. Ahora comparte el mismo ancho que el resto. */
+.progreso-sesion {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* Escritorio y tableta.
+ *
+ * La app se diseñó para una mano y esa medida no mejora estirándola: una lista
+ * de 1000px de ancho no se lee mejor. Lo que sí se puede hacer es que la
+ * columna deje de parecer un teléfono olvidado en medio de un campo negro, y
+ * que el marco se note deliberado. */
+@media (min-width: 900px) {
+  .app {
+    background: #0e0f11;
+    box-shadow: 0 0 0 1px var(--borde-tenue);
+  }
+  .pestanas,
+  .progreso-sesion {
+    box-shadow: 0 0 0 1px var(--borde-tenue);
+  }
+}
+
+/* El resumen del historial son dos datos, uno debajo del otro. En fila se
+   partían en dos columnas estrechas y volvían a leerse como dos tarjetas. */
+.resumen {
+  display: block;
+  margin-bottom: 16px;
+}

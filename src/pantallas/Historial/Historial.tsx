@@ -13,7 +13,6 @@ import { aComparable } from '../../dominio/serie'
 import { formatearRir } from '../../dominio/rir'
 import { calcularDescansos, formatearSegundos } from '../../logica/descanso'
 import { evaluarSerie, ETIQUETA_PROGRESO_CORTA } from '../../logica/progreso'
-import { Cabecera } from '../../componentes/Cabecera'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Ejercicio, SerieComparable } from '../../dominio/tipos'
 import type { SerieConFecha } from '../../datos/referencias'
@@ -34,10 +33,12 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!datos || datos.entrenados.length === 0) {
     return (
-      <>
-        <Cabecera kicker="Historial por variante" titulo="Progreso" />
+      <div className="contenido">
+        <header className="pantalla">
+          <h1 className="pantalla__titulo">Historial</h1>
+        </header>
         <p className="aviso">Todavía no hay entrenamientos registrados.</p>
-      </>
+      </div>
     )
   }
 
@@ -46,13 +47,15 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
 
   return (
     <>
-      <Cabecera
-        kicker="Historial por variante"
-        titulo="Progreso"
-        meta={`${sesiones.length} ${sesiones.length === 1 ? 'sesión' : 'sesiones'}`}
-      />
-
       <div className="contenido">
+        <header className="pantalla">
+          <h1 className="pantalla__titulo">Historial</h1>
+          <p className="pantalla__sub">
+            {sesiones.length} {sesiones.length === 1 ? 'sesión' : 'sesiones'} de{' '}
+            {ejercicio.nombre}
+          </p>
+        </header>
+
         <nav className="filtros" aria-label="Ejercicio del historial">
           {entrenados.map((opcion) => (
             <button
@@ -67,19 +70,20 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
           ))}
         </nav>
 
-        {/* §9: la mejor referencia sobrevive a los días malos; se muestra aparte. */}
-        <div className="resumen" style={{ marginTop: 12 }}>
-          <div className="resumen__tarjeta resumen__tarjeta--mejor">
-            <span className="etiqueta-campo">Mejor referencia</span>
+        {/* §9: la mejor referencia sobrevive a los días malos; se muestra aparte.
+            Dos líneas, no dos tarjetas: son dos datos, no dos fichas. */}
+        <div className="resumen">
+          <p className="resumen__linea">
+            <span className="etiqueta-campo">Mejor referencia</span>{' '}
             <span className="resumen__valor">
               {referencias?.mejor ? describirSerie(referencias.mejor, ejercicio) : '—'}
             </span>
             <span className="resumen__pie">
               {referencias?.mejor ? `RIR ${formatearRir(referencias.mejor.rir)}` : 'Sin marca'}
             </span>
-          </div>
-          <div className="resumen__tarjeta">
-            <span className="etiqueta-campo">Última sesión</span>
+          </p>
+          <p className="resumen__linea">
+            <span className="etiqueta-campo">Última sesión</span>{' '}
             <span className="resumen__valor">
               {referencias?.ultimaSesion[0]
                 ? describirSerie(referencias.ultimaSesion[0], ejercicio)
@@ -90,17 +94,17 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
                 ? formatearFecha(referencias.fechaUltimaSesion)
                 : 'Sin registros'}
             </span>
-          </div>
+          </p>
         </div>
 
-        <div className="sesiones" style={{ marginTop: 12 }}>
+        <div className="grupo grupo--pleno">
           {sesiones.map((sesion) => (
             <div key={sesion.fecha}>
               {/* Un número mal apuntado se descubre días después: la sesión se
                   abre para corregirlo sin salir del historial. */}
               <button
                 type="button"
-                className="sesion"
+                className="fila sesion"
                 aria-expanded={abierta === sesion.fecha}
                 onClick={() =>
                   setAbierta((actual) => (actual === sesion.fecha ? null : sesion.fecha))

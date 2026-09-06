@@ -16,6 +16,7 @@ import { sincronizarConfiguracionCloud } from './aplicacion/sincronizarCloud'
 import { sembrar } from './datos/semilla'
 import { AltaParticipante } from './pantallas/Alta/AltaParticipante'
 import { EntrenamientoHoy } from './pantallas/EntrenamientoHoy/EntrenamientoHoy'
+import { Entrenamiento } from './pantallas/EntrenamientoHoy/Entrenamiento'
 import { Biblioteca } from './pantallas/Biblioteca/Biblioteca'
 import { Historial } from './pantallas/Historial/Historial'
 import { Perfil } from './pantallas/Perfil/Perfil'
@@ -38,6 +39,16 @@ export function App() {
   const [listo, setListo] = useState(false)
   const [vistaPrevia, setVistaPrevia] = useState(false)
   const [seccion, setSeccion] = useState<Seccion>('hoy')
+
+  /*
+   * Modo entrenamiento.
+   *
+   * Vive en la pestaña Hoy: salir a la Biblioteca durante el descanso y volver
+   * te devuelve al ejercicio donde estabas, como en cualquier app. No se
+   * persiste a propósito: tras recargar se aterriza en el resumen con
+   * «Continuar», que es honesto y no abre una pantalla completa por sorpresa.
+   */
+  const [entrenando, setEntrenando] = useState(false)
 
   /*
    * Contexto de cada sección.
@@ -121,14 +132,29 @@ export function App() {
     <ProveedorDescanso>
     <div className={vistaPrevia ? 'app app--vista-previa' : 'app'}>
       {vistaPrevia && (
+        /*
+         * Cambio de modo, no «modo desarrollador».
+         *
+         * Dice de quién es la vista que se está mirando, que es lo único que el
+         * coach necesita saber, y ofrece la vuelta. Nada de «impersonación»,
+         * «preview» ni «sesión técnica»: por dentro es una sesión normal, y por
+         * fuera tiene que leerse como cambiar de modo dentro del producto.
+         */
         <aside className="vista-previa" aria-label="Vista previa del cliente">
-          <span>Vista previa</span>
+          <span>Vista de {participante.nombre}</span>
           <a href="/salir?volver=admin">Volver al Coach</a>
         </aside>
       )}
-      {seccion === 'hoy' && (
-        <EntrenamientoHoy memoriaDia={diaDeHoy} memoriaAbierta={ejercicioAbierto} />
-      )}
+      {seccion === 'hoy' &&
+        (entrenando ? (
+          <Entrenamiento
+            memoriaDia={diaDeHoy}
+            memoriaAbierta={ejercicioAbierto}
+            onSalir={() => setEntrenando(false)}
+          />
+        ) : (
+          <EntrenamientoHoy memoriaDia={diaDeHoy} onComenzar={() => setEntrenando(true)} />
+        ))}
       {seccion === 'biblioteca' && <Biblioteca memoriaFiltro={filtroBiblioteca} />}
       {seccion === 'historial' && <Historial memoriaEjercicio={ejercicioHistorial} />}
       {seccion === 'perfil' && <Perfil vistaPrevia={vistaPrevia} soloParticipante />}

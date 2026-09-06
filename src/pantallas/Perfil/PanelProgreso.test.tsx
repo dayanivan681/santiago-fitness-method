@@ -29,6 +29,15 @@ async function abrir() {
   await screen.findByText('Progreso')
 }
 
+/**
+ * El formulario de medición ya no está siempre desplegado: siete campos vacíos
+ * eran lo primero que se veía al entrar al perfil. Se abre al pedirlo.
+ */
+async function abrirFormulario() {
+  await abrir()
+  await userEvent.click(await screen.findByRole('button', { name: 'Añadir medición' }))
+}
+
 async function anotar(campo: string, valor: string) {
   const entrada = screen.getByLabelText(campo)
   await userEvent.clear(entrada)
@@ -38,7 +47,7 @@ async function anotar(campo: string, valor: string) {
 describe('medidas y fotos con fecha (V1)', () => {
   test('guarda una medida con su fecha', async () => {
     // Arrange
-    await abrir()
+    await abrirFormulario()
 
     // Act
     await anotar('Fecha', '2026-08-01')
@@ -55,7 +64,7 @@ describe('medidas y fotos con fecha (V1)', () => {
 
   test('una fila sin medidas ni foto no se guarda', async () => {
     // Sólo la fecha no cuenta nada.
-    await abrir()
+    await abrirFormulario()
 
     await userEvent.click(screen.getByRole('button', { name: 'Guardar medición' }))
 
@@ -65,13 +74,15 @@ describe('medidas y fotos con fecha (V1)', () => {
 
   test('enseña la variación respecto a la medición anterior', async () => {
     // Arrange: en agosto la cintura estaba en 34
-    await abrir()
+    await abrirFormulario()
     await anotar('Fecha', '2026-08-01')
     await anotar('Cintura (in)', '34')
     await userEvent.click(screen.getByRole('button', { name: 'Guardar medición' }))
     await screen.findByText('1 ago')
 
-    // Act: en septiembre está en 32
+    // Act: en septiembre está en 32. Guardar cierra el formulario, así que hay
+    // que volver a abrirlo, igual que haría el participante.
+    await userEvent.click(screen.getByRole('button', { name: 'Añadir medición' }))
     await anotar('Fecha', '2026-09-01')
     await anotar('Cintura (in)', '32')
     await userEvent.click(screen.getByRole('button', { name: 'Guardar medición' }))
@@ -81,12 +92,13 @@ describe('medidas y fotos con fecha (V1)', () => {
   })
 
   test('lo más reciente aparece primero', async () => {
-    await abrir()
+    await abrirFormulario()
     await anotar('Fecha', '2026-08-01')
     await anotar('Peso corporal (lb)', '180')
     await userEvent.click(screen.getByRole('button', { name: 'Guardar medición' }))
     await screen.findByText('1 ago')
 
+    await userEvent.click(screen.getByRole('button', { name: 'Añadir medición' }))
     await anotar('Fecha', '2026-09-01')
     await anotar('Peso corporal (lb)', '175')
     await userEvent.click(screen.getByRole('button', { name: 'Guardar medición' }))
@@ -98,7 +110,7 @@ describe('medidas y fotos con fecha (V1)', () => {
 
   test('guarda la foto en el dispositivo y la muestra', async () => {
     // Arrange
-    await abrir()
+    await abrirFormulario()
     const foto = new File(['imagen'], 'progreso.jpg', { type: 'image/jpeg' })
 
     // Act
@@ -116,7 +128,7 @@ describe('medidas y fotos con fecha (V1)', () => {
 
   test('se puede borrar una medición equivocada, con su foto', async () => {
     // Arrange
-    await abrir()
+    await abrirFormulario()
     await userEvent.upload(
       screen.getByLabelText('Foto'),
       new File(['imagen'], 'progreso.jpg', { type: 'image/jpeg' }),

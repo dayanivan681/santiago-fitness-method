@@ -6,7 +6,6 @@
 
 import { usePerfil } from '../../aplicacion/usePerfil'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
-import { Cabecera } from '../../componentes/Cabecera'
 import { FichaParticipante } from './FichaParticipante'
 import { PanelLimitaciones } from './PanelLimitaciones'
 import { PanelProgreso } from './PanelProgreso'
@@ -33,13 +32,14 @@ export function Perfil({
 
   return (
     <>
-      <Cabecera
-        kicker="Perfil"
-        titulo={participante.nombre}
-        meta={`${participante.frecuenciaEntrenamiento} días / semana`}
-      />
-
       <div className="contenido">
+        <header className="pantalla">
+          <h1 className="pantalla__titulo">{participante.nombre}</h1>
+          <p className="pantalla__sub">
+            {participante.frecuenciaEntrenamiento} días por semana
+          </p>
+        </header>
+
         <div className="pila">
           <FichaParticipante
             participante={participante}

@@ -36,6 +36,7 @@ export function PanelProgreso({ participante, repositorio }: Props) {
   const [medidas, setMedidas] = useState<Medidas>({})
   const [foto, setFoto] = useState<File | null>(null)
   const [aviso, setAviso] = useState('')
+  const [midiendo, setMidiendo] = useState(false)
 
   async function guardar(evento: FormEvent) {
     evento.preventDefault()
@@ -61,6 +62,7 @@ export function PanelProgreso({ participante, repositorio }: Props) {
 
     setMedidas({})
     setFoto(null)
+    setMidiendo(false)
   }
 
   const lista = registros ?? []
@@ -72,6 +74,19 @@ export function PanelProgreso({ participante, repositorio }: Props) {
         <span className="panel__nota">Sólo en este dispositivo</span>
       </div>
 
+      {/*
+        * Apuntar una medida es algo que se hace de vez en cuando, no cada vez
+        * que se abre el perfil. Con el formulario siempre desplegado, siete
+        * campos vacíos eran lo primero que se veía y convertían la pantalla en
+        * una hoja de configuración.
+        */}
+      {!midiendo && (
+        <button type="button" className="accion accion--suave" onClick={() => setMidiendo(true)}>
+          Añadir medición
+        </button>
+      )}
+
+      {midiendo && (
       <form className="pila" onSubmit={guardar}>
         <div className="rejilla-datos">
           <label className="campo-texto">
@@ -124,14 +139,19 @@ export function PanelProgreso({ participante, repositorio }: Props) {
           </p>
         )}
 
-        <button
-          type="submit"
-          className="boton-guardar"
-          style={{ width: '100%', height: 40, justifyContent: 'center' }}
-        >
-          Guardar medición
-        </button>
+        <div className="acciones-medicion">
+          <button type="button" className="boton-guardar boton-guardar--secundario"
+            onClick={() => setMidiendo(false)}>
+            Cancelar
+          </button>
+          {/* Sin alto fijo: `boton-guardar` ya trae los 44px mínimos, y el
+              `height: 40` que había aquí se los comía. */}
+          <button type="submit" className="boton-guardar">
+            Guardar medición
+          </button>
+        </div>
       </form>
+      )}
 
       {lista.length === 0 ? (
         <p className="nota">Todavía no hay mediciones.</p>

@@ -2,7 +2,10 @@ import 'fake-indexeddb/auto'
 import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor, fireEvent, cleanup, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
+import { Entrenamiento } from './Entrenamiento'
+import { useMemoria } from '../../aplicacion/memoria'
 import { ProveedorDescanso } from '../../aplicacion/ProveedorDescanso'
 import { Descanso } from '../../componentes/Descanso'
 import { baseDePrueba } from '../../pruebas/base'
@@ -52,21 +55,55 @@ function idDeLaPrimeraSerie(numeroSerie = 1) {
   })
 }
 
-/** El primer ejercicio viene desplegado; los demás hay que abrirlos. */
 /**
- * El cronómetro pasó a colgar de App, así que las pruebas de esta pantalla lo
- * montan igual que lo hace App: proveedor alrededor y barra al final.
+ * El armazón que monta `App`: resumen del día y modo entrenamiento comparten el
+ * día elegido y el ejercicio en curso, y el cronómetro cuelga de fuera de los
+ * dos para que no se detenga al cambiar de pantalla.
  */
 function Pantalla() {
+  const memoriaDia = useMemoria<string | null>(null)
+  const memoriaAbierta = useMemoria(0)
+  const [entrenando, setEntrenando] = useState(false)
+
   return (
     <ProveedorDescanso>
-      <EntrenamientoHoy repositorio={repositorio} />
+      {entrenando ? (
+        <Entrenamiento
+          repositorio={repositorio}
+          memoriaDia={memoriaDia}
+          memoriaAbierta={memoriaAbierta}
+          onSalir={() => setEntrenando(false)}
+        />
+      ) : (
+        <EntrenamientoHoy
+          repositorio={repositorio}
+          memoriaDia={memoriaDia}
+          onComenzar={() => setEntrenando(true)}
+        />
+      )}
       <Descanso />
     </ProveedorDescanso>
   )
 }
 
+/**
+ * Elegir el día y entrar a entrenar.
+ *
+ * Registrar una serie ya no ocurre en Hoy: Hoy dice qué toca y el registro vive
+ * en el modo entrenamiento, así que estas pruebas empiezan donde empieza el
+ * participante.
+ */
 async function abrirUpperA() {
+  render(<Pantalla />)
+  await userEvent.click(await screen.findByRole('button', { name: 'Upper A' }))
+  await userEvent.click(
+    await screen.findByRole('button', { name: /Comenzar entrenamiento|^Continuar/ }),
+  )
+  await screen.findByText(PRESS)
+}
+
+/** El resumen del día, sin entrar a entrenar. */
+async function abrirResumen() {
   render(<Pantalla />)
   await userEvent.click(await screen.findByRole('button', { name: 'Upper A' }))
   await screen.findByText(PRESS)
@@ -81,7 +118,8 @@ beforeEach(async () => {
 
 describe('el entrenamiento ya viene cargado (§3)', () => {
   test('muestra los 5 ejercicios de Upper A sin que el participante escriba nada', async () => {
-    await abrirUpperA()
+    // El plan del día se lee en el resumen; entrenar enseña uno a la vez.
+    await abrirResumen()
 
     // §29: los cinco ejercicios, con Military Press ya retirado
     expect(screen.getByText(PRESS)).toBeInTheDocument()
@@ -93,7 +131,7 @@ describe('el entrenamiento ya viene cargado (§3)', () => {
   })
 
   test('las series y el rango de reps ya están definidos', async () => {
-    await abrirUpperA()
+    await abrirResumen()
 
     // §4 y §10: el primer ejercicio es de fuerza, rango 1–5
     expect(screen.getByText('4 series · 1–5 reps')).toBeInTheDocument()
@@ -124,7 +162,9 @@ describe('referencia del entrenamiento anterior (§7)', () => {
 
     // Assert
     expect(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)).toHaveTextContent('45')
-    expect(screen.getAllByText(/Anterior: 45 lb\/lado × 5 · RIR 2/)).toHaveLength(4)
+    // Una, no cuatro: sólo está abierta la serie que toca. Las otras tres
+    // esperan en una línea con su punto de partida.
+    expect(screen.getAllByText(/Anterior: 45 lb\/lado × 5 · RIR 2/)).toHaveLength(1)
 
     // Nada queda registrado mientras no se confirme
     expect(await repositorio.historialDeEjercicio(participanteId, PRESS_BANCA_15_SMITH.id)).toHaveLength(1)
@@ -696,6 +736,8 @@ describe('autosave del borrador y recuperación', () => {
     // Sin la posición y el número en la clave, se pisarían entre ellas.
     await abrirUpperA()
 
+    // La serie 2 no toca todavía: se abre tocándola.
+    await userEvent.click(screen.getByLabelText(`Abrir la serie 2 de ${PRESS}`))
     await userEvent.click(screen.getByLabelText(`Subir peso de la serie 2 de ${PRESS}`))
 
     await waitFor(async () => {
@@ -784,6 +826,7 @@ describe('la siguiente serie parte de lo que se acaba de levantar', () => {
     await sembrarSesionAnterior()
 
     await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Abrir la serie 2 de ${PRESS}`))
 
     expect(screen.getByLabelText(`Peso de la serie 2 de ${PRESS}`)).toHaveTextContent('45')
   })
@@ -851,26 +894,31 @@ describe('el ejercicio terminado se pliega y pasa el turno', () => {
     ).toBeInTheDocument()
   })
 
-  test('plegado sigue diciendo cuántas series se hicieron', async () => {
-    // Plegar no puede esconder el dato: 4/4 tiene que seguir a la vista.
+  test('la cuenta del ejercicio terminado sigue a la vista en la lista del día', async () => {
+    // Pasar al siguiente no puede esconder el dato: 4/4 tiene que poder verse.
     await completarElPrimerEjercicio()
+    await screen.findByText('Press convergente inclinado')
 
-    await waitFor(() => {
-      const resumen = screen.getByRole('button', { name: (texto) => texto.includes(PRESS) })
-      expect(resumen).toHaveTextContent('4/4')
-      expect(resumen).toHaveTextContent('Completo')
-    })
+    await userEvent.click(screen.getByRole('button', { name: 'Ejercicios del día' }))
+
+    const hoja = await screen.findByRole('dialog', { name: 'Ejercicios del día' })
+    const fila = within(hoja).getByRole('button', { name: (texto) => texto.includes(PRESS) })
+    expect(fila).toHaveTextContent('4/4')
   })
 
-  test('se puede reabrir para corregir', async () => {
+  test('se puede volver al ejercicio terminado para corregir', async () => {
     // Arrange
     await completarElPrimerEjercicio()
     await waitFor(() =>
       expect(screen.queryByLabelText(`Guardar la serie 1 de ${PRESS}`)).not.toBeInTheDocument(),
     )
 
-    // Act
-    await userEvent.click(screen.getByRole('button', { name: (texto) => texto.includes(PRESS) }))
+    // Act: la lista del día lleva a cualquiera de los cinco.
+    await userEvent.click(screen.getByRole('button', { name: 'Ejercicios del día' }))
+    const hoja = await screen.findByRole('dialog', { name: 'Ejercicios del día' })
+    await userEvent.click(
+      within(hoja).getByRole('button', { name: (texto) => texto.includes(PRESS) }),
+    )
 
     // Assert
     expect(await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)).toBeInTheDocument()
@@ -968,7 +1016,11 @@ describe('el cronómetro convive con la barra de sesión', () => {
     await userEvent.click(screen.getAllByRole('button', { name: 'Descanso' })[0])
     await screen.findByRole('status', { name: 'Temporizador de descanso' })
 
-    await userEvent.click(screen.getByRole('button', { name: /Lat pulldown/ }))
+    // Cambiar de ejercicio: la fila «Siguiente» del final del ejercicio.
+    await userEvent.click(
+      screen.getByRole('button', { name: /Press convergente inclinado/ }),
+    )
+    await screen.findByText('Press convergente inclinado')
 
     expect(
       screen.getByRole('status', { name: 'Temporizador de descanso' }),

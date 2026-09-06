@@ -113,7 +113,6 @@ export function FichaParticipante({ participante, repositorio, onGuardar, editab
         <button
           type="button"
           className="boton-guardar boton-guardar--secundario"
-          style={{ height: 38, justifyContent: 'center' }}
           onClick={() => {
             setBorrador(participante)
             setEditando(false)

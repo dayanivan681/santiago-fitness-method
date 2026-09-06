@@ -1,142 +1,62 @@
 /**
- * Pantalla principal.
+ * Hoy: qué toca entrenar y una sola acción para empezar.
+ *
  * Guía del proyecto §3 (ya viene cargado), §24 (los 5 ejercicios), §25.
+ *
+ * Antes esta pantalla ERA el entrenamiento: abría con el primer ejercicio
+ * desplegado y sus series listas para guardar, unos cuarenta controles tocables
+ * en dos pantallas de scroll. Se entendía después de leerla, no de un vistazo.
+ *
+ * Ahora responde a una sola pregunta —qué tengo que hacer hoy— y el registro
+ * vive en `Entrenamiento`, que es un modo aparte. Lo que se ve aquí es el plan,
+ * no el formulario: los ejercicios del día son filas de lectura, sin controles.
  */
 
-import { useEffect, useMemo, useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
-import { useControlDescanso } from '../../aplicacion/contextoDescanso'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
-import { Cabecera } from '../../componentes/Cabecera'
-import { TarjetaEjercicio } from './TarjetaEjercicio'
-import { HojaVariantes } from './HojaVariantes'
-import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
-import { fechaDeHoy, type Repositorio } from '../../datos/repositorio'
-import type { Ejercicio } from '../../dominio/tipos'
-import type { ClaveDeBorrador } from '../../logica/borrador'
-
-/** La clave sin `numeroSerie`: cada fila añade el suyo. */
-type ClaveDelDia = Omit<ClaveDeBorrador, 'numeroSerie'>
-import { useMemoria, type Memoria } from '../../aplicacion/memoria'
+import type { Repositorio } from '../../datos/repositorio'
+import type { Memoria } from '../../aplicacion/memoria'
 
 interface Props {
   readonly repositorio?: Repositorio
   /** Día elegido, recordado por `App` mientras dure la pestaña. */
   readonly memoriaDia?: Memoria<string | null>
-  /** Ejercicio desplegado, para no volver siempre al primero. */
-  readonly memoriaAbierta?: Memoria<number>
+  /** Entrar al modo entrenamiento. */
+  readonly onComenzar?: () => void
 }
 
 export function EntrenamientoHoy({
   repositorio = repositorioPorDefecto,
   memoriaDia,
-  memoriaAbierta,
+  onComenzar,
 }: Props = {}) {
-  const {
-    datos,
-    elegirPlantilla,
-    registrarSerie,
-    corregirSerie,
-    deshacerUltimaCorreccion,
-    terminarSesion,
-    cambiarVariante,
-    cargando,
-  } = useEntrenamiento(repositorio, memoriaDia)
-
-  const abiertaPropia = useMemoria(0)
-  const { valor: abierta, recordar: setAbierta } = memoriaAbierta ?? abiertaPropia
-  const [variantesDe, setVariantesDe] = useState<number | null>(null)
-  const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
-  const { arrancar: arrancarDescanso, declararBarraDeSesion } = useControlDescanso()
-
-  /**
-   * El cronómetro vive en App y no sabe si hay una sesión abierta, pero los dos
-   * son fijos al fondo. Sin este aviso se solaparían: ya pasó una vez, 22 px.
-   */
-  const barraDeSesionVisible = Boolean(datos?.sesionDeHoy && !datos.sesionDeHoy.completadaEn)
-  useEffect(() => {
-    declararBarraDeSesion(barraDeSesionVisible)
-    return () => declararBarraDeSesion(false)
-  }, [barraDeSesionVisible, declararBarraDeSesion])
-
-  /**
-   * La identidad de la clave del borrador tiene que sobrevivir al repintado.
-   *
-   * Antes se construía un objeto nuevo en cada render y viajaba como prop hasta
-   * el efecto de autosave de `FilaSerie`, que lo tiene en sus dependencias: el
-   * autosave se disparaba en CADA repintado. El daño se veía justo al guardar
-   * una serie —arrancar el descanso repinta el árbol— porque volvía a escribir
-   * el borrador que `registrarSerie` acababa de borrar, y la serie recién
-   * guardada se quedaba con un borrador fantasma.
-   *
-   * Atadas a `datos`: sólo cambian cuando cambia el entrenamiento, no cuando
-   * se repinta.
-   */
-  const clavesDelDia = useMemo(() => {
-    const claves = new Map<number, ClaveDelDia>()
-    if (!datos) return claves
-
-    const fecha = fechaDeHoy()
-    for (const item of datos.ejerciciosDelDia) {
-      claves.set(item.slot.orden, {
-        participanteId: datos.participante.id,
-        fecha,
-        plantillaDiaId: datos.plantilla.id,
-        orden: item.slot.orden,
-      })
-    }
-    return claves
-  }, [datos])
-
-  /**
-   * Al completar la última serie, el ejercicio se pliega y se abre el siguiente.
-   *
-   * Es lo que se hace en el gimnasio: terminas y pasas al que toca. Plegado
-   * sigue viéndose el resumen —`4/4`, "Completo"— y se puede reabrir para
-   * corregir, así que no se esconde nada.
-   */
-  function avanzarSiTermino(indice: number, numeroSerie: number, seriesObjetivo: number) {
-    if (numeroSerie < seriesObjetivo) return
-    setAbierta((actual) => (actual === indice ? indice + 1 : actual))
-  }
+  const { datos, elegirPlantilla, cargando } = useEntrenamiento(repositorio, memoriaDia)
 
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!datos) return <p className="aviso">No hay entrenamiento configurado todavía.</p>
 
-  const {
-    participante,
-    plantilla,
-    plantillas,
-    ejerciciosDelDia,
-    seriesHechas,
-    seriesObjetivo,
-    sesionDeHoy,
-  } = datos
-  const item = variantesDe === null ? undefined : ejerciciosDelDia[variantesDe]
-  const bibliotecaDelDia = ejerciciosUnicos(
-    ejerciciosDelDia.flatMap((ejercicioDelDia) => ejercicioDelDia.variantes),
-  )
+  const { plantilla, plantillas, ejerciciosDelDia, seriesHechas, seriesObjetivo, sesionDeHoy } =
+    datos
 
-  // El descanso arranca solo al guardar una serie de trabajo, y el botón
-  // "Descanso" sigue disponible para arrancarlo a mano cuando hace falta.
-  // Ojo con no confundirlo con el descanso *medido* que guarda el historial
-  // (§5), que se sigue derivando solo de las marcas de tiempo de cada serie.
+  const enCurso = Boolean(sesionDeHoy && !sesionDeHoy.completadaEn)
+  const terminada = Boolean(sesionDeHoy?.completadaEn)
 
   return (
     <>
-      <Cabecera
-        kicker={plantilla.nombre}
-        titulo="Entrenamiento de hoy"
-        meta={`${seriesHechas}/${seriesObjetivo} series`}
-      />
+      <div className="contenido">
+        <header className="pantalla">
+          <h1 className="pantalla__titulo">Entrenamiento de hoy</h1>
+          <p className="pantalla__sub">
+            {plantilla.nombre}
+            {ejerciciosDelDia.length > 0 && (
+              <>
+                {' · '}
+                {ejerciciosDelDia.length} ejercicios · {seriesObjetivo} series
+              </>
+            )}
+          </p>
+        </header>
 
-      {/* Con la barra de sesión abajo hace falta más hueco, o el último texto
-          queda a seis píxeles de quedar tapado. */}
-      <div
-        className={
-          sesionDeHoy && !sesionDeHoy.completadaEn ? 'contenido contenido--con-barra' : 'contenido'
-        }
-      >
         <nav className="filtros" aria-label="Día de entrenamiento">
           {plantillas.map((opcion) => (
             <button
@@ -151,158 +71,56 @@ export function EntrenamientoHoy({
           ))}
         </nav>
 
-        {/* Portada del día: da identidad a la sesión antes de la lista (§24).
-            Sin foto real va compacta, para no empujar la primera serie fuera de
-            la pantalla en un móvil pequeño. */}
-        {ejerciciosDelDia.length > 0 && (
-          <div className="portada portada--compacta" style={{ marginTop: 12 }}>
-            <div className="portada__imagen">
-              <span className="portada__marcador">Foto del día</span>
-            </div>
-            <div className="portada__pie">
-              <div className="portada__dia">{plantilla.nombre}</div>
-              <div className="portada__lema">Disciplina = Resultados</div>
-            </div>
-          </div>
-        )}
-
         {ejerciciosDelDia.length === 0 ? (
           // Si el coach aún no ha publicado ese día desde /admin, el participante
           // recibe un estado vacío explícito en vez de controles de programación.
           <p className="aviso">
-            {plantilla.nombre} todavía no tiene ejercicios definidos. El coach lo configura
-            desde la consola Coach/Admin.
+            {plantilla.nombre} todavía no tiene ejercicios definidos. El coach lo configura desde
+            la consola Coach/Admin.
           </p>
         ) : (
-          <div className="pila" style={{ marginTop: 12 }}>
-            {ejerciciosDelDia.map((ejercicioDelDia, indice) => (
-              <TarjetaEjercicio
-                key={ejercicioDelDia.ejercicio.id}
-                item={ejercicioDelDia}
-                abierta={abierta === indice}
-                onAlternar={() => setAbierta((actual) => (actual === indice ? -1 : indice))}
-                onAbrirVariantes={() => setVariantesDe(indice)}
-                onAbrirFicha={() => setFichaDe(ejercicioDelDia.ejercicio)}
-                onDescansar={() =>
-                  arrancarDescanso(
-                    ejercicioDelDia.ejercicio.id,
-                    ejercicioDelDia.slot.descansoSegundos,
-                  )
-                }
-                onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
-                  // Si esto lanza, no se llega al cronómetro: un guardado
-                  // fallido no debe arrancar ningún descanso.
-                  await registrarSerie(ejercicioId, numeroSerie, valores)
-                  // El calentamiento no descansa: es preparación, y encadenar
-                  // tres minutos entre aproximaciones alarga la sesión sin
-                  // motivo. Las correcciones llegan por otra vía (onCorregir)
-                  // y tampoco pasan por aquí.
-                  if (!valores.esCalentamiento) {
-                    arrancarDescanso(ejercicioId, ejercicioDelDia.slot.descansoSegundos)
-                  }
-                  avanzarSiTermino(indice, numeroSerie, ejercicioDelDia.slot.seriesObjetivo)
-                }}
-                onCorregirSerie={corregirSerie}
-                onDeshacerCorreccion={deshacerUltimaCorreccion}
-                repositorio={repositorio}
-                claveDeBorrador={clavesDelDia.get(ejercicioDelDia.slot.orden)}
-              />
-            ))}
+          <>
+            {/* La única acción de la pantalla. Con una sesión abierta cambia de
+                verbo y lleva el progreso: entrar y seguir es lo mismo. */}
+            <button type="button" className="accion" onClick={onComenzar} style={{ marginTop: 18 }}>
+              {enCurso
+                ? `Continuar · ${seriesHechas} de ${seriesObjetivo} series`
+                : terminada
+                  ? 'Volver al entrenamiento'
+                  : 'Comenzar entrenamiento'}
+            </button>
 
-            {/* §19: la sesión la cierra el participante. Se guarda lo que hizo,
-                aunque falten ejercicios o series. Ahora vive en la barra fija;
-                aquí sólo queda la confirmación de que ya está cerrada. */}
-            {sesionDeHoy?.completadaEn && (
-              <p className="nota nota--hecho">
+            {terminada && (
+              <p className="nota nota--hecho" style={{ marginTop: 12 }}>
                 Sesión terminada. Lo registrado ya está en el historial.
               </p>
             )}
 
-            <p className="nota">
-              La app no impone el peso. Muestra la referencia anterior; tú ajustas lo que
-              realmente hiciste antes de guardar.
-            </p>
-          </div>
+            <h2 className="grupo__titulo">Ejercicios</h2>
+            <div className="grupo grupo--pleno">
+              {ejerciciosDelDia.map((ejercicioDelDia) => {
+                const hechas = ejercicioDelDia.seriesDeHoy.length
+                return (
+                  <div className="fila" key={ejercicioDelDia.ejercicio.id}>
+                    <span className="fila__cuerpo">
+                      <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>
+                      <span className="fila__detalle">
+                        {ejercicioDelDia.slot.seriesObjetivo} series ·{' '}
+                        {ejercicioDelDia.slot.repMin}–{ejercicioDelDia.slot.repMax} reps
+                      </span>
+                    </span>
+                    {hechas > 0 && (
+                      <span className="fila__valor">
+                        {hechas}/{ejercicioDelDia.slot.seriesObjetivo}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </>
         )}
       </div>
-
-      {/* El nombre importa: los campos de la serie son <output>, que también
-          anuncian estado, y sin él no se distinguiría cuál es el cronómetro. */}
-      {/*
-       * Progreso de la sesión, siempre a la vista.
-       *
-       * Antes había que bajar hasta el final de la lista —hasta ocho ejercicios—
-       * para ver cuánto llevabas y para poder cerrar la sesión. Con esto se sabe
-       * de un vistazo y se cierra desde donde estés.
-       */}
-      {sesionDeHoy && !sesionDeHoy.completadaEn && (
-        <div
-          className="progreso-sesion"
-          role="group"
-          aria-label="Progreso de la sesión y cierre"
-        >
-          <div
-            className="progreso-sesion__medidor"
-            role="progressbar"
-            aria-label="Progreso de la sesión"
-            aria-valuemin={0}
-            aria-valuemax={seriesObjetivo}
-            aria-valuenow={seriesHechas}
-          >
-            <span
-              className="progreso-sesion__relleno"
-              style={{ width: `${(seriesHechas / Math.max(1, seriesObjetivo)) * 100}%` }}
-            />
-            <span className="progreso-sesion__texto">
-              {seriesHechas} de {seriesObjetivo} series
-            </span>
-          </div>
-          <button
-            type="button"
-            className="progreso-sesion__terminar"
-            onClick={terminarSesion}
-          >
-            Terminar sesión
-          </button>
-        </div>
-      )}
-
-      {/* La ficha se superpone: la tarjeta sigue montada debajo, así que abrirla
-          y cerrarla no cuesta lo que llevas tecleado en la serie. */}
-      {fichaDe && (
-        <HojaEjercicio
-          ejercicio={fichaDe}
-          biblioteca={bibliotecaDelDia}
-          historial={{ participanteId: participante.id, repositorio }}
-          onElegir={setFichaDe}
-          onCerrar={() => setFichaDe(null)}
-        />
-      )}
-
-      {item && (
-        <HojaVariantes
-          variantes={item.variantes}
-          actualId={item.ejercicio.id}
-          asignadaId={item.ejercicioDeLaPlantillaId}
-          participante={participante}
-          rango={item.rango}
-          repositorio={repositorio}
-          onCerrar={() => setVariantesDe(null)}
-          onElegir={async (ejercicioId, alcance) => {
-            await cambiarVariante(item.slot.orden, ejercicioId, alcance)
-            setVariantesDe(null)
-          }}
-        />
-      )}
     </>
   )
-}
-
-/**
- * Cada ejercicio del día carga todas sus variantes, así que al aplanarlas se
- * repite el mismo catálogo varias veces. La ficha necesita una sola fila por
- * ejercicio: además de evitar botones duplicados, conserva claves React únicas.
- */
-function ejerciciosUnicos(ejercicios: readonly Ejercicio[]): Ejercicio[] {
-  return [...new Map(ejercicios.map((ejercicio) => [ejercicio.id, ejercicio])).values()]
 }

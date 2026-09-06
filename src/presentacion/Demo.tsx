@@ -11,7 +11,7 @@ import {
   IconoHistorial,
   IconoPerfil,
 } from "../componentes/IconosNavegacion";
-import { TarjetaEjercicio } from "../pantallas/EntrenamientoHoy/TarjetaEjercicio";
+import { CuerpoEjercicio } from "../pantallas/EntrenamientoHoy/CuerpoEjercicio";
 import { HojaEjercicio } from "../pantallas/Biblioteca/HojaEjercicio";
 import { NOMBRE_MUSCULO, etiquetaEquipo } from "../dominio/etiquetas";
 import type { Ejercicio, SerieRegistrada } from "../dominio/tipos";
@@ -36,7 +36,6 @@ export function Demo() {
 function DemoCliente() {
   const [tab, setTab] = useState("hoy");
   const [dia, setDia] = useState(0);
-  const [abierto, setAbierto] = useState(0);
   const [ficha, setFicha] = useState<Ejercicio | null>(null);
   const [filtro, setFiltro] = useState("todos");
   const [series, setSeries] = useState<SerieRegistrada[]>([]);
@@ -102,7 +101,6 @@ function DemoCliente() {
                 aria-pressed={index === dia}
                 onClick={() => {
                   setDia(index);
-                  setAbierto(0);
                 }}
               >
                 {day.nombre}
@@ -116,7 +114,9 @@ function DemoCliente() {
             </div>
           </div>
           <div className="pila" style={{ marginTop: 12 }}>
-            {actual.ejercicios.map(({ slot, ejercicio: asignado }, index) => {
+            {/* La app enseña un ejercicio a la vez desde M2, y la presentación
+                tiene que parecerse a la app: aquí se muestra el primero. */}
+            {actual.ejercicios.slice(0, 1).map(({ slot, ejercicio: asignado }, index) => {
               const ejercicio =
                 BIBLIOTECA_DEMO.find(
                   (e) => e.id === variantes[`${actual.slug}:${index}`],
@@ -125,7 +125,7 @@ function DemoCliente() {
                 (e) => e.movimiento === ejercicio.movimiento,
               );
               return (
-                <TarjetaEjercicio
+                <CuerpoEjercicio
                   key={`${actual.slug}:${ejercicio.id}`}
                   item={{
                     slot,
@@ -143,8 +143,6 @@ function DemoCliente() {
                     soloHoy: ejercicio.id !== asignado.id,
                     ejercicioDeLaPlantillaId: asignado.id,
                   }}
-                  abierta={abierto === index}
-                  onAlternar={() => setAbierto(abierto === index ? -1 : index)}
                   onAbrirFicha={() => setFicha(ejercicio)}
                   onAbrirVariantes={() => setCambiando(index)}
                   onDescansar={() =>

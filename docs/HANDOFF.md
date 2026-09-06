@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-06T22:33:33.643Z
+- **Última sincronización:** 2026-09-06T23:11:00.428Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-06T23:11:00.429Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Entrenar deja de ser la pantalla de inicio. Hoy pasa a resumir el dia --dia, ejercicios, series, plan de lectura-- con una sola accion, Comenzar o Continuar; registrar vive en un modo enfocado nuevo que ensena un ejercicio a la vez, con su cabecera contextual, la lista del dia en una hoja y la fila Siguiente. Antes Hoy abria con el primer ejercicio desplegado: ~40 controles tocables en 2,1 pantallas. Solo se abre la serie que toca; las siguientes esperan en una linea y las guardadas colapsan a una. Biblioteca pasa de rejilla de tarjetas con foto a filas con miniatura, con la busqueda que faltaba y estado vacio al filtrar. Historial cambia dos tarjetas por dos lineas y una lista a sangre. En Perfil el formulario de medicion se abre bajo demanda y se corrigen tres altos por debajo de 44px. Teclado: enterKeyHint y encadenado peso->reps->guardar, que no existia. La barra de pestanas NO se oculta al entrenar: salir a Biblioteca durante el descanso y volver es un flujo real y una regresion cubierta por Maestro, y toda la pila inferior cuelga de --sobre-pestanas. Etiquetas ARIA, contrato de geometria, copia literal y logica de negocio intactos
+- **Verificación:** npm test 693/693 (666 antes, +27 nuevas) en 59 ficheros; lint 0; build OK; npm run test:movil PASS con QA-MOB-01 y QA-MOB-02; QA visual a 320x667, 390x844, 430x932, 768 y 1024 sin scroll horizontal ni elementos fuera de marco; flujos A-F a mano incluido admin -> Probar como cliente -> navegar -> Volver al Coach
+- **Siguiente:** Revision de M2. Pendiente declarado en docs/CLIENT-MOBILE-EXPERIENCE.md: actividad reciente en Hoy, pantalla de cierre de sesion, detalle de sesion del historial como pantalla propia. Limitacion: el teclado real de iPhone y la PWA en standalone no se pudieron validar, solo emulacion Chromium. Aparte: el flujo de Maestro estaba roto desde que la demo publica fija la identidad a cliente-1, que no existe en la D1 local; documentado y resuelto con PUBLIC_DEMO_CLIENT_ID vacio en .dev.vars. NO empezar Biblioteca Fase 3B
+
 
 ### 2026-09-06T22:33:33.643Z | claude-code | CLAIM
 - **Estado:** active

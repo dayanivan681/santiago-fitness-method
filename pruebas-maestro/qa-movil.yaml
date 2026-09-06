@@ -31,6 +31,12 @@
 # El cronómetro se busca por su aria-label y no por su texto: el rótulo cambia a
 # "Descanso terminado" al agotarse, y `text:` casa la cadena entera.
 #
+# OJO con la demo pública: `wrangler.toml` fija PUBLIC_DEMO_CLIENT_ID a
+# `cliente-1`, y ese cliente no existe en la D1 local. Con la variable puesta,
+# `/api/cliente` responde 404 para cualquier sesión y la app se queda en el alta,
+# así que este flujo no llega a arrancar. El servidor local tiene que correr con
+# `PUBLIC_DEMO_CLIENT_ID = ""` en `.dev.vars` para que mande la sesión del enlace.
+#
 # Uso:
 #   npx wrangler pages dev --port 8788 --local &
 #   maestro test pruebas-maestro/qa-movil.yaml -e ENLACE=$(node pruebas-maestro/enlace-local.mjs)
@@ -49,6 +55,14 @@ tags:
 - extendedWaitUntil:
     visible: "Entrenamiento de hoy"
     timeout: 20000
+
+# Desde M2, Hoy es el resumen del día y registrar vive en el modo entrenamiento.
+- tapOn:
+    text: "Comenzar entrenamiento"
+    label: Entrar al modo entrenamiento
+- extendedWaitUntil:
+    visible: "Ejercicio 1 de 5"
+    timeout: 15000
 
 # ---- Estado de partida ------------------------------------------------------
 # Guardar una serie NUEVA de trabajo es lo único que arranca el descanso, y deja
@@ -105,9 +119,12 @@ tags:
     id: "Temporizador de descanso"
     label: El descanso sigue corriendo fuera de Hoy
 
+# Volver a la pestaña Hoy devuelve al ejercicio en curso, no al resumen: el
+# modo entrenamiento vive dentro de la pestaña. Eso es lo que permite salir a
+# consultar algo durante el descanso sin perder el sitio.
 - tapOn: "Hoy"
 - extendedWaitUntil:
-    visible: "Entrenamiento de hoy"
+    visible: "Ejercicio 1 de 5"
     timeout: 15000
 - assertVisible:
     id: "Temporizador de descanso"
