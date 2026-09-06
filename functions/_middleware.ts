@@ -11,9 +11,9 @@
  * React no participa. La app no sabe que esto existe y no maneja ningún token.
  *
  * OJO: el proyecto está conectado a Git y el hostname sirve el despliegue
- * canónico, que sale de un push. La autenticación no tiene un interruptor de
- * bypass en variables de entorno: un despliegue mal configurado debe fallar
- * cerrado, nunca abrir el sitio.
+ * canónico, que sale de un push. La excepción pública temporal está aislada en
+ * `demoPublica.ts`: sólo acepta `cliente-1` y cualquier otro valor falla
+ * cerrado.
  */
 
 import {
@@ -41,8 +41,9 @@ import {
   paginaSesionCerrada,
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
+import { clienteDemoPublico, type EntornoDemoPublica } from './lib/demoPublica'
 
-type Entorno = {
+type Entorno = EntornoDemoPublica & {
   readonly ACCESO: D1Database
   readonly ASSETS: Fetcher
 }
@@ -237,6 +238,10 @@ async function atenderApp(
   env: Entorno,
   next: () => Promise<Response>,
 ): Promise<Response> {
+  // Sólo libera el shell y sus assets. La identidad que devuelve la API se
+  // resuelve de nuevo, exclusivamente en servidor, con la misma configuración.
+  if (clienteDemoPublico(env)) return next()
+
   const cookie = leerCookie(request)
   if (!cookie) return paginaAccesoRequerido()
 

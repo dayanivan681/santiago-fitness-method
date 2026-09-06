@@ -2,15 +2,19 @@ name = "santiago-fitness-method"
 compatibility_date = "2026-05-01"
 pages_build_output_dir = "dist"
 
-# La autenticación por enlace privado vive en functions/_middleware.ts. No hay
-# una variable de entorno que pueda saltarse esa puerta del participante. La
-# única excepción temporal afecta exclusivamente a /admin y está acotada por
-# fecha; el cliente y todos los assets siguen cerrados por el middleware.
+# La autenticación por enlace privado vive en functions/_middleware.ts. Durante
+# la prueba pública, PUBLIC_DEMO_CLIENT_ID libera exclusivamente a `cliente-1`.
+# La identidad se vuelve a resolver en la API y nunca sale del navegador.
 
 [vars]
 # El cliente técnico `dayan-test` sólo se enseña fuera de producción. La fila se
 # conserva en D1 —preview usa la misma base—, sólo se oculta. Ver functions/lib/qa.ts.
 SHOW_QA_CLIENTS = "false"
+
+# Demo pública temporal. `demoPublica.ts` acepta sólo este valor exacto; usar
+# `santiago`, otro ID o una cadena mal escrita falla cerrado. Eliminar esta
+# variable devuelve la puerta normal de enlace privado sin migraciones.
+PUBLIC_DEMO_CLIENT_ID = "cliente-1"
 
 # Apertura del panel para el coach, sin OTP, sólo en el hostname canónico y
 # hasta este instante UTC. Al vencer, la función vuelve a cerrar la ruta incluso
@@ -38,6 +42,8 @@ database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
 # cambio en producción. Cloudflare Access sigue delante de ellos.
 [env.preview.vars]
 SHOW_QA_CLIENTS = "true"
+# Los previews conservan la autenticación normal y nunca publican un cliente.
+PUBLIC_DEMO_CLIENT_ID = ""
 # Nunca abrir el panel de un preview por esta excepción.
 COACH_ACCESS_TEMPORARY_UNTIL = ""
 

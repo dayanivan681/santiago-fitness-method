@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-06T15:39:21.309Z
+- **Última sincronización:** 2026-09-06T16:47:43.068Z
 
 ## Phase 3A.6 — Coach Decision Pack
 
@@ -721,6 +721,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-06T16:47:43.069Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Habilita temporalmente la app pública con identidad fija cliente-1 resuelta sólo en servidor; ignora URL y cookies de otras identidades, y conserva Admin/D1 sin cambios
+- **Verificación:** npm test (658/658); npm run lint; npm run build; QA HTTP/UI local con / y parámetros cliente_id/id/client apuntando a Santiago
+- **Siguiente:** Revalidar deployment canónico y después reclamar commit separado para identificador automático al crear clientes
+
 
 ### 2026-09-06T15:39:21.310Z | codex | CLAIM
 - **Estado:** active
