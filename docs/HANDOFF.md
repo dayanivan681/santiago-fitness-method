@@ -722,6 +722,69 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
 
 <!-- HANDOFF-ENTRIES -->
 
+### 2026-09-07T15:30:00.000Z | claude-code | NOTA
+
+**El turno sigue siendo tuyo. No lo he reclamado ni lo he publicado, y no he
+tocado ni una línea de tu trabajo.**
+
+Lo único que hice fue commitear lo que tenías sin guardar, a petición del dueño
+del producto: eran 104 rutas viviendo sólo en un disco desde hace veinticuatro
+horas. Está en `416f136`. Por eso `git status` te va a salir limpio: no se ha
+perdido nada, está commiteado. Sigue donde lo dejaste.
+
+Comprobé antes de commitear que nadie estuviera editando —el último fichero se
+tocó nueve horas antes— y que el árbol estaba verde: `tsc` limpio, lint 0,
+build OK y 687/687 en 62 ficheros.
+
+#### Lo que encontré pendiente, por si ahorra tiempo
+
+1. **Las migraciones no están aplicadas.** `0008_coaching_cloud.sql` y
+   `0009_versiones_originales.sql` no están en la D1 remota, y de paso
+   desaparecieron de `package.json` los scripts `d1:migrar*`, así que ahora
+   mismo no hay comando documentado para aplicarlas.
+
+2. **Cuatro suites e2e apuntan a una API que tu propio stub responde con 410.**
+   `scripts/pruebas-admin-ui.mjs`, `pruebas-acceso.mjs`, `pruebas-qa.mjs` y
+   `pruebas-roles.mjs` siguen llamando a `/admin/api/clientes`. Son unas 71
+   comprobaciones de la frontera de roles y de acceso; sólo tocaste
+   `pruebas-roles.mjs`. Son justo las que no conviene dejar caer en un cambio
+   que mueve la autenticación.
+
+3. **`pruebas-maestro/qa-movil.yaml` pincha `"Guardar"` en tres sitios** y el
+   botón ahora dice «Completar serie». Tu `qa-v2.yaml` ya lo contempla; el
+   viejo se queda fallando salvo que lo retires.
+
+4. **Cloudflare Access tiene que cuadrar con el código.** `ACCESS_AUD` e
+   issuer ya se validan de verdad; si no coinciden con la aplicación real, el
+   coach pasará el OTP y aun así recibirá un 401 nuestro.
+
+5. **Documentación.** No hay doc de la arquitectura v2, el bloque «Estado
+   actual» de este fichero está obsoleto, y `PUBLIC-TEST-MODE.md`, `ACCESO.md`
+   y `ADMIN-MOBILE-EXPERIENCE.md` describen cosas que este cambio elimina.
+
+#### Dos observaciones, con el mismo ánimo
+
+- **`src/nube/cloud.ts` (515 líneas) y `src/producto/servicio.ts` (293) no
+  tienen ni un comentario.** La norma del repo ronda un comentario cada tres o
+  cuatro líneas en la lógica delicada —`ultimaVez.ts` tiene 38 en 92—, y es lo
+  que nos ha salvado varias veces. Sincronización y seguridad es donde más
+  falta hace saber el porqué, no el qué.
+
+- **Volver a cachear en el service worker se quitó una vez a propósito**: con
+  Access delante, un shell cacheado sirve la app sin pasar por el servidor. Tu
+  comentario dice que las APIs y las fotos nunca se cachean, que es lo
+  correcto; sólo merece quedar argumentado donde se quitaron las guardas de
+  `shellMovil.test.ts`.
+
+El diseño me parece bueno, y en acceso y modelo de datos, mejor que bueno: la
+tabla `cambios` con revisión, hash y actor es sincronización idempotente de
+verdad, la `0009` es aditiva y repetible, y conservar los tests de
+`accesoCoachTemporal` y `demoPublica` como guardianes de la ausencia está muy
+bien pensado.
+
+**Siguiente:** el turno es tuyo; retómalo donde estabas.
+
+
 ### 2026-09-06T23:58:51.222Z | codex | CLAIM
 - **Estado:** active
 - **Tarea:** Implementar producto compartido Coach y Cliente, acceso privado, demo aislada y persistencia cloud con migración segura
