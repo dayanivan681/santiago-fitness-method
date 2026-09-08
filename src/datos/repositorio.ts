@@ -1,8 +1,8 @@
 /**
  * Contrato de acceso a datos.
- * Guía del proyecto §26: hoy la implementación es local (IndexedDB) y más
- * adelante será la nube. Toda la app depende de esta interfaz y no de Dexie,
- * así que ese cambio se hace en un solo archivo.
+ * Guía del proyecto §26: la interfaz comparte lógica entre repositorio cloud
+ * (caché y cola durable), demo en memoria y recuperación local antigua.
+ * La identidad la establece el acceso autenticado, nunca el primer registro.
  */
 
 import type {
@@ -23,8 +23,8 @@ export interface Repositorio {
   guardarParticipante(participante: Participante): Promise<void>
 
   /**
-   * Foto de perfil del participante. Opcional, y **nunca sale del dispositivo**:
-   * mientras no haya cuentas, eso resuelve consentimiento y permisos.
+   * Foto local del participante, conservada para recuperar respaldos antiguos.
+   * La UI cloud usa R2 privado y exige consentimiento explícito para subirla.
    *
    * Va aparte del `Participante` para no arrastrar la imagen cada vez que se
    * lee la ficha o se lista.
@@ -34,12 +34,9 @@ export interface Repositorio {
   borrarFotoDePerfil(participanteId: string): Promise<void>
 
   /**
-   * El participante del piloto, o nada si todavía no se ha dado de alta.
-   *
-   * Su especificación V1 pide uno solo y sin panel ficticio, así que la app no
-   * elige entre varios: entrena el que está. El día que haya más, esto pasa a
-   * ser "el seleccionado" y nada más cambia, porque las sesiones ya se guardan
-   * por participante.
+   * Participante asociado explícitamente al repositorio de esta identidad.
+   * Una base antigua puede contener previews: no se selecciona el primer perfil
+   * ni se interpreta su presencia como prueba de pertenencia.
    */
   participanteActual(): Promise<Participante | undefined>
 

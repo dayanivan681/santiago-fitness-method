@@ -74,7 +74,9 @@ export function App() {
 }
 function InicioDePantalla() {
   const { pathname } = useLocation();
-  useLayoutEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [pathname]);
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname]);
   return null;
 }
 function Puerta({ error = "" }: { error?: string }) {
@@ -169,7 +171,57 @@ function ClienteReal() {
 }
 function CoachReal() {
   const [servicio] = useState(() => new ServicioCoach());
+  const [autorizado, setAutorizado] = useState(false);
+  const [comprobado, setComprobado] = useState(false);
   const nav = useNavigate();
+  useRevision();
+  useEffect(() => {
+    let vivo = true;
+    const validar = async () => {
+      try {
+        await new ClienteApi(true).pedir<Contexto>("/contexto");
+        if (vivo) {
+          estadoCambiar({ bloqueado: false });
+          setAutorizado(true);
+        }
+      } catch (e) {
+        if (vivo && e instanceof ErrorAcceso) setAutorizado(false);
+      } finally {
+        if (vivo) setComprobado(true);
+      }
+    };
+    // La frontera cubre también la vista previa, que no necesita sincronizar
+    // actividad. Una revocación desmonta toda ficha y sus notas de la pantalla.
+    void validar();
+    const timer = setInterval(() => {
+      if (!document.hidden) void validar();
+    }, 4000);
+    return () => {
+      vivo = false;
+      clearInterval(timer);
+    };
+  }, []);
+  if (!comprobado)
+    return (
+      <div className="sfm-launch">
+        <Marca />
+        <p role="status">Verificando tu acceso…</p>
+      </div>
+    );
+  if (!autorizado || estadoNube.bloqueado)
+    return (
+      <div className="sfm-door">
+        <Marca />
+        <h1>Tu espacio de coaching</h1>
+        <p>Vuelve a identificarte para acceder a tus clientes.</p>
+        <a className="sfm-primary" href="/admin">
+          Entrar al Coach
+        </a>
+        <Link className="sfm-text-button" to="/demo/coach">
+          Explorar la demo
+        </Link>
+      </div>
+    );
   return (
     <Routes>
       <Route

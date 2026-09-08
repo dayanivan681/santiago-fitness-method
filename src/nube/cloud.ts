@@ -53,11 +53,14 @@ export class ClienteApi {
     const r = await fetch(url, {
       method,
       credentials: "same-origin",
+      redirect: "manual",
       headers: body === undefined ? {} : { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
       cache: "no-store",
     });
-    if (r.status === 401) {
+    // Access redirige al login antes de llegar a Functions. No seguir ese
+    // redirect como si fuera un fallo de red: también invalida datos visibles.
+    if (r.status === 401 || r.type === "opaqueredirect") {
       estadoCambiar({
         bloqueado: true,
         mensaje: "Tu acceso caducó. Vuelve a entrar; lo pendiente se conserva.",
@@ -217,6 +220,8 @@ export class ConexionCloud {
             opId: crypto.randomUUID(),
             revision: 0,
           });
+          // Confirmar en pantalla sólo después de persistir registro y cola
+          // juntos: cerrar la app entre ambas escrituras no puede perder actividad.
           await this.db.transaction("rw", this.db.tables, async () => {
             await original.apply(target, args);
             await this.encolar(tipo, id, datos, !!borrar);
@@ -237,6 +242,8 @@ export class ConexionCloud {
     const clave = `${tipo}:${id}`;
     const doc = await this.db.documentos.get(clave);
     const cola = await this.db.cola.where("clave").equals(clave).toArray();
+    // Cada edición offline reserva la revisión posterior de su documento;
+    // conservar el opId permite reintentar sin duplicar la confirmación remota.
     const revision = Math.max(
       doc?.revision ?? 0,
       ...cola.map((o) => o.revision + 1),
@@ -283,6 +290,8 @@ export class ConexionCloud {
     void this.sincronizar();
   }
   async preparar(inicio?: Inicio) {
+    // Sólo catálogo en la base aislada de esta identidad. Nunca se adopta un
+    // participante del piloto; su recuperación exige confirmar pertenencia.
     await sembrar(this.local);
     if (inicio) {
       if (inicio.perfil)
@@ -331,6 +340,8 @@ export class ConexionCloud {
     const anterior = await this.db.documentos.get(clave);
     if (anterior && anterior.revision > c.revision) return;
     await this.db.documentos.put({ ...c, clave });
+    // Se conoce la versión cloud, pero el borrador visible sigue siendo del
+    // usuario hasta que se confirme o resuelva su cola; no sobrescribirlo.
     if (await this.db.cola.where("clave").equals(clave).count()) return;
     const tabla = TABLAS[c.tipo];
     if (tabla) {
@@ -362,6 +373,8 @@ export class ConexionCloud {
       if (contexto.rol === "cliente")
         localStorage.setItem("sfm-v2-contexto", JSON.stringify(contexto));
       const cola = await this.db.cola.orderBy("secuencia").toArray();
+      // Un conflicto detiene sólo ese documento. Los demás pueden sincronizar
+      // sin descartar ninguna de las propuestas que necesitan revisión.
       const bloqueadas = new Set(
         cola.filter((o) => o.estado === "conflicto").map((o) => o.clave),
       );
@@ -422,6 +435,7 @@ export class ConexionCloud {
           {
             method: "PUT",
             credentials: "same-origin",
+            redirect: "manual",
             headers: {
               "X-SFM-Consentimiento": "subir",
               "Content-Type": f.imagen.type,

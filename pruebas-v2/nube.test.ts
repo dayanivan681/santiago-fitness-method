@@ -2,7 +2,12 @@
 import { afterEach, beforeEach, describe, it, expect } from "vitest";
 import { SignJWT, generateKeyPair, exportJWK } from "jose";
 import { sqliteD1 } from "./d1";
-import { aplicar, actual, leerCambios } from "../functions/lib/v2/datos";
+import {
+  aplicar,
+  actual,
+  leerCambios,
+  clientesActuales,
+} from "../functions/lib/v2/datos";
 import { api } from "../functions/lib/v2/api";
 import {
   verificarCoach,
@@ -78,6 +83,20 @@ beforeEach(async () => {
 });
 afterEach(() => local.cerrar());
 describe("persistencia real con SQL transaccional", () => {
+  it("lee una cartera de 80 clientes con un presupuesto constante de consultas", async () => {
+    for (let i = 0; i < 77; i++)
+      local.ejecutar(
+        `INSERT INTO clientes(id,nombre,creado_en,actualizado_en) VALUES('cartera-${i}','Persona ${i}',unixepoch(),unixepoch())`,
+      );
+    local.reiniciarConsultas();
+    const clientes = await clientesActuales(local.db);
+    expect(clientes).toHaveLength(80);
+    expect(
+      clientes.find((c) => c.perfil.id === "test-a")?.plan.dias,
+    ).toHaveLength(4);
+    expect(local.consultas).toBeLessThanOrEqual(3);
+  });
+
   it("confirma y repite sin duplicar entrenamientos ni series", async () => {
     const e = op("entrenamiento", entrenamiento.id, entrenamiento);
     const s = op("serie", serie.id, serie);

@@ -164,6 +164,8 @@ function HoyCoach({
   const pendientes = clientes.filter(
     (c) =>
       c.plan.estado !== "publicado" ||
+      !c.plan.revisado ||
+      c.plan.dias.length === 0 ||
       c.plan.dias.some((d) => d.slots.length < 5),
   );
   return (
@@ -300,6 +302,8 @@ function HoyCoach({
 function FilaCliente({ c, base }: { c: Cliente; base: string }) {
   const incompleto =
     c.plan.estado !== "publicado" ||
+    !c.plan.revisado ||
+    c.plan.dias.length === 0 ||
     c.plan.dias.some((d) => d.slots.length < 5);
   return (
     <Link className="sfm-row" to={`${base}/clientes/${c.perfil.id}`}>
@@ -332,6 +336,11 @@ function ListaClientes({
   listo: boolean;
 }) {
   const [q, setQ] = useState("");
+  const visibles = clientes.filter((c) =>
+    c.perfil.nombre
+      .toLocaleLowerCase("es")
+      .includes(q.trim().toLocaleLowerCase("es")),
+  );
   return (
     <>
       <Cabecera
@@ -355,14 +364,21 @@ function ListaClientes({
         onChange={(e) => setQ(e.target.value)}
       />
       <div className="sfm-list">
-        {clientes
-          .filter((c) =>
-            c.perfil.nombre.toLowerCase().includes(q.toLowerCase()),
-          )
-          .map((c) => (
-            <FilaCliente c={c} base={base} key={c.perfil.id} />
-          ))}
+        {visibles.map((c) => (
+          <FilaCliente c={c} base={base} key={c.perfil.id} />
+        ))}
       </div>
+      {listo && clientes.length > 0 && !visibles.length && (
+        <div role="status">
+          <Vacio
+            titulo="No encontramos esa persona"
+            detalle="Prueba con otro nombre o vuelve a ver todos tus clientes."
+          />
+          <button className="sfm-text-button" onClick={() => setQ("")}>
+            Ver todos los clientes
+          </button>
+        </div>
+      )}
       {listo && !clientes.length && (
         <Vacio
           titulo="Tu próximo proceso empieza aquí"

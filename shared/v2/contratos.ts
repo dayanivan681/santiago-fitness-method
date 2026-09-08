@@ -54,10 +54,14 @@ export const Perfil = z.object({
 export const PlanHistorico = z.object({
   id: Id,
   estado: z.enum(["borrador", "publicado"]),
-  dias: z.array(Dia).min(1).max(7),
+  dias: z.array(Dia).max(7),
   revisado: z.boolean().default(false),
 });
-export const Plan = PlanHistorico.superRefine((p, ctx) => {
+// Se pueden leer perfiles históricos aún sin rutina; una escritura nueva
+// exige al menos una sesión y nunca inventa programación para completarlos.
+export const Plan = PlanHistorico.extend({
+  dias: z.array(Dia).min(1).max(7),
+}).superRefine((p, ctx) => {
   if (
     new Set(p.dias.map((d) => d.id)).size !== p.dias.length ||
     new Set(p.dias.map((d) => d.orden)).size !== p.dias.length

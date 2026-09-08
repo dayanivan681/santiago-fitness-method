@@ -1,30 +1,31 @@
-# Modo de prueba abierta
+# Demo pública y pruebas
 
-El modo de prueba abierta fue retirado del producto y no está disponible en el
-despliegue actual. No existe ninguna variable que pueda saltarse la autenticación
-del participante ni la protección del panel del coach.
+El modo público anterior está retirado. `PUBLIC_DEMO_CLIENT_ID`, la apertura
+temporal de Coach y las previews que generaban sesiones reales ya no existen
+en la implementación v2.
 
-## Acceso vigente
+`/demo` presenta Coach y Cliente con personas ficticias y repositorio en memoria.
+Recargar reinicia la simulación. Usa componentes reales y no abre IndexedDB ni
+llama APIs privadas. `/presentacion` enlaza a esta misma demo.
 
-- El participante entra mediante un enlace privado de un solo uso en
-  `/access?t=…`. El enlace crea una sesión de siete días en D1 y la cookie se
-  valida en cada petición.
-- El coach entra en `/admin/` mediante Cloudflare Access. La función de Pages
-  exige además la cabecera que Access inyecta. Las previews y URLs hash siguen
-  bajo Access para no dejar despliegues antiguos expuestos.
-- No existe una segunda entrada como `/consola/`.
+La vista previa dentro de Coach lee sólo datos autorizados y simula cambios en
+memoria. «Entrenar juntos» es una acción real distinta, con autor registrado.
 
-La separación permite que el participante abra su enlace en el dominio canónico
-sin pasar por Cloudflare Access, mientras el panel administrativo y los
-despliegues de preview siguen detrás de la puerta del coach.
+Las escrituras de QA se limitan a staging o al runtime local aislado. Producción
+sólo admite QA de lectura. Ver [QA v2](QA-V2.md) y [arquitectura](ARQUITECTURA-V2.md).
+El release canónico se identifica en HANDOFF; este documento describe v2.
 
-## Verificación
+Entrada de revisión permanente sin OTP para Santiago:
+https://codex-premium-v2.santiago-fitness-method.pages.dev/demo/coach
 
-Sin cookie, `/`, `/api/cliente`, los assets de la app y las imágenes devuelven
-`401 Acceso requerido`. `/access?t=…` sigue siendo público para mostrar la
-pantalla **Entrar**; sólo su POST consume la invitación. `/admin/` queda bajo
-Cloudflare Access y una petición directa sin la cabecera secundaria devuelve
-`403` cuando llega a la función.
+Cloudflare Access contiene la aplicación `Santiago · Demo pública`
+(`ae649139-87e2-49d5-943c-dcaf01917213`) y la política Bypass/Everyone
+`Demo sin inicio de sesión` (`26b25359-d457-48c8-82d7-6e8c9cc403e1`). Sólo aplica
+al hostname exacto `codex-premium-v2.santiago-fitness-method.pages.dev` y a estas
+rutas: `/demo`, `/assets`, `/ejercicios`, `/fuentes`, `/favicon.svg`,
+`/apple-touch-icon.png`, `/manifest.webmanifest`, `/icon*`. La regla no tiene
+vencimiento. No incluye raíz, Admin, API ni otros deployments.
 
-No se modifican las invitaciones, sesiones, datos de clientes ni el esquema de
-D1 al retirar este modo.
+La aplicación privada `Santiago Fitness Method` y su audiencia siguen intactas.
+Al publicar v2 en el hostname canónico, `/demo` será igualmente pública por el
+middleware; la excepción del alias sólo permite enseñar avances ya revisados.

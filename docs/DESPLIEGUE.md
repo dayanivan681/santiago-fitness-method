@@ -1,96 +1,83 @@
-# Publicar la app para que el cliente la pruebe
+# Despliegue y migración v2
 
-## La decisión que hay que tomar antes de enseñársela
+Este procedimiento sustituye las instrucciones del piloto local. La aplicación
+usa Pages Functions, D1 y R2 privado; mover sólo los archivos estáticos no mueve
+cuentas ni datos. El estado real del rollout se registra en HANDOFF.
 
-**IndexedDB es por origen.** Todo lo que el participante registre vive atado al
-dominio donde abrió la app. Si prueba en `algo.pages.dev` y más adelante se pasa
-a un dominio propio, **esos datos no viajan**: se quedan en el origen viejo, y no
-hay redirección que los mueva.
+## Recursos separados
 
-Así que conviene **fijar el dominio definitivo antes de que el cliente escriba el
-primer dato real**. Si todavía no hay dominio, se puede empezar en `*.pages.dev`
-sabiendo que lo de esa etapa es desechable — o exportar la copia antes de mover
-(ver *Copia de seguridad* en Perfil).
+| Entorno | D1 | Identificador |
+|---|---|---|
+| Producción | santiago-acceso | 7cb38489-4054-45e9-94d9-aad9c9f533f5 |
+| Staging | santiago-staging | 747a9348-369c-462d-83ba-37ae9bdaad48 |
+| Local | sfm-local | 00000000-0000-4000-8000-000000000001 |
 
-## Por qué Cloudflare Pages
+`wrangler.toml` declara producción y preview; `wrangler.local.toml` sólo local.
+No intercambiar bindings. Los buckets R2 de staging y producción deben ser
+privados y distintos. Su activación requiere que el dueño acepte las condiciones
+si Cloudflare solicita facturación; no está delegada esa aceptación.
 
-- **Uso comercial permitido en el plan gratuito.** Vercel Hobby lo prohíbe, e
-  incluye explícitamente *"un consultor pagado escribiendo el código"*: este
-  proyecto entra en esa definición, así que usarlo obligaría a pagar Pro o a
-  mudarse después.
-- **Ancho de banda ilimitado** para archivos estáticos, que es todo lo que la app
-  sirve. No hay backend: cero funciones, cero límites de invocación.
-- **Sirve en la raíz del dominio**, que es lo que necesitan las rutas de imagen
-  (`/ejercicios/…`) y el `start_url: '/'` del manifiesto.
+## Validar y publicar preview
 
-**GitHub Pages no vale sin tocar código**: sirve bajo `/santiago-fitness-method/`
-y habría que cambiar `vite.config.ts` y el manifiesto.
+1. Ejecutar `npm test`, `npm run lint`, `npm run build` y el QA v2.
+2. Guardar un commit local para identificar exactamente el artefacto revisado.
+3. Publicar explícitamente una rama preview, nunca `main`:
 
-## ¿Se puede empezar en una cuenta y moverla después?
-
-Sí, y sin drama: **en Cloudflare no vive nada**. El sitio se reconstruye desde
-GitHub en cada despliegue, así que "transferir" es borrar el proyecto en una
-cuenta y crearlo en la otra apuntando al mismo repositorio. Dos minutos.
-
-Lo único que **no** se mueve solo son los datos del participante, porque
-IndexedDB está atado al origen:
-
-- Si se usa un **dominio propio**, se apunta a la cuenta nueva y el origen no
-  cambia: no se pierde nada.
-- Si se usa el subdominio `*.pages.dev`, la URL cambia con la cuenta. En ese
-  caso, antes de mover: **Perfil → Copia de seguridad → Descargar copia**, y
-  restaurarla en la URL nueva.
-
-Por eso la copia de seguridad existe: hace que esta decisión deje de ser
-irreversible.
-
-## Pasos
-
-1. En Cloudflare → Workers & Pages → Create → Pages → Connect to Git.
-2. Elegir el repositorio `dayanivan681/santiago-fitness-method`.
-3. Configuración de build:
-   - **Framework preset:** ninguno / Vite
-   - **Build command:** `npm run build`
-   - **Output directory:** `dist`
-   - **Variables de entorno:** ninguna
-4. Desplegar. A partir de ahí, **cada push a `main` publica solo** — y como el
-   protocolo de handoff hace push al publicar un turno, cada turno queda
-   probable sin pasos extra.
-5. Si hay dominio propio: Custom domains → añadirlo **antes** de entregarle la
-   app al cliente.
-
-### Atajo para el primer despliegue
-
-Si sólo quieres verla publicada cuanto antes, sin conectar el repositorio:
-
-```
-npx wrangler login     # abre el navegador para entrar en tu cuenta
-npm run deploy         # compila y publica
+```sh
+npx --no-install wrangler pages deploy dist --project-name santiago-fitness-method --branch codex-premium-v2 --commit-hash <commit-verificado>
 ```
 
-Es un despliegue suelto: no se actualiza sola con cada push. Para el piloto
-conviene igualmente conectar el repositorio como arriba.
+4. Comprobar el URL devuelto, su commit, los bindings de staging y el acceso
+   real de Cloudflare. Un preview protegido no equivale a una demo pública del
+   dominio canónico. No usar un JWT local contra el entorno remoto.
+5. Probar con personas sintéticas. R2 requiere upload, recuperación y permisos
+   en staging antes de afirmar que está listo para producción.
 
-`public/_headers` ya trae las cabeceras de caché: los assets llevan hash en el
-nombre y se cachean para siempre; `index.html` y `sw.js` no, para que la app note
-cuando hay versión nueva.
+## Respaldo y migraciones aditivas
 
-## Comprobar que quedó bien
+El comando por defecto es de sólo lectura remota: exporta D1, restaura la copia
+en SQLite aislado, ejecuta `0008` y `0009` dos veces y comprueba integridad y
+conservación exacta de clientes, rutinas, invitaciones y sesiones. Guarda SQL,
+base de ensayo y manifiesto en `.recovery/`, fuera de Git y con permisos privados.
 
-Desde un **móvil real**, no desde el escritorio:
+```sh
+npm run d1:v2 -- --staging
+npm run d1:v2 -- --produccion
+```
 
-- [ ] Abrir la URL y añadirla a la pantalla de inicio.
-- [ ] Abrirla desde el icono: tiene que verse sin barra de navegador.
-- [ ] Dar de alta al participante y registrar una serie.
-- [ ] **Poner el móvil en modo avión y seguir usándola.** Es la única forma de
-      comprobar el service worker; el servidor de desarrollo no lo activa.
-- [ ] Hacer una foto de progreso desde la cámara.
-- [ ] Perfil → Copia de seguridad → Descargar copia, y restaurarla en otro
-      navegador para confirmar que el archivo sirve.
+Revisar el manifiesto antes del rollout. Para aplicar, el comando vuelve a tomar
+un respaldo y repetir el ensayo; no reutiliza una copia obsoleta:
 
-## Lo que sigue sin resolverse con esto
+```sh
+npm run d1:v2 -- --staging --aplicar
+npm run d1:v2 -- --produccion --aplicar
+```
 
-Alojar la app **no** da sincronización. Cada dispositivo tiene sus propios datos
-y el coach no ve los del participante salvo que éste le mande la copia. Eso es
-Etapa 2 (§31): cuentas, base de datos en la nube y login — plan en
-`docs/PLAN-LOGIN.md`.
+`--aplicar` es una mutación real. Sólo usar producción después de aprobar staging
+y preparar una versión privada de recuperación compatible. El comando fija el
+UUID esperado, verifica el marcador de entorno y ejecuta exclusivamente las dos
+migraciones revisadas. Nunca recorrer todas las migraciones antiguas: contienen
+semillas y cambios del piloto que no deben repetirse. Una diferencia posterior
+puede ser actividad concurrente; se investiga, nunca se restaura automáticamente.
+
+Las tablas originales se conservan. `0009` añade primeras versiones sin reemplazar
+versiones existentes. Si falla una parte, conservar el respaldo y repetir tras
+investigar; ambas migraciones son repetibles. Time Travel puede complementar la
+copia exportada según la retención de la cuenta, pero no sustituye el ensayo.
+
+## Producción y rollback
+
+El proyecto está conectado a Git: publicar el turno con `handoff:publish` hace
+push a `main` y dispara el deployment canónico. `npm run deploy` ya no publica
+producción por accidente. Tras el push, comprobar el commit realmente servido,
+las fronteras anónimas y las lecturas autorizadas. QA de escritura sólo en staging.
+
+No volver al Admin abierto ni a un código que crea semillas en peticiones. No
+restaurar una base antigua descartando actividad posterior. El rollback cambia
+el código a una versión privada compatible con D1 aditiva y mantiene los datos.
+Si requiere restauración de datos, preparar primero un plan explícito que conserve
+las operaciones posteriores y ensayarlo en otro recurso.
+
+Cambiar de dominio mantiene los datos ya confirmados en D1, pero la cola pendiente
+sigue perteneciendo al origen anterior: sincronizar o recuperar antes de retirar
+ese origen. Mantener enlaces antiguos con sus adaptadores durante la transición.

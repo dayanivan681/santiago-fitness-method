@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && vite build --config vite.presentacion.config.ts && node scripts/preparar-pwa.mjs",
-    "deploy": "npm run build && npx wrangler pages deploy dist --project-name=santiago-fitness-method",
+    "deploy": "node scripts/deploy.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
@@ -20,10 +20,12 @@
     "handoff:adopt": "node scripts/handoff-sync.mjs adopt",
     "handoff:publish": "node scripts/handoff-sync.mjs publish",
     "invitar": "node scripts/invitar.mjs",
-    "test:movil": "node pruebas-maestro/enlace-local.mjs > /tmp/sfm-enlace.txt && maestro test pruebas-maestro/qa-movil.yaml -e ENLACE=$(cat /tmp/sfm-enlace.txt)",
+    "test:movil": "maestro test pruebas-maestro/qa-v2.yaml",
     "qa:preparar": "node scripts/preparar-qa-v2.mjs",
     "qa:servir": "node scripts/servir-qa-v2.mjs",
-    "qa:acceso": "node scripts/qa-proxy.mjs"
+    "qa:acceso": "node scripts/qa-proxy.mjs",
+    "test:http": "node scripts/pruebas-v2-http.mjs",
+    "d1:v2": "node scripts/migrar-v2.mjs"
   },
   "dependencies": {
     "dexie": "^4.4.5",

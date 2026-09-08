@@ -16,6 +16,8 @@ export type Cliente = {
   revision: number;
   actividad?: { semana: number; total: number; ultima: Sesion | null };
 };
+// La misma interfaz alimenta ambos modos. La rama demo conserva todo en
+// memoria; ninguna acción de demostración puede caer en la API por omisión.
 export class ServicioCoach {
   demo: boolean;
   clientes: Cliente[] = [];
@@ -58,7 +60,7 @@ export class ServicioCoach {
         };
         if (i === 2) {
           plan.estado = "borrador";
-          plan.dias[0].slots = [];
+          plan.revisado = false;
         }
         this.clientes.push({ perfil, plan, revision: 1 });
       }
@@ -87,6 +89,8 @@ export class ServicioCoach {
       await new ClienteApi(true).pedir<{ clientes: Cliente[] }>("/clientes")
     ).clientes;
   }
+  // El cursor puede paginar un historial largo: no asumir que la primera
+  // respuesta contiene todas las versiones al reconstruir la ficha.
   async cambios(cliente?: string): Promise<Cambio[]> {
     if (this.demo) {
       const cambios = structuredClone(
@@ -233,6 +237,8 @@ export class ServicioCoach {
     }
     await new ClienteApi(true, id).pedir("/" + accion, {});
   }
+  // Coach y Cliente de demo comparten esta instancia por persona. Cambiar de
+  // rol muestra el mismo proceso, y recargar elimina toda la simulación.
   async repoDemo(id: string) {
     const existente = this.repos.get(id);
     if (existente) return existente;

@@ -99,9 +99,11 @@ describe('ficha del participante (§2)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Guardar' }))
 
     // Assert
-    expect(
-      await screen.findByText('Entrena de noche; viaja una semana al mes.'),
-    ).toBeInTheDocument()
+    // Esperar la nota en lectura; el mismo texto puede seguir un instante en
+    // el textarea que se desmonta cuando termina el guardado asíncrono.
+    await waitFor(() => expect(screen.getByText(
+      'Entrena de noche; viaja una semana al mes.', { selector: 'p' },
+    )).toBeInTheDocument())
     const participante = await repositorio.participanteActual()
     expect(participante?.notas).toBe('Entrena de noche; viaja una semana al mes.')
   })

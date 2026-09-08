@@ -30,6 +30,26 @@ trabaja y lo publica antes de que el otro continúe.
   completa del checkpoint tiene 687 pruebas; volver a ejecutar antes de publicar
   los cambios posteriores, incluyendo revocación visual de Coach.
 
+### Validación adicional del 2026-09-08
+
+- Demo sin login para Santiago confirmada en el alias permanente:
+  https://codex-premium-v2.santiago-fitness-method.pages.dev/demo/coach
+  Configuración exacta y límites en PUBLIC-TEST-MODE.md. Admin sigue privado.
+- Ensayo actualizado de producción: 6 clientes, 24 rutinas, 37 sesiones de acceso,
+  13 invitaciones conservadas tras restauración y migración doble. No se aplicó
+  la migración remota de producción. Nuevo comando `npm run d1:v2` ensaya por
+  defecto; `--aplicar` es explícito y respalda de nuevo antes de modificar D1.
+- QA: 691 pruebas/64 archivos PASS, lint/build PASS, 30 comprobaciones HTTP,
+  Maestro Chromium 34 comandos; revocación visual
+  cubre 401 y redirect opaco de Access. Cartera de 80 clientes usa tres consultas.
+  Los perfiles antiguos sin rutina ya no bloquean la lista de Coach.
+- Documentadas arquitectura, recuperación, despliegue y fronteras. Retiradas las
+  herramientas que insertaban invitaciones directamente o sembraban QA antiguo.
+- R2 continúa sin activar en la cuenta; el dueño debe completar ese paso según
+  el plan aprobado. No se aceptaron condiciones ni suscripciones en su nombre.
+- Las notas de Claude se conservaron. El tipo `exact` del test de demo se corrigió;
+  Nora muestra un plan completo pendiente de revisar, sin una sesión vacía ficticia.
+
 ## Phase 3A.6 — Coach Decision Pack
 
 - Entrega para Santiago: `docs/BIBLIOTECA-COACH-DECISION-PACK.md`.
