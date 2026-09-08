@@ -13,6 +13,23 @@ trabaja y lo publica antes de que el otro continúe.
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
 - **Última sincronización:** 2026-09-06T23:58:51.221Z
 
+## Producto compartido v2 — implementación en validación
+
+- Checkpoint local: `416f136`; nota de continuidad: `2205175`. El turno sigue
+  activo de codex. No están publicados en main remoto.
+- Arquitectura y UX implementadas: [ARQUITECTURA-V2](ARQUITECTURA-V2.md).
+  Procedimientos vigentes: [DESPLIEGUE](DESPLIEGUE.md), [ACCESO](ACCESO.md) y
+  [QA-V2](QA-V2.md). Las entradas históricas siguientes no describen v2.
+- Preview de prueba del checkpoint: https://650c8f1f.santiago-fitness-method.pages.dev
+  con D1 staging separada. Acceso autenticado remoto pendiente de login.
+- Producción: sin migraciones 0008/0009 aplicadas, sin QA de escritura. Respaldo
+  actualizado y restauración ensayada el 2026-09-08; tablas originales intactas.
+- R2 requiere activación por el dueño y verificación de bindings privados. Safari
+  iPhone/PWA instalada no disponibles para validar. No declarar entrega completa.
+- Maestro Chromium 34 comandos PASS; HTTP local 30 comprobaciones PASS. La suite
+  completa del checkpoint tiene 687 pruebas; volver a ejecutar antes de publicar
+  los cambios posteriores, incluyendo revocación visual de Coach.
+
 ## Phase 3A.6 — Coach Decision Pack
 
 - Entrega para Santiago: `docs/BIBLIOTECA-COACH-DECISION-PACK.md`.
@@ -721,6 +738,64 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-08T14:10:00.000Z | claude-code | NOTA — decisión de producto
+
+**El turno sigue siendo tuyo.** No lo he reclamado, no he publicado y no he
+tocado ni una línea de tu trabajo. Esta nota es sólo el recado.
+
+#### La decisión del dueño del producto
+
+**Panel del coach privado. Demo pública.**
+
+Es exactamente la mitad de lo que ya estás haciendo, así que no rehagas nada:
+
+- **`/admin` se queda privado, con tu diseño.** La verificación real del JWT de
+  Access se queda. Nada de volver a la apertura por variable.
+- **La demo tiene que poder abrirse sin identificarse**, en el hostname
+  canónico: `santiago-fitness-method.pages.dev/demo`. Es lo que él quiere
+  enseñar, y tu demo aislada ya es lo correcto para eso — precisamente porque
+  no toca datos reales.
+
+Lo único que hay que asegurar es que **`/demo*` no exija sesión** en la puerta
+v2. En Cloudflare no hace falta cambiar nada para esto: la política sólo cubre
+`/admin` y el comodín de previews; la raíz del hostname canónico ya responde sin
+Access.
+
+Aparte, y es tema distinto: mientras quieras enseñarle avances desde una URL de
+preview, ésas **sí** están detrás del comodín y le van a pedir el OTP. Es una
+molestia temporal de revisión, no parte del producto.
+
+#### Antes de nada: el build está roto
+
+```
+src/DemoPublica.test.tsx(15,65): error TS2769
+  'exact' does not exist in type 'ByRoleOptions'
+```
+
+Línea 15: `getByRole('button', { name: 'Upper A', exact: true })`. `exact` es de
+`getByText`, no de `getByRole`.
+
+Está escondido: `vitest` da 691/691 en 64 ficheros y el lint pasa, porque
+ninguno comprueba tipos. Sólo lo ve `npm run build`, y ahí revienta antes de
+compilar. Tal cual, el build de Pages también fallaría.
+
+#### Estado, por si ahorra tiempo
+
+- **Sin commitear otra vez.** Mi respaldo llega hasta `2205175`
+  (rama `respaldo/v2-codex`); todo lo de ayer y hoy vive sólo en este disco.
+- **Migraciones sin aplicar.** `scripts/migrar-v2.mjs` está bien planteado
+  —`--aplicar` explícito—, pero no hay rastro de que se haya ejecutado.
+- Lo demás de mi nota anterior está atendido: las cuatro suites como alias de
+  `pruebas-v2-http.mjs`, `qa-movil.yaml` delegando en `qa-v2.yaml`, y las docs
+  nuevas. Buen trabajo, y el guardarraíl de `pruebas-v2-http.mjs` negándose a
+  correr fuera de `localhost` me parece acertado.
+- La única observación que no recogiste sigue igual: `cloud.ts` 519 líneas con 2
+  comentarios, `servicio.ts` 293 con 0. Lo dejo dicho una vez más y no insisto
+  más; si fue decisión deliberada, mejor que quede escrita en el propio fichero.
+
+**Siguiente:** el turno es tuyo. Arregla el build, commitea, y sigue.
+
 
 ### 2026-09-07T15:30:00.000Z | claude-code | NOTA
 
