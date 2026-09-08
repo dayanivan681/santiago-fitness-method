@@ -20,7 +20,7 @@ npm run test:http
 npm run test:movil
 ```
 
-`test:http` verifica la API real de Functions en localhost:8788. Sus 30
+`test:http` verifica la API real de Functions en localhost:8788. Sus 35
 comprobaciones incluyen JWT falsificado, roles, onboarding atómico, invitación de
 un uso, filtrado de notas, identidad impuesta por servidor, CSRF, reintentos,
 preview de lectura y revocación. Las cuatro entradas históricas `pruebas-acceso`,
@@ -36,7 +36,7 @@ componentes reales en memoria y ninguna persona productiva. El flujo histórico
 
 - Suite completa: 691 pruebas en 64 archivos PASS (`tests-v2-13.log`),
   incluyendo demo real sin red/IndexedDB/Storage. Lint y build aprobados.
-- API local: 30 comprobaciones PASS, `.recovery/http-v2.log`.
+- API local: 35 comprobaciones PASS, `.recovery/http-v2.log`.
 - Maestro Chromium: 34 comandos PASS (repetido en build v2 actualizado): completar, editar, descanso manual,
   Biblioteca, búsqueda, retorno al ejercicio, cierre y resumen.
 - Revocación de Coach: prueba adicional comprueba que la pantalla desmonta datos
@@ -90,3 +90,10 @@ oculta esa intermitencia ni se interpreta el resultado como aprobación de Safar
 La prueba antigua de notas del perfil coincidía transitoriamente con el textarea
 que se desmontaba al guardar. Ahora exige la nota en el párrafo de lectura y su
 persistencia; la suite completa de 691 pasa con esa comprobación estable.
+
+La suite HTTP usa dos invitaciones y sesiones independientes del mismo cliente:
+la segunda recupera las series de D1 sin una copia local, y la revocación bloquea
+ambas. Resultado actualizado: 35 comprobaciones PASS.
+
+Se intentó QA con iPhone Mirroring: «iPhone in Use», requiere que el dueño bloquee
+su iPhone para conectar. No se interrumpió su uso y no se declaró Safari aprobado.

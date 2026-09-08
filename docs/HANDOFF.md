@@ -39,7 +39,7 @@ trabaja y lo publica antes de que el otro continúe.
   13 invitaciones conservadas tras restauración y migración doble. No se aplicó
   la migración remota de producción. Nuevo comando `npm run d1:v2` ensaya por
   defecto; `--aplicar` es explícito y respalda de nuevo antes de modificar D1.
-- QA: 691 pruebas/64 archivos PASS, lint/build PASS, 30 comprobaciones HTTP,
+- QA: 691 pruebas/64 archivos PASS, lint/build PASS, 35 comprobaciones HTTP,
   Maestro Chromium 34 comandos; revocación visual
   cubre 401 y redirect opaco de Access. Cartera de 80 clientes usa tres consultas.
   Los perfiles antiguos sin rutina ya no bloquean la lista de Coach.
@@ -49,6 +49,18 @@ trabaja y lo publica antes de que el otro continúe.
   el plan aprobado. No se aceptaron condiciones ni suscripciones en su nombre.
 - Las notas de Claude se conservaron. El tipo `exact` del test de demo se corrigió;
   Nora muestra un plan completo pendiente de revisar, sin una sesión vacía ficticia.
+
+### Checkpoint publicado para revisión
+
+- Código verificado: `8afc26a`, respaldado en GitHub en
+  `codex/premium-v2-review`. No se hizo push a `origin/main` ni se cerró el turno.
+- Deployment Pages: `698a177a-368c-464f-80c4-b2efa433f221`, commit `8afc26a`,
+  rama de deployment `codex-premium-v2`. Alias público de demo conservado.
+- Readback: demo sin OTP y Nora con cuatro sesiones completas pendientes de
+  revisión. No hay cambios en D1 productiva; release real aún pendiente.
+- Para cerrar: activación R2 por el dueño; QA autenticado de staging; validación
+  de Safari/PWA en iPhone disponible; después migración aditiva y publicación
+  canónica con handoff. No reabrir Admin ni sustituir estos pasos por demo.
 
 ## Phase 3A.6 — Coach Decision Pack
 

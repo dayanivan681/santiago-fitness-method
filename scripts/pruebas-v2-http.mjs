@@ -120,7 +120,7 @@ const invitacion = await (
   )
 ).json();
 const enlace = new URL(invitacion.enlace);
-const aceptar = () =>
+const aceptar = (invitacionUrl = enlace) =>
   fetch(new URL("/access", base), {
     method: "POST",
     redirect: "manual",
@@ -128,7 +128,7 @@ const aceptar = () =>
       Origin: base.origin,
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: new URLSearchParams({ t: enlace.searchParams.get("t") }),
+    body: new URLSearchParams({ t: invitacionUrl.searchParams.get("t") }),
   });
 const entrar = await aceptar();
 await codigo(entrar, 302, "Invitación de un uso");
@@ -214,6 +214,30 @@ const otro = await (
 ).json();
 assert.equal(otro.perfil.id, id, "La URL no cambia la identidad");
 checks++;
+// Otro dispositivo tiene otra sesión y ninguna copia local del entrenamiento.
+const invitacion2 = await (
+  await codigo(
+    await pedir(cbase + "/invitar?cliente=" + id, coach, {}),
+    200,
+    "Invitación para segundo dispositivo",
+  )
+).json();
+const entrar2 = await codigo(
+  await aceptar(new URL(invitacion2.enlace)),
+  302,
+  "Acceso independiente",
+);
+const dispositivo2 = {
+  Cookie: entrar2.headers.get("set-cookie").split(";")[0],
+};
+assert.notEqual(dispositivo2.Cookie, cliente.Cookie);
+checks++;
+const desdeOtro = await (await pedir("/api/v2/cambios", dispositivo2)).json();
+assert.deepEqual(
+  desdeOtro.cambios.filter((c) => c.tipo === "serie"),
+  cambios.cambios.filter((c) => c.tipo === "serie"),
+);
+checks++;
 const previewAntes = await (await pedir("/api/v2/cambios", cliente)).json();
 await codigo(
   await pedir("/admin/vista/" + id, coach),
@@ -239,6 +263,11 @@ await codigo(
   await pedir("/api/v2/inicio", cliente),
   401,
   "La sesión revocada se bloquea",
+);
+await codigo(
+  await pedir("/api/v2/inicio", dispositivo2),
+  401,
+  "Revocación en el segundo dispositivo",
 );
 await codigo(
   await pedir(cbase + "/archivar?cliente=" + id, coach, {}),
