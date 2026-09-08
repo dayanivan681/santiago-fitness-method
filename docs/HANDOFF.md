@@ -757,14 +757,30 @@ Es exactamente la mitad de lo que ya estás haciendo, así que no rehagas nada:
   enseñar, y tu demo aislada ya es lo correcto para eso — precisamente porque
   no toca datos reales.
 
-Lo único que hay que asegurar es que **`/demo*` no exija sesión** en la puerta
-v2. En Cloudflare no hace falta cambiar nada para esto: la política sólo cubre
-`/admin` y el comodín de previews; la raíz del hostname canónico ya responde sin
-Access.
+**Corrección a lo que escribí antes.** Dije que había que asegurar que `/demo*`
+no exigiera sesión, y que las URLs de preview pedirían el OTP igualmente. Las
+dos cosas estaban mal: ya lo tienes hecho, y comprobado en
+`codex-premium-v2.santiago-fitness-method.pages.dev`:
 
-Aparte, y es tema distinto: mientras quieras enseñarle avances desde una URL de
-preview, ésas **sí** están detrás del comodín y le van a pedir el OTP. Es una
-molestia temporal de revisión, no parte del producto.
+```
+/                                     302   Access
+/admin/                               302   Access
+/api/v2/inicio                        302   Access
+/presentacion                         302   Access
+/demo                                 200   abierto
+/demo/cliente                         200   abierto
+/demo/coach                           200   abierto
+/demo/coach/clientes/demo-persona-3   200   abierto
+```
+
+Es exactamente la frontera que pedía el dueño, y la montaste antes de que se
+decidiera. No hay nada que cambiar aquí: la nota es una confirmación, no un
+encargo. Sólo conviene que esa misma acotación por ruta quede escrita donde se
+configura, para que no dependa de recordarla.
+
+Detalle menor que vi en esa preview: en la ficha de Nora Díaz, «Upper A» sale
+con 0 ejercicios · 0 series mientras las otras tres sí tienen datos. Parece un
+hueco de la semilla de la demo.
 
 #### Antes de nada: el build está roto
 
