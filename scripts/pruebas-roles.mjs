@@ -10,6 +10,7 @@ import { execFileSync } from 'node:child_process'
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:8788'
 const DB = 'santiago-acceso'
 const MODO = process.env.D1_MODO ?? '--local'
+if(MODO!=='--local'||!['localhost','127.0.0.1'].includes(new URL(BASE_URL).hostname))throw Error('Este QA legado sólo puede escribir en local. Usa la suite v2 para staging.')
 const ACCESS = { 'Cf-Access-Jwt-Assertion': 'qa-local' }
 const resultados = []
 

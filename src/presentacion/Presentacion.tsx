@@ -13,15 +13,15 @@ const CAPTURAS = [
       "Imágenes, equipos y filtros por músculo para encontrar cada ejercicio.",
   },
   {
-    id: "historial",
-    titulo: "Historial",
+    id: "progreso",
+    titulo: "Progreso",
     texto:
       "Consulta tus sesiones y el registro independiente de cada variante.",
   },
   {
-    id: "perfil",
-    titulo: "Perfil",
-    texto: "Tus datos, objetivo, medidas, fotos de progreso y volumen semanal.",
+    id: "coach",
+    titulo: "Coach",
+    texto: "Personas, programación y actividad en un mismo espacio.",
   },
 ];
 
@@ -82,7 +82,7 @@ export function Presentacion() {
             <div className="landing-phone">
               <iframe
                 title="Demo interactiva de Santiago Fitness Method"
-                src="/presentacion/?demo=1"
+                src="/demo/cliente"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -146,22 +146,14 @@ export function Presentacion() {
             <p className="landing-eyebrow">02 / LA APP REAL</p>
             <h2>TODO EN SU SITIO.</h2>
             <p>
-              Capturas de la aplicación actual con un perfil de demostración.
-              Sin datos de participantes reales.
+              Explora las dos caras del mismo producto con personas ficticias.
+              Cada demo empieza de nuevo al recargar.
             </p>
           </div>
           <div className="landing-captures">
             {CAPTURAS.map((item) => (
               <figure key={item.id}>
-                <div className="landing-capture-frame">
-                  <img
-                    src={`/presentacion/media/capturas/${item.id}.png`}
-                    alt={`Pantalla real de ${item.titulo} con datos de demostración`}
-                    loading="lazy"
-                    width="390"
-                    height="844"
-                  />
-                </div>
+                <a className="landing-view-link" href={item.id==='coach'?'/demo/coach':`/demo/cliente${item.id==='hoy'?'':'/'+item.id}`}>Explorar {item.titulo} ↗</a>
                 <figcaption>
                   <h3>{item.titulo}</h3>
                   <p>{item.texto}</p>
@@ -248,7 +240,7 @@ export function Presentacion() {
               EL CLIENTE ENTRENA.
             </h2>
             <p>
-              El coach entra por la consola protegida con Cloudflare Access.
+              El coach entra en su espacio privado con su correo autorizado.
               Allí administra perfiles, programación y acceso de cada cliente.
             </p>
           </div>
@@ -308,27 +300,26 @@ export function Presentacion() {
             <details>
               <summary>¿Dónde se guarda mi entrenamiento?</summary>
               <p>
-                El coach administra perfil y programación en la nube. Tus
-                series, sesiones, fotos y progreso siguen locales en el
-                dispositivo. Usa el mismo navegador y conserva sus datos.
+                Tu perfil, programación, series, entrenamientos y progreso se
+                guardan en tu cuenta. Los cambios sin conexión quedan pendientes
+                y se sincronizan cuando vuelves. Tus fotos sólo se suben con tu consentimiento.
               </p>
             </details>
             <details>
               <summary>¿Puedo abrirla desde la pantalla de inicio?</summary>
               <p>
                 En Safari, usa Compartir → Añadir a pantalla de inicio.
-                Necesitas conexión para acceder a la aplicación. La instalación
-                y persistencia en iPhone físico siguen pendientes de validación
-                final.
+                Entra primero con tu invitación privada y abre tu entrenamiento
+                con conexión. Después podrás continuar temporalmente sin señal;
+                la app te indicará qué cambios quedan pendientes de sincronizar.
               </p>
             </details>
             <details>
               <summary>¿Qué puedo probar aquí?</summary>
               <p>
                 La demo permite registrar y editar series, usar el descanso,
-                consultar fichas y navegar. Historial muestra sólo tu actividad
-                de esta demo; Perfil explica su función. Las capturas muestran
-                las pantallas completas del producto.
+                consultar fichas y recorrer Cliente y Coach. Todas las personas
+                son ficticias. Los cambios sólo duran mientras mantengas esta demo abierta.
               </p>
             </details>
           </div>

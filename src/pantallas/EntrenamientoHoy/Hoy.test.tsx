@@ -9,7 +9,7 @@ import { ProveedorDescanso } from '../../aplicacion/ProveedorDescanso'
 import { Descanso } from '../../componentes/Descanso'
 import { useMemoria } from '../../aplicacion/memoria'
 import { baseDePrueba } from '../../pruebas/base'
-import { RepositorioLocal } from '../../datos/repositorioLocal'
+import { RepositorioPilotoDePrueba as RepositorioLocal } from '../../pruebas/base'
 import { sembrar } from '../../datos/semilla'
 import { sembrarParticipante } from '../../pruebas/participante'
 

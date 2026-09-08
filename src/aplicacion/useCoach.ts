@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../nube/eventos'
 import type { Repositorio } from '../datos/repositorio'
 import {
   actualizarSlot,

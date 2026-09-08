@@ -8,7 +8,7 @@ import {
 const respaldo = (parcial: Record<string, unknown> = {}) => ({
   version: VERSION_RESPALDO,
   exportadoEn: '2026-08-24T10:00:00.000Z',
-  participante: { id: '001', nombre: 'Santiago' },
+  participante: { id: '001', nombre: 'Santiago', sexo:null,edad:null,estaturaCm:null,pesoCorporalLb:null,objetivo:'',frecuenciaEntrenamiento:4,limitaciones:'',notas:'',ejerciciosEvitados:[] },
   plantillas: [],
   sesiones: [],
   series: [],

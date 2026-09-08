@@ -11,6 +11,7 @@
  * recomendación y sus cifras, y el acceso a descanso, ficha y variantes.
  */
 
+import { useEffect,useRef } from 'react'
 import { describirSerie, resumirUltimaVez } from '../../logica/ultimaVez'
 import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
 import { FilaSerie } from './FilaSerie'
@@ -29,10 +30,11 @@ const ETIQUETA_ESTIMULO = {
 
 interface Props {
   readonly item: EjercicioDelDia
+  readonly onIdentidadVisible?: (visible:boolean)=>void
   readonly onAbrirVariantes: () => void
   /** Abre la ficha del ejercicio: datos, equivalentes e historial de la variante. */
   readonly onAbrirFicha: () => void
-  /** Arranca el descanso a mano. El automático lo dispara guardar una serie de trabajo. */
+  /** Arranca el descanso a mano; guardar una serie nunca lo inicia. */
   readonly onDescansar: () => void
   readonly onGuardarSerie: (
     ejercicioId: string,
@@ -48,6 +50,7 @@ interface Props {
 
 export function CuerpoEjercicio({
   item,
+  onIdentidadVisible,
   onAbrirVariantes,
   onAbrirFicha,
   onDescansar,
@@ -58,6 +61,8 @@ export function CuerpoEjercicio({
   repositorio,
 }: Props) {
   const { slot, ejercicio, referencias, seriesDeHoy, sugerencia } = item
+  const identidad=useRef<HTMLElement>(null)
+  useEffect(()=>{if(typeof IntersectionObserver==='undefined'||!identidad.current)return;const observer=new IntersectionObserver(([e])=>onIdentidadVisible?.(e.isIntersecting),{rootMargin:'-60px 0px 0px 0px'});observer.observe(identidad.current);return()=>observer.disconnect()},[onIdentidadVisible])
 
   // §7: cada serie se compara contra la del mismo número de la última vez.
   const referenciaDe = (numeroSerie: number): SerieComparable | undefined =>
@@ -96,7 +101,8 @@ export function CuerpoEjercicio({
 
   return (
     <section className="entreno__ejercicio">
-      <header className="entreno__identidad">
+      <header ref={identidad} className="entreno__identidad">
+        <button type="button" className="sfm-workout-image" onClick={onAbrirFicha} aria-label="Ver ficha del ejercicio"><img src={ejercicio.imagen} alt=""/><span>Ver ejercicio ↗</span></button>
         <span className={`ejercicio__tag tinta--${slot.estimulo}`}>
           <span className={`ejercicio__punto punto--${slot.estimulo}`} />
           {ETIQUETA_ESTIMULO[slot.estimulo]}

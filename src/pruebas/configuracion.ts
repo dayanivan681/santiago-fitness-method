@@ -11,3 +11,10 @@ import { configure } from '@testing-library/react'
  * roto.
  */
 configure({ asyncUtilTimeout: 5000 })
+
+// jsdom no implementa todavía los métodos nativos del diálogo. Las pruebas
+// funcionales verifican su apertura; foco y geometría se comprueban en navegador.
+if(typeof HTMLDialogElement!=='undefined'){
+ if(!HTMLDialogElement.prototype.showModal)HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','')}
+ if(!HTMLDialogElement.prototype.close)HTMLDialogElement.prototype.close=function(){this.removeAttribute('open')}
+}

@@ -151,6 +151,10 @@ export interface Sesion {
    * pasó, y una sesión a medias —con ejercicios omitidos o menos series— es un
    * dato válido, no un error que haya que corregir.
    */
+  readonly prescripcion?: PlantillaDia
+  readonly cargas?: Record<string, PerfilCarga>
+  readonly planRevision?: number
+  readonly procedencia?: 'app' | 'importacion'
   readonly completadaEn?: string
 }
 
@@ -181,6 +185,7 @@ export interface SerieRegistrada {
    * registrar sin perder tiempo. Opcional: las series guardadas antes de que
    * existiera este campo no lo tienen.
    */
+  readonly carga?: PerfilCarga
   readonly instante?: string
   /**
    * Calidad de ejecución. El cliente pide que entre en la decisión: una mejora
@@ -209,6 +214,7 @@ export interface SerieRegistrada {
 
 /** Lo que puede cambiar al corregir una serie. */
 export interface ValoresDeSerie {
+  readonly nota?: string
   readonly pesoRegistradoLb: number
   readonly repsRealizadas: number
   readonly rir: number
@@ -236,6 +242,7 @@ export interface ValoresDeSerie {
  * y sin esto ese ajuste se perdería.
  */
 export interface BorradorDeSerie {
+  readonly nota?: string
   /** Derivado de participante, fecha, día, posición y número de serie. */
   readonly id: string
   readonly participanteId: string

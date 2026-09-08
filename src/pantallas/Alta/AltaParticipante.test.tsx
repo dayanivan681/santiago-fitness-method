@@ -4,13 +4,13 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AltaParticipante } from './AltaParticipante'
 import { RestaurarCopia } from './RestaurarCopia'
-import { baseDePrueba } from '../../pruebas/base'
-import { RepositorioLocal } from '../../datos/repositorioLocal'
+import { repositorioDePrueba } from '../../pruebas/base'
+import { RepositorioPilotoDePrueba as RepositorioLocal } from '../../pruebas/base'
 
 let repositorio: RepositorioLocal
 
 beforeEach(() => {
-  repositorio = new RepositorioLocal(baseDePrueba(`prueba-alta-${crypto.randomUUID()}`))
+  repositorio = repositorioDePrueba(`prueba-alta-${crypto.randomUUID()}`)
 })
 
 function abrir() {

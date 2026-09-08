@@ -1,5 +1,5 @@
-import { RepositorioLocal } from '../datos/repositorioLocal'
 import type { Repositorio } from '../datos/repositorio'
-
-/** Instancia única de la app. §26: hoy local, mañana nube — se cambia aquí. */
-export const repositorio: Repositorio = new RepositorioLocal()
+import { RepositorioMemoria } from '../nube/memoria'
+/** El arranque autentica antes de instalar un repositorio durable. */
+export let repositorio:Repositorio = new RepositorioMemoria()
+export function instalarRepositorio(nuevo:Repositorio){repositorio=nuevo}

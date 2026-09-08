@@ -11,7 +11,7 @@ import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 
 import { aPesoRegistradoLb, incrementoRegistradoLb } from '../../dominio/carga'
 import { aComparable } from '../../dominio/serie'
 import { ETIQUETA_PROGRESO, evaluarSerie } from '../../logica/progreso'
-import { formatearRir, siguienteRir } from '../../dominio/rir'
+import { formatearRir } from '../../dominio/rir'
 import {
   TECNICAS,
   TECNICA_POR_DEFECTO,
@@ -95,6 +95,12 @@ export function FilaSerie({
   const [esCalentamiento, setEsCalentamiento] = useState(
     registrada?.esCalentamiento ?? false,
   )
+  const [nota,setNota]=useState(registrada?.nota??'')
+  const [error,setError]=useState('')
+  const guardandoRef=useRef(false)
+  const filaRef=useRef<HTMLDivElement>(null)
+  const antesColapsada=useRef(colapsada)
+  useEffect(()=>{if(antesColapsada.current&&!colapsada)filaRef.current?.scrollIntoView?.({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});antesColapsada.current=colapsada},[colapsada])
   const [guardando, setGuardando] = useState(false)
   // Tocar el valor lo abre para escribirlo directo. Sin esto, arrancar de 0
   // hasta un peso real serían decenas de toques del stepper.
@@ -125,9 +131,10 @@ export function FilaSerie({
   // Al registrarse una serie anterior cambia el punto de partida de ésta. Se
   // sigue **sólo si el participante no ha tocado nada**: pisarle lo que lleva
   // tecleado por guardar otra serie sería peor que no ajustar.
-  const [partidaSeguida, setPartidaSeguida] = useState(pesoDePartida)
-  if (pesoDePartida !== partidaSeguida) {
-    setPartidaSeguida(pesoDePartida)
+  const clavePartida = `${pesoDePartida}:${repsDePartida}`
+  const [partidaSeguida, setPartidaSeguida] = useState(clavePartida)
+  if (clavePartida !== partidaSeguida) {
+    setPartidaSeguida(clavePartida)
     if (!tocado && !registrada) {
       setPeso(pesoDePartida)
       setReps(repsDePartida)
@@ -156,6 +163,7 @@ export function FilaSerie({
       setPeso(borrador.pesoRegistradoLb)
       setReps(borrador.repsRealizadas)
       setRir(borrador.rir)
+      setNota(borrador.nota??'')
       setTecnica(borrador.tecnica ?? TECNICA_POR_DEFECTO)
       setEsCalentamiento(borrador.esCalentamiento ?? false)
     })
@@ -175,7 +183,9 @@ export function FilaSerie({
       : undefined
 
   async function guardar() {
-    if (guardando) return
+    if (guardandoRef.current) return
+    guardandoRef.current=true
+    setError('')
     setGuardando(true)
     try {
       const valores = {
@@ -184,6 +194,7 @@ export function FilaSerie({
         rir,
         tecnica,
         esCalentamiento,
+        ...(nota.trim()?{nota:nota.trim()}:{}),
       }
       if (registrada) {
         await onCorregir(registrada, valores)
@@ -194,7 +205,8 @@ export function FilaSerie({
         // guardado fallara, se perdería justo lo que el borrador protege.
         if (idDelBorrador && repositorio) await repositorio.borrarBorrador(idDelBorrador)
       }
-    } finally {
+    } catch(e){setError(e instanceof Error?e.message:'No se pudo guardar. Tus valores siguen aquí.')} finally {
+      guardandoRef.current=false
       setGuardando(false)
     }
   }
@@ -215,9 +227,11 @@ export function FilaSerie({
       rir,
       tecnica,
       esCalentamiento,
+      ...(nota.trim()?{nota:nota.trim()}:{}),
       guardadoEn: new Date().toISOString(),
-    })
+    }).catch(e=>setError(e instanceof Error?e.message:'No se pudo conservar el borrador.'))
   }, [
+    nota,
     idDelBorrador,
     repositorio,
     claveDeBorrador,
@@ -254,7 +268,7 @@ export function FilaSerie({
   }
 
   return (
-    <div className={hecha ? 'serie serie--hecha' : 'serie'}>
+    <div ref={filaRef} className={hecha ? 'serie serie--hecha' : 'serie'}>
       <div className="serie__cabecera">
         <span className="serie__titulo">
           Serie {numeroSerie}
@@ -291,7 +305,7 @@ export function FilaSerie({
             )}
           </span>
         ) : (
-          <span className="serie__meta">
+          <details className="serie__opciones"><summary>Más opciones</summary>
             <button
               type="button"
               className={`marca marca--${tecnica} marca--tocable`}
@@ -311,9 +325,10 @@ export function FilaSerie({
               onClick={() => cambiarCalentamiento((valor) => !valor)}
               aria-label={`Marcar la ${etiqueta} como calentamiento`}
             >
-              Calent.
+              Calentamiento
             </button>
-          </span>
+<label className="sfm-field sfm-field--compact"><span>Nota de esta serie</span><textarea className="sfm-series-note" aria-label={`Nota de la ${etiqueta}`} maxLength={4000} value={nota} onChange={e=>{setTocado(true);setNota(e.target.value)}} placeholder="Algo que recordar"/></label>
+          </details>
         )}
       </div>
 
@@ -453,18 +468,14 @@ export function FilaSerie({
               {formatearRir(registrada.rir)}
             </output>
           ) : (
-            <button
-              type="button"
-              className="valor valor--tocable"
-              onClick={() => cambiarRir(siguienteRir)}
-              aria-label={`RIR de la ${etiqueta}`}
-            >
-              {formatearRir(rir)}
-            </button>
+            <div className="sfm-rir-segments" role="group" aria-label={`RIR de la ${etiqueta}`}>
+              {[0,1,2,3,4,5].map(valor => <button key={valor} type="button" aria-pressed={rir===valor} aria-label={`RIR ${valor}${valor===5?'+':''} de la ${etiqueta}`} onClick={()=>cambiarRir(()=>valor)}>{valor===5?'5+':valor}</button>)}
+            </div>
           )}
         </div>
       </div>
 
+      {error&&<p className="sfm-set-error" role="alert">{error}</p>}
       <div className="serie__pie">
         <span className="serie__anterior">
           {referencia
@@ -501,7 +512,7 @@ export function FilaSerie({
             disabled={guardando}
             aria-label={`Guardar la ${etiqueta}`}
           >
-            {guardando ? '…' : 'Guardar'}
+            {guardando ? 'Guardando…' : 'Completar serie'}
           </button>
         )}
       </div>

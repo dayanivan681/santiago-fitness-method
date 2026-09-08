@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useMemoria } from './memoria'
 import { Biblioteca } from '../pantallas/Biblioteca/Biblioteca'
 import { baseDePrueba } from '../pruebas/base'
-import { RepositorioLocal } from '../datos/repositorioLocal'
+import { RepositorioPilotoDePrueba as RepositorioLocal } from '../pruebas/base'
 import { sembrar } from '../datos/semilla'
 import type { Musculo } from '../dominio/tipos'
 

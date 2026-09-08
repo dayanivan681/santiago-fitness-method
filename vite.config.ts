@@ -4,10 +4,18 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rolldownOptions: { output: { codeSplitting: { groups: [
+      { name: 'interfaz', test: /node_modules\/(react|react-dom|react-router|scheduler)\// },
+      { name: 'almacenamiento', test: /node_modules\/(dexie|dexie-react-hooks)\// },
+      { name: 'contratos', test: /node_modules\/zod\// },
+    ] } } },
+  },
   server: {
     host: true, // expuesto en la red local para probar desde el móvil
   },
   test: {
+    include: ['src/**/*.test.{ts,tsx}', 'functions/**/*.test.{ts,tsx}', 'shared/**/*.test.{ts,tsx}', 'pruebas-v2/**/*.test.{ts,tsx}'],
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/pruebas/configuracion.ts'],

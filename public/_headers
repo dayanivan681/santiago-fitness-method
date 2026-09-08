@@ -14,7 +14,7 @@
 /index.html
   Cache-Control: no-store
 
-# El service worker de autodestrucción. Si un intermediario devolviera una copia
+# El service worker del shell. Si un intermediario devolviera una copia
 # guardada, las instalaciones antiguas no llegarían a migrar nunca.
 /sw.js
   Cache-Control: no-store, no-cache, must-revalidate

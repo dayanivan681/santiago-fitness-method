@@ -7,7 +7,7 @@
  * serían decenas de lecturas que nadie mira.
  */
 
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../nube/eventos'
 import { describirSerie } from '../logica/ultimaVez'
 import { derivarReferencias } from '../datos/referencias'
 import type { Repositorio } from '../datos/repositorio'

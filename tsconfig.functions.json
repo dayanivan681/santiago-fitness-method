@@ -22,6 +22,7 @@
     "functions"
   ],
   "exclude": [
-    "functions/**/*.test.ts"
+    "functions/**/*.test.ts",
+    "functions/**/*.test.tsx"
   ]
 }

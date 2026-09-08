@@ -50,10 +50,10 @@ export function derivarReferencias(
     .filter((serie) => serie.fecha === fechaUltimaSesion)
     .slice()
     .sort((a, b) => a.numeroSerie - b.numeroSerie)
-    .map((serie) => aComparable(serie, perfil))
+    .map((serie) => aComparable(serie, serie.carga ?? perfil))
 
   const mejor = mejorSerie(
-    historial.map((serie) => aComparable(serie, perfil)),
+    historial.map((serie) => aComparable(serie, serie.carga ?? perfil)),
     rango,
   )
 

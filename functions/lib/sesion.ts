@@ -120,3 +120,15 @@ export async function cerrarSesion(
     .bind(await resumen(valorDeCookie), ahora)
     .run()
 }
+
+/** Consumir la invitación y crear el acceso sucede en una sola transacción. */
+export async function entrarConInvitacion(db:D1Database,token:string,ahora=ahoraEnSegundos()):Promise<{cookie:string}|null>{
+ const cookie=tokenNuevo();const id=await resumen(cookie);const tokenHash=await resumen(token)
+ await db.batch([
+  db.prepare(`INSERT INTO sesiones(id,cliente_id,invitacion,creada_en,expira_en)
+    SELECT ?1,i.cliente_id,i.token_hash,?3,?4 FROM invitaciones i JOIN clientes c ON c.id=i.cliente_id
+    WHERE i.token_hash=?2 AND i.consumida_en IS NULL AND i.revocada_en IS NULL AND i.expira_en>?3 AND c.activo=1`).bind(id,tokenHash,ahora,ahora+VIDA_DE_SESION),
+  db.prepare('UPDATE invitaciones SET consumida_en=? WHERE token_hash=? AND EXISTS(SELECT 1 FROM sesiones WHERE id=?)').bind(ahora,tokenHash,id),
+ ])
+ return await db.prepare('SELECT id FROM sesiones WHERE id=?').bind(id).first()?{cookie}:null
+}

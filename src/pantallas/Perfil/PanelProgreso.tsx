@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useState, type FormEvent } from 'react'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../../nube/eventos'
 import { fechaDeHoy, nuevoId, type Repositorio } from '../../datos/repositorio'
 import { reducirImagen } from '../../datos/imagen'
 import {

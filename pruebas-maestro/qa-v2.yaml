@@ -1,0 +1,58 @@
+# Flujos de componentes reales en demo volátil. Nunca escribe en D1 ni abre
+# la caché privada. El QA cloud usa exclusivamente los fixtures de staging/local.
+url: http://127.0.0.1:8789/demo/cliente
+name: Santiago V2 · entrenamiento y continuidad
+tags: [web, v2, demo]
+---
+- clearState
+- openLink: http://127.0.0.1:8789/demo/cliente
+- extendedWaitUntil:
+    visible: Comenzar entrenamiento
+    timeout: 20000
+- tapOn: Upper A
+- tapOn: Comenzar entrenamiento
+- assertVisible: Ejercicio 1 de 5
+- tapOn:
+    id: Peso de la serie 1 de Press inclinado bajo \(15°\) en Smith
+- eraseText
+- inputText: '25'
+- tapOn:
+    id: Reps de la serie 1 de Press inclinado bajo \(15°\) en Smith
+- eraseText
+- inputText: '5'
+- tapOn:
+    id: RIR 2 de la serie 1 de Press inclinado bajo \(15°\) en Smith
+- tapOn:
+    id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
+- assertVisible:
+    id: Editar la serie 1 de Press inclinado bajo \(15°\) en Smith
+- scrollUntilVisible:
+    element: Descanso
+    direction: DOWN
+    centerElement: true
+- tapOn: Descanso
+- assertVisible:
+    id: Temporizador de descanso
+- tapOn: Biblioteca
+- tapOn:
+    id: Buscar ejercicio
+- inputText: Sentadilla
+- assertVisible: Sentadilla con barra
+- tapOn: Hoy
+- assertVisible: Ejercicio 1 de 5
+- assertVisible:
+    id: Temporizador de descanso
+- tapOn:
+    id: Editar la serie 1 de Press inclinado bajo \(15°\) en Smith
+- waitForAnimationToEnd
+- assertVisible:
+    id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
+- tapOn:
+    id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
+- tapOn: Listo
+- scrollUntilVisible:
+    element: Terminar sesión
+    direction: DOWN
+    centerElement: true
+- tapOn: Terminar sesión
+- assertVisible: Sesión completada

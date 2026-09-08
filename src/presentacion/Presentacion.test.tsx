@@ -1,8 +1,7 @@
 import 'fake-indexeddb/auto';
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Presentacion } from "./Presentacion";
-import { Demo } from "./Demo";
 import { DIAS_DEMO, BIBLIOTECA_DEMO } from "./datos";
 import { PLANTILLAS_BASE } from "../../shared/plantillas-base";
 import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
@@ -25,16 +24,16 @@ describe("Presentación pública fiel", () => {
         expect(ejercicio.id).toBe(slot.ejercicioId);
   });
 
-  it("explica acceso, datos locales y capturas actuales sin claims inexistentes", () => {
+  it("explica el acceso privado, sincronización y demo compartida", () => {
     const { container } = render(<Presentacion />);
     expect(container.textContent).toContain("pulsa Entrar");
-    expect(container.textContent).toContain("Cloudflare Access");
-    expect(container.textContent).toContain("siguen locales en el dispositivo");
+    expect(container.textContent).toContain("correo autorizado");
+    expect(container.textContent).toContain("se sincronizan cuando vuelves");
     expect(container.textContent).not.toMatch(
       /\bkg\b|Copia de seguridad|vídeo|sincronización entre dispositivos|Press militar/,
     );
-    expect(screen.getAllByAltText(/Pantalla real de/)).toHaveLength(4);
-    expect(container.querySelector("iframe")).toHaveAttribute("src", "/presentacion/?demo=1");
+    expect(screen.getByRole("link",{name:"Explorar Coach ↗"})).toHaveAttribute("href","/demo/coach");
+    expect(container.querySelector("iframe")).toHaveAttribute("src", "/demo/cliente");
     expect(container.querySelector("iframe")).toHaveAttribute("referrerpolicy", "no-referrer");
     expect(
       screen.getByRole("link", { name: /Abrir Santiago Fitness Method/ }),
@@ -52,77 +51,4 @@ describe("Presentación pública fiel", () => {
     }
   });
 
-  it("guarda, arranca el timer, permite editar sin reiniciarlo y conserva al navegar", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch");
-    const storageSpy = vi.spyOn(Storage.prototype, "setItem");
-    const databaseSpy = vi.spyOn(indexedDB, "open");
-    render(<Demo />);
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Subir peso de la serie 1 de Press inclinado bajo (15°) en Smith",
-      }),
-    );
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Guardar la serie 1 de Press inclinado bajo (15°) en Smith",
-      }),
-    );
-    const timer = await screen.findByRole("status", {
-      name: "Temporizador de descanso",
-    });
-    expect(within(timer).getByText("3:00")).toBeInTheDocument();
-    fireEvent.click(within(timer).getByRole("button", { name: "+30s" }));
-    expect(within(timer).getByText("3:30")).toBeInTheDocument();
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Editar la serie 1 de Press inclinado bajo (15°) en Smith",
-      }),
-    );
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Guardar la serie 1 de Press inclinado bajo (15°) en Smith",
-      }),
-    );
-    expect(within(timer).getByText("3:30")).toBeInTheDocument();
-    for (const tab of ["Biblioteca", "Historial", "Perfil", "Hoy"]) {
-      fireEvent.click(screen.getByRole("button", { name: tab }));
-      expect(
-        screen.getByRole("status", { name: "Temporizador de descanso" }),
-      ).toBeInTheDocument();
-    }
-    expect(screen.getByRole("progressbar")).toHaveAttribute(
-      "aria-valuenow",
-      "1",
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Terminar sesión" }));
-    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Historial" }));
-    expect(
-      screen.getByText("Sesión terminada · Hoy, en esta demo"),
-    ).toBeInTheDocument();
-    expect(fetchSpy).not.toHaveBeenCalled();
-    expect(storageSpy).not.toHaveBeenCalled();
-    expect(databaseSpy).not.toHaveBeenCalled();
-  });
-
-  it("un calentamiento no inicia el descanso ni aparece como Última vez", async () => {
-    render(<Demo />);
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Marcar la serie 1 de Press inclinado bajo (15°) en Smith como calentamiento",
-      }),
-    );
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Guardar la serie 1 de Press inclinado bajo (15°) en Smith",
-      }),
-    );
-    await screen.findByRole("button", {
-      name: "Editar la serie 1 de Press inclinado bajo (15°) en Smith",
-    });
-    expect(
-      screen.queryByRole("status", { name: "Temporizador de descanso" }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByText("Sin historial")).toBeInTheDocument();
-  });
 });

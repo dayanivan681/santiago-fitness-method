@@ -5,7 +5,7 @@
  */
 
 import { useMemoria, type Memoria } from './memoria'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../nube/eventos'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
 import type { Repositorio } from '../datos/repositorio'
 import { rangoDeEjercicio } from '../logica/plantilla'

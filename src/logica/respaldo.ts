@@ -1,16 +1,5 @@
-/**
- * Respaldo de los datos del participante.
- *
- * Todo vive en el dispositivo (§26). Eso resuelve el consentimiento de las
- * fotos por construcción, pero deja un riesgo que hasta ahora no tenía red: si
- * el navegador borra su almacenamiento, se van meses de entrenamiento y §19 —"lo
- * registrado no se pierde"— deja de cumplirse por un motivo que no depende de
- * la app.
- *
- * El archivo también es, mientras no haya cuentas, la única forma de que el
- * coach reciba lo que hizo el participante.
- */
-
+/** Compatibilidad de lectura con respaldos v1. La restauración cloud vive en /api/v2/importar. */
+import { RespaldoV1 } from "../../shared/v2/importacion"
 import type {
   Participante,
   PlantillaDia,
@@ -53,22 +42,7 @@ export interface Respaldo {
  * que ante la duda se rechaza entero.
  */
 export function esRespaldoValido(candidato: unknown): candidato is Respaldo {
-  if (typeof candidato !== 'object' || candidato === null || Array.isArray(candidato)) {
-    return false
-  }
-
-  const posible = candidato as Partial<Respaldo>
-  if (posible.version !== VERSION_RESPALDO) return false
-  if (typeof posible.participante !== 'object' || posible.participante === null) return false
-
-  const listas = [
-    posible.plantillas,
-    posible.sesiones,
-    posible.series,
-    posible.progreso,
-    posible.sustituciones,
-  ]
-  return listas.every(Array.isArray)
+  return RespaldoV1.safeParse(candidato).success
 }
 
 /** Un nombre que se distinga de otros respaldos al verlo en la carpeta. */

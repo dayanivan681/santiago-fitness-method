@@ -8,7 +8,7 @@
  */
 
 import { useState } from 'react'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../../nube/eventos'
 import { dejarDeEvitar, evitar } from '../../logica/limitaciones'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Participante } from '../../dominio/tipos'

@@ -4,7 +4,7 @@
  * frecuencia y limitaciones. Todo editable por el coach.
  */
 
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../nube/eventos'
 import type { Repositorio } from '../datos/repositorio'
 import type { Participante } from '../dominio/tipos'
 

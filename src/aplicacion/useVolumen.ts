@@ -3,7 +3,7 @@
  * Guía del proyecto §20 (objetivos), §21 (directas vs indirectas), §22 (sexo).
  */
 
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../nube/eventos'
 import { fechaDeHoy, fechaHaceDias, type Repositorio } from '../datos/repositorio'
 import {
   estadoVolumen,

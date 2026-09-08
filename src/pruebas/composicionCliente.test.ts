@@ -14,7 +14,7 @@ import { resolve } from 'node:path'
 const raiz = (ruta: string) => readFileSync(resolve(process.cwd(), ruta), 'utf8')
 
 const CSS = raiz('src/index.css')
-const APP = raiz('src/App.tsx')
+const APP = raiz('src/producto/Cliente.tsx')
 const HOY = raiz('src/pantallas/EntrenamientoHoy/EntrenamientoHoy.tsx')
 const ENTRENO = raiz('src/pantallas/EntrenamientoHoy/Entrenamiento.tsx')
 const BIBLIOTECA = raiz('src/pantallas/Biblioteca/Biblioteca.tsx')
@@ -34,21 +34,19 @@ describe('entrenar es un modo, no la pantalla de inicio', () => {
   })
 
   it('App decide entre resumen y entrenamiento dentro de la misma pestaña', () => {
-    // Salir a la Biblioteca durante el descanso y volver tiene que devolver al
-    // ejercicio donde estabas; por eso el modo vive dentro de la pestaña Hoy y
-    // no en una ruta aparte.
-    expect(APP).toMatch(/entrenando \? \(/)
-    expect(APP).toContain('<Entrenamiento')
-    expect(APP).toContain('<EntrenamientoHoy')
+    expect(APP).toMatch(/<Route\s+path="entrenar"/)
+    expect(APP).toContain('memoriaDia={dia}')
+    expect(APP).toContain('memoriaAbierta={ejercicio}')
   })
 
   it('la barra de pestañas no se esconde al entrenar', () => {
     // Ocultarla parecía «reducir distracción», pero salir a la Biblioteca
     // mientras corre el descanso es un flujo real y una regresión cubierta por
     // `pruebas-maestro/qa-movil.yaml`.
-    const nav = APP.slice(APP.indexOf('<nav className="pestanas"'))
-    expect(nav).toContain('PESTANAS.map')
-    expect(APP).not.toMatch(/\{!entrenando && \(?\s*<nav className="pestanas"/)
+    const nav = APP.slice(APP.indexOf('<nav'))
+    expect(nav).toContain('Navegación del cliente')
+    expect(nav).toContain('NavLink')
+    expect(APP).not.toContain('!entrenando &&')
   })
 })
 

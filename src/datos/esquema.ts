@@ -36,6 +36,9 @@ export class BaseDatosSantiago extends Dexie {
   /** Series a medio teclear. Se borran al guardarlas de verdad. */
   borradores!: EntityTable<BorradorDeSerie, 'id'>
 
+  cola!: EntityTable<import('../nube/cloud').Pendiente, 'opId'>
+  meta!: EntityTable<{ id:string; valor:unknown }, 'id'>
+  documentos!: EntityTable<import('../../shared/v2/contratos').Cambio & { clave:string }, 'clave'>
   constructor(nombre = 'santiago-fitness-method') {
     super(nombre)
     this.version(1).stores({
@@ -172,6 +175,7 @@ export class BaseDatosSantiago extends Dexie {
     this.version(10).stores({
       identidadesCatalogo: 'id, referenciaCanonica, estado',
     })
+    this.version(11).stores({cola:'opId, secuencia, clave, estado',meta:'id',documentos:'clave, tipo'})
   }
 }
 

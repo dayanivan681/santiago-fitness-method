@@ -4,9 +4,9 @@
  */
 
 import { useMemoria, type Memoria } from './memoria'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../nube/eventos'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
-import { fechaDeHoy, nuevoId, type Repositorio } from '../datos/repositorio'
+import { fechaDeHoy, type Repositorio } from '../datos/repositorio'
 import { diaSugerido } from '../logica/rotacion'
 import { reemplazarEjercicio } from '../logica/plantilla'
 import { aplicarSustituciones, idSustitucion } from '../logica/sustitucion'
@@ -65,6 +65,7 @@ export interface DatosEntrenamiento {
 }
 
 export interface NuevaSerie {
+  readonly nota?: string
   readonly pesoRegistradoLb: number
   readonly repsRealizadas: number
   readonly rir: number
@@ -102,7 +103,7 @@ export function useEntrenamiento(repositorio: Repositorio, memoriaDia?: Memoria<
       (sesion) => sesion.fecha === fecha && sesion.plantillaDiaId === datos.plantilla.id,
     )
 
-    const sesionId = existente?.id ?? nuevoId()
+    const sesionId = existente?.id ?? `entreno:${datos.participante.id}|${fecha}|${datos.plantilla.id}`
     if (!existente) {
       await repositorio.crearSesion({
         id: sesionId,
@@ -113,7 +114,7 @@ export function useEntrenamiento(repositorio: Repositorio, memoriaDia?: Memoria<
     }
 
     await repositorio.registrarSerie({
-      id: nuevoId(),
+      id: `${sesionId}|${ejercicioId}|${numeroSerie}`,
       sesionId,
       ejercicioId,
       numeroSerie,
@@ -225,6 +226,9 @@ async function cargarEntrenamiento(
     repositorio.listarSustituciones(participante.id, fecha),
   ])
 
+  // Una publicación posterior puede quitar un día; la sesión iniciada conserva
+  // su prescripción y sigue siendo accesible hasta terminarla.
+  for(const s of sesiones.filter(s=>s.fecha===fecha && s.prescripcion)){if(!plantillas.some(p=>p.id===s.plantillaDiaId))plantillas.push(s.prescripcion!)}
   if (plantillas.length === 0) return null
 
   // Si ya se empezó a registrar hoy, ese es el día que se está entrenando. Sin
@@ -247,7 +251,8 @@ async function cargarEntrenamiento(
 
   // La plantilla guardada es la del participante; ésta es la que se entrena
   // hoy, con los cambios puntuales aplicados encima.
-  const plantillaDeHoy = aplicarSustituciones(plantilla, sustituciones)
+  const plantillaHistorica = sesionDeHoy?.prescripcion ?? plantilla
+  const plantillaDeHoy = aplicarSustituciones(plantillaHistorica, sustituciones)
   const slots = [...plantillaDeHoy.slots].sort((a, b) => a.orden - b.orden)
   // De una vez, no ejercicio por ejercicio: así no se releen las sesiones del
   // participante una vez por cada uno de los ocho huecos del día.
@@ -263,7 +268,7 @@ async function cargarEntrenamiento(
         plantilla,
         fecha,
         seriesDeHoy,
-        ejercicios,
+        ejercicios.map(e => ({...e,...sesionDeHoy?.cargas?.[e.id]})),
       ),
     ),
   )
@@ -272,7 +277,7 @@ async function cargarEntrenamiento(
   return {
     participante,
     plantillas,
-    plantilla,
+    plantilla: plantillaHistorica,
     ejerciciosDelDia,
     seriesHechas: ejerciciosDelDia.reduce((total, e) => total + e.seriesDeHoy.length, 0),
     seriesObjetivo: ejerciciosDelDia.reduce((total, e) => total + e.slot.seriesObjetivo, 0),

@@ -34,3 +34,7 @@ dist-ssr
 
 # Material de entrega puntual para diseño: capturas y copias de public/
 entrega-diseno/
+
+# Respaldos privados; nunca publicar datos ni credenciales
+.recovery/
+.qa-local/

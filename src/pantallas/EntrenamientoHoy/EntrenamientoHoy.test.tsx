@@ -9,7 +9,7 @@ import { useMemoria } from '../../aplicacion/memoria'
 import { ProveedorDescanso } from '../../aplicacion/ProveedorDescanso'
 import { Descanso } from '../../componentes/Descanso'
 import { baseDePrueba } from '../../pruebas/base'
-import { RepositorioLocal } from '../../datos/repositorioLocal'
+import { RepositorioPilotoDePrueba as RepositorioLocal } from '../../pruebas/base'
 import { sembrar } from '../../datos/semilla'
 import { idDeDia } from '../../datos/semilla'
 import { sembrarParticipante } from '../../pruebas/participante'
@@ -428,10 +428,9 @@ describe('temporizador de descanso (criterio 5)', () => {
   const cronometro = () =>
     screen.queryByRole('status', { name: 'Temporizador de descanso' })
 
-  test('guardar una serie de trabajo arranca el descanso sola', async () => {
-    // Cambio de criterio de la Fase 1: antes era estrictamente manual. Ojo, esto
-    // no es el descanso *medido* de §5, que se sigue derivando de las marcas de
-    // tiempo de cada serie y no ha cambiado.
+  test('guardar una serie de trabajo no inicia el descanso manual', async () => {
+    // El plan aprobado mantiene el temporizador manual. El descanso medido
+    // sigue derivándose de las marcas de tiempo de las series.
     // Arrange
     await abrirUpperA()
 
@@ -440,8 +439,7 @@ describe('temporizador de descanso (criterio 5)', () => {
     await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
 
     // Assert
-    expect(await screen.findByRole('status', { name: 'Temporizador de descanso' }))
-      .toHaveTextContent('Descanso')
+    expect(cronometro()).not.toBeInTheDocument()
   })
 
   test('un calentamiento no arranca el descanso', async () => {
@@ -467,7 +465,6 @@ describe('temporizador de descanso (criterio 5)', () => {
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
     await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
-    await userEvent.click(screen.getByRole('button', { name: 'Listo' }))
     await waitFor(() => expect(cronometro()).not.toBeInTheDocument())
 
     // Act

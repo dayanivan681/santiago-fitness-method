@@ -4,7 +4,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Biblioteca } from './Biblioteca'
 import { baseDePrueba } from '../../pruebas/base'
-import { RepositorioLocal } from '../../datos/repositorioLocal'
+import { RepositorioPilotoDePrueba as RepositorioLocal } from '../../pruebas/base'
 import { sembrar } from '../../datos/semilla'
 
 let repositorio: RepositorioLocal

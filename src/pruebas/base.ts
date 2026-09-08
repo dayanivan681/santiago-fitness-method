@@ -12,6 +12,7 @@ import { afterEach } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { BaseDatosSantiago } from '../datos/esquema'
 import { RepositorioLocal } from '../datos/repositorioLocal'
+import type { Participante } from '../dominio/tipos'
 
 const abiertas: BaseDatosSantiago[] = []
 
@@ -34,7 +35,18 @@ export function baseDePrueba(nombre = `prueba-${crypto.randomUUID()}`): BaseDato
   return base
 }
 
-/** Lo mismo, ya envuelto en el repositorio, que es lo que usan casi todas. */
-export function repositorioDePrueba(nombre?: string): RepositorioLocal {
-  return new RepositorioLocal(baseDePrueba(nombre))
+/** Selección explícita del perfil creado por el harness del piloto antiguo. */
+export class RepositorioPilotoDePrueba extends RepositorioLocal {
+  private seleccion: string | undefined
+  async guardarParticipante(p: Participante) {
+    await super.guardarParticipante(p)
+    this.seleccion ??= p.id
+  }
+  async participanteActual() {
+    return this.seleccion ? this.obtenerParticipante(this.seleccion) : undefined
+  }
+}
+
+export function repositorioDePrueba(nombre?: string): RepositorioPilotoDePrueba {
+  return new RepositorioPilotoDePrueba(baseDePrueba(nombre))
 }

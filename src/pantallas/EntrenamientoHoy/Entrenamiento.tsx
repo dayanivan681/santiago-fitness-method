@@ -31,6 +31,7 @@ import type { ClaveDeBorrador } from '../../logica/borrador'
 import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 import type { EjercicioDelDia } from '../../aplicacion/useEntrenamiento'
 import { useRef } from 'react'
+import { Hoja as HojaResumen,ErrorVisible } from '../../producto/ui'
 
 /** La clave sin `numeroSerie`: cada fila añade el suyo. */
 type ClaveDelDia = Omit<ClaveDeBorrador, 'numeroSerie'>
@@ -66,6 +67,10 @@ export function Entrenamiento({
   const [variantesAbiertas, setVariantesAbiertas] = useState(false)
   const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
   const [listaAbierta, setListaAbierta] = useState(false)
+  const [resumenAbierto,setResumenAbierto]=useState(false)
+  const [identidadVisible,setIdentidadVisible]=useState(true)
+  const [errorCierre,setErrorCierre]=useState('')
+  const [cerrando,setCerrando]=useState(false)
   const { arrancar: arrancarDescanso, declararBarraDeSesion } = useControlDescanso()
 
   /**
@@ -151,7 +156,7 @@ export function Entrenamiento({
           ‹
         </button>
         <span className="entreno__contexto">
-          <span className="entreno__dia">{plantilla.nombre}</span>
+          <span className="entreno__dia">{identidadVisible?plantilla.nombre:item.ejercicio.nombre}</span>
           <span className="entreno__paso">
             Ejercicio {indice + 1} de {ejerciciosDelDia.length}
           </span>
@@ -176,19 +181,13 @@ export function Entrenamiento({
         <CuerpoEjercicio
           key={item.ejercicio.id}
           item={item}
+          onIdentidadVisible={setIdentidadVisible}
           onAbrirVariantes={() => setVariantesAbiertas(true)}
           onAbrirFicha={() => setFichaDe(item.ejercicio)}
           onDescansar={() => arrancarDescanso(item.ejercicio.id, item.slot.descansoSegundos)}
           onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
-            // Si esto lanza, no se llega al cronómetro: un guardado fallido no
-            // debe arrancar ningún descanso.
             await registrarSerie(ejercicioId, numeroSerie, valores)
-            // El calentamiento no descansa: es preparación, y encadenar tres
-            // minutos entre aproximaciones alarga la sesión sin motivo. Las
-            // correcciones llegan por otra vía y tampoco pasan por aquí.
-            if (!valores.esCalentamiento) {
-              arrancarDescanso(ejercicioId, item.slot.descansoSegundos)
-            }
+            // El descanso se inicia con el botón Descansar, a elección del cliente.
             avanzarSiTermino(numeroSerie, item.slot.seriesObjetivo)
           }}
           onCorregirSerie={corregirSerie}
@@ -249,12 +248,14 @@ export function Entrenamiento({
               {seriesHechas} de {seriesObjetivo} series
             </span>
           </div>
-          <button type="button" className="progreso-sesion__terminar" onClick={terminarSesion}>
+          <button type="button" className="progreso-sesion__terminar" disabled={cerrando} onClick={()=>{setCerrando(true);setErrorCierre('');void terminarSesion().then(()=>setResumenAbierto(true)).catch(e=>setErrorCierre(e.message)).finally(()=>setCerrando(false))}}>
             Terminar sesión
           </button>
         </div>
       )}
 
+      <ErrorVisible error={errorCierre}/>
+      {resumenAbierto&&<HojaResumen titulo="Sesión completada" cerrar={()=>setResumenAbierto(false)}><p>{plantilla.nombre} · {new Date().toLocaleDateString('es',{day:'numeric',month:'long'})}</p><div className="sfm-metrics sfm-metrics--two"><div><strong>{seriesHechas}</strong><span>Series registradas</span></div><div><strong>{ejerciciosDelDia.filter(e=>e.seriesDeHoy.length).length}</strong><span>Ejercicios entrenados</span></div></div><p>Tu trabajo de hoy forma parte de tu progreso.</p><button className="sfm-primary" onClick={()=>{setResumenAbierto(false);onSalir?.()}}>Volver a Hoy</button><button className="sfm-secondary" onClick={()=>setResumenAbierto(false)}>Revisar y corregir series</button></HojaResumen>}
       {listaAbierta && (
         <HojaDelDia
           ejercicios={ejerciciosDelDia}

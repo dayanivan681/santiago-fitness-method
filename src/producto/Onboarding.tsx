@@ -1,0 +1,332 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
+import { Alta as ValidarAlta, type Alta } from "../../shared/v2/contratos";
+import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
+import { Cabecera, ErrorVisible, Icono } from "./ui";
+import { EditorPlan } from "./EditorPlan";
+import { planBase, ServicioCoach, ultimos } from "./servicio";
+export function Onboarding({
+  servicio,
+  base,
+}: {
+  servicio: ServicioCoach;
+  base: string;
+}) {
+  const { borradorId } = useParams();
+  const navegar = useNavigate();
+  const [alta, setAlta] = useState<Alta | null>(null);
+  const [revision, setRevision] = useState(0);
+  const [estado, setEstado] = useState("");
+  const [error, setError] = useState("");
+  const [ocupado, setOcupado] = useState(false);
+  const cola = useRef(Promise.resolve());
+  const rev = useRef(0);
+  const ultima = useRef("");
+  const publicando = useRef(false);
+  useEffect(() => {
+    let vivo = true;
+    void (async () => {
+      const cambios = await servicio.cambios();
+      const existente = ultimos(cambios, "alta").find(
+        (c) => c.id === borradorId,
+      );
+      if (!vivo) return;
+      if (existente) {
+        rev.current = existente.revision;
+        setRevision(existente.revision);
+        setAlta(existente.datos as Alta);
+        ultima.current = JSON.stringify(existente.datos);
+      } else {
+        const id = crypto.randomUUID();
+        const persona = "cliente-" + crypto.randomUUID().replaceAll("-", "");
+        setAlta({
+          id,
+          paso: 1,
+          completado: false,
+          perfil: {
+            id: persona,
+            nombre: "",
+            sexo: null,
+            edad: null,
+            estaturaCm: null,
+            pesoCorporalLb: null,
+            objetivo: "",
+            frecuenciaEntrenamiento: 4,
+            limitaciones: "",
+            notas: "",
+            ejerciciosEvitados: [],
+          },
+          plan: planBase(persona),
+        });
+      }
+    })().catch((e) => setError(e.message));
+    return () => {
+      vivo = false;
+    };
+  }, [servicio, borradorId]);
+  const guardar = useCallback(
+    (valor: Alta): Promise<void> => {
+      if (!valor.perfil.nombre.trim()) return Promise.resolve();
+      const serial = JSON.stringify(valor);
+      if (ultima.current === serial) return cola.current;
+      setEstado("Guardando borrador…");
+      cola.current = cola.current
+        .catch(() => {})
+        .then(async () => {
+          const c = await servicio.guardar(
+            undefined,
+            "alta",
+            valor.id,
+            rev.current,
+            valor,
+          );
+          rev.current = c.revision;
+          setRevision(c.revision);
+          ultima.current = serial;
+          setEstado("Borrador guardado");
+        })
+        .catch((e) => {
+          setError(e.message);
+          setEstado("Sin guardar");
+          throw e;
+        });
+      return cola.current;
+    },
+    [servicio],
+  );
+  useEffect(() => {
+    if (!alta) return;
+    const t = setTimeout(() => {
+      if (!publicando.current) void guardar(alta).catch(() => {});
+    }, 900);
+    return () => clearTimeout(t);
+  }, [alta, guardar]);
+  if (!alta)
+    return (
+      <p className="sfm-loading" role="status">
+        Preparando onboarding…
+      </p>
+    );
+  const a = alta;
+  const p = a.perfil;
+  async function siguiente() {
+    setError("");
+    if (!p.nombre.trim() || !p.objetivo.trim()) {
+      setError("Añade su nombre y el objetivo que van a trabajar.");
+      return;
+    }
+    setAlta({ ...a, paso: Math.min(3, a.paso + 1) });
+  }
+  async function crear() {
+    if (publicando.current) return;
+    publicando.current = true;
+    setError("");
+    setOcupado(true);
+    try {
+      const listo = ValidarAlta.parse({
+        ...a,
+        plan: { ...a.plan, id: "programa", estado: "publicado" },
+      });
+      await guardar(listo);
+      const id = await servicio.crear(listo, rev.current);
+      navegar(`${base}/clientes/${id}`);
+    } catch (e) {
+      publicando.current = false;
+      setError(e instanceof Error ? e.message : "No se pudo crear el cliente.");
+    } finally {
+      setOcupado(false);
+    }
+  }
+  return (
+    <section className="sfm-onboarding">
+      <Cabecera
+        titulo={
+          ["Conocer a la persona", "Diseñar su semana", "Su primer plan"][
+            a.paso - 1
+          ]
+        }
+        kicker="Nuevo proceso de coaching"
+        volver={`${base}/clientes`}
+      />
+      <div className="sfm-stepper" aria-label={`Paso ${a.paso} de 3`}>
+        {["Persona", "Contexto", "Plan"].map((s, i) => (
+          <button
+            key={s}
+            className={i + 1 <= a.paso ? "is-active" : ""}
+            onClick={() => i + 1 < a.paso && setAlta({ ...a, paso: i + 1 })}
+          >
+            <span>
+              {i + 1 < a.paso ? <Icono nombre="check" size={16} /> : i + 1}
+            </span>
+            {s}
+          </button>
+        ))}
+      </div>
+      {a.paso === 1 && (
+        <div className="sfm-form">
+          <p className="sfm-lead">Todo empieza por lo que quiere conseguir.</p>
+          <label className="sfm-field">
+            <span>Nombre</span>
+            <input
+              autoComplete="name"
+              value={p.nombre}
+              maxLength={120}
+              placeholder="Nombre y apellido"
+              onChange={(e) =>
+                setAlta({ ...a, perfil: { ...p, nombre: e.target.value } })
+              }
+            />
+          </label>
+          <label className="sfm-field">
+            <span>Objetivo compartido</span>
+            <textarea
+              value={p.objetivo}
+              maxLength={4000}
+              placeholder="¿Qué le gustaría lograr con tu acompañamiento?"
+              onChange={(e) =>
+                setAlta({ ...a, perfil: { ...p, objetivo: e.target.value } })
+              }
+            />
+          </label>
+          <p className="sfm-hint">
+            Edad, medidas y otros detalles pueden completarse cuando los
+            conozcas.
+          </p>
+        </div>
+      )}
+      {a.paso === 2 && (
+        <div className="sfm-form">
+          <h2>¿Cuántos días puede entrenar?</h2>
+          <div className="sfm-frecuencia">
+            {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+              <button
+                key={n}
+                aria-pressed={p.frecuenciaEntrenamiento === n}
+                onClick={() =>
+                  setAlta({
+                    ...a,
+                    perfil: { ...p, frecuenciaEntrenamiento: n },
+                  })
+                }
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          <label className="sfm-field">
+            <span>Limitaciones y contexto</span>
+            <textarea
+              value={p.limitaciones}
+              placeholder="Movimientos a evitar, molestias o adaptaciones necesarias"
+              maxLength={4000}
+              onChange={(e) =>
+                setAlta({
+                  ...a,
+                  perfil: { ...p, limitaciones: e.target.value },
+                })
+              }
+            />
+          </label>
+          <details className="sfm-details">
+            <summary>Marcar ejercicios a evitar</summary>
+            {BIBLIOTECA_INICIAL.map((e) => (
+              <label className="sfm-check" key={e.id}>
+                <input
+                  type="checkbox"
+                  checked={p.ejerciciosEvitados.includes(e.id)}
+                  onChange={(v) =>
+                    setAlta({
+                      ...a,
+                      perfil: {
+                        ...p,
+                        ejerciciosEvitados: v.target.checked
+                          ? [...p.ejerciciosEvitados, e.id]
+                          : p.ejerciciosEvitados.filter((id) => id !== e.id),
+                      },
+                    })
+                  }
+                />
+                <span>{e.nombre}</span>
+              </label>
+            ))}
+          </details>
+          <label className="sfm-field">
+            <span>Notas privadas del Coach</span>
+            <textarea
+              value={p.notas}
+              placeholder="Sólo tú podrás leerlas"
+              maxLength={4000}
+              onChange={(e) =>
+                setAlta({ ...a, perfil: { ...p, notas: e.target.value } })
+              }
+            />
+          </label>
+        </div>
+      )}
+      {a.paso === 3 && (
+        <>
+          <div className="sfm-onboarding-summary">
+            <strong>{p.nombre}</strong>
+            <p>{p.objetivo}</p>
+            <span>{p.frecuenciaEntrenamiento} días por semana</span>
+          </div>
+          <p className="sfm-hint">
+            Punto de partida: rotación del método. Revisa la prescripción para
+            esta persona antes de publicarla.
+          </p>
+          <EditorPlan
+            plan={a.plan}
+            perfil={p}
+            onChange={(plan) => setAlta({ ...a, plan })}
+          />
+          <label className="sfm-check">
+            <input
+              type="checkbox"
+              checked={a.plan.revisado}
+              onChange={(e) =>
+                setAlta({
+                  ...a,
+                  plan: { ...a.plan, revisado: e.target.checked },
+                })
+              }
+            />
+            <span>He revisado el plan y sus limitaciones.</span>
+          </label>
+        </>
+      )}
+      <ErrorVisible error={error} />
+      <footer className="sfm-form-footer">
+        <button
+          className="sfm-primary"
+          disabled={ocupado || (a.paso === 3 && !a.plan.revisado)}
+          onClick={() => void (a.paso < 3 ? siguiente() : crear())}
+        >
+          {ocupado
+            ? "Creando…"
+            : a.paso < 3
+              ? "Continuar"
+              : "Crear cliente y publicar plan"}
+          <Icono nombre="flecha" size={18} />
+        </button>
+        <Link
+          className="sfm-text-button"
+          to={`${base}/clientes`}
+          onClick={(e) => {
+            e.preventDefault();
+            void guardar(a)
+              .then(() => navegar(`${base}/clientes`))
+              .catch(() => {});
+          }}
+        >
+          Guardar y continuar después
+        </Link>
+        <span role="status" className="sfm-save-state">
+          {estado ||
+            (!revision
+              ? "Aún no hay un borrador guardado"
+              : "Borrador guardado")}
+        </span>
+      </footer>
+    </section>
+  );
+}

@@ -27,6 +27,7 @@
     "src/**/*.test.tsx",
     "src/pruebas",
     "src",
-    "functions"
+    "functions",
+    "pruebas-v2"
   ]
 }

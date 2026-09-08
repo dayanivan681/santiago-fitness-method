@@ -16,7 +16,7 @@
  */
 
 import { useState } from 'react'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../../nube/eventos'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
 import { normalizarBusqueda } from '../../logica/busqueda'

@@ -16,6 +16,7 @@ import type { SerieRegistrada, Tecnica, ValoresDeSerie } from '../dominio/tipos'
 
 /** Lo que se puede cambiar al corregir. */
 export interface ValoresCorregidos {
+  readonly nota?: string
   readonly pesoRegistradoLb: number
   readonly repsRealizadas: number
   readonly rir: number
@@ -78,6 +79,7 @@ export function deshacerCorreccion(
     repsRealizadas: ultima.repsRealizadas,
     rir: ultima.rir,
     tecnica: ultima.tecnica,
+    nota: ultima.nota,
     esCalentamiento: ultima.esCalentamiento,
     correcciones: [...previas, instantanea(serie, 'reversion', ahora)],
   }
@@ -94,6 +96,7 @@ function instantanea(
     repsRealizadas: serie.repsRealizadas,
     rir: serie.rir,
     tecnica: serie.tecnica,
+    nota: serie.nota,
     esCalentamiento: serie.esCalentamiento,
     corregidaEn: ahora.toISOString(),
     motivo,

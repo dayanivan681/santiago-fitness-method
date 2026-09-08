@@ -45,18 +45,18 @@ export function EntrenamientoHoy({
     <>
       <div className="contenido">
         <header className="pantalla">
-          <h1 className="pantalla__titulo">Entrenamiento de hoy</h1>
+          <p className="sfm-eyebrow">Tu próxima sesión</p>
+          <h2 className="sfm-today-title">{plantilla.nombre}</h2>
           <p className="pantalla__sub">
-            {plantilla.nombre}
             {ejerciciosDelDia.length > 0 && (
               <>
-                {' · '}
                 {ejerciciosDelDia.length} ejercicios · {seriesObjetivo} series
               </>
             )}
           </p>
         </header>
 
+        {ejerciciosDelDia.length>0&&<div className="sfm-session-visual" aria-hidden="true">{ejerciciosDelDia.slice(0,3).map(e=><img key={e.ejercicio.id} src={e.ejercicio.imagen} alt=""/>)}</div>}
         <nav className="filtros" aria-label="Día de entrenamiento">
           {plantillas.map((opcion) => (
             <button
@@ -75,8 +75,7 @@ export function EntrenamientoHoy({
           // Si el coach aún no ha publicado ese día desde /admin, el participante
           // recibe un estado vacío explícito en vez de controles de programación.
           <p className="aviso">
-            {plantilla.nombre} todavía no tiene ejercicios definidos. El coach lo configura desde
-            la consola Coach/Admin.
+            {plantilla.nombre} todavía no tiene ejercicios definidos. Tu coach está preparando esta sesión.
           </p>
         ) : (
           <>
@@ -96,12 +95,13 @@ export function EntrenamientoHoy({
               </p>
             )}
 
-            <h2 className="grupo__titulo">Ejercicios</h2>
+            <h2 className="grupo__titulo">Tu sesión, paso a paso</h2>
             <div className="grupo grupo--pleno">
               {ejerciciosDelDia.map((ejercicioDelDia) => {
                 const hechas = ejercicioDelDia.seriesDeHoy.length
                 return (
                   <div className="fila" key={ejercicioDelDia.ejercicio.id}>
+                    <img className="sfm-exercise-thumb" src={ejercicioDelDia.ejercicio.imagen} alt="" loading="lazy"/>
                     <span className="fila__cuerpo">
                       <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>
                       <span className="fila__detalle">

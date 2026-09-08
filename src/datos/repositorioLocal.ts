@@ -19,9 +19,11 @@ import type {
 import type { IdentidadCatalogo } from '../../shared/catalogo-maestro'
 
 export class RepositorioLocal implements Repositorio {
-  private readonly db: BaseDatosSantiago
+  protected readonly db: BaseDatosSantiago
 
-  constructor(db: BaseDatosSantiago = baseCompartida) {
+  private readonly identidad?: string
+  constructor(db: BaseDatosSantiago = baseCompartida, identidad?: string) {
+    this.identidad = identidad
     this.db = db
   }
 
@@ -33,18 +35,9 @@ export class RepositorioLocal implements Repositorio {
     await this.db.participantes.put(participante)
   }
 
-  /**
-   * El cliente cloud seleccionado en este dispositivo, o el primero durante
-   * el piloto local. La selección sólo evita que una previsualización de otro
-   * cliente lea el primer registro histórico de IndexedDB; no concede acceso.
-   */
+  /** La identidad la fija el contexto autenticado; nunca se deduce de la caché. */
   async participanteActual(): Promise<Participante | undefined> {
-    const seleccionado = idSeleccionado()
-    if (seleccionado) {
-      const encontrado = await this.db.participantes.get(seleccionado)
-      if (encontrado) return encontrado
-    }
-    return this.db.participantes.toCollection().first()
+    return this.identidad ? this.db.participantes.get(this.identidad) : undefined
   }
 
   async obtenerFotoDePerfil(participanteId: string): Promise<Blob | undefined> {
@@ -110,7 +103,7 @@ export class RepositorioLocal implements Repositorio {
   }
 
   async actualizarSesion(sesion: Sesion): Promise<void> {
-    const actualizadas = await this.db.sesiones.update(sesion.id, sesion)
+    const actualizadas = await this.db.sesiones.update(sesion.id, actual => { Object.assign(actual, sesion) })
     if (actualizadas === 0) {
       throw new Error(`No existe la sesión ${sesion.id}`)
     }
@@ -281,13 +274,3 @@ export class RepositorioLocal implements Repositorio {
   }
 }
 
-function idSeleccionado(): string | null {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      return window.localStorage.getItem('sfm_cliente_id')
-    }
-  } catch {
-    // Un storage bloqueado no impide el modo local de participante único.
-  }
-  return null
-}

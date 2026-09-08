@@ -19,7 +19,6 @@ const leer = (ruta: string) => readFileSync(resolve(raiz, ruta), 'utf8')
 const manifest = JSON.parse(leer('public/manifest.webmanifest'))
 const indexHtml = leer('index.html')
 const css = leer('src/index.css')
-const app = leer('src/App.tsx')
 const sw = leer('public/sw.js')
 
 describe('manifest instalable', () => {
@@ -163,10 +162,10 @@ describe('movimiento y toque', () => {
 
 describe('vista previa del coach', () => {
   it('mantiene un regreso explícito al Admin desde cualquier sección', () => {
-    expect(app).toContain('Vista previa del cliente')
-    expect(app).toContain('Volver al Coach')
-    expect(app).toContain('href="/salir?volver=admin"')
-    expect(css).toMatch(/\.vista-previa\s*\{[^}]*position:\s*fixed/)
+    const cliente=readFileSync(resolve(process.cwd(),'src/producto/Cliente.tsx'),'utf8')
+    expect(cliente).toContain('Vista previa · Simulación sin guardar')
+    expect(cliente).toContain('Volver al Coach')
+    expect(cliente).not.toContain('/salir?volver=admin')
   })
 
   it('respeta el notch y ofrece 44 px reales de toque', () => {
@@ -175,18 +174,21 @@ describe('vista previa del coach', () => {
   })
 })
 
-describe('el service worker sigue siendo sólo limpieza', () => {
-  it('no intercepta peticiones', () => {
-    expect(sw).not.toContain("addEventListener('fetch'")
+describe('PWA con shell público y datos privados', () => {
+  it('excluye APIs, Access, Admin y medios privados del caché', () => {
+    expect(sw).toContain("u.pathname.startsWith('/api')")
+    expect(sw).toContain("u.pathname.startsWith('/admin')")
+    expect(sw).toContain("u.pathname==='/access'")
   })
-
-  it('no guarda nada en caché', () => {
-    expect(sw).not.toMatch(/caches\.open|cache\.put|cache\.addAll/)
+  it('precarga recursos públicos para el primer cierre offline', () => {
+    expect(sw).toContain('PRECACHE')
+    expect(sw).toContain('c.addAll(PRECACHE)')
+    expect(sw).toContain('/*__SFM_ASSETS__*/')
   })
-
-  it('borra lo que dejó la versión anterior y se desregistra', () => {
+  it('retira sólo versiones anteriores del caché al actualizar', () => {
     expect(sw).toContain('caches.delete')
-    expect(sw).toContain('registration.unregister()')
+    expect(sw).toContain('k!==VERSION')
+    expect(sw).not.toContain('registration.unregister()')
   })
 })
 

@@ -2,52 +2,26 @@ name = "santiago-fitness-method"
 compatibility_date = "2026-05-01"
 pages_build_output_dir = "dist"
 
-# La autenticación por enlace privado vive en functions/_middleware.ts. Durante
-# la prueba pública, PUBLIC_DEMO_CLIENT_ID libera exclusivamente a `cliente-1`.
-# La identidad se vuelve a resolver en la API y nunca sale del navegador.
-
 [vars]
-# El cliente técnico `dayan-test` sólo se enseña fuera de producción. La fila se
-# conserva en D1 —preview usa la misma base—, sólo se oculta. Ver functions/lib/qa.ts.
+SFM_ENV = "production"
 SHOW_QA_CLIENTS = "false"
-
-# Demo pública temporal. `demoPublica.ts` acepta sólo este valor exacto; usar
-# `santiago`, otro ID o una cadena mal escrita falla cerrado. Eliminar esta
-# variable devuelve la puerta normal de enlace privado sin migraciones.
-PUBLIC_DEMO_CLIENT_ID = "cliente-1"
-
-# Apertura del panel para el coach, sin OTP, sólo en el hostname canónico y
-# hasta este instante UTC. Al vencer, la función vuelve a cerrar la ruta incluso
-# si recibe una cabecera inventada.
-#
-# ATENCIÓN: la fecha es de 2099, o sea que NO vence. Es una decisión explícita
-# del dueño del producto —«déjalo abierto indefinidamente por ahora»— y no un
-# descuido ni un valor de prueba que se quedó puesto.
-#
-# Mientras esté así, /admin y /admin/api/clientes están abiertos a cualquiera
-# que sepa la URL: perfiles completos de los clientes, y la consola desde la que
-# se generan enlaces de acceso a la app del participante.
-#
-# Para cerrarlo: vuelve a añadir el destino /admin en Cloudflare Zero Trust y
-# deja esta variable vacía. El orden importa, porque en cuanto se vacía la
-# variable la ruta queda cerrada para todos hasta que Access esté delante.
-COACH_ACCESS_TEMPORARY_UNTIL = "2099-12-31T00:00:00Z"
+ACCESS_ISSUER = "https://cool-surf-8e6d.cloudflareaccess.com"
+ACCESS_AUD = "735cc022eab2972e53e307644fa69687945c09471a0ec7ee369f9671c3a93277"
+COACH_EMAILS = "yayo1716@gmail.com"
 
 [[d1_databases]]
 binding = "ACCESO"
 database_name = "santiago-acceso"
 database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
 
-# Los despliegues de rama son el banco de pruebas del sistema nuevo antes del
-# cambio en producción. Cloudflare Access sigue delante de ellos.
 [env.preview.vars]
+SFM_ENV = "staging"
 SHOW_QA_CLIENTS = "true"
-# Los previews conservan la autenticación normal y nunca publican un cliente.
-PUBLIC_DEMO_CLIENT_ID = ""
-# Nunca abrir el panel de un preview por esta excepción.
-COACH_ACCESS_TEMPORARY_UNTIL = ""
+ACCESS_ISSUER = "https://cool-surf-8e6d.cloudflareaccess.com"
+ACCESS_AUD = "735cc022eab2972e53e307644fa69687945c09471a0ec7ee369f9671c3a93277"
+COACH_EMAILS = "yayo1716@gmail.com"
 
 [[env.preview.d1_databases]]
 binding = "ACCESO"
-database_name = "santiago-acceso"
-database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
+database_name = "santiago-staging"
+database_id = "747a9348-369c-462d-83ba-37ae9bdaad48"

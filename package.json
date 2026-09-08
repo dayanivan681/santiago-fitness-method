@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && vite build --config vite.presentacion.config.ts",
+    "build": "tsc -b && vite build && vite build --config vite.presentacion.config.ts && node scripts/preparar-pwa.mjs",
     "deploy": "npm run build && npx wrangler pages deploy dist --project-name=santiago-fitness-method",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -20,17 +20,19 @@
     "handoff:adopt": "node scripts/handoff-sync.mjs adopt",
     "handoff:publish": "node scripts/handoff-sync.mjs publish",
     "invitar": "node scripts/invitar.mjs",
-    "d1:migrar": "wrangler d1 execute santiago-acceso --remote --file=migrations/0001_acceso.sql",
-    "d1:migrar-roles": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0002_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0003_seed_qa_role_split.sql && npx wrangler d1 execute santiago-acceso --remote --file=migrations/0004_seed_santiago_routines.sql",
-    "d1:migrar-lista": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0007_lista_de_clientes.sql",
-  "d1:migrar-santiago": "npx wrangler d1 execute santiago-acceso --remote --file=migrations/0004_seed_santiago_routines.sql",
-    "test:movil": "node pruebas-maestro/enlace-local.mjs > /tmp/sfm-enlace.txt && maestro test pruebas-maestro/qa-movil.yaml -e ENLACE=$(cat /tmp/sfm-enlace.txt)"
+    "test:movil": "node pruebas-maestro/enlace-local.mjs > /tmp/sfm-enlace.txt && maestro test pruebas-maestro/qa-movil.yaml -e ENLACE=$(cat /tmp/sfm-enlace.txt)",
+    "qa:preparar": "node scripts/preparar-qa-v2.mjs",
+    "qa:servir": "node scripts/servir-qa-v2.mjs",
+    "qa:acceso": "node scripts/qa-proxy.mjs"
   },
   "dependencies": {
     "dexie": "^4.4.5",
     "dexie-react-hooks": "^4.4.0",
+    "jose": "^6.2.12",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-router": "^7.18.3",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260830.1",

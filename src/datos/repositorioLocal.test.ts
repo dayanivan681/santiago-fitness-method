@@ -50,7 +50,7 @@ describe('el participante del piloto', () => {
     expect(await repositorio.participanteActual()).toBeUndefined()
   })
 
-  test('después del alta, es el que devuelve', async () => {
+  test('sólo devuelve el perfil seleccionado explícitamente', async () => {
     // Arrange
     const participante = crearParticipante({ ...ALTA_POR_DEFECTO, nombre: 'Santiago' })
 
@@ -58,7 +58,8 @@ describe('el participante del piloto', () => {
     await repositorio.guardarParticipante(participante)
 
     // Assert
-    expect((await repositorio.participanteActual())?.nombre).toBe('Santiago')
+    expect(await repositorio.participanteActual()).toBeUndefined()
+    expect((await new RepositorioLocal(db, participante.id).participanteActual())?.nombre).toBe('Santiago')
   })
 })
 
@@ -310,7 +311,7 @@ describe('persistencia tras cerrar y reabrir la app', () => {
     await antesDeCerrar.registrarSerie(serie('a', 's1', PRESS_BANCA_15_SMITH.id, 45, 10))
 
     // Act: "se reabre la app" — instancia nueva, mismo nombre de base
-    const despuesDeReabrir = new RepositorioLocal(baseDePrueba(nombre))
+    const despuesDeReabrir = new RepositorioLocal(baseDePrueba(nombre), participante.id)
 
     // Assert
     expect((await despuesDeReabrir.participanteActual())?.nombre).toBe('Santiago')
@@ -378,7 +379,7 @@ describe('foto de perfil', () => {
     await repositorio.guardarParticipante(participante)
     await repositorio.guardarFotoDePerfil(participante.id, imagen('retrato'))
 
-    const leido = await repositorio.participanteActual()
+    const leido = await repositorio.obtenerParticipante(participante.id)
 
     expect(Object.keys(leido!)).not.toContain('imagen')
   })

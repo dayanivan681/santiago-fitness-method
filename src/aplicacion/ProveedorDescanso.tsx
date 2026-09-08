@@ -30,14 +30,19 @@ import {
 
 interface Props {
   readonly children: ReactNode
+  readonly clavePersistencia?: string
 }
 
-export function ProveedorDescanso({ children }: Props) {
-  const [estado, setEstado] = useState<EstadoDescanso>(DESCANSO_INACTIVO)
+export function ProveedorDescanso({ children, clavePersistencia }: Props) {
+  const [estado, setEstado] = useState<EstadoDescanso>(() => {
+    if (!clavePersistencia) return DESCANSO_INACTIVO
+    try { const guardado=JSON.parse(localStorage.getItem(clavePersistencia)??'null'); return guardado?.estado==='activo' && Number.isFinite(guardado.terminaEn) ? avanzarDescanso(guardado,Date.now()) : DESCANSO_INACTIVO } catch { return DESCANSO_INACTIVO }
+  })
   const [restantes, setRestantes] = useState(0)
   const [barraDeSesion, setBarraDeSesion] = useState(false)
   const intervalo = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  useEffect(() => { if(clavePersistencia) {try{localStorage.setItem(clavePersistencia,JSON.stringify(estado))}catch{/* El cronómetro sigue en memoria si el sistema bloquea storage. */}} },[estado,clavePersistencia])
   const detener = useCallback(() => {
     if (intervalo.current === null) return
     clearInterval(intervalo.current)

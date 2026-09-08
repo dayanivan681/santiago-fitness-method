@@ -1,0 +1,15 @@
+name = "sfm-local"
+compatibility_date = "2026-05-01"
+pages_build_output_dir = "dist"
+[vars]
+SFM_ENV = "local"
+ACCESS_ISSUER = "https://sfm-qa.cloudflareaccess.com"
+ACCESS_AUD = "sfm-local-tests"
+COACH_EMAILS = "coach@sfm.invalid"
+[[d1_databases]]
+binding = "ACCESO"
+database_name = "sfm-local"
+database_id = "00000000-0000-4000-8000-000000000001"
+[[r2_buckets]]
+binding = "FOTOS"
+bucket_name = "sfm-local-fotos"

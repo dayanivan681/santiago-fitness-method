@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PanelProgreso } from './PanelProgreso'
 import { baseDePrueba } from '../../pruebas/base'
-import { RepositorioLocal } from '../../datos/repositorioLocal'
+import { RepositorioPilotoDePrueba as RepositorioLocal } from '../../pruebas/base'
 import { sembrarParticipante } from '../../pruebas/participante'
 import type { Participante } from '../../dominio/tipos'
 

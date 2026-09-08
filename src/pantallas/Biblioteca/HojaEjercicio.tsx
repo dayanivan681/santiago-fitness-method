@@ -12,7 +12,7 @@
  */
 
 import { useRef } from 'react'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../../nube/eventos'
 import { useCapa } from '../../aplicacion/useCapa'
 import { ETIQUETA_CARGA, NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
 import type { Repositorio } from '../../datos/repositorio'

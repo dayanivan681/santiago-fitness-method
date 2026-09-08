@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useMemo } from 'react'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { useLiveQuery } from '../../nube/eventos'
 import { reducirImagen } from '../../datos/imagen'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Participante } from '../../dominio/tipos'

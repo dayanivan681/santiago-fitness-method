@@ -1,24 +1,6 @@
-/**
- * La puerta.
- *
- * Un middleware en la raíz de `functions/` se ejecuta en TODAS las peticiones
- * al proyecto de Pages, incluidos los ficheros estáticos, antes de servirlos.
- * Ésa es la razón de que la autenticación viva aquí y no en un Worker aparte:
- * un Worker delante del sitio crearía un segundo origen accesible por su
- * cuenta, y habría que inventar un secreto compartido para taparlo. Aquí no hay
- * nada que rodear porque no hay segundo origen.
- *
- * React no participa. La app no sabe que esto existe y no maneja ningún token.
- *
- * OJO: el proyecto está conectado a Git y el hostname sirve el despliegue
- * canónico, que sale de un push. La excepción pública temporal está aislada en
- * `demoPublica.ts`: sólo acepta `cliente-1` y cualquier otro valor falla
- * cerrado.
- */
-
+/** Shell público sin datos; APIs privadas, invitaciones de un uso y sesiones revocables. */
 import {
   ahoraEnSegundos,
-  consumirInvitacion,
   estadoDeInvitacion,
   type EstadoDeInvitacion,
 } from './lib/invitacion'
@@ -26,13 +8,11 @@ import {
   cabeceraDeCookieBorrada,
   cerrarSesion,
   crearCabeceraDeCookie,
-  crearSesion,
+  entrarConInvitacion,
   leerCookie,
-  validarSesion,
   VIDA_DE_SESION,
 } from './lib/sesion'
 import {
-  paginaAccesoRequerido,
   paginaEnlaceExpirado,
   paginaEnlaceInactivo,
   paginaEnlaceNoValido,
@@ -41,9 +21,9 @@ import {
   paginaSesionCerrada,
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
-import { clienteDemoPublico, type EntornoDemoPublica } from './lib/demoPublica'
+import { origenSeguro } from './lib/v2/seguridad'
 
-type Entorno = EntornoDemoPublica & {
+type Entorno = {
   readonly ACCESO: D1Database
   readonly ASSETS: Fetcher
 }
@@ -59,27 +39,12 @@ const RUTA_SALIR = '/salir'
  */
 const PREFIJO_ADMIN = '/admin'
 
-/**
- * La única ruta pública de la aplicación, y hay que entender por qué.
- *
- * Una instalación antigua de la PWA sigue controlada por el service worker de
- * entonces, que sirve la app desde su propia caché sin tocar la red — es decir,
- * saltándose esta puerta. La forma de desactivarlo es que el navegador descargue
- * el `/sw.js` de autodestrucción que lo sustituye.
- *
- * Pero el navegador pide ese fichero SIN sesión, y hasta ahora recibía la página
- * de "Acceso requerido": HTML con 401 en vez de JavaScript. La actualización
- * fallaba y el worker viejo se quedaba indefinidamente.
- *
- * Exceptuarlo no abre nada: `public/sw.js` no contiene aplicación, ni datos, ni
- * secretos, ni un manejador `fetch`. Sólo borra cachés, se desregistra y recarga
- * las pestañas para que vuelvan a pasar por aquí.
- */
 const RUTA_SW = '/sw.js'
 
 export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   const { request, env, next } = contexto
   const url = new URL(request.url)
+  if (!origenSeguro(request)) return new Response('Origen no autorizado', { status: 403 })
 
   if (esRutaPresentacion(url.pathname)) return servirPresentacion(request, env.ASSETS)
 
@@ -97,7 +62,7 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
 }
 
 /**
- * Sirve el service worker de autodestrucción, sin exigir sesión.
+ * Sirve el service worker del shell sin exigir sesión.
  *
  * Las cabeceras impiden que un intermediario devuelva una copia guardada: si el
  * navegador recibiera el fichero viejo, la migración no ocurriría nunca.
@@ -150,19 +115,9 @@ async function atenderAcceso(request: Request, env: Entorno): Promise<Response> 
   if (!token) return paginaEnlaceNoValido()
 
   const ahora = ahoraEnSegundos()
-  const invitacion = await consumirInvitacion(env.ACCESO, token, ahora)
-
-  // Una sola sentencia decidió si existía, si estaba sin usar, sin revocar y
-  // sin caducar. Si devuelve null no se entra, y da igual por qué: la sesión no
-  // se crea. El estado sólo se consulta después, para decir algo útil.
-  if (!invitacion) return paginaDelEstado(await estadoDeInvitacion(env.ACCESO, token, ahora))
-
-  const { cookie } = await crearSesion(
-    env.ACCESO,
-    invitacion.clienteId,
-    invitacion.tokenHash,
-    ahora,
-  )
+  const entrada=await entrarConInvitacion(env.ACCESO,token,ahora)
+  if(!entrada)return paginaDelEstado(await estadoDeInvitacion(env.ACCESO,token,ahora))
+  const {cookie}=entrada
 
   // Redirección a la raíz: el token desaparece de la barra y del historial.
   return new Response(null, {
@@ -187,44 +142,11 @@ function paginaDelEstado(estado: EstadoDeInvitacion): Response {
 
 /** Cierre de sesión: revoca en el servidor y borra la cookie. */
 async function atenderSalir(request: Request, env: Entorno): Promise<Response> {
-  const cookie = leerCookie(request)
-
-  // Revocar antes de borrar la cookie: si sólo se borrase, quien tuviera una
-  // copia del valor seguiría entrando.
-  if (cookie) await cerrarSesion(env.ACCESO, cookie)
-
-  // La previsualización del coach usa la misma sesión que un participante,
-  // pero deja una salida inequívoca al panel. El marcador no concede ningún
-  // permiso: sólo permite limpiar la sesión y volver a pedir Cloudflare Access.
-  const pedidoVolver = new URL(request.url).searchParams.get('volver') === 'admin'
-  const destino = pedidoVolver && leerCookieConNombre(request, 'sfm_preview') === '1' ? '/admin/' : null
-  if (destino) {
-    const cabeceras = new Headers({ Location: destino, 'Cache-Control': 'no-store' })
-    cabeceras.append('Set-Cookie', cabeceraDeCookieBorrada())
-    cabeceras.append('Set-Cookie', cookieDePreviewBorrada())
-    return new Response(null, {
-      status: 302,
-      headers: cabeceras,
-    })
-  }
-
+  if(request.method==='GET')return new Response(`<!doctype html><html lang="es"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cerrar sesión · Santiago</title><body style="background:#0b0c0d;color:#f4f3f0;font:18px system-ui;padding:48px 24px"><h1>Cerrar sesión</h1><p>Los cambios pendientes se conservarán para cuando vuelvas.</p><form method="post" action="/salir"><button style="min-height:48px;padding:12px 24px">Cerrar sesión</button></form><p><a style="color:inherit" href="/">Volver a mi espacio</a></p></body></html>`,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'"}})
+  if(request.method!=='POST')return new Response('Método no permitido',{status:405})
+  const cookie=leerCookie(request)
+  if(cookie)await cerrarSesion(env.ACCESO,cookie)
   return paginaSesionCerrada(cabeceraDeCookieBorrada())
-}
-
-function leerCookieConNombre(request: Request, nombre: string): string | null {
-  const cabecera = request.headers.get('Cookie')
-  if (!cabecera) return null
-  for (const trozo of cabecera.split(';')) {
-    const separador = trozo.indexOf('=')
-    if (separador !== -1 && trozo.slice(0, separador).trim() === nombre) {
-      return trozo.slice(separador + 1).trim() || null
-    }
-  }
-  return null
-}
-
-function cookieDePreviewBorrada(): string {
-  return 'sfm_preview=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0'
 }
 
 /**
@@ -234,19 +156,11 @@ function cookieDePreviewBorrada(): string {
  * la URL a secas puede no haber tenido nunca uno.
  */
 async function atenderApp(
-  request: Request,
-  env: Entorno,
+  _request: Request,
+  _env: Entorno,
   next: () => Promise<Response>,
 ): Promise<Response> {
-  // Sólo libera el shell y sus assets. La identidad que devuelve la API se
-  // resuelve de nuevo, exclusivamente en servidor, con la misma configuración.
-  if (clienteDemoPublico(env)) return next()
-
-  const cookie = leerCookie(request)
-  if (!cookie) return paginaAccesoRequerido()
-
-  const sesion = await validarSesion(env.ACCESO, cookie)
-  if (!sesion) return paginaAccesoRequerido()
-
+  // El shell no contiene datos personales. Cada API valida identidad y permisos;
+  // esto permite una demo pública en memoria y recuperar el shell offline.
   return next()
 }
