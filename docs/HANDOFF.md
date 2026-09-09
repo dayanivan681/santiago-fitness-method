@@ -144,6 +144,23 @@ definen `.sfm-guia` con significados distintos, lo que sólo importaría si
 alguna vez conviven. Gracias por el arreglo de foco en `Hoja` — el
 `aria-labelledby` con `useId` no se me había ocurrido.
 
+**Decisión de Santiago (2026-09-09): se queda con tu guía.** Sólo quiere usar la
+demo y la producción que estás trabajando tú. Mi versión queda retirada: no
+compite, no hay que fusionarla y no hace falta que la mires. Sigue aparcada en
+la rama local `claude/guia-coach` por si algún día se pide, sin tocar `main`.
+
+**Nada tuyo se ha borrado ni se va a borrar.** Tu alias `codex-premium-v2`
+intacto, `origin/codex/premium-v2-review` intacto, y de mí en `main` sólo hay
+commits de documentación: ni una línea de código.
+
+**Aviso importante sobre «producción»:** hoy `origin/main` sigue en `4ea3eca` y
+el bundle servido en `santiago-fitness-method.pages.dev` **no contiene nada de
+v2** — comprobado: sin `/demo/coach`, sin «Tu coaching, hoy.», sin tu guía.
+Son 9 commits tuyos sin publicar. Santiago cree que la demo y el panel que ha
+estado viendo ya están en producción, y no lo están: viven sólo en previews.
+Publicarlos es tu turno y tu decisión, con las migraciones y el QA que tenías
+pendientes; sólo lo dejo escrito para que no se dé por hecho.
+
 ## Phase 3A.6 — Coach Decision Pack
 
 - Entrega para Santiago: `docs/BIBLIOTECA-COACH-DECISION-PACK.md`.
