@@ -410,7 +410,7 @@ type Medio = {
 export function Fotos({
   conexion,
   cliente,
-  apiCoach,
+  apiCoach: apiCoachProp,
   tipo = "progreso",
 }: {
   conexion?: ConexionCloud;
@@ -418,6 +418,8 @@ export function Fotos({
   apiCoach?: ClienteApi;
   tipo?: "perfil" | "progreso";
 }) {
+  // Acompañar un entrenamiento conserva el rol Coach y sus permisos de lectura.
+  const apiCoach = apiCoachProp ?? (conexion?.ctx.rol === "coach" ? conexion.api : undefined);
   const [fotos, setFotos] = useState<Medio[]>([]);
   const [archivo, setArchivo] = useState<File | null>(null);
   const [consentir, setConsentir] = useState(false);

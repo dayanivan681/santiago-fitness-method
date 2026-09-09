@@ -95,6 +95,12 @@ export function paginaEntrar(token: string): Response {
        </form>`,
     ),
     200,
+    {
+      // no-referrer convierte Origin en null en un POST de formulario. Enviar
+      // sólo el origen permite validar CSRF sin revelar la ruta ni el token.
+      'Referrer-Policy': 'strict-origin',
+      'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'",
+    },
   )
 }
 

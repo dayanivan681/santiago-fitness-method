@@ -887,7 +887,7 @@ describe('el ejercicio terminado se pliega y pasa el turno', () => {
       ).not.toBeInTheDocument(),
     )
     expect(
-      screen.getByLabelText('Guardar la serie 1 de Press convergente inclinado'),
+      await screen.findByLabelText('Guardar la serie 1 de Press convergente inclinado'),
     ).toBeInTheDocument()
   })
 

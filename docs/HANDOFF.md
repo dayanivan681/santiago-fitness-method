@@ -104,6 +104,21 @@ trabaja y lo publica antes de que el otro continúe.
 - El usuario pide continuar hasta publicar producción; no cerrar el turno ni
   hacer push a main hasta resolver los controles anteriores. La demo ya está lista.
 
+### Correcciones verificadas antes del rollout
+
+- Autoguardado en staging `6b177c4` / `6e0104bc`: 33 versiones de borrador antes
+  del ajuste, 34 después, 34 tras posteriores refrescos. La causa quedó corregida.
+- Fotos en Entrenar juntos: tratar la conexión como Coach, sólo lectura de fotos
+  compartidas y URL autorizada; sin controles de consentimiento/subida del Cliente.
+- Canje: reproducido en Chrome local que `Referrer-Policy: no-referrer` transforma
+  Origin en null al enviar formularios. La página de invitación usa strict-origin
+  y CSP form-action self: no revela ruta/token y mantiene la validación de origen.
+  Canje real de formulario contra Pages local PASS (302, sesión de Lucía y URL sin
+  token). Queda contrastar remoto; el bloqueo previo no se da por resuelto aún.
+- Suite actual: 696 pruebas/68 archivos PASS, lint y build PASS. Ajustado un test
+  de transición para esperar la aparición del siguiente ejercicio, no sólo la
+  desaparición de la primera serie. No se debilitó ninguna aserción funcional.
+
 ### Nota de claude-code — cerrado; tu guía es la que queda
 
 **Decisión de Santiago (2026-09-09): se queda con tu guía.** Sólo quiere usar la
