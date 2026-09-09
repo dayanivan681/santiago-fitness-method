@@ -40,8 +40,10 @@ Las fotos usan R2 privado, metadatos en D1 y comprobación de permisos en cada G
 El upload requiere consentimiento; compartir con Coach es una elección separada.
 Límites de aplicación: 5 MB por imagen y 100 MB por cliente, incluyendo objetos
 retenidos tras eliminación lógica. El estado pendiente permite recuperar cargas
-interrumpidas. La activación y bindings de R2 siguen pendientes; no se debe
-presentar la fotografía cloud como disponible hasta verificarlos.
+interrumpidas. R2 fue habilitado por el dueño y los bindings privados separados
+quedaron verificados el 2026-09-09: `sfm-fotos-staging` y
+`sfm-fotos-production`. En staging se comprobó consentimiento, retirada de
+compartición, recuperación de la cola offline y lectura desde otro navegador.
 
 ## Entornos y modos
 

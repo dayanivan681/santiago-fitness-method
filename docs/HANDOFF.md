@@ -7,13 +7,43 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-06T23:58:51.221Z
+- **Última sincronización:** 2026-09-09T18:47:19.883Z
 
-## Producto compartido v2 — implementación en validación
+## Release v2 — 2026-09-09
+
+- Implementación verificada: `2e492c2`; staging `fa0bee17`, alias público
+  `codex-premium-v2`. Demo Coach/Cliente y guía en español disponibles sin login.
+  Admin real permanece privado; preview no crea sesiones ni actividad real.
+- 701 tests/69 archivos, lint, build, 35 comprobaciones HTTP y Maestro Chromium
+  34 comandos PASS. QA autenticado remoto con dos navegadores y personas sintéticas:
+  onboarding recuperable, sesión acompañada, preview aislada, invitaciones, fotos
+  privadas/compartidas, entrenamiento cerrado offline y leído en segundo dispositivo.
+- R2 activado por el dueño; buckets privados distintos `sfm-fotos-production` y
+  `sfm-fotos-staging`, binding FOTOS. Dos fotos sintéticas recuperadas en segundo
+  navegador; retirada de consentimiento de compartir oculta la foto al Coach.
+- Migración productiva 0008/0009 aplicada después de respaldo y restauración
+  ensayada dos veces. Manifiesto privado:
+  `.recovery/migracion-production-1788979558126/manifest.json`.
+  Conservación exacta por hash: 6 clientes, 24 rutinas, 37 sesiones de acceso y
+  13 invitaciones. Ninguna escritura de QA en producción ni importación automática.
+- Recuperación de código privado compatible: `.recovery/rollback-2e492c2`,
+  168 archivos con SHA-256. No restaurar una base antigua perdiendo actividad.
+- La publicación de este turno dispara el deployment canónico. Verificar su
+  commit y fronteras en lectura antes de anunciar la entrega; el reporte final
+  de la conversación recoge el deployment resultante.
+- Límites: Safari/PWA en iPhone físico no verificados por instrucción del usuario.
+  La guía es de demo. Las equivalencias técnicas del catálogo siguen pendientes;
+  PDFs originales intactos. El correo autorizado de Coach es el del dueño;
+  añadir el correo de Santiago requiere conocerlo y autorizarlo en Access y la app.
+
+## Historial de implementación v2 — notas previas al release
+
+Las fechas y pendientes siguientes describen checkpoints anteriores; el estado
+vigente es el release anterior y su publicación al final de este documento.
 
 - Checkpoint local: `416f136`; nota de continuidad: `2205175`. El turno sigue
   activo de codex. No están publicados en main remoto.
@@ -858,6 +888,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-09T18:47:19.885Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Producto v2: Coach y Cliente compartidos, onboarding cloud, demo publica con guia espanola, acceso privado y fotos R2; migraciones aditivas productivas verificadas
+- **Verificación:** npm test: 701 PASS; npm run lint PASS; npm run build PASS; HTTP 35 PASS; Maestro Chromium 34 PASS; QA autenticado staging en dos navegadores y offline PASS; PDFs intactos
+- **Siguiente:** Verificar deployment canonico y acceso en lectura; correo de Santiago pendiente para habilitar su Coach privado; Safari/PWA fisica no verificados por instruccion del usuario
+
 
 ### 2026-09-08T14:10:00.000Z | claude-code | NOTA — decisión de producto
 

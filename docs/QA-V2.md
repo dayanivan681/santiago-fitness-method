@@ -1,6 +1,7 @@
 # QA v2 · ejecución y evidencia
 
-Estado al 8 de septiembre de 2026: validación en curso. Producción no migrada.
+Estado al 9 de septiembre de 2026: QA de release completado en staging y navegador.
+El estado del rollout productivo está en HANDOFF. Safari/PWA física no verificados.
 
 ## Entorno local
 
@@ -34,15 +35,27 @@ componentes reales en memoria y ninguna persona productiva. El flujo histórico
 
 ## Evidencia obtenida
 
-- Suite completa: 691 pruebas en 64 archivos PASS (`tests-v2-13.log`),
+- Suite completa: 701 pruebas en 69 archivos PASS (`sfm-release-tests-final.log`),
   incluyendo demo real sin red/IndexedDB/Storage. Lint y build aprobados.
-- API local: 35 comprobaciones PASS, `.recovery/http-v2.log`.
+- API local: 35 comprobaciones PASS, `sfm-release-http-final.log`.
 - Maestro Chromium: 34 comandos PASS (repetido en build v2 actualizado): completar, editar, descanso manual,
   Biblioteca, búsqueda, retorno al ejercicio, cierre y resumen.
 - Revocación de Coach: prueba adicional comprueba que la pantalla desmonta datos
   privados al detectar el acceso revocado, incluso fuera de un workout.
-- Fotos: PUT/GET local con R2 simulado y lectura anónima rechazada; cloud R2 no
-  validado hasta activar el servicio y bindings aislados.
+- Fotos: R2 privado real en staging; consentimiento requerido, compartir y retirar
+  acceso del Coach, cola offline recuperada sin duplicación y dos imágenes
+  sintéticas de 400×400 descargadas desde un segundo navegador.
+- Invitación: formulario real local y remoto canjeado correctamente en IAB y
+  Chrome; URL sin token después de entrar. strict-origin evita Origin null sin
+  aceptar orígenes externos.
+- Offline remoto: reabrir, comenzar, registrar y cerrar una sesión sin red;
+  sincronizar y leer desde otro navegador 2.5 lb/lado × 1, RIR 2. Cinco pruebas
+  cubren contexto válido, antiguo, vencido, revocado y fallo HTTP de servidor,
+  incluso cuando navigator.onLine indica conexión.
+- Onboarding remoto: borrador de Marina QA iniciado en IAB y retomado en Chrome;
+  creación atómica, sesión acompañada y preview sin actividad cloud adicional.
+- Autoguardado remoto: una edición añade una versión (33 → 34) y posteriores
+  refrescos mantienen 34, evitando el bucle anterior.
 - Migración: exportación reciente de producción, restauración aislada e iteración
   doble de 0008/0009; 6 clientes, 24 rutinas, 37 accesos y 13 invitaciones
   conservados. Se ensayó también staging. Manifiestos privados en `.recovery`.
@@ -67,14 +80,14 @@ Se corrigieron durante QA: contraste del temporizador, diferencia de ancho entre
 barra de descanso y navegación, y scroll retenido al abrir Biblioteca. El
 readback a 390 px confirma texto claro sobre #202124 y barras sin solapamiento.
 
-## Pendientes explícitos
+## Límites explícitos
 
-- QA autenticado del deployment de staging con Cloudflare Access real.
-- Completar QA autenticado remoto y estados de error offline en dispositivos reales.
-- R2 remoto, recuperación de subida interrumpida y lectura desde otro dispositivo.
+- QA autenticado remoto realizado con Cloudflare Access real y personas sintéticas.
+- La recuperación de subida se comprobó mediante pérdida de red y cola durable;
+  no se simuló un corte físico del dispositivo a mitad de un paquete de red.
 - Safari de iPhone y PWA instalada: NO VERIFICADOS. El único dispositivo de Maestro
   disponible es Chromium; su jerarquía no constituye evidencia de iOS.
-- Producción: migración y deployment final pendientes; sólo lectura al verificar.
+- Producción: sólo lectura durante QA; consultar HANDOFF para el rollout.
 
 ## Entrada pública para Santiago
 
@@ -95,5 +108,11 @@ La suite HTTP usa dos invitaciones y sesiones independientes del mismo cliente:
 la segunda recupera las series de D1 sin una copia local, y la revocación bloquea
 ambas. Resultado actualizado: 35 comprobaciones PASS.
 
-Se intentó QA con iPhone Mirroring: «iPhone in Use», requiere que el dueño bloquee
-su iPhone para conectar. No se interrumpió su uso y no se declaró Safari aprobado.
+El usuario descartó expresamente el iPhone físico. No volver a intentar Mirroring.
+El último flujo Maestro se ejecutó por CLI con un Chromium nuevo: 34 comandos
+PASS (`sfm-maestro-final.log`). El controlador MCP anterior apuntaba a una ventana
+cerrada y no ejecutó comandos; no se cuenta ese intento como una prueba aprobada.
+
+La guía de demo en español se verificó local y remotamente a 320/375/390/430/768/
+1024 px: bienvenida, retorno, cambio a Cliente, ayuda y onboarding ficticio;
+sin errores de ejecución, overflow ni controles inferiores a 48 px en la guía.
