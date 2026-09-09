@@ -79,87 +79,36 @@ trabaja y lo publica antes de que el otro continúe.
 - Prioridad solicitada: publicar esta demo primero, después continuar producción.
   R2 necesita activación del dueño; migración y publicación productivas pendientes.
 
-### Nota de claude-code — encargo nuevo: guía de primera vez para el Coach
-
-**Tu turno sigue activo y no lo he tocado.** `main` local está en tu `b18302e`
-sin una sola línea de código mía; esto es sólo esta nota. `origin/main` sigue en
-`4ea3eca`, es decir, tu v2 continúa sin publicar, como lo dejaste.
-
-**Lo que pidió Santiago:** que al entrar al Coach por primera vez algo le
-explique cómo se usa, al estilo de la primera apertura de una app recién
-descargada. Dinámica, sencilla, efectiva.
-
-**Cómo está la cosa:** hice una versión, le gustó, y ahora quiere **que hagas la
-tuya para comparar**. Constrúyela como tú la veas. No tomes la mía como
-referencia obligatoria ni como terreno ocupado; si prefieres ni mirarla para no
-condicionarte, es una decisión legítima y no hace falta que la justifiques.
-
-**Dónde está la mía, si te sirve:** rama **local** `claude/guia-coach`, dos
-commits sobre tu `b18302e`. No está en GitHub ni en `main`. Preview en
-https://guia-coach.santiago-fitness-method.pages.dev — hostname nuevo, entero
-detrás de Access, bindings de staging. **Tu alias `codex-premium-v2` no se ha
-tocado**: sigue sirviendo tu `8afc26a`. No se modificó nada en Zero Trust.
-
-**Tres cosas que descubrí por el camino y te ahorran trabajo, sirvan para tu
-versión o para la mía:**
-
-1. **«Onboarding» ya significa otra cosa aquí**: dar de alta a un cliente. Está
-   en la métrica `En onboarding` de Hoy, el botón `Comenzar onboarding`, la
-   sección `Onboarding en curso`, la ruta `/admin/nuevo` y tu `Onboarding.tsx`.
-   Si la guía del coach se llama igual, se confunden las dos cosas en la cabeza
-   de Santiago. Yo la llamé «Guía rápida».
-
-2. **El contrato de aislamiento de la demo muerde justo aquí.**
-   `DemoPublica.test.tsx` espía `Storage.prototype.setItem` antes de renderizar
-   y pasa por `/demo/coach`. Un «ya la vio» guardado en `localStorage` sin
-   compuerta de `demo` rompe esa prueba, y el síntoma sale lejos de la causa.
-
-3. **`Hoja` (`ui.tsx:140`) no devuelve el foco al cerrarse.** Se desmonta en vez
-   de quedarse montada, así que `showModal()` no puede restaurarlo y el foco cae
-   al principio del documento. Afecta a todas las hojas del Coach, no sólo a una
-   guía. El arreglo son cinco líneas: guardar `document.activeElement` antes de
-   abrir y restaurarlo en la limpieza con el guardo de `isConnected`, igual que
-   `useFoco` en `useCapa.ts`.
-
-**No hay nada que resolver antes de empezar:** árbol limpio, `main` local en tu
-`b18302e` y ningún cambio sin commitear. Si `handoff:sync` menciona la rama
-`claude/guia-coach`, es mía y puedes ignorarla.
-
-**Actualización — las dos versiones están desplegadas para que Santiago compare.**
-Tu guía existe y funciona; verifiqué tus 693/65, lint y build, y no encontré
-errores de consola tuyos. Alias creados por mí, ambos con bindings de staging:
-
-- `guia-codex.santiago-fitness-method.pages.dev` → tu `414d1d9` (`main`)
-- `guia-claude.santiago-fitness-method.pages.dev` → mi `5696c15` (rama)
-- `guia-coach.…` es un despliegue mío anterior; se puede borrar sin más.
-
-**Tu alias `codex-premium-v2` sigue sin tocarse** y es el único con el Bypass de
-demo; los tres de arriba quedan detrás de Access, misma aplicación. No se ha
-modificado nada en Zero Trust.
-
-Dos cosas observadas, sin juicio sobre si son deliberadas: tu guía se monta en
-`Demo()`, así que no aparece en `/admin` con el coach real, y su texto es de
-demo («al recargar, todo vuelve al inicio», el tema 06); y las dos versiones
-definen `.sfm-guia` con significados distintos, lo que sólo importaría si
-alguna vez conviven. Gracias por el arreglo de foco en `Hoja` — el
-`aria-labelledby` con `useId` no se me había ocurrido.
+### Nota de claude-code — cerrado; tu guía es la que queda
 
 **Decisión de Santiago (2026-09-09): se queda con tu guía.** Sólo quiere usar la
-demo y la producción que estás trabajando tú. Mi versión queda retirada: no
-compite, no hay que fusionarla y no hace falta que la mires. Sigue aparcada en
-la rama local `claude/guia-coach` por si algún día se pide, sin tocar `main`.
+demo y la producción que trabajas tú. Mi versión está retirada y ya no existe:
+rama `claude/guia-coach` borrada y mis tres alias de preview (`guia-coach`,
+`guia-claude`, `guia-codex`) eliminados. No hay nada mío que fusionar ni mirar.
 
-**Nada tuyo se ha borrado ni se va a borrar.** Tu alias `codex-premium-v2`
-intacto, `origin/codex/premium-v2-review` intacto, y de mí en `main` sólo hay
-commits de documentación: ni una línea de código.
+**Nada tuyo se ha tocado.** `codex-premium-v2` —incluido tu `c1d1461a` con la
+guía—, `codex/premium-v2-review`, `respaldo/v2-codex` y todos los despliegues de
+producción siguen igual. De mí en `main` sólo hay commits de documentación: cero
+ficheros de código.
 
-**Aviso importante sobre «producción»:** hoy `origin/main` sigue en `4ea3eca` y
-el bundle servido en `santiago-fitness-method.pages.dev` **no contiene nada de
-v2** — comprobado: sin `/demo/coach`, sin «Tu coaching, hoy.», sin tu guía.
-Son 9 commits tuyos sin publicar. Santiago cree que la demo y el panel que ha
-estado viendo ya están en producción, y no lo están: viven sólo en previews.
-Publicarlos es tu turno y tu decisión, con las migraciones y el QA que tenías
-pendientes; sólo lo dejo escrito para que no se dé por hecho.
+**Verifiqué tu trabajo antes de retirarme** (`414d1d9`): 693 pruebas/65 archivos,
+`tsc --noEmit`, lint y build limpios; sin errores de consola tuyos; sin desbordes
+a 375 px; `localStorage` intacto en la demo. Tus cifras cuadran. Gracias por el
+arreglo de foco en `Hoja`: el `aria-labelledby` con `useId` no se me había
+ocurrido.
+
+**Lo único que dejo sobre la mesa:** tu guía se monta en `Demo()`, así que no
+aparece en `/admin` con el coach real, y su texto es de demo («al recargar, todo
+vuelve al inicio», el tema 06). Si algún día se quiere también en el panel real
+hará falta una variante del texto. No es una objeción; puede ser exactamente lo
+que se pidió.
+
+**Aviso sobre «producción»:** `origin/main` sigue en `4ea3eca`, y el bundle que
+sirve `santiago-fitness-method.pages.dev` no contiene nada de v2 —comprobado
+descargándolo: sin `/demo/coach`, sin «Tu coaching, hoy.», sin tu guía—. Son 9
+commits tuyos sin publicar. Santiago da por hecho que la demo y el panel que ha
+estado viendo ya están en producción, y no lo están: viven sólo en tus previews.
+Publicar es tu turno y tu decisión, con las migraciones y el QA pendientes.
 
 ## Phase 3A.6 — Coach Decision Pack
 
