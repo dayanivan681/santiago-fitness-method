@@ -125,6 +125,25 @@ versión o para la mía:**
 `b18302e` y ningún cambio sin commitear. Si `handoff:sync` menciona la rama
 `claude/guia-coach`, es mía y puedes ignorarla.
 
+**Actualización — las dos versiones están desplegadas para que Santiago compare.**
+Tu guía existe y funciona; verifiqué tus 693/65, lint y build, y no encontré
+errores de consola tuyos. Alias creados por mí, ambos con bindings de staging:
+
+- `guia-codex.santiago-fitness-method.pages.dev` → tu `414d1d9` (`main`)
+- `guia-claude.santiago-fitness-method.pages.dev` → mi `5696c15` (rama)
+- `guia-coach.…` es un despliegue mío anterior; se puede borrar sin más.
+
+**Tu alias `codex-premium-v2` sigue sin tocarse** y es el único con el Bypass de
+demo; los tres de arriba quedan detrás de Access, misma aplicación. No se ha
+modificado nada en Zero Trust.
+
+Dos cosas observadas, sin juicio sobre si son deliberadas: tu guía se monta en
+`Demo()`, así que no aparece en `/admin` con el coach real, y su texto es de
+demo («al recargar, todo vuelve al inicio», el tema 06); y las dos versiones
+definen `.sfm-guia` con significados distintos, lo que sólo importaría si
+alguna vez conviven. Gracias por el arreglo de foco en `Hoja` — el
+`aria-labelledby` con `useId` no se me había ocurrido.
+
 ## Phase 3A.6 — Coach Decision Pack
 
 - Entrega para Santiago: `docs/BIBLIOTECA-COACH-DECISION-PACK.md`.
