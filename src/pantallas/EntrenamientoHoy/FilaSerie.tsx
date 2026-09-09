@@ -211,16 +211,27 @@ export function FilaSerie({
     }
   }
 
+  // Una lectura cloud reconstruye los objetos de la clave. Sólo sus valores
+  // identifican un borrador: depender del objeto vuelve a guardarlo con cada
+  // refresco y la confirmación de ese guardado dispara otra escritura.
+  const participanteBorrador = claveDeBorrador?.participanteId
+  const fechaBorrador = claveDeBorrador?.fecha
+  const plantillaBorrador = claveDeBorrador?.plantillaDiaId
+  const ordenBorrador = claveDeBorrador?.orden
+
   // Autosave: cada ajuste se guarda sin esperar a Guardar. El borrador vive
   // aparte del historial, así que esto no registra nada en §19 antes de tiempo.
   useEffect(() => {
-    if (!idDelBorrador || !repositorio || !claveDeBorrador || registrada) return
+    if (!idDelBorrador || !repositorio || !participanteBorrador || !fechaBorrador || !plantillaBorrador || ordenBorrador === undefined || registrada) return
     // No guardar antes de haber intentado recuperar, ni si nadie tocó nada.
     if (!recuperado.current || !tocado) return
 
     repositorio.guardarBorrador({
       id: idDelBorrador,
-      ...claveDeBorrador,
+      participanteId: participanteBorrador,
+      fecha: fechaBorrador,
+      plantillaDiaId: plantillaBorrador,
+      orden: ordenBorrador,
       numeroSerie,
       pesoRegistradoLb: peso,
       repsRealizadas: reps,
@@ -234,7 +245,10 @@ export function FilaSerie({
     nota,
     idDelBorrador,
     repositorio,
-    claveDeBorrador,
+    participanteBorrador,
+    fechaBorrador,
+    plantillaBorrador,
+    ordenBorrador,
     registrada,
     numeroSerie,
     tocado,

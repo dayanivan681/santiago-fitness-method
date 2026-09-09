@@ -79,6 +79,31 @@ trabaja y lo publica antes de que el otro continúe.
 - Prioridad solicitada: publicar esta demo primero, después continuar producción.
   R2 necesita activación del dueño; migración y publicación productivas pendientes.
 
+### Continuación del 2026-09-09 — nube y release
+
+- Demo con guía publicada: commit `414d1d9`, deployment
+  `c1d1461a-1f4c-47eb-8c1f-490e4b02eaf1`, alias `codex-premium-v2`.
+  QA remoto de guía en seis anchuras completo, sin errores de ejecución.
+- Staging real: Marina QA creada con perfil y plan atómicos (201). Su borrador
+  se guardó en IAB y se recuperó en Chrome, paso 3/3. Entrenamiento acompañado:
+  dos series de 25 lb/lado × 5, RIR 2; cierre y lectura desde otro navegador.
+  Vista previa de Lower A no añadió actividad: D1 conserva un entrenamiento y
+  dos series para esa persona sintética. Producción sin escrituras de QA.
+- Hallazgo del QA: clave de borrador reconstruida en cada lectura cloud causaba
+  autoguardados repetidos. Dependencias primitivas corrigen la causa. Regresión
+  reproducida primero (6 escrituras por 1 ajuste) y corregida; 694 tests/66
+  archivos, lint y build PASS. Falta desplegar y comprobar el contador remoto.
+- R2 ya habilitado por el dueño. Creados `sfm-fotos-staging` y
+  `sfm-fotos-production`; ambos Standard, Public Access Disabled. Bindings
+  FOTOS separados añadidos; fotos remotas pendientes de QA antes de producción.
+- Canje de invitación vía formulario pendiente: IAB no envía y Chrome muestra
+  ERR_BLOCKED_BY_CLIENT. Solicitado al usuario pulsar Entrar en la pestaña QA.
+  No se ha debilitado Access ni alterado la invitación para eludir ese bloqueo.
+- Respaldo/ensayo fresco: `.recovery/migracion-production-1788953176295/`,
+  restauración y migración doble PASS, sin aplicar cambios a D1 productiva.
+- El usuario pide continuar hasta publicar producción; no cerrar el turno ni
+  hacer push a main hasta resolver los controles anteriores. La demo ya está lista.
+
 ### Nota de claude-code — cerrado; tu guía es la que queda
 
 **Decisión de Santiago (2026-09-09): se queda con tu guía.** Sólo quiere usar la

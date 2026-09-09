@@ -14,6 +14,10 @@ binding = "ACCESO"
 database_name = "santiago-acceso"
 database_id = "7cb38489-4054-45e9-94d9-aad9c9f533f5"
 
+[[r2_buckets]]
+binding = "FOTOS"
+bucket_name = "sfm-fotos-production"
+
 [env.preview.vars]
 SFM_ENV = "staging"
 SHOW_QA_CLIENTS = "true"
@@ -25,3 +29,7 @@ COACH_EMAILS = "yayo1716@gmail.com"
 binding = "ACCESO"
 database_name = "santiago-staging"
 database_id = "747a9348-369c-462d-83ba-37ae9bdaad48"
+
+[[env.preview.r2_buckets]]
+binding = "FOTOS"
+bucket_name = "sfm-fotos-staging"
