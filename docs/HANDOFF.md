@@ -62,6 +62,52 @@ trabaja y lo publica antes de que el otro continúe.
   de Safari/PWA en iPhone disponible; después migración aditiva y publicación
   canónica con handoff. No reabrir Admin ni sustituir estos pasos por demo.
 
+### Nota de claude-code — encargo nuevo: guía de primera vez para el Coach
+
+**Tu turno sigue activo y no lo he tocado.** `main` local está en tu `b18302e`
+sin una sola línea de código mía; esto es sólo esta nota. `origin/main` sigue en
+`4ea3eca`, es decir, tu v2 continúa sin publicar, como lo dejaste.
+
+**Lo que pidió Santiago:** que al entrar al Coach por primera vez algo le
+explique cómo se usa, al estilo de la primera apertura de una app recién
+descargada. Dinámica, sencilla, efectiva.
+
+**Cómo está la cosa:** hice una versión, le gustó, y ahora quiere **que hagas la
+tuya para comparar**. Constrúyela como tú la veas. No tomes la mía como
+referencia obligatoria ni como terreno ocupado; si prefieres ni mirarla para no
+condicionarte, es una decisión legítima y no hace falta que la justifiques.
+
+**Dónde está la mía, si te sirve:** rama **local** `claude/guia-coach`, dos
+commits sobre tu `b18302e`. No está en GitHub ni en `main`. Preview en
+https://guia-coach.santiago-fitness-method.pages.dev — hostname nuevo, entero
+detrás de Access, bindings de staging. **Tu alias `codex-premium-v2` no se ha
+tocado**: sigue sirviendo tu `8afc26a`. No se modificó nada en Zero Trust.
+
+**Tres cosas que descubrí por el camino y te ahorran trabajo, sirvan para tu
+versión o para la mía:**
+
+1. **«Onboarding» ya significa otra cosa aquí**: dar de alta a un cliente. Está
+   en la métrica `En onboarding` de Hoy, el botón `Comenzar onboarding`, la
+   sección `Onboarding en curso`, la ruta `/admin/nuevo` y tu `Onboarding.tsx`.
+   Si la guía del coach se llama igual, se confunden las dos cosas en la cabeza
+   de Santiago. Yo la llamé «Guía rápida».
+
+2. **El contrato de aislamiento de la demo muerde justo aquí.**
+   `DemoPublica.test.tsx` espía `Storage.prototype.setItem` antes de renderizar
+   y pasa por `/demo/coach`. Un «ya la vio» guardado en `localStorage` sin
+   compuerta de `demo` rompe esa prueba, y el síntoma sale lejos de la causa.
+
+3. **`Hoja` (`ui.tsx:140`) no devuelve el foco al cerrarse.** Se desmonta en vez
+   de quedarse montada, así que `showModal()` no puede restaurarlo y el foco cae
+   al principio del documento. Afecta a todas las hojas del Coach, no sólo a una
+   guía. El arreglo son cinco líneas: guardar `document.activeElement` antes de
+   abrir y restaurarlo en la limpieza con el guardo de `isConnected`, igual que
+   `useFoco` en `useCapa.ts`.
+
+**No hay nada que resolver antes de empezar:** árbol limpio, `main` local en tu
+`b18302e` y ningún cambio sin commitear. Si `handoff:sync` menciona la rama
+`claude/guia-coach`, es mía y puedes ignorarla.
+
 ## Phase 3A.6 — Coach Decision Pack
 
 - Entrega para Santiago: `docs/BIBLIOTECA-COACH-DECISION-PACK.md`.
