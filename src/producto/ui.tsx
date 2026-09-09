@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { Link } from "react-router";
 export function Icono({
   nombre,
@@ -141,21 +141,29 @@ export function Hoja({
   titulo,
   children,
   cerrar,
+  clase = "",
 }: {
   titulo: string;
   children: ReactNode;
   cerrar: () => void;
+  clase?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const tituloId = useId();
   useEffect(() => {
     const elemento = dialog.current;
+    const origen = document.activeElement;
     elemento?.showModal();
-    return () => elemento?.close();
+    return () => {
+      elemento?.close();
+      if (origen instanceof HTMLElement && origen.isConnected) origen.focus();
+    };
   }, []);
   return (
     <dialog
       ref={dialog}
-      className="sfm-hoja"
+      className={`sfm-hoja ${clase}`}
+      aria-labelledby={tituloId}
       onCancel={cerrar}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -171,7 +179,7 @@ export function Hoja({
       }}
     >
       <header>
-        <h2>{titulo}</h2>
+        <h2 id={tituloId}>{titulo}</h2>
         <button
           className="sfm-icon-button"
           aria-label="Cerrar"

@@ -49,6 +49,7 @@ import type {
   BorradorDeSerie,
 } from "./dominio/tipos";
 import "./producto/producto.css";
+import { GuiaDemo } from "./producto/GuiaDemo";
 export function App() {
   return (
     <RecuperarPantalla>
@@ -257,6 +258,7 @@ function Demo() {
     <>
       <aside className="sfm-demo-banner">
         <strong>DEMO</strong>
+        <GuiaDemo />
         <span>Datos ficticios · Nada se guarda</span>
         <Link to={coach ? "/demo/cliente" : "/demo/coach"}>
           {coach ? "Ver Cliente" : "Ver Coach"}{" "}

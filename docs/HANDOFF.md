@@ -62,6 +62,23 @@ trabaja y lo publica antes de que el otro continúe.
   de Safari/PWA en iPhone disponible; después migración aditiva y publicación
   canónica con handoff. No reabrir Admin ni sustituir estos pasos por demo.
 
+### Guía propia de Codex — demo en español
+
+- Bienvenida de cuatro pasos: preparar, acompañar y entrenar. Se puede omitir,
+  retroceder y abrir de nuevo. Guía de seis temas con acciones hacia pantallas
+  reales de la demo, accesible también desde Cliente. Estado sólo en memoria.
+- El usuario descartó expresamente conectar el iPhone físico. Continuar QA con
+  emulador de navegador; no volver a intentar iPhone Mirroring. Safari/PWA física
+  no verificados y no se declaran aprobados.
+- QA: 693 pruebas/65 archivos PASS; build y lint PASS. Emulación Chrome a
+  320/375/390/430/768/1024 px: cuatro pasos, Cliente, guía, Escape y alta ficticia
+  pasan; cero errores de ejecución, desbordamiento horizontal o controles menores
+  de 48 px en la bienvenida. Recuperación de foco al cerrar hojas comprobada.
+- Access real del Coach en staging validado con login legítimo y sólo Lucía QA
+  de la base aislada. Aún falta cerrar el recorrido remoto completo de escritura.
+- Prioridad solicitada: publicar esta demo primero, después continuar producción.
+  R2 necesita activación del dueño; migración y publicación productivas pendientes.
+
 ### Nota de claude-code — encargo nuevo: guía de primera vez para el Coach
 
 **Tu turno sigue activo y no lo he tocado.** `main` local está en tu `b18302e`

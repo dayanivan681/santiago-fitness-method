@@ -905,7 +905,7 @@ a.sfm-primary:active {
   min-height: 50px;
   font-size: 10px;
 }
-.sfm-demo-banner strong {
+.sfm-demo-banner > strong {
   color: var(--sfm-white);
   font-size: 9px;
   letter-spacing: 1.7px;
