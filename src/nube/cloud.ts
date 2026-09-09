@@ -57,7 +57,7 @@ export class ClienteApi {
       headers: body === undefined ? {} : { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
       cache: "no-store",
-    });
+    }).catch(() => { throw new ErrorConexion(); });
     // Access redirige al login antes de llegar a Functions. No seguir ese
     // redirect como si fuera un fallo de red: también invalida datos visibles.
     if (r.status === 401 || r.type === "opaqueredirect") {
@@ -79,6 +79,9 @@ export class ClienteApi {
       );
     return d as T;
   }
+}
+export class ErrorConexion extends Error {
+  constructor() { super("Sin conexión con tu cuenta. Lo pendiente se conserva en este dispositivo."); }
 }
 export class ErrorRespuesta extends Error {
   status: number;

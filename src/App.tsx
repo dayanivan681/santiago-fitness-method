@@ -23,6 +23,7 @@ import {
   ClienteApi,
   ConexionCloud,
   ErrorAcceso,
+  ErrorConexion,
   estadoCambiar,
   estadoNube,
   type Inicio,
@@ -129,7 +130,7 @@ function ClienteReal() {
           setConexion(actual);
         } else actual.limpiar();
       } catch (e) {
-        if (!(e instanceof ErrorAcceso) && !navigator.onLine) {
+        if (e instanceof ErrorConexion) {
           try {
             const ctx = JSON.parse(
               localStorage.getItem("sfm-v2-contexto") ?? "null",
