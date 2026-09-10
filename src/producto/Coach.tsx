@@ -1,3 +1,4 @@
+import { useRecorrido } from "./recorrido-contexto";
 import { useCallback, useEffect, useState } from "react";
 import {
   Link,
@@ -180,7 +181,7 @@ function HoyCoach({
         accion={
           <Link
             className="sfm-icon-button"
-            to={`${base}/nuevo`}
+            data-tour="nuevo" data-tour-action="abrir-alta" to={`${base}/nuevo`}
             aria-label="Nuevo cliente"
           >
             <Icono nombre="mas" />
@@ -290,7 +291,7 @@ function HoyCoach({
           titulo="El método empieza con una persona"
           detalle="Prepara su objetivo, contexto y primer plan."
           accion={
-            <Link className="sfm-primary" to={`${base}/nuevo`}>
+            <Link className="sfm-primary" data-tour="nuevo" data-tour-action="abrir-alta" to={`${base}/nuevo`}>
               Comenzar onboarding
             </Link>
           }
@@ -306,7 +307,7 @@ function FilaCliente({ c, base }: { c: Cliente; base: string }) {
     c.plan.dias.length === 0 ||
     c.plan.dias.some((d) => d.slots.length < 5);
   return (
-    <Link className="sfm-row" to={`${base}/clientes/${c.perfil.id}`}>
+    <Link className="sfm-row" data-tour-action="abrir-cliente" data-tour-client={c.perfil.id} to={`${base}/clientes/${c.perfil.id}`}>
       <Avatar nombre={c.perfil.nombre} />
       <span className="sfm-row-body">
         <strong>{c.perfil.nombre}</strong>
@@ -349,7 +350,7 @@ function ListaClientes({
         accion={
           <Link
             className="sfm-icon-button"
-            to={`${base}/nuevo`}
+            data-tour="nuevo" data-tour-action="abrir-alta" to={`${base}/nuevo`}
             aria-label="Nuevo cliente"
           >
             <Icono nombre="mas" />
@@ -358,7 +359,7 @@ function ListaClientes({
       />
       <input
         className="sfm-search"
-        aria-label="Buscar cliente"
+        data-tour="buscar-cliente" aria-label="Buscar cliente"
         placeholder="Buscar una persona"
         value={q}
         onChange={(e) => setQ(e.target.value)}
@@ -385,7 +386,7 @@ function ListaClientes({
           detalle="Da la bienvenida a tu primer cliente con un plan pensado para él."
         />
       )}
-      <Link className="sfm-secondary" to={`${base}/nuevo`}>
+      <Link className="sfm-secondary" data-tour="nuevo" data-tour-action="abrir-alta" to={`${base}/nuevo`}>
         <Icono nombre="mas" /> Comenzar onboarding
       </Link>
       {borradores.length > 0 && (
@@ -412,7 +413,7 @@ function ListaClientes({
 }
 function FichaCoach(props: Parameters<typeof FichaCliente>[0]) {
   const { clienteId } = useParams();
-  return <FichaCliente key={clienteId} {...props} />;
+  return <FichaCliente key={`${clienteId}:${new URLSearchParams(location.search).get("guia")??""}`} {...props} />;
 }
 function FichaCliente({
   clientes,
@@ -429,6 +430,7 @@ function FichaCliente({
   preview: (c: Cliente) => void;
   entrenar: (c: Cliente) => void;
 }) {
+  const guia=useRecorrido();
   const { clienteId } = useParams();
   const c = clientes.find((c) => c.perfil.id === clienteId);
   const [seccion, setSeccion] = useState(() =>
@@ -497,6 +499,7 @@ function FichaCliente({
       );
       setCambios(await servicio.cambios(clienteId));
       await actualizar();
+      guia?.emitir(publicar?"plan-publicado":"plan-borrador");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -508,6 +511,7 @@ function FichaCliente({
     setError("");
     try {
       setEnlace(await servicio.invitar(cliente.perfil.id));
+      guia?.emitir("invitacion-lista");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -535,7 +539,7 @@ function FichaCliente({
           {c.perfil.objetivo || "Objetivo por conversar"}
         </p>
         <div className="sfm-client-actions">
-          <button className="sfm-secondary" onClick={() => preview(c)}>
+          <button data-tour="preview" data-tour-action="abrir-preview" className="sfm-secondary" onClick={() => preview(c)}>
             Vista previa
           </button>
           <button className="sfm-secondary" onClick={() => entrenar(c)}>
@@ -550,7 +554,7 @@ function FichaCliente({
           ].map(([key, label]) => (
             <button
               key={key}
-              aria-pressed={seccion === key}
+              data-tour={`tab-${key}`} data-tour-action={key==='actividad'?'actividad-abierta':key==='perfil'?'perfil-abierto':'programa-abierto'} aria-pressed={seccion === key}
               onClick={() => setSeccion(key)}
             >
               {label}
@@ -588,14 +592,14 @@ function FichaCliente({
                         revisado: true,
                       }).success
                     }
-                    onClick={() => void guardar(true)}
+                    data-tour="publicar-plan" onClick={() => void guardar(true)}
                   >
                     Revisado · Publicar programa
                   </button>
                   <button
                     className="sfm-secondary"
                     disabled={ocupado}
-                    onClick={() => void guardar(false)}
+                    data-tour="guardar-plan" onClick={() => void guardar(false)}
                   >
                     Guardar borrador
                   </button>
@@ -633,14 +637,14 @@ function FichaCliente({
                   ))}
                 </div>
                 <button
-                  className="sfm-secondary"
+                  className="sfm-secondary" data-tour="preparar-plan" data-tour-action="preparar-plan"
                   onClick={() => setPlan(structuredClone(c.plan))}
                 >
                   Preparar cambios
                 </button>
                 {borrador && (
                   <button
-                    className="sfm-next-card"
+                    className="sfm-next-card" data-tour="retomar-plan" data-tour-action="retomar-plan"
                     onClick={() =>
                       setPlan(structuredClone(borrador.datos as Plan))
                     }
@@ -663,13 +667,13 @@ function FichaCliente({
                   <button
                     className="sfm-primary"
                     disabled={ocupado}
-                    onClick={() => void invitar()}
+                    data-tour="invitar" onClick={() => void invitar()}
                   >
                     Preparar invitación
                   </button>
                   {enlace && (
-                    <div className="sfm-invitation">
-                      <p>Lista para compartir personalmente.</p>
+                    <div className="sfm-invitation" data-tour="invitacion">
+                      <p>{servicio.demo?"Simulación: no se crea ni se envía ninguna invitación.":"Lista para compartir personalmente."}</p>
                       <input
                         aria-label="Invitación privada"
                         readOnly
@@ -693,11 +697,11 @@ function FichaCliente({
           </>
         )}
         {seccion === "actividad" && (
-          <ResumenSesiones
+          <div data-tour="actividad-cliente"><ResumenSesiones
             cambios={cambios}
             cliente={c.perfil.id}
             api={servicio.demo ? undefined : new ClienteApi(true, c.perfil.id)}
-          />
+          /></div>
         )}
         {seccion === "perfil" && (
           <>
@@ -780,7 +784,7 @@ function FichaCliente({
                           ? "Objetivo"
                           : "Limitaciones"}
                     </span>
-                    <textarea
+                    <textarea data-tour={k==="objetivo"?"objetivo-perfil":undefined}
                       value={perfil[k]}
                       onChange={(e) =>
                         setPerfil({ ...perfil, [k]: e.target.value })
@@ -830,6 +834,7 @@ function FichaCliente({
                       )
                       .then(() => {
                         setPerfil(null);
+                        guia?.emitir("perfil-guardado");
                         return actualizar();
                       })
                       .catch((e) => setError(e.message))
@@ -873,7 +878,7 @@ function FichaCliente({
                 </dl>
                 <button
                   className="sfm-secondary"
-                  onClick={() => setPerfil(structuredClone(c.perfil))}
+                  data-tour="editar-perfil" data-tour-action="editar-perfil" onClick={() => setPerfil(structuredClone(c.perfil))}
                 >
                   Editar perfil
                 </button>

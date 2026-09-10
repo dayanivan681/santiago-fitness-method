@@ -182,7 +182,7 @@ export function CuerpoEjercicio({
       {/* Acciones del ejercicio: enlaces de texto, no botones con borde. Están
           bajo las series porque se usan poco comparado con guardar. */}
       <div className="entreno__acciones">
-        <button type="button" className="enlace" onClick={onDescansar}>
+        <button type="button" className="enlace" data-tour="abrir-descanso" onClick={onDescansar}>
           Descanso
         </button>
         {/* Consultar el ejercicio delante de la máquina, sin salir. */}

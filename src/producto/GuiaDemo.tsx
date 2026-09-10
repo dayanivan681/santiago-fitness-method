@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Hoja, Icono } from "./ui";
 import "./guia-demo.css";
+import { useRecorrido, type Capitulo } from "./recorrido-contexto";
 
 const pasos = [
   {
@@ -93,6 +94,14 @@ const temas = [
 /** La bienvenida vive en memoria, igual que la demo. Nunca marca dispositivos. */
 export function GuiaDemo() {
   const { pathname } = useLocation();
+  const recorrido=useRecorrido();
+  const [vistos,setVistos]=useState<string[]>([]);
+  const [bienvenidaCliente,setBienvenidaCliente]=useState(false);
+  if(pathname.startsWith('/demo/cliente')&&recorrido&&!vistos.includes(recorrido.clienteId)) {
+    setVistos([...vistos,recorrido.clienteId]);
+    setBienvenidaCliente(!recorrido.activo);
+  }
+  const comenzar=(capitulo:Capitulo)=>{setPaso(null);setAyuda(false);setBienvenidaCliente(false);void recorrido?.iniciar(capitulo);};
   const navegar = useNavigate();
   const [paso, setPaso] = useState<number | null>(() =>
     pathname === "/demo/coach" || pathname === "/demo/coach/" ? 0 : null,
@@ -108,11 +117,21 @@ export function GuiaDemo() {
     <>
       <button
         className="sfm-demo-help"
-        onClick={() => setAyuda(true)}
+        onClick={() => {recorrido?.pausar();setAyuda(true);}}
         aria-label="Abrir guía de uso"
       >
         Guía de uso <span aria-hidden="true">?</span>
       </button>
+      {bienvenidaCliente && !recorrido?.activo && pathname.startsWith('/demo/cliente') && (
+        <Hoja titulo="Tu primera entrada" cerrar={()=>setBienvenidaCliente(false)} clase="sfm-guia">
+          <p className="sfm-eyebrow">TU ESPACIO · TU RITMO</p>
+          <h3>Tu coach preparó tu espacio.</h3>
+          <p className="sfm-guia-copy">Vamos a probar tu primera serie. Te acompañaremos sobre los controles reales: registrar, corregir y encontrar tu progreso.</p>
+          <p className="sfm-guia-sandbox">Una práctica ficticia. Nada sale de esta demo.</p>
+          <button className="sfm-primary" onClick={()=>comenzar('cliente')}>Empezar con ayuda</button>
+          <button className="sfm-text-button" onClick={()=>setBienvenidaCliente(false)}>Ahora no</button>
+        </Hoja>
+      )}
       {actual && (
         <Hoja
           titulo="Bienvenido, Santiago"
@@ -167,9 +186,9 @@ export function GuiaDemo() {
               <>
                 <button
                   className="sfm-primary"
-                  onClick={() => ir("/demo/coach/nuevo")}
+                  onClick={() => comenzar("crear")}
                 >
-                  Crear un cliente de prueba
+                  Crear mi primer cliente con ayuda
                   <Icono nombre="mas" />
                 </button>
                 <button
@@ -216,6 +235,9 @@ export function GuiaDemo() {
             </span>
             <Icono nombre="flecha" />
           </button>
+          <div className="sfm-tour-next">
+            {([['crear','Crear un cliente paso a paso'],['gestionar','Manejar un cliente paso a paso'],['preview','Practicar Vista previa'],['cliente','Practicar mi primera serie']] as const).map(([id,label])=><button key={id} onClick={()=>comenzar(id)}>{label} →</button>)}
+          </div>
           <div className="sfm-guia-temas">
             {temas.map((tema, i) => (
               <details key={tema.titulo}>

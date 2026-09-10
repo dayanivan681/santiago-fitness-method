@@ -1,3 +1,4 @@
+import { useRecorrido } from "./recorrido-contexto";
 import { useState } from "react";
 import {
   Link,
@@ -35,6 +36,7 @@ export function ClienteApp({
   modo?: "real" | "demo" | "preview" | "acompanar";
   volver?: string;
 }) {
+  const guia=useRecorrido();
   const navegar = useNavigate();
   const ubicacion = useLocation();
   const [retomar, setRetomar] = useState(() =>
@@ -42,6 +44,7 @@ export function ClienteApp({
   );
   const comenzar = () => {
     setRetomar(true);
+    guia?.emitir("entrenamiento-abierto");
     navegar(`${base}/entrenar`);
   };
   const dia = useMemoria<string | null>(null);
@@ -61,7 +64,7 @@ export function ClienteApp({
     >
       <div className="sfm-shell sfm-shell--client">
         {(modo === "preview" || modo === "acompanar" || volver) && (
-          <aside className="sfm-modebar">
+          <aside className="sfm-modebar" data-tour="modo-preview">
             <span>
               {modo === "preview"
                 ? "Vista previa · Simulación sin guardar"
@@ -69,12 +72,12 @@ export function ClienteApp({
                   ? "Entrenando juntos · Simulación de demo"
                   : "Entrenando juntos · Registro real"}
             </span>
-            <Link to={volver ?? "/admin"}>Volver al Coach</Link>
+            <Link data-tour="volver-coach" data-tour-action="volver-coach" to={volver ?? "/admin"}>Volver al Coach</Link>
           </aside>
         )}
         <div className="sfm-brandbar">
           <Marca />
-          <Link to={`${base}/perfil`} aria-label="Mi perfil">
+          <Link data-tour="perfil-cliente" data-tour-action="perfil-cliente-abierto" to={`${base}/perfil`} aria-label="Mi perfil">
             <AvatarCuenta nombre={participante.nombre} conexion={conexion} />
           </Link>
         </div>
@@ -159,7 +162,7 @@ export function ClienteApp({
                     kicker="Tu cuenta"
                     volver={base || "/"}
                   />
-                  <dl className="sfm-profile-data">
+                  <dl className="sfm-profile-data" data-tour="perfil-pagina">
                     <div>
                       <dt>Tu objetivo</dt>
                       <dd>
@@ -235,7 +238,7 @@ export function ClienteApp({
               ["/biblioteca", "Biblioteca", "biblioteca"],
               ["/progreso", "Progreso", "progreso"],
             ].map(([ruta, label, icon]) => (
-              <NavLink
+              <NavLink data-tour={ruta==="/progreso"?"nav-progreso":ruta==="/biblioteca"?"nav-biblioteca":undefined} data-tour-action={ruta==="/progreso"?"progreso-abierto":ruta==="/biblioteca"?"biblioteca-abierta":undefined}
                 key={label}
                 end={ruta === ""}
                 to={

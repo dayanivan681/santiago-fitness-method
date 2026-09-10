@@ -1,3 +1,4 @@
+import { useRecorrido } from "../../producto/recorrido-contexto";
 /**
  * Una serie: peso, reps y RIR.
  * Guía del proyecto §5 (registro serie por serie), §8 (evaluación contra la
@@ -68,6 +69,7 @@ export function FilaSerie({
   onCorregir,
   onDeshacer,
 }: Props) {
+  const guia=useRecorrido();
   const paso = incrementoRegistradoLb(ejercicio)
   const porLado = ejercicio.tipoCarga === 'porLado'
 
@@ -124,7 +126,7 @@ export function FilaSerie({
     }
   const cambiarPeso = marcar(setPeso)
   const cambiarReps = marcar(setReps)
-  const cambiarRir = marcar(setRir)
+  const cambiarRir = (v:SetStateAction<number>)=>{marcar(setRir)(v);guia?.emitir("rir-ajustado");}
   const cambiarTecnica = marcar(setTecnica)
   const cambiarCalentamiento = marcar(setEsCalentamiento)
 
@@ -199,11 +201,13 @@ export function FilaSerie({
       if (registrada) {
         await onCorregir(registrada, valores)
         setEditando(false)
+        guia?.emitir("serie-corregida");
       } else {
         await onGuardar(valores)
         // Sólo después de registrarla de verdad: si se borrara antes y el
         // guardado fallara, se perdería justo lo que el borrador protege.
         if (idDelBorrador && repositorio) await repositorio.borrarBorrador(idDelBorrador)
+        guia?.emitir("serie-guardada");
       }
     } catch(e){setError(e instanceof Error?e.message:'No se pudo guardar. Tus valores siguen aquí.')} finally {
       guardandoRef.current=false
@@ -282,7 +286,7 @@ export function FilaSerie({
   }
 
   return (
-    <div ref={filaRef} className={hecha ? 'serie serie--hecha' : 'serie'}>
+    <div data-tour={!hecha?"serie-activa":undefined} ref={filaRef} className={hecha ? 'serie serie--hecha' : 'serie'}>
       <div className="serie__cabecera">
         <span className="serie__titulo">
           Serie {numeroSerie}
@@ -347,7 +351,7 @@ export function FilaSerie({
       </div>
 
       <div className="serie__campos">
-        <div className="campo campo--peso">
+        <div data-tour={!hecha?"peso-serie":undefined} className="campo campo--peso">
           {conEtiquetas && (
             <span className="etiqueta-campo">Peso {porLado ? '(lb/lado)' : '(lb)'}</span>
           )}
@@ -373,6 +377,7 @@ export function FilaSerie({
               onBlur={() => {
                 cambiarPeso((p) => Math.max(0, redondear(p)))
                 setEditandoPeso(false)
+                guia?.emitir("peso-ajustado");
               }}
               onKeyDown={(e) => {
                 if (e.key !== 'Enter') return
@@ -389,7 +394,7 @@ export function FilaSerie({
                 type="button"
                 className="paso__boton"
                 disabled={peso <= 0}
-                onClick={() => cambiarPeso((p) => redondear(Math.max(0, p - paso)))}
+                onClick={() => {cambiarPeso((p) => redondear(Math.max(0, p - paso)));guia?.emitir("peso-ajustado");}}
                 aria-label={`Bajar peso de la ${etiqueta}`}
               >
                 –
@@ -405,7 +410,7 @@ export function FilaSerie({
               <button
                 type="button"
                 className="paso__boton"
-                onClick={() => cambiarPeso((p) => redondear(p + paso))}
+                onClick={() => {cambiarPeso((p) => redondear(p + paso));guia?.emitir("peso-ajustado");}}
                 aria-label={`Subir peso de la ${etiqueta}`}
               >
                 +
@@ -414,7 +419,7 @@ export function FilaSerie({
           )}
         </div>
 
-        <div className="campo campo--reps">
+        <div data-tour={!hecha?"reps-serie":undefined} className="campo campo--reps">
           {conEtiquetas && <span className="etiqueta-campo">Reps</span>}
           {hecha ? (
             <output className="valor" aria-label={`Reps de la ${etiqueta}`}>
@@ -436,12 +441,13 @@ export function FilaSerie({
               onBlur={() => {
                 cambiarReps((r) => Math.max(1, Math.round(r)))
                 setEditandoReps(false)
+                guia?.emitir("reps-ajustadas");
               }}
               onKeyDown={(e) => {
                 if (e.key !== 'Enter') return
                 e.preventDefault()
                 e.currentTarget.blur()
-                void guardar()
+                if(guia?.paso!=="cliente-reps") void guardar()
               }}
             />
           ) : (
@@ -450,7 +456,7 @@ export function FilaSerie({
                 type="button"
                 className="paso__boton"
                 disabled={reps <= 1}
-                onClick={() => cambiarReps((r) => Math.max(1, r - 1))}
+                onClick={() => {cambiarReps((r) => Math.max(1, r - 1));guia?.emitir("reps-ajustadas");}}
                 aria-label={`Bajar reps de la ${etiqueta}`}
               >
                 –
@@ -466,7 +472,7 @@ export function FilaSerie({
               <button
                 type="button"
                 className="paso__boton"
-                onClick={() => cambiarReps((r) => r + 1)}
+                onClick={() => {cambiarReps((r) => r + 1);guia?.emitir("reps-ajustadas");}}
                 aria-label={`Subir reps de la ${etiqueta}`}
               >
                 +
@@ -482,7 +488,7 @@ export function FilaSerie({
               {formatearRir(registrada.rir)}
             </output>
           ) : (
-            <div className="sfm-rir-segments" role="group" aria-label={`RIR de la ${etiqueta}`}>
+            <div className="sfm-rir-segments" data-tour={!hecha?"rir-serie":undefined} role="group" aria-label={`RIR de la ${etiqueta}`}>
               {[0,1,2,3,4,5].map(valor => <button key={valor} type="button" aria-pressed={rir===valor} aria-label={`RIR ${valor}${valor===5?'+':''} de la ${etiqueta}`} onClick={()=>cambiarRir(()=>valor)}>{valor===5?'5+':valor}</button>)}
             </div>
           )}
@@ -512,7 +518,7 @@ export function FilaSerie({
             <button
               type="button"
               className="boton-guardar boton-guardar--secundario"
-              onClick={() => setEditando(true)}
+              data-tour="editar-serie" data-tour-action="editar-serie" onClick={() => setEditando(true)}
               aria-label={`Editar la ${etiqueta}`}
             >
               Editar
@@ -521,7 +527,7 @@ export function FilaSerie({
         ) : (
           <button
             type="button"
-            className="boton-guardar"
+            data-tour="guardar-serie" className="boton-guardar"
             onClick={guardar}
             disabled={guardando}
             aria-label={`Guardar la ${etiqueta}`}

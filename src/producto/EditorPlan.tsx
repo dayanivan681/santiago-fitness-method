@@ -37,7 +37,7 @@ export function EditorPlan({
     revisado: true,
   });
   return (
-    <div className="sfm-editor">
+    <div className="sfm-editor" data-tour="editor-plan">
       <div className="sfm-segmentos" aria-label="Sesión del programa">
         {plan.dias.map((d, i) => (
           <button key={d.id} aria-pressed={i === dia} onClick={() => setDia(i)}>
@@ -74,7 +74,7 @@ export function EditorPlan({
           return (
             <div className="sfm-plan-row" key={`${s.ejercicioId}-${i}`}>
               <button
-                className="sfm-row sfm-row--grow"
+                data-tour={i===0?"editar-ejercicio":undefined} data-tour-action="editar-ejercicio" className="sfm-row sfm-row--grow"
                 onClick={() => setEditar(i)}
               >
                 <span className="sfm-ordinal">
@@ -291,7 +291,7 @@ export function EditorPlan({
           <h3>
             {BIBLIOTECA_INICIAL.find((e) => e.id === item.ejercicioId)?.nombre}
           </h3>
-          <div className="sfm-fields-grid">
+          <div className="sfm-fields-grid" data-tour="prescripcion">
             {(
               [
                 ["seriesObjetivo", "Series", 1, 12],
@@ -368,7 +368,7 @@ export function EditorPlan({
               <option value="revisarReducir">Revisar / reducir</option>
             </select>
           </label>
-          <button className="sfm-primary" onClick={() => setEditar(null)}>
+          <button data-tour-action="prescripcion-lista" className="sfm-primary" onClick={() => setEditar(null)}>
             Listo
           </button>
           <button

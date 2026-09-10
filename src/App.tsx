@@ -50,6 +50,8 @@ import type {
   BorradorDeSerie,
 } from "./dominio/tipos";
 import "./producto/producto.css";
+import { ProveedorRecorridos } from "./producto/RecorridosDemo";
+import { useRecorrido } from "./producto/recorrido-contexto";
 import { GuiaDemo } from "./producto/GuiaDemo";
 export function App() {
   return (
@@ -252,6 +254,10 @@ function CoachReal() {
 }
 function Demo() {
   const [servicio] = useState(() => new ServicioCoach(true));
+  return <ProveedorRecorridos servicio={servicio}><ContenidoDemo servicio={servicio}/></ProveedorRecorridos>;
+}
+function ContenidoDemo({servicio}:{servicio:ServicioCoach}) {
+  const personaDemo=useRecorrido()?.clienteId;
   const loc = useLocation();
   const nav = useNavigate();
   const coach = loc.pathname.includes("/coach");
@@ -295,17 +301,18 @@ function Demo() {
             />
           }
         />
-        <Route path="cliente/*" element={<ClienteDemo servicio={servicio} />} />
-        <Route path="*" element={<ClienteDemo servicio={servicio} />} />
+        <Route path="cliente/*" element={<ClienteDemo key={personaDemo} servicio={servicio} />} />
+        <Route path="*" element={<ClienteDemo key={personaDemo} servicio={servicio} />} />
       </Routes>
     </>
   );
 }
 function ClienteDemo({ servicio }: { servicio: ServicioCoach }) {
+  const clienteDemo = useRecorrido()?.clienteId ?? "demo-persona-1";
   const [repo, setRepo] = useState<RepositorioMemoria | null>(null);
   useEffect(() => {
     let vivo = true;
-    void servicio.repoDemo("demo-persona-1").then((r) => {
+    void servicio.repoDemo(clienteDemo).then((r) => {
       if (vivo) {
         instalarRepositorio(r);
         setRepo(r);
@@ -314,9 +321,9 @@ function ClienteDemo({ servicio }: { servicio: ServicioCoach }) {
     return () => {
       vivo = false;
     };
-  }, [servicio]);
+  }, [servicio, clienteDemo]);
   return repo ? (
-    <ClienteApp repo={repo} base="/demo/cliente" modo="demo" />
+    <ClienteApp key={clienteDemo} repo={repo} base="/demo/cliente" modo="demo" />
   ) : (
     <p className="sfm-loading">Preparando la demo…</p>
   );

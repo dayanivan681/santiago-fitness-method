@@ -85,7 +85,7 @@ export function Cabecera({
   return (
     <header className="sfm-cabecera">
       {volver && (
-        <Link className="sfm-icon-button" to={volver} aria-label="Volver">
+        <Link className="sfm-icon-button" data-tour="volver-clientes" data-tour-action="lista-clientes" to={volver} aria-label="Volver">
           <Icono nombre="volver" />
         </Link>
       )}

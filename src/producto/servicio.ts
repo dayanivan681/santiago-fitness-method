@@ -66,6 +66,16 @@ export class ServicioCoach {
       }
     }
   }
+  async escenarioDemo(origen:string):Promise<string> {
+    if(!this.demo) throw Error("La práctica sólo está disponible en la demo.");
+    const c=this.clientes.find(c=>c.perfil.id===origen);
+    if(!c)throw Error("No encontramos esta persona de la demo.");
+    const id="demo-practica-"+crypto.randomUUID();
+    const perfil={...structuredClone(c.perfil),id,nombre:c.perfil.nombre.split(" · práctica")[0]+" · práctica "+(this.clientes.length-2)};
+    const plan={...structuredClone(c.plan),dias:c.plan.dias.map(d=>({...structuredClone(d),id:crypto.randomUUID(),participanteId:id}))};
+    this.clientes.push({perfil,plan,revision:1});
+    return id;
+  }
   async listar(): Promise<Cliente[]> {
     if (this.demo) {
       for (const c of this.clientes) {

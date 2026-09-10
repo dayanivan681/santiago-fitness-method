@@ -1,3 +1,4 @@
+import { useRecorrido } from "../../producto/recorrido-contexto";
 /**
  * Modo entrenamiento: un ejercicio a la vez.
  *
@@ -71,6 +72,7 @@ export function Entrenamiento({
   const [identidadVisible,setIdentidadVisible]=useState(true)
   const [errorCierre,setErrorCierre]=useState('')
   const [cerrando,setCerrando]=useState(false)
+  const guia=useRecorrido();
   const { arrancar: arrancarDescanso, declararBarraDeSesion } = useControlDescanso()
 
   /**
@@ -184,7 +186,7 @@ export function Entrenamiento({
           onIdentidadVisible={setIdentidadVisible}
           onAbrirVariantes={() => setVariantesAbiertas(true)}
           onAbrirFicha={() => setFichaDe(item.ejercicio)}
-          onDescansar={() => arrancarDescanso(item.ejercicio.id, item.slot.descansoSegundos)}
+          onDescansar={() => {arrancarDescanso(item.ejercicio.id, item.slot.descansoSegundos);guia?.emitir("descanso-iniciado");}}
           onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
             await registrarSerie(ejercicioId, numeroSerie, valores)
             // El descanso se inicia con el botón Descansar, a elección del cliente.
@@ -248,14 +250,14 @@ export function Entrenamiento({
               {seriesHechas} de {seriesObjetivo} series
             </span>
           </div>
-          <button type="button" className="progreso-sesion__terminar" disabled={cerrando} onClick={()=>{setCerrando(true);setErrorCierre('');void terminarSesion().then(()=>setResumenAbierto(true)).catch(e=>setErrorCierre(e.message)).finally(()=>setCerrando(false))}}>
+          <button type="button" data-tour="terminar" className="progreso-sesion__terminar" disabled={cerrando} onClick={()=>{setCerrando(true);setErrorCierre('');void terminarSesion().then(()=>{setResumenAbierto(true);guia?.emitir("sesion-terminada");}).catch(e=>setErrorCierre(e.message)).finally(()=>setCerrando(false))}}>
             Terminar sesión
           </button>
         </div>
       )}
 
       <ErrorVisible error={errorCierre}/>
-      {resumenAbierto&&<HojaResumen titulo="Sesión completada" cerrar={()=>setResumenAbierto(false)}><p>{plantilla.nombre} · {new Date().toLocaleDateString('es',{day:'numeric',month:'long'})}</p><div className="sfm-metrics sfm-metrics--two"><div><strong>{seriesHechas}</strong><span>Series registradas</span></div><div><strong>{ejerciciosDelDia.filter(e=>e.seriesDeHoy.length).length}</strong><span>Ejercicios entrenados</span></div></div><p>Tu trabajo de hoy forma parte de tu progreso.</p><button className="sfm-primary" onClick={()=>{setResumenAbierto(false);onSalir?.()}}>Volver a Hoy</button><button className="sfm-secondary" onClick={()=>setResumenAbierto(false)}>Revisar y corregir series</button></HojaResumen>}
+      {resumenAbierto&&<HojaResumen titulo="Sesión completada" cerrar={()=>setResumenAbierto(false)}><p data-tour="resumen">{plantilla.nombre} · {new Date().toLocaleDateString('es',{day:'numeric',month:'long'})}</p><div className="sfm-metrics sfm-metrics--two"><div><strong>{seriesHechas}</strong><span>Series registradas</span></div><div><strong>{ejerciciosDelDia.filter(e=>e.seriesDeHoy.length).length}</strong><span>Ejercicios entrenados</span></div></div><p>Tu trabajo de hoy forma parte de tu progreso.</p><button className="sfm-primary" onClick={()=>{setResumenAbierto(false);guia?.emitir("resumen-cerrado");onSalir?.()}}>Volver a Hoy</button><button className="sfm-secondary" onClick={()=>setResumenAbierto(false)}>Revisar y corregir series</button></HojaResumen>}
       {listaAbierta && (
         <HojaDelDia
           ejercicios={ejerciciosDelDia}

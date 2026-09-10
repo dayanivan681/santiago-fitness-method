@@ -1,3 +1,4 @@
+import { useRecorrido } from "./recorrido-contexto";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Alta as ValidarAlta, type Alta } from "../../shared/v2/contratos";
@@ -12,6 +13,8 @@ export function Onboarding({
   servicio: ServicioCoach;
   base: string;
 }) {
+  const guia = useRecorrido();
+  const emitirGuia=guia?.emitir;
   const { borradorId } = useParams();
   const navegar = useNavigate();
   const [alta, setAlta] = useState<Alta | null>(null);
@@ -84,6 +87,7 @@ export function Onboarding({
           setRevision(c.revision);
           ultima.current = serial;
           setEstado("Borrador guardado");
+          emitirGuia?.("borrador-guardado",valor.id);
         })
         .catch((e) => {
           setError(e.message);
@@ -92,8 +96,14 @@ export function Onboarding({
         });
       return cola.current;
     },
-    [servicio],
+    [servicio,emitirGuia],
   );
+  const ultimoBorrador=useRef({alta,guardar});
+  useEffect(()=>{ultimoBorrador.current={alta,guardar};},[alta,guardar]);
+  useEffect(()=>()=>{
+    const ultimo=ultimoBorrador.current;
+    if(servicio.demo&&ultimo.alta&&!publicando.current)void ultimo.guardar(ultimo.alta).catch(()=>{});
+  },[servicio]);
   useEffect(() => {
     if (!alta) return;
     const t = setTimeout(() => {
@@ -116,6 +126,7 @@ export function Onboarding({
       return;
     }
     setAlta({ ...a, paso: Math.min(3, a.paso + 1) });
+    guia?.emitir(a.paso===1?"alta-contexto":"alta-plan");
   }
   async function crear() {
     if (publicando.current) return;
@@ -129,6 +140,7 @@ export function Onboarding({
       });
       await guardar(listo);
       const id = await servicio.crear(listo, rev.current);
+      guia?.emitir("cliente-creado",id);
       navegar(`${base}/clientes/${id}`);
     } catch (e) {
       publicando.current = false;
@@ -163,8 +175,9 @@ export function Onboarding({
         ))}
       </div>
       {a.paso === 1 && (
-        <div className="sfm-form">
+        <div className="sfm-form" data-tour="alta-persona">
           <p className="sfm-lead">Todo empieza por lo que quiere conseguir.</p>
+          {guia?.paso==="crear-persona"&&<button className="sfm-tour-example" onClick={()=>setAlta({...a,perfil:{...p,nombre:guia.nombreEjemplo,objetivo:"Ganar fuerza y entrenar con constancia"}})}>Usar un ejemplo ficticio</button>}
           <label className="sfm-field">
             <span>Nombre</span>
             <input
@@ -195,7 +208,7 @@ export function Onboarding({
         </div>
       )}
       {a.paso === 2 && (
-        <div className="sfm-form">
+        <div className="sfm-form" data-tour="alta-contexto">
           <h2>¿Cuántos días puede entrenar?</h2>
           <div className="sfm-frecuencia">
             {[1, 2, 3, 4, 5, 6, 7].map((n) => (
@@ -295,7 +308,7 @@ export function Onboarding({
         </>
       )}
       <ErrorVisible error={error} />
-      <footer className="sfm-form-footer">
+      <footer className="sfm-form-footer" data-tour="alta-publicar">
         <button
           className="sfm-primary"
           disabled={ocupado || (a.paso === 3 && !a.plan.revisado)}

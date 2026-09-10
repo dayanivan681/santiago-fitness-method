@@ -44,7 +44,7 @@ export function EntrenamientoHoy({
   return (
     <>
       <div className="contenido">
-        <header className="pantalla">
+        <header data-tour="sesion-hoy" className="pantalla">
           <p className="sfm-eyebrow">Tu próxima sesión</p>
           <h2 className="sfm-today-title">{plantilla.nombre}</h2>
           <p className="pantalla__sub">
@@ -81,7 +81,7 @@ export function EntrenamientoHoy({
           <>
             {/* La única acción de la pantalla. Con una sesión abierta cambia de
                 verbo y lleva el progreso: entrar y seguir es lo mismo. */}
-            <button type="button" className="accion" onClick={onComenzar} style={{ marginTop: 18 }}>
+            <button type="button" data-tour="comenzar" className="accion" onClick={onComenzar} style={{ marginTop: 18 }}>
               {enCurso
                 ? `Continuar · ${seriesHechas} de ${seriesObjetivo} series`
                 : terminada

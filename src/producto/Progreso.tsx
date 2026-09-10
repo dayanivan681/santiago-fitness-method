@@ -1,3 +1,4 @@
+import { useRecorrido } from "./recorrido-contexto";
 import { useEffect, useState } from "react";
 import type { Cambio } from "../../shared/v2/contratos";
 import type { Repositorio } from "../datos/repositorio";
@@ -291,6 +292,7 @@ function ListaSesiones({
   sesiones: Sesion[];
   obtenerSeries: (id: string) => Promise<SerieRegistrada[]>;
 }) {
+  const guia=useRecorrido();
   const [detalle, setDetalle] = useState<{
     sesion: Sesion;
     series: SerieRegistrada[];
@@ -308,11 +310,11 @@ function ListaSesiones({
             .sort((a, b) => b.fecha.localeCompare(a.fecha))
             .map((s) => (
               <button
-                className="sfm-row sfm-history-row"
+                data-tour="sesion-historial" className="sfm-row sfm-history-row"
                 key={s.id}
                 onClick={() =>
                   void obtenerSeries(s.id).then((series) =>
-                    setDetalle({ sesion: s, series }),
+                    {setDetalle({ sesion: s, series });guia?.emitir("historial-abierto");},
                   )
                 }
               >
@@ -339,9 +341,9 @@ function ListaSesiones({
       {detalle && (
         <Hoja
           titulo={detalle.sesion.prescripcion?.nombre ?? "Entrenamiento"}
-          cerrar={() => setDetalle(null)}
+          cerrar={() => {setDetalle(null);guia?.emitir("historial-cerrado");}}
         >
-          <p className="sfm-hint">
+          <p className="sfm-hint" data-tour="detalle-historial">
             <FechaBonita fecha={detalle.sesion.fecha} /> ·{" "}
             {detalle.series.filter((s) => !s.esCalentamiento).length} series de
             trabajo
