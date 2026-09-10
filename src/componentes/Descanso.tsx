@@ -95,7 +95,7 @@ export function Descanso() {
       </button>
       <button
         type="button"
-        className="descanso__boton descanso__boton--fuerte"
+        data-tour="cerrar-descanso" className="descanso__boton descanso__boton--fuerte"
         onClick={()=>{terminar();guia?.emitir("descanso-cerrado");}}
       >
         Listo

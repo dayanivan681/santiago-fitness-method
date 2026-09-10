@@ -181,7 +181,7 @@ export function Onboarding({
           <label className="sfm-field">
             <span>Nombre</span>
             <input
-              autoComplete="name"
+              data-tour="alta-nombre" autoComplete="name"
               value={p.nombre}
               maxLength={120}
               placeholder="Nombre y apellido"
@@ -193,7 +193,7 @@ export function Onboarding({
           <label className="sfm-field">
             <span>Objetivo compartido</span>
             <textarea
-              value={p.objetivo}
+              data-tour="alta-objetivo" value={p.objetivo}
               maxLength={4000}
               placeholder="¿Qué le gustaría lograr con tu acompañamiento?"
               onChange={(e) =>
@@ -210,7 +210,7 @@ export function Onboarding({
       {a.paso === 2 && (
         <div className="sfm-form" data-tour="alta-contexto">
           <h2>¿Cuántos días puede entrenar?</h2>
-          <div className="sfm-frecuencia">
+          <div className="sfm-frecuencia" data-tour="alta-frecuencia">
             {[1, 2, 3, 4, 5, 6, 7].map((n) => (
               <button
                 key={n}
@@ -292,7 +292,7 @@ export function Onboarding({
             perfil={p}
             onChange={(plan) => setAlta({ ...a, plan })}
           />
-          <label className="sfm-check">
+          <label className="sfm-check" data-tour="alta-revision">
             <input
               type="checkbox"
               checked={a.plan.revisado}
@@ -310,7 +310,7 @@ export function Onboarding({
       <ErrorVisible error={error} />
       <footer className="sfm-form-footer" data-tour="alta-publicar">
         <button
-          className="sfm-primary"
+          data-tour="alta-continuar" className="sfm-primary"
           disabled={ocupado || (a.paso === 3 && !a.plan.revisado)}
           onClick={() => void (a.paso < 3 ? siguiente() : crear())}
         >

@@ -307,7 +307,7 @@ export function EditorPlan({
                   inputMode="numeric"
                   min={min}
                   max={max}
-                  value={item[k]}
+                  data-tour={k === "descansoSegundos" ? "prescripcion-descanso" : undefined} value={item[k]}
                   onChange={(e) =>
                     cambiar(
                       d.slots.map((s, i) =>
@@ -368,7 +368,7 @@ export function EditorPlan({
               <option value="revisarReducir">Revisar / reducir</option>
             </select>
           </label>
-          <button data-tour-action="prescripcion-lista" className="sfm-primary" onClick={() => setEditar(null)}>
+          <button data-tour="prescripcion-lista" data-tour-action="prescripcion-lista" className="sfm-primary" onClick={() => setEditar(null)}>
             Listo
           </button>
           <button

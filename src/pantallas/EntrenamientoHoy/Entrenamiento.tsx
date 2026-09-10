@@ -257,7 +257,7 @@ export function Entrenamiento({
       )}
 
       <ErrorVisible error={errorCierre}/>
-      {resumenAbierto&&<HojaResumen titulo="Sesión completada" cerrar={()=>setResumenAbierto(false)}><p data-tour="resumen">{plantilla.nombre} · {new Date().toLocaleDateString('es',{day:'numeric',month:'long'})}</p><div className="sfm-metrics sfm-metrics--two"><div><strong>{seriesHechas}</strong><span>Series registradas</span></div><div><strong>{ejerciciosDelDia.filter(e=>e.seriesDeHoy.length).length}</strong><span>Ejercicios entrenados</span></div></div><p>Tu trabajo de hoy forma parte de tu progreso.</p><button className="sfm-primary" onClick={()=>{setResumenAbierto(false);guia?.emitir("resumen-cerrado");onSalir?.()}}>Volver a Hoy</button><button className="sfm-secondary" onClick={()=>setResumenAbierto(false)}>Revisar y corregir series</button></HojaResumen>}
+      {resumenAbierto&&<HojaResumen titulo="Sesión completada" cerrar={()=>setResumenAbierto(false)}><p data-tour="resumen">{plantilla.nombre} · {new Date().toLocaleDateString('es',{day:'numeric',month:'long'})}</p><div className="sfm-metrics sfm-metrics--two"><div><strong>{seriesHechas}</strong><span>Series registradas</span></div><div><strong>{ejerciciosDelDia.filter(e=>e.seriesDeHoy.length).length}</strong><span>Ejercicios entrenados</span></div></div><p>Tu trabajo de hoy forma parte de tu progreso.</p><button data-tour="cerrar-resumen" className="sfm-primary" onClick={()=>{setResumenAbierto(false);guia?.emitir("resumen-cerrado");onSalir?.()}}>Volver a Hoy</button><button className="sfm-secondary" onClick={()=>setResumenAbierto(false)}>Revisar y corregir series</button></HojaResumen>}
       {listaAbierta && (
         <HojaDelDia
           ejercicios={ejerciciosDelDia}

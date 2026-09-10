@@ -9,7 +9,12 @@ import {
 import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router";
 import { ContextoRecorrido, type Capitulo } from "./recorrido-contexto";
-import { recorridos, titulos, type PasoRecorrido } from "./recorridos";
+import {
+  accionesRecorrido,
+  recorridos,
+  titulos,
+  type PasoRecorrido,
+} from "./recorridos";
 import type { ServicioCoach } from "./servicio";
 import "./recorridos.css";
 type Recorrido = {
@@ -279,6 +284,7 @@ export function ProveedorRecorridos({
       {actual && (
         <FocoRecorrido
           paso={paso}
+          clienteId={actual.cliente}
           pausa={actual.pausa}
           confirmacion={actual.confirmacion}
           titulo={titulos[actual.capitulo]}
@@ -306,6 +312,7 @@ export function ProveedorRecorridos({
               )}
               {!paso.evento && (
                 <button
+                  className="sfm-tour-primary"
                   disabled={
                     paso.id === "preview-comprobar" && !previewVerificada
                   }
@@ -373,6 +380,7 @@ export function ProveedorRecorridos({
 }
 function FocoRecorrido({
   paso,
+  clienteId,
   pausa,
   titulo,
   numero,
@@ -384,6 +392,7 @@ function FocoRecorrido({
   seguir,
 }: {
   paso?: PasoRecorrido;
+  clienteId: string;
   pausa: boolean;
   titulo: string;
   numero: number;
@@ -396,12 +405,16 @@ function FocoRecorrido({
 }) {
   const tarjeta = useRef<HTMLDivElement>(null);
   const teclado = useRef(false);
+  const [indicacion, setIndicacion] = useState("Mira aquí");
+  const [pulso, setPulso] = useState(0);
+  const [quieto, setQuieto] = useState(false);
   const [host, setHost] = useState<HTMLElement>(document.body);
   const [rect, setRect] = useState<{
     x: number;
     y: number;
     w: number;
     h: number;
+    abajo: boolean;
   } | null>(null);
   const [ventana, setVentana] = useState({ top: 0, compacta: false });
   const [encontrado, setEncontrado] = useState(false);
@@ -418,6 +431,8 @@ function FocoRecorrido({
   useLayoutEffect(() => {
     let frame = 0,
       ultimo: HTMLElement | null = null;
+    let recolocar = true;
+    const editados = new WeakSet<HTMLElement>();
     const medir = () => {
       const dialog = Array.from(
         document.querySelectorAll<HTMLDialogElement>("dialog[open]"),
@@ -445,16 +460,109 @@ function FocoRecorrido({
               ),
             )
           : [];
-      const objetivo =
+      let objetivo =
         candidatos.find((e) => visible(e) && (!dialog || dialog.contains(e))) ??
         null;
+      const buscar = (ancla: string) =>
+        Array.from(
+          lugar.querySelectorAll<HTMLElement>(`[data-tour="${ancla}"]`),
+        ).find(visible) ?? null;
+      const editando = (e: HTMLElement | null) =>
+        e && document.activeElement === e;
+      const pendiente = (e: HTMLElement | null) =>
+        e instanceof HTMLInputElement || e instanceof HTMLTextAreaElement
+          ? !e.value.trim() || editando(e)
+          : false;
+      if (paso && !pausa) {
+        objetivo = buscar(accionesRecorrido[paso.id] ?? paso.ancla) ?? objetivo;
+        if (paso.id === "crear-persona") {
+          const nombre = buscar("alta-nombre"),
+            meta = buscar("alta-objetivo");
+          objetivo = pendiente(nombre)
+            ? nombre
+            : pendiente(meta)
+              ? meta
+              : buscar("alta-continuar");
+        }
+        if (paso.id === "crear-contexto") {
+          const frecuencia = buscar("alta-frecuencia");
+          objetivo =
+            frecuencia && !editados.has(frecuencia)
+              ? frecuencia
+              : buscar("alta-continuar");
+        }
+        if (paso.id === "crear-publicar") {
+          const revision = buscar("alta-revision");
+          objetivo = revision?.querySelector<HTMLInputElement>("input")?.checked
+            ? buscar("alta-continuar")
+            : revision;
+        }
+        if (paso.id === "crear-buscar") {
+          const fila = Array.from(
+            lugar.querySelectorAll<HTMLElement>("[data-tour-client]"),
+          ).find((e) => e.dataset.tourClient === clienteId && visible(e));
+          const campo = buscar("buscar-cliente");
+          objetivo = editando(campo) ? campo : (fila ?? campo);
+        }
+        if (
+          paso.id === "gestionar-objetivo" ||
+          paso.id === "gestionar-prescripcion"
+        ) {
+          const campo = buscar(
+            paso.id === "gestionar-objetivo"
+              ? "objetivo-perfil"
+              : "prescripcion-descanso",
+          );
+          objetivo =
+            campo && editados.has(campo) && !editando(campo)
+              ? buscar(
+                  paso.id === "gestionar-objetivo"
+                    ? "guardar-perfil"
+                    : "prescripcion-lista",
+                )
+              : campo;
+        }
+        if (paso.id === "cliente-detalle")
+          objetivo = lugar.querySelector<HTMLElement>(
+            'button[aria-label="Cerrar"]',
+          );
+        if (paso.id === "cliente-corregir") {
+          const campo = buscar("serie-activa");
+          objetivo =
+            campo?.querySelector<HTMLElement>('[aria-label^="Subir reps"]') ??
+            buscar("guardar-serie");
+          if (campo && editados.has(campo)) objetivo = buscar("guardar-serie");
+        }
+        if (paso.id === "cliente-peso" || paso.id === "cliente-reps")
+          objetivo =
+            objetivo?.querySelector<HTMLElement>(
+              'input,button[aria-label^="Subir"]',
+            ) ?? objetivo;
+      }
+      if (objetivo?.matches(":disabled")) objetivo = null;
       setEncontrado(Boolean(objetivo));
       if (objetivo) {
         objetivo.setAttribute("aria-describedby", "sfm-tour-instruccion");
         const r = objetivo.getBoundingClientRect();
-        if (ultimo !== objetivo) {
+        const cambiaObjetivo = ultimo !== objetivo;
+        if (cambiaObjetivo) {
           ultimo?.removeAttribute("aria-describedby");
+          ultimo?.removeAttribute("data-tour-highlight");
           ultimo = objetivo;
+          const tipo = objetivo.matches("input:not([type=checkbox]),textarea")
+            ? "Escribe aquí"
+            : objetivo.matches("button,a,label")
+              ? "Toca aquí"
+              : objetivo.querySelector("button,input,select") && paso?.evento
+                ? "Elige aquí"
+                : "Mira aquí";
+          setIndicacion(tipo);
+          objetivo.setAttribute(
+            "data-tour-highlight",
+            objetivo.matches("button,a") ? "accion" : "campo",
+          );
+          setQuieto(false);
+          setPulso((n) => n + 1);
           if (teclado.current) {
             const control = objetivo.matches("button,a,input,textarea,select")
               ? objetivo
@@ -463,8 +571,11 @@ function FocoRecorrido({
                 );
             control?.focus({ preventScroll: true });
           }
+        }
+        if (cambiaObjetivo || recolocar) {
+          recolocar = false;
           if (
-            r.top < top + (panel?.height ?? 180) + 12 ||
+            r.top < top + (panel?.height ?? 180) + 24 ||
             r.bottom > top + alto - 110
           )
             objetivo.scrollIntoView({ block: "center", behavior: "instant" });
@@ -472,6 +583,7 @@ function FocoRecorrido({
         const b = objetivo.getBoundingClientRect();
         const y = Math.max(top + (panel?.height ?? 180) + 16, b.top - 5);
         const nuevo = {
+          abajo: y - top < (panel?.height ?? 180) + 65,
           x: Math.max(4, b.left - 5),
           y,
           w: Math.min(window.innerWidth - 8, b.width + 10),
@@ -491,35 +603,85 @@ function FocoRecorrido({
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(medir);
     };
+    const reajustar = () => {
+      recolocar = true;
+      solicitar();
+    };
     const observer = new MutationObserver(solicitar);
     observer.observe(document.body, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["open", "data-tour", "aria-pressed"],
+      attributeFilter: [
+        "open",
+        "data-tour",
+        "aria-pressed",
+        "disabled",
+        "checked",
+        "value",
+      ],
     });
     const resize =
       typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(solicitar)
+        ? new ResizeObserver(reajustar)
         : null;
     if (tarjeta.current) resize?.observe(tarjeta.current);
-    window.addEventListener("resize", solicitar);
+    const interactuar = (e: Event) => {
+      if (!(e.target instanceof HTMLElement)) return;
+      if (ultimo?.contains(e.target)) setQuieto(true);
+      if (e.type === "input" || e.type === "change") editados.add(e.target);
+      if (
+        paso?.id === "crear-contexto" &&
+        (e.type === "click" || e.type === "input")
+      ) {
+        const frecuencia = document.querySelector<HTMLElement>(
+          '[data-tour="alta-frecuencia"]',
+        );
+        if (frecuencia && e.target.closest('[data-tour="alta-contexto"]'))
+          editados.add(frecuencia);
+      }
+      if (
+        paso?.id === "cliente-corregir" &&
+        (e.type === "input" || e.type === "click") &&
+        e.target.closest('[data-tour="serie-activa"]')
+      ) {
+        const serie = buscarSerie();
+        if (
+          serie &&
+          (e.target.matches("input") ||
+            e.target.closest(
+              '[aria-label^="Subir reps"],[aria-label^="Bajar reps"]',
+            ))
+        )
+          editados.add(serie);
+      }
+      solicitar();
+    };
+    const buscarSerie = () =>
+      document.querySelector<HTMLElement>('[data-tour="serie-activa"]');
+    const eventos = ["input", "change", "focusout", "click", "pointerdown"];
+    eventos.forEach((e) => document.addEventListener(e, interactuar, true));
+    window.addEventListener("resize", reajustar);
     window.addEventListener("scroll", solicitar, true);
-    window.visualViewport?.addEventListener("resize", solicitar);
+    window.visualViewport?.addEventListener("resize", reajustar);
     window.visualViewport?.addEventListener("scroll", solicitar);
     solicitar();
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
       resize?.disconnect();
-      window.removeEventListener("resize", solicitar);
+      window.removeEventListener("resize", reajustar);
       window.removeEventListener("scroll", solicitar, true);
-      window.visualViewport?.removeEventListener("resize", solicitar);
+      window.visualViewport?.removeEventListener("resize", reajustar);
       window.visualViewport?.removeEventListener("scroll", solicitar);
       ultimo?.removeAttribute("aria-describedby");
+      ultimo?.removeAttribute("data-tour-highlight");
+      eventos.forEach((e) =>
+        document.removeEventListener(e, interactuar, true),
+      );
       document.documentElement.style.removeProperty("--tour-space");
     };
-  }, [paso, pausa, host]);
+  }, [paso, pausa, host, clienteId]);
   useEffect(() => {
     const f = (e: KeyboardEvent) => {
       if (e.key === "Tab") teclado.current = true;
@@ -541,9 +703,28 @@ function FocoRecorrido({
       {!pausa && rect && (
         <div
           aria-hidden="true"
-          className="sfm-tour-focus"
+          className={`sfm-tour-focus ${quieto ? "sfm-tour-focus--quieto" : ""}`}
           style={{ left: rect.x, top: rect.y, width: rect.w, height: rect.h }}
-        />
+        >
+          <span key={pulso} className="sfm-tour-halos">
+            <i />
+            <i />
+          </span>
+          {!ventana.compacta && (
+            <span
+              style={{
+                left: Math.min(
+                  Math.max(rect.w / 2, 80 - rect.x),
+                  window.innerWidth - 80 - rect.x,
+                ),
+              }}
+              className={`sfm-tour-cue ${rect.abajo ? "sfm-tour-cue--below" : ""}`}
+            >
+              {indicacion}
+              <span className="sfm-tour-arrow">↓</span>
+            </span>
+          )}
+        </div>
       )}
       <div
         ref={tarjeta}

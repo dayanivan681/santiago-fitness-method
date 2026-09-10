@@ -820,7 +820,7 @@ function FichaCliente({
                   ))}
                 </details>
                 <button
-                  className="sfm-primary"
+                  data-tour="guardar-perfil" className="sfm-primary"
                   disabled={ocupado}
                   onClick={() => {
                     setOcupado(true);

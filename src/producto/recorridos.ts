@@ -407,3 +407,10 @@ export const recorridos: Record<Capitulo, PasoRecorrido[]> = {
     ),
   ],
 };
+
+/** Objetivo de acción dentro de un paso; el resultado sigue gobernado por evento. */
+export const accionesRecorrido: Record<string, string> = {
+  "cliente-reloj": "cerrar-descanso",
+  "cliente-resumen": "cerrar-resumen",
+  "preview-serie": "guardar-serie",
+};
