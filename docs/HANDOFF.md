@@ -7,11 +7,36 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-10T00:00:38.033Z
+- **Última sincronización:** 2026-09-10T14:15:13.312Z
+
+## Guías interactivas de demo — 2026-09-10
+
+- Código `b520e04`, preview `fa49c081` en el alias público `codex-premium-v2`.
+  Continúa la bienvenida del Coach con creación, gestión de perfil/plan,
+  borrador/publicación y vista previa. Primera entrada del Cliente con práctica
+  de una serie, corrección, descanso, cierre, historial, Biblioteca y perfil.
+- Misma persona ficticia entre los dos roles. La vista previa verifica que su
+  simulación no cambia el historial. Repetir prepara otro escenario en memoria.
+  La guía avanza por acciones confirmadas; fallos de guardado no avanzan el paso.
+- Foco recortado, transición de 250 ms, tarjeta translúcida, progreso y check
+  sobrios. Teclado, movimiento reducido, controles de 48 px, pausa y retorno a
+  puntos válidos. Las hojas usan opacidad durante el tour para no desplazar el
+  panel fijo con su animación de entrada.
+- 705 pruebas/70 archivos, lint y build PASS. Recorridos completos en navegador
+  a 320/375/390/430/768/1024 px; preview remoto a 390 PASS, sin errores de
+  consola ni solicitudes a APIs privadas. Prueba adicional de teclado numérico
+  con área visible 390×400, doble toque, cambio de sección, retorno y recarga PASS.
+- Evidencias locales fuera de Git: `/tmp/sfm-tour-*.log`, capturas
+  `/tmp/sfm-tour-<ancho>-<paso>.png`, `/tmp/sfm-tour-teclado.png`.
+- Activación exclusivamente en `/demo`; sin API nueva, migración, cambio de
+  Access, D1 o R2. PDFs intactos. Sin uso de iPhone físico. Las guías reales
+  siguen fuera de esta entrega, tal como se aprobó.
+- La publicación del turno actualiza el dominio canónico; comprobar el commit
+  resultante y la primera entrada de ambos roles antes de anunciar el cierre.
 
 ## Release v2 — 2026-09-09
 
@@ -888,6 +913,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-10T14:15:13.313Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Guias interactivas premium exclusivamente en demo: onboarding y gestion Coach, preview aislada y primera practica Cliente conectada a su historial
+- **Verificación:** 705 tests PASS; lint/build PASS; recorridos completos en seis anchuras; preview remoto PASS sin API privada ni errores; teclado, pausa, doble toque y reinicio PASS; PDFs intactos
+- **Siguiente:** Verificar deployment canonico resultante. Guias en cuentas reales fuera del alcance aprobado
+
 
 ### 2026-09-10T00:00:38.034Z | codex | CLAIM
 - **Estado:** active
