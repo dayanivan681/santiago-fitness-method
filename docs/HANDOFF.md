@@ -7,11 +7,33 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-10T15:26:36.399Z
+- **Última sincronización:** 2026-09-10T15:35:39.081Z
+
+## Resaltado premium de acciones — 2026-09-10
+
+- Código `f12e66c`; preview `3fc8a477` en `codex-premium-v2`, verificado remoto.
+- Botón real blanco, contorno rojo, dos pulsaciones al entrar y un recordatorio
+  limitado; etiqueta con flecha dentro de los límites de pantalla. Se detiene al
+  interactuar y respeta movimiento reducido. Sin capas que capturen el toque.
+- El foco sigue nombre/objetivo → Continuar, frecuencia → Continuar, revisión →
+  Publicar, edición → Guardar/Listo, ficha correcta, cierre de descanso/resumen
+  y corrección de serie. Recoloca el campo al abrir el teclado; limpia estilos
+  y referencias al pausar o salir. Sin cambios en APIs, cloud ni datos reales.
+- 705 pruebas/70 archivos PASS, lint y build PASS. Recorridos completos en
+  320/375/390/430/768/1024; preview remoto completo y pruebas específicas PASS.
+  Comprobados errores de formulario, doble toque, teclado, pausa/regreso,
+  movimiento reducido, geometría del foco y ausencia de peticiones privadas.
+- QA con Playwright/Chrome emulado (Browser plugin no disponible); sin iPhone
+  físico. Evidencias `/tmp/sfm-highlight-*.log`, capturas `/tmp/sfm-tour-*.png`,
+  `/tmp/sfm-highlight-pulse.png` y vídeo `/tmp/sfm-highlight-motion/`.
+- Una ejecución de tests concurrente con cuatro navegadores mostró una aserción
+  temporal 3/4 vs 4/4 en un test existente; repetición completa aislada PASS.
+- Publicación canónica por handoff; comprobar deployment resultante antes del
+  cierre. PDFs intactos; ninguna migración.
 
 ## Guías interactivas de demo — 2026-09-10
 
@@ -913,6 +935,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-10T15:35:39.082Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Guías demo con foco sobre la acción exacta, botones destacados, halo animado y etiquetas con flecha; preview verificado
+- **Verificación:** npm test: 705 PASS; npm run lint: PASS; npm run build: PASS; QA seis anchos y preview remoto: PASS
+- **Siguiente:** Comprobar deployment canónico resultante en lectura y recorrido demo aislado
+
 
 ### 2026-09-10T15:26:36.400Z | codex | CLAIM
 - **Estado:** active
