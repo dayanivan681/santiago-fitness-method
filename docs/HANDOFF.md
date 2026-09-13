@@ -7,11 +7,28 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-13T00:31:45.837Z
+- **Última sincronización:** 2026-09-13T00:36:08.873Z
+
+## Corrección de scroll de las guías — 2026-09-12
+
+- Código `e260204`, preview `a2690ff6`. La interpolación de posición del foco
+  provocaba hasta 83 px de desfase al hacer scroll durante el alta. Eliminada:
+  la geometría sigue al control sin transición; se conserva el halo de entrada.
+- No dibujar contornos colapsados/etiquetas cuando el control sale del área
+  visible. El scroll manual detiene los pulsos. Pequeños cambios de altura
+  (barra del navegador/tarjeta) ya no recentran el formulario; teclado y cambios
+  de ancho siguen teniendo recuperación de visibilidad.
+- 705 pruebas/70 archivos, lint y build PASS. Recorridos completos Coach,
+  gestión, preview y Cliente a 320/375/390/430/768/1024 PASS. Prueba específica
+  de scroll mide 0 px de desfase en todas las muestras; sin foco fantasma ni
+  recentrado al simular la barra del navegador. Teclado/doble toque/pausa PASS.
+- Preview remoto: recorrido completo y prueba de scroll PASS. Evidencias
+  `/tmp/sfm-scroll-*.log` y `/tmp/sfm-scroll-390-after.png`. QA con navegador
+  emulado, sin iPhone físico. Sin API, cloud, migraciones ni cambios a PDFs.
 
 ## Resaltado premium de acciones — 2026-09-10
 
@@ -935,6 +952,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-13T00:36:08.875Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Corregido el desfase del foco al hacer scroll y el recentrado inesperado durante alta; recorridos demo verificados
+- **Verificación:** 705 tests PASS; lint PASS; build PASS; seis anchos y preview remoto PASS
+- **Siguiente:** Verificar deployment canónico y cerrar entrega
+
 
 ### 2026-09-13T00:31:45.839Z | codex | CLAIM
 - **Estado:** active
