@@ -7,11 +7,32 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-13T23:35:29.426Z
+- **Última sincronización:** 2026-09-13T23:39:45.068Z
+
+## Descanso automático por serie — 2026-09-13
+
+- Decisión explícita del dueño: sustituir el inicio manual por descanso automático
+  después de guardar cada serie nueva, con la duración del Coach. Los PDFs quedan
+  intactos. Aplica a entrenamiento real, demo y simulación de Vista previa.
+- Código `1b46fa1`, preview `25a90b90` verificado en el alias público.
+- Incluye series de calentamiento; cero segundos no abre el temporizador.
+  Un guardado pendiente/fallido no lo inicia. Correcciones no lo reinician;
+  otra serie nueva sustituye el contador. Omitir lo cierra y +30s añade tiempo.
+  Terminar sesión cierra el descanso sólo tras confirmar el cierre.
+- Ayuda del Cliente actualizada. Sin APIs nuevas, migraciones ni cambios de
+  almacenamiento. Se conserva el cálculo histórico de descanso entre series.
+- 710 pruebas/70 archivos, lint y build PASS. Regresiones de duración del Coach,
+  cero, error/pending/doble toque, corrección, siguiente serie y cierre PASS.
+- Playwright/Chrome sobre build local a 320/390/1024 y preview remoto a 390 PASS:
+  inicio, prórroga, corrección, nueva serie, omitir y terminar; cronómetro único,
+  controles >=44px, Editar accesible, sin desbordes ni errores/peticiones privadas.
+  Evidencias `/tmp/sfm-auto-rest-*.log` y `/tmp/sfm-auto-rest-*.png`.
+  Sin iPhone físico ni lector de pantalla real. Browser plugin no disponible.
+- Publicación del turno dispara deployment canónico; verificar commit servido.
 
 ## Onboarding contextual de demo — 2026-09-13
 
@@ -994,6 +1015,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-13T23:39:45.069Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Descanso automático tras cada serie guardada, Omitir/+30s, sin reinicio al corregir y cierre al terminar; preview 25a90b90 verificado
+- **Verificación:** npm test: 710/710; npm run lint: PASS; npm run build: PASS; Playwright 320/390/1024 y remoto 390: PASS
+- **Siguiente:** ninguno
+
 
 ### 2026-09-13T23:35:29.428Z | codex | CLAIM
 - **Estado:** active
