@@ -432,6 +432,9 @@ function FocoRecorrido({
     let frame = 0,
       ultimo: HTMLElement | null = null;
     let recolocar = true;
+    let scrollAutomatico = false;
+    let altoAnterior = window.visualViewport?.height ?? window.innerHeight;
+    let anchoAnterior = window.innerWidth;
     const editados = new WeakSet<HTMLElement>();
     const medir = () => {
       const dialog = Array.from(
@@ -577,8 +580,10 @@ function FocoRecorrido({
           if (
             r.top < top + (panel?.height ?? 180) + 24 ||
             r.bottom > top + alto - 110
-          )
+          ) {
+            scrollAutomatico = true;
             objetivo.scrollIntoView({ block: "center", behavior: "instant" });
+          }
         }
         const b = objetivo.getBoundingClientRect();
         const y = Math.max(top + (panel?.height ?? 180) + 16, b.top - 5);
@@ -589,6 +594,12 @@ function FocoRecorrido({
           w: Math.min(window.innerWidth - 8, b.width + 10),
           h: Math.max(0, Math.min(b.bottom + 5, top + alto) - y),
         };
+        // No dibujar un borde colapsado ni una etiqueta flotante cuando el
+        // control ha salido del espacio utilizable bajo la guía.
+        if (nuevo.h < 32 || b.top >= top + alto) {
+          setRect(null);
+          return;
+        }
         setRect((a) =>
           a &&
           Object.keys(nuevo).every(
@@ -604,7 +615,14 @@ function FocoRecorrido({
       frame = requestAnimationFrame(medir);
     };
     const reajustar = () => {
-      recolocar = true;
+      const alto = window.visualViewport?.height ?? window.innerHeight;
+      // La barra del navegador y el tamaño de la tarjeta no deben recentrar
+      // el formulario mientras la persona lo está recorriendo.
+      recolocar ||=
+        Math.abs(alto - altoAnterior) > 120 ||
+        window.innerWidth !== anchoAnterior;
+      altoAnterior = alto;
+      anchoAnterior = window.innerWidth;
       solicitar();
     };
     const observer = new MutationObserver(solicitar);
@@ -662,18 +680,23 @@ function FocoRecorrido({
     const eventos = ["input", "change", "focusout", "click", "pointerdown"];
     eventos.forEach((e) => document.addEventListener(e, interactuar, true));
     window.addEventListener("resize", reajustar);
-    window.addEventListener("scroll", solicitar, true);
+    const alDesplazar = () => {
+      if (!scrollAutomatico) setQuieto(true);
+      scrollAutomatico = false;
+      solicitar();
+    };
+    window.addEventListener("scroll", alDesplazar, true);
     window.visualViewport?.addEventListener("resize", reajustar);
-    window.visualViewport?.addEventListener("scroll", solicitar);
+    window.visualViewport?.addEventListener("scroll", alDesplazar);
     solicitar();
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
       resize?.disconnect();
       window.removeEventListener("resize", reajustar);
-      window.removeEventListener("scroll", solicitar, true);
+      window.removeEventListener("scroll", alDesplazar, true);
       window.visualViewport?.removeEventListener("resize", reajustar);
-      window.visualViewport?.removeEventListener("scroll", solicitar);
+      window.visualViewport?.removeEventListener("scroll", alDesplazar);
       ultimo?.removeAttribute("aria-describedby");
       ultimo?.removeAttribute("data-tour-highlight");
       eventos.forEach((e) =>
