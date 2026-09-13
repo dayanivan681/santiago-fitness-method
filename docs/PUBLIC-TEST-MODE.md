@@ -8,6 +8,13 @@ en la implementación v2.
 Recargar reinicia la simulación. Usa componentes reales y no abre IndexedDB ni
 llama APIs privadas. `/presentacion` enlaza a esta misma demo.
 
+La demo ofrece una bienvenida breve por rol y ayuda contextual descartable.
+El Coach crea una persona y revisa/publica su plan; el Cliente practica su
+primera serie. No hay capítulos secuenciales ni bloqueo de navegación o scroll.
+«Ayuda» contiene instrucciones opcionales por rol y no modifica datos. Cierres,
+tareas completadas y la persona creada se conservan en memoria hasta recargar.
+Este onboarding no está habilitado en cuentas reales.
+
 La vista previa dentro de Coach lee sólo datos autorizados y simula cambios en
 memoria. «Entrenar juntos» es una acción real distinta, con autor registrado.
 

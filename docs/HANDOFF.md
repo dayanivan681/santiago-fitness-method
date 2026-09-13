@@ -7,11 +7,36 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-13T17:24:16.232Z
+- **Última sincronización:** 2026-09-13T22:42:40.015Z
+
+## Onboarding contextual de demo — 2026-09-13
+
+- Código `f996e07`, preview `b1272113`, alias público `codex-premium-v2`.
+- Una bienvenida por rol. Coach abre directamente Datos, Días y Plan; se
+  mantienen validación, borradores, advertencias y revisión antes de publicar.
+  Cliente recibe ayuda en Hoy y al registrar su primera serie; el guardado
+  confirmado cierra la tarea sin exigir visitas a otras secciones.
+- Retirados los cuatro capítulos, 48 pasos y bloqueos de scroll, teclado,
+  navegación y foco. Consejos dentro del contenido, descartables en memoria;
+  Ayuda opcional por rol. No hay prácticas automáticas ni creación de escenarios
+  al consultar ayuda. La persona creada se conserva al cambiar de rol.
+- Invitación etiquetada como simulación antes de pulsar. Vista previa no
+  registra actividad ni completa la primera tarea del Cliente. Cuentas reales
+  conservan su presentación; sin APIs nuevas, migraciones ni cambios a PDFs.
+- 707 pruebas/70 archivos, lint y build PASS. Regresiones de guardado fallido,
+  publicación revisada, borrador recuperable, cierre de ayuda, cambio de rol,
+  reinicio de demo y ausencia de persistencia/red privada PASS.
+- Playwright/Chrome: recorridos completos a 320/390/1024 y preview remoto a 320
+  PASS; tabulación, scroll libre, área reducida a 400 px para teclado, capturas,
+  ausencia de desbordamiento/overlay/errores de consola/peticiones privadas.
+  Evidencias `/tmp/sfm-context-*.log` y `/tmp/sfm-context-*.png`.
+  Browser plugin no disponible; sin iPhone físico ni lector de pantalla real.
+- La publicación del turno dispara el deployment canónico; comprobar el commit
+  servido y la primera entrada antes de anunciar el cierre.
 
 ## Guías sin scroll manual — 2026-09-13
 
@@ -969,6 +994,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-13T22:42:40.016Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Demo simplificada: bienvenida por rol, ayuda contextual libre y capítulos retirados; preview b1272113 verificado
+- **Verificación:** npm test: 707/707; npm run lint: PASS; npm run build: PASS; Playwright 320/390/1024 y remoto 320: PASS
+- **Siguiente:** ninguno
+
 
 ### 2026-09-13T17:24:16.233Z | codex | CLAIM
 - **Estado:** active
