@@ -1,4 +1,5 @@
-import { useRecorrido } from "./recorrido-contexto";
+import { useAyudaDemo } from "./ayuda-demo-contexto";
+import { ConsejoDemo } from "./AyudaDemo";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Alta as ValidarAlta, type Alta } from "../../shared/v2/contratos";
@@ -13,8 +14,7 @@ export function Onboarding({
   servicio: ServicioCoach;
   base: string;
 }) {
-  const guia = useRecorrido();
-  const emitirGuia=guia?.emitir;
+  const ayuda = useAyudaDemo();
   const { borradorId } = useParams();
   const navegar = useNavigate();
   const [alta, setAlta] = useState<Alta | null>(null);
@@ -87,7 +87,6 @@ export function Onboarding({
           setRevision(c.revision);
           ultima.current = serial;
           setEstado("Borrador guardado");
-          emitirGuia?.("borrador-guardado",valor.id);
         })
         .catch((e) => {
           setError(e.message);
@@ -96,7 +95,7 @@ export function Onboarding({
         });
       return cola.current;
     },
-    [servicio,emitirGuia],
+    [servicio],
   );
   const ultimoBorrador=useRef({alta,guardar});
   useEffect(()=>{ultimoBorrador.current={alta,guardar};},[alta,guardar]);
@@ -126,7 +125,7 @@ export function Onboarding({
       return;
     }
     setAlta({ ...a, paso: Math.min(3, a.paso + 1) });
-    guia?.emitir(a.paso===1?"alta-contexto":"alta-plan");
+
   }
   async function crear() {
     if (publicando.current) return;
@@ -140,7 +139,8 @@ export function Onboarding({
       });
       await guardar(listo);
       const id = await servicio.crear(listo, rev.current);
-      guia?.emitir("cliente-creado",id);
+      ayuda?.confirmarCliente(id);
+
       navegar(`${base}/clientes/${id}`);
     } catch (e) {
       publicando.current = false;
@@ -153,15 +153,15 @@ export function Onboarding({
     <section className="sfm-onboarding">
       <Cabecera
         titulo={
-          ["Conocer a la persona", "Diseñar su semana", "Su primer plan"][
+          (servicio.demo ? ["Datos del cliente", "Días y limitaciones", "Revisa el plan"] : ["Conocer a la persona", "Diseñar su semana", "Su primer plan"])[
             a.paso - 1
           ]
         }
-        kicker="Nuevo proceso de coaching"
+        kicker={servicio.demo ? "Nuevo cliente" : "Nuevo proceso de coaching"}
         volver={`${base}/clientes`}
       />
       <div className="sfm-stepper" aria-label={`Paso ${a.paso} de 3`}>
-        {["Persona", "Contexto", "Plan"].map((s, i) => (
+        {(servicio.demo ? ["Datos", "Días", "Plan"] : ["Persona", "Contexto", "Plan"]).map((s, i) => (
           <button
             key={s}
             className={i + 1 <= a.paso ? "is-active" : ""}
@@ -176,8 +176,7 @@ export function Onboarding({
       </div>
       {a.paso === 1 && (
         <div className="sfm-form" data-tour="alta-persona">
-          <p className="sfm-lead">Todo empieza por lo que quiere conseguir.</p>
-          {guia?.paso==="crear-persona"&&<button className="sfm-tour-example" onClick={()=>setAlta({...a,perfil:{...p,nombre:guia.nombreEjemplo,objetivo:"Ganar fuerza y entrenar con constancia"}})}>Usar un ejemplo ficticio</button>}
+          {servicio.demo ? <ConsejoDemo id="alta-datos"><p>Añade su nombre y lo que quiere conseguir.</p></ConsejoDemo> : <p className="sfm-lead">Todo empieza por lo que quiere conseguir.</p>}
           <label className="sfm-field">
             <span>Nombre</span>
             <input
@@ -191,11 +190,11 @@ export function Onboarding({
             />
           </label>
           <label className="sfm-field">
-            <span>Objetivo compartido</span>
+            <span>{servicio.demo ? "Objetivo" : "Objetivo compartido"}</span>
             <textarea
               data-tour="alta-objetivo" value={p.objetivo}
               maxLength={4000}
-              placeholder="¿Qué le gustaría lograr con tu acompañamiento?"
+              placeholder={servicio.demo ? "Por ejemplo: ganar fuerza" : "¿Qué le gustaría lograr con tu acompañamiento?"}
               onChange={(e) =>
                 setAlta({ ...a, perfil: { ...p, objetivo: e.target.value } })
               }
@@ -227,7 +226,7 @@ export function Onboarding({
             ))}
           </div>
           <label className="sfm-field">
-            <span>Limitaciones y contexto</span>
+            <span>{servicio.demo ? "Limitaciones (opcional)" : "Limitaciones y contexto"}</span>
             <textarea
               data-tour="alta-limitaciones" value={p.limitaciones}
               placeholder="Movimientos a evitar, molestias o adaptaciones necesarias"
@@ -264,7 +263,7 @@ export function Onboarding({
             ))}
           </details>
           <label className="sfm-field">
-            <span>Notas privadas del Coach</span>
+            <span>{servicio.demo ? "Notas privadas (opcional)" : "Notas privadas del Coach"}</span>
             <textarea
               data-tour="alta-notas" value={p.notas}
               placeholder="Sólo tú podrás leerlas"

@@ -1,4 +1,5 @@
-import { useRecorrido } from "./recorrido-contexto";
+import { ConsejoDemo } from "./AyudaDemo";
+import { useAyudaDemo } from "./ayuda-demo-contexto";
 import { useCallback, useEffect, useState } from "react";
 import {
   Link,
@@ -232,7 +233,7 @@ function HoyCoach({
               to={`${base}/nuevo/${c.id}`}
             >
               <span>
-                <small>Onboarding · Paso {(c.datos as Alta).paso} de 3</small>
+                <small>{base.startsWith("/demo") ? "Nuevo cliente" : "Onboarding"} · Paso {(c.datos as Alta).paso} de 3</small>
                 <strong>{(c.datos as Alta).perfil.nombre}</strong>
               </span>
               <Icono nombre="flecha" />
@@ -387,12 +388,12 @@ function ListaClientes({
         />
       )}
       <Link className="sfm-secondary" data-tour="nuevo" data-tour-action="abrir-alta" to={`${base}/nuevo`}>
-        <Icono nombre="mas" /> Comenzar onboarding
+        <Icono nombre="mas" /> {base.startsWith("/demo") ? "Crear cliente" : "Comenzar onboarding"}
       </Link>
       {borradores.length > 0 && (
         <>
           <div className="sfm-section-heading">
-            <h2>Onboarding en curso</h2>
+            <h2>{base.startsWith("/demo") ? "Clientes por terminar" : "Onboarding en curso"}</h2>
           </div>
           {borradores.map((c) => (
             <Link className="sfm-row" key={c.id} to={`${base}/nuevo/${c.id}`}>
@@ -413,7 +414,7 @@ function ListaClientes({
 }
 function FichaCoach(props: Parameters<typeof FichaCliente>[0]) {
   const { clienteId } = useParams();
-  return <FichaCliente key={`${clienteId}:${new URLSearchParams(location.search).get("guia")??""}`} {...props} />;
+  return <FichaCliente key={clienteId} {...props} />;
 }
 function FichaCliente({
   clientes,
@@ -430,7 +431,6 @@ function FichaCliente({
   preview: (c: Cliente) => void;
   entrenar: (c: Cliente) => void;
 }) {
-  const guia=useRecorrido();
   const { clienteId } = useParams();
   const c = clientes.find((c) => c.perfil.id === clienteId);
   const [seccion, setSeccion] = useState(() =>
@@ -499,7 +499,7 @@ function FichaCliente({
       );
       setCambios(await servicio.cambios(clienteId));
       await actualizar();
-      guia?.emitir(publicar?"plan-publicado":"plan-borrador");
+
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -511,7 +511,7 @@ function FichaCliente({
     setError("");
     try {
       setEnlace(await servicio.invitar(cliente.perfil.id));
-      guia?.emitir("invitacion-lista");
+
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -535,6 +535,7 @@ function FichaCliente({
           volver={`${base}/clientes`}
           accion={<Avatar nombre={c.perfil.nombre} />}
         />
+        <ClienteCreadoDemo id={c.perfil.id} />
         <p className="sfm-client-goal">
           {c.perfil.objetivo || "Objetivo por conversar"}
         </p>
@@ -669,8 +670,9 @@ function FichaCliente({
                     disabled={ocupado}
                     data-tour="invitar" onClick={() => void invitar()}
                   >
-                    Preparar invitación
+                    {servicio.demo ? "Probar invitación" : "Preparar invitación"}
                   </button>
+                  {servicio.demo && <p className="sfm-hint">Simulación: no da acceso real ni envía mensajes.</p>}
                   {enlace && (
                     <div className="sfm-invitation" data-tour="invitacion">
                       <p>{servicio.demo?"Simulación: no se crea ni se envía ninguna invitación.":"Lista para compartir personalmente."}</p>
@@ -834,7 +836,7 @@ function FichaCliente({
                       )
                       .then(() => {
                         setPerfil(null);
-                        guia?.emitir("perfil-guardado");
+
                         return actualizar();
                       })
                       .catch((e) => setError(e.message))
@@ -968,4 +970,9 @@ function BibliotecaCoach() {
       </div>
     </>
   );
+}
+
+function ClienteCreadoDemo({ id }: { id: string }) {
+  const ayuda = useAyudaDemo();
+  return ayuda?.completados.has(`creado:${id}`) ? <ConsejoDemo id={`creado:${id}`}><strong>Cliente creado. Su plan está listo.</strong></ConsejoDemo> : null;
 }

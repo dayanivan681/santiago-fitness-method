@@ -1,4 +1,4 @@
-import { useRecorrido } from "./recorrido-contexto";
+import { ConsejoCliente } from "./AyudaDemo";
 import { useState } from "react";
 import {
   Link,
@@ -36,7 +36,6 @@ export function ClienteApp({
   modo?: "real" | "demo" | "preview" | "acompanar";
   volver?: string;
 }) {
-  const guia=useRecorrido();
   const navegar = useNavigate();
   const ubicacion = useLocation();
   const [retomar, setRetomar] = useState(() =>
@@ -44,7 +43,7 @@ export function ClienteApp({
   );
   const comenzar = () => {
     setRetomar(true);
-    guia?.emitir("entrenamiento-abierto");
+
     navegar(`${base}/entrenar`);
   };
   const dia = useMemoria<string | null>(null);
@@ -119,6 +118,7 @@ export function ClienteApp({
                       month: "long",
                     })}
                   />
+                  {modo === "demo" && <ConsejoCliente />}
                   <EntrenamientoHoy
                     repositorio={repo}
                     memoriaDia={dia}
@@ -130,6 +130,8 @@ export function ClienteApp({
             <Route
               path="entrenar"
               element={
+                <>
+                {modo === "demo" && <ConsejoCliente entrenando />}
                 <Entrenamiento
                   repositorio={repo}
                   memoriaDia={dia}
@@ -139,6 +141,7 @@ export function ClienteApp({
                     navegar(base || "/");
                   }}
                 />
+                </>
               }
             />
             <Route

@@ -1,4 +1,3 @@
-import { useRecorrido } from "../producto/recorrido-contexto";
 /**
  * La barra del descanso. Fija abajo, sobre la navegación.
  *
@@ -24,7 +23,6 @@ import { useControlDescanso } from '../aplicacion/contextoDescanso'
 export const VARIABLE_ALTO = '--alto-cronometro'
 
 export function Descanso() {
-  const guia=useRecorrido();
   const { estado, restantes, prorrogar, terminar, barraDeSesion } = useControlDescanso()
   const barra = useRef<HTMLDivElement>(null)
 
@@ -96,7 +94,7 @@ export function Descanso() {
       <button
         type="button"
         data-tour="cerrar-descanso" className="descanso__boton descanso__boton--fuerte"
-        onClick={()=>{terminar();guia?.emitir("descanso-cerrado");}}
+        onClick={()=>{terminar();}}
       >
         Listo
       </button>

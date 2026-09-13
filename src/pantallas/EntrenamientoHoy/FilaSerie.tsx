@@ -1,4 +1,4 @@
-import { useRecorrido } from "../../producto/recorrido-contexto";
+import { useAyudaDemo } from "../../producto/ayuda-demo-contexto";
 /**
  * Una serie: peso, reps y RIR.
  * Guía del proyecto §5 (registro serie por serie), §8 (evaluación contra la
@@ -69,7 +69,6 @@ export function FilaSerie({
   onCorregir,
   onDeshacer,
 }: Props) {
-  const guia=useRecorrido();
   const paso = incrementoRegistradoLb(ejercicio)
   const porLado = ejercicio.tipoCarga === 'porLado'
 
@@ -89,6 +88,7 @@ export function FilaSerie({
   // Las reps también arrancan en la referencia: con el rango de fuerza (1–5),
   // empezar en el mínimo obligaría a pulsar cuatro veces cada serie.
   const [reps, setReps] = useState(registrada?.repsRealizadas ?? repsDePartida)
+  const ayuda = useAyudaDemo();
   const [rir, setRir] = useState(registrada?.rir ?? 2)
 
   // Técnica y calentamiento se marcan sólo cuando se salen de lo normal: por
@@ -126,7 +126,7 @@ export function FilaSerie({
     }
   const cambiarPeso = marcar(setPeso)
   const cambiarReps = marcar(setReps)
-  const cambiarRir = (v:SetStateAction<number>)=>{marcar(setRir)(v);guia?.emitir("rir-ajustado");}
+  const cambiarRir = (v:SetStateAction<number>)=>{marcar(setRir)(v);}
   const cambiarTecnica = marcar(setTecnica)
   const cambiarCalentamiento = marcar(setEsCalentamiento)
 
@@ -201,13 +201,14 @@ export function FilaSerie({
       if (registrada) {
         await onCorregir(registrada, valores)
         setEditando(false)
-        guia?.emitir("serie-corregida");
+
       } else {
         await onGuardar(valores)
         // Sólo después de registrarla de verdad: si se borrara antes y el
         // guardado fallara, se perdería justo lo que el borrador protege.
         if (idDelBorrador && repositorio) await repositorio.borrarBorrador(idDelBorrador)
-        guia?.emitir("serie-guardada");
+        ayuda?.confirmarSerie();
+
       }
     } catch(e){setError(e instanceof Error?e.message:'No se pudo guardar. Tus valores siguen aquí.')} finally {
       guardandoRef.current=false
@@ -377,7 +378,7 @@ export function FilaSerie({
               onBlur={() => {
                 cambiarPeso((p) => Math.max(0, redondear(p)))
                 setEditandoPeso(false)
-                guia?.emitir("peso-ajustado");
+
               }}
               onKeyDown={(e) => {
                 if (e.key !== 'Enter') return
@@ -394,7 +395,7 @@ export function FilaSerie({
                 type="button"
                 className="paso__boton"
                 disabled={peso <= 0}
-                onClick={() => {cambiarPeso((p) => redondear(Math.max(0, p - paso)));guia?.emitir("peso-ajustado");}}
+                onClick={() => {cambiarPeso((p) => redondear(Math.max(0, p - paso)));}}
                 aria-label={`Bajar peso de la ${etiqueta}`}
               >
                 –
@@ -410,7 +411,7 @@ export function FilaSerie({
               <button
                 type="button"
                 className="paso__boton"
-                onClick={() => {cambiarPeso((p) => redondear(p + paso));guia?.emitir("peso-ajustado");}}
+                onClick={() => {cambiarPeso((p) => redondear(p + paso));}}
                 aria-label={`Subir peso de la ${etiqueta}`}
               >
                 +
@@ -441,13 +442,13 @@ export function FilaSerie({
               onBlur={() => {
                 cambiarReps((r) => Math.max(1, Math.round(r)))
                 setEditandoReps(false)
-                guia?.emitir("reps-ajustadas");
+
               }}
               onKeyDown={(e) => {
                 if (e.key !== 'Enter') return
                 e.preventDefault()
                 e.currentTarget.blur()
-                if(guia?.paso!=="cliente-reps") void guardar()
+                void guardar()
               }}
             />
           ) : (
@@ -456,7 +457,7 @@ export function FilaSerie({
                 type="button"
                 className="paso__boton"
                 disabled={reps <= 1}
-                onClick={() => {cambiarReps((r) => Math.max(1, r - 1));guia?.emitir("reps-ajustadas");}}
+                onClick={() => {cambiarReps((r) => Math.max(1, r - 1));}}
                 aria-label={`Bajar reps de la ${etiqueta}`}
               >
                 –
@@ -472,7 +473,7 @@ export function FilaSerie({
               <button
                 type="button"
                 className="paso__boton"
-                onClick={() => {cambiarReps((r) => r + 1);guia?.emitir("reps-ajustadas");}}
+                onClick={() => {cambiarReps((r) => r + 1);}}
                 aria-label={`Subir reps de la ${etiqueta}`}
               >
                 +
@@ -483,6 +484,7 @@ export function FilaSerie({
 
         <div className="campo campo--rir">
           {conEtiquetas && <span className="etiqueta-campo">RIR</span>}
+          {!hecha && ayuda?.esCliente && <span className="sfm-rir-help">¿Cuántas repeticiones más podrías hacer?</span>}
           {hecha ? (
             <output className="valor" aria-label={`RIR de la ${etiqueta}`}>
               {formatearRir(registrada.rir)}

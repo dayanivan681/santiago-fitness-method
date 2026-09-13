@@ -50,8 +50,8 @@ import type {
   BorradorDeSerie,
 } from "./dominio/tipos";
 import "./producto/producto.css";
-import { ProveedorRecorridos } from "./producto/RecorridosDemo";
-import { useRecorrido } from "./producto/recorrido-contexto";
+import { ProveedorAyudaDemo } from "./producto/AyudaDemo";
+import { useAyudaDemo } from "./producto/ayuda-demo-contexto";
 import { GuiaDemo } from "./producto/GuiaDemo";
 export function App() {
   return (
@@ -254,10 +254,10 @@ function CoachReal() {
 }
 function Demo() {
   const [servicio] = useState(() => new ServicioCoach(true));
-  return <ProveedorRecorridos servicio={servicio}><ContenidoDemo servicio={servicio}/></ProveedorRecorridos>;
+  return <ProveedorAyudaDemo><ContenidoDemo servicio={servicio}/></ProveedorAyudaDemo>;
 }
 function ContenidoDemo({servicio}:{servicio:ServicioCoach}) {
-  const personaDemo=useRecorrido()?.clienteId;
+  const personaDemo=useAyudaDemo()?.clienteId;
   const loc = useLocation();
   const nav = useNavigate();
   const coach = loc.pathname.includes("/coach");
@@ -308,7 +308,7 @@ function ContenidoDemo({servicio}:{servicio:ServicioCoach}) {
   );
 }
 function ClienteDemo({ servicio }: { servicio: ServicioCoach }) {
-  const clienteDemo = useRecorrido()?.clienteId ?? "demo-persona-1";
+  const clienteDemo = useAyudaDemo()?.clienteId ?? "demo-persona-1";
   const [repo, setRepo] = useState<RepositorioMemoria | null>(null);
   useEffect(() => {
     let vivo = true;

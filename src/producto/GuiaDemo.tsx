@@ -1,262 +1,141 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Hoja, Icono } from "./ui";
+import { useAyudaDemo } from "./ayuda-demo-contexto";
 import "./guia-demo.css";
-import { useRecorrido, type Capitulo } from "./recorrido-contexto";
 
-const pasos = [
-  {
-    etiqueta: "TU MÉTODO",
-    titulo: "Tu coaching. Un solo lugar.",
-    texto:
-      "Prepara el plan, acompaña el proceso y descubre cómo lo vive tu cliente.",
-    icono: "clientes",
-    tarjetas: ["Tú preparas", "Tu cliente entrena", "Ambos ven el progreso"],
-  },
-  {
-    etiqueta: "01 · PREPARAR",
-    titulo: "Empieza por la persona.",
-    texto:
-      "Define su objetivo y sus limitaciones. Después revisa cada sesión de su primer plan antes de invitarla.",
-    icono: "mas",
-    tarjetas: [
-      "Persona y objetivo",
-      "Frecuencia y limitaciones",
-      "Primer plan revisado",
-    ],
-  },
-  {
-    etiqueta: "02 · ACOMPAÑAR",
-    titulo: "Sabe dónde estar presente.",
-    texto:
-      "Hoy reúne lo pendiente. En Clientes encuentras el plan, los entrenamientos y el progreso de cada persona.",
-    icono: "progreso",
-    tarjetas: [
-      "Hoy · Tu siguiente paso",
-      "Clientes · Cada proceso",
-      "Biblioteca · Tu criterio técnico",
-    ],
-  },
-  {
-    etiqueta: "03 · ENTRENAR",
-    titulo: "Una serie. El siguiente paso.",
-    texto:
-      "Tu cliente ajusta peso, repeticiones y RIR, guarda la serie y continúa. El descanso se inicia cuando lo necesita.",
-    icono: "check",
-    tarjetas: ["Ajustar", "Guardar la serie", "Descansar y continuar"],
-  },
+const temasCoach = [
+  [
+    "Crear un cliente",
+    "Toca Nuevo cliente. Añade su nombre, objetivo y días de entrenamiento. Revisa las sesiones y sus limitaciones antes de publicar el plan.",
+  ],
+  [
+    "Editar un cliente",
+    "Abre su ficha → Perfil → Editar perfil. Cambia los datos y toca Guardar perfil. Las notas del Coach son privadas.",
+  ],
+  [
+    "Cambiar un plan",
+    "En Programa, toca Preparar cambios. Puedes guardar un borrador y retomarlo después. Revisa los cambios antes de publicar: un borrador todavía no cambia el plan del cliente.",
+  ],
+  [
+    "Invitar a un cliente",
+    "Después de publicar, toca Probar invitación. Aquí es una simulación: no da acceso real ni envía mensajes. En una cuenta real, el Coach comparte personalmente el enlace privado de un uso.",
+  ],
+  [
+    "Probar Vista previa",
+    "Abre Vista previa desde la ficha. Puedes probar el entrenamiento sin añadir registros a la actividad del cliente.",
+  ],
+  [
+    "Consultar actividad y privacidad",
+    "En la ficha, abre Actividad para ver los entrenamientos. Las notas del Coach son privadas. El cliente decide si comparte sus fotos.",
+  ],
 ];
-const temas = [
-  {
-    titulo: "Crear el primer cliente",
-    texto:
-      "En Coach, toca + o Nuevo cliente. Completa persona y objetivo, frecuencia y limitaciones, y primer plan. Revisa las sesiones antes de terminar. En esta demo puedes practicar todo el recorrido; el borrador desaparece al recargar.",
-    accion: "Probar con un cliente ficticio",
-    ruta: "/demo/coach/nuevo",
-  },
-  {
-    titulo: "Preparar y publicar un plan",
-    texto:
-      "Abre Clientes y elige una persona. Revisa su programación: orden, ejercicios, series y prescripción. Prepara sesiones de 5–8 ejercicios y revisa las advertencias. Un borrador aún no es un plan publicado. La invitación real se prepara después de revisar el plan.",
-    accion: "Ver los clientes de ejemplo",
-    ruta: "/demo/coach/clientes",
-  },
-  {
-    titulo: "Vista previa o entrenar juntos",
-    texto:
-      "Vista previa permite comprobar cómo verá el plan esa persona y simularlo sin registrar actividad. Entrenar juntos es acompañar un entrenamiento: en una cuenta real sí guarda actividad y registra al Coach como autor. En esta demo ambas acciones usan únicamente datos ficticios.",
-    accion: "Explorar una ficha",
-    ruta: "/demo/coach/clientes",
-  },
-  {
-    titulo: "Registrar un entrenamiento",
-    texto:
-      "Cambia a Cliente y toca Comenzar entrenamiento. Ajusta peso, repeticiones y RIR (las repeticiones que crees que aún podrías hacer). Guarda cada serie; puedes editarla si te equivocas. El temporizador de descanso es manual. Al terminar, revisa el resumen.",
-    accion: "Probar como Cliente",
-    ruta: "/demo/cliente",
-  },
-  {
-    titulo: "Consultar el progreso",
-    texto:
-      "El cliente encuentra su historial, medidas y fotos en Progreso. El Coach sigue la actividad desde la ficha de cada persona. Las notas privadas del Coach permanecen privadas y compartir fotografías es una elección del cliente.",
-    accion: "Ver Progreso como Cliente",
-    ruta: "/demo/cliente/progreso",
-  },
-  {
-    titulo: "Qué se guarda en esta demo",
-    texto:
-      "Aquí no hay clientes reales, no se envían invitaciones y nada se guarda al cerrar o recargar. Puedes cambiar entre Coach y Cliente desde la barra superior. En las cuentas privadas, los registros se sincronizan con la nube; Pendiente de sincronizar indica que falta esa confirmación.",
-    accion: "Volver a Hoy del Coach",
-    ruta: "/demo/coach",
-  },
+const temasCliente = [
+  [
+    "Registrar una serie",
+    "Toca Comenzar entrenamiento. Introduce peso y repeticiones. RIR indica cuántas repeticiones más podrías hacer. Toca Completar serie para guardarla.",
+  ],
+  [
+    "Corregir una serie",
+    "Toca Editar en la serie registrada. Corrige los valores y vuelve a guardarla.",
+  ],
+  [
+    "Descansar",
+    "Toca Descanso cuando lo necesites. El temporizador no empieza solo. Toca Listo para cerrarlo.",
+  ],
+  [
+    "Terminar y ver tu historial",
+    "Toca Terminar sesión y revisa el resumen. Después, en Progreso, abre un entrenamiento para consultar sus series.",
+  ],
+  [
+    "Consultar un ejercicio",
+    "Abre Biblioteca y elige un ejercicio para consultar su explicación y variantes.",
+  ],
+  [
+    "Medidas, fotos y privacidad",
+    "Desde tu avatar accedes a tu perfil. En Progreso puedes consultar medidas y fotos; tú decides si compartes las fotos con tu Coach.",
+  ],
 ];
-
-/** La bienvenida vive en memoria, igual que la demo. Nunca marca dispositivos. */
 export function GuiaDemo() {
+  const ayuda = useAyudaDemo()!;
   const { pathname } = useLocation();
-  const recorrido=useRecorrido();
-  const [vistos,setVistos]=useState<string[]>([]);
-  const [bienvenidaCliente,setBienvenidaCliente]=useState(false);
-  if(pathname.startsWith('/demo/cliente')&&recorrido&&!vistos.includes(recorrido.clienteId)) {
-    setVistos([...vistos,recorrido.clienteId]);
-    setBienvenidaCliente(!recorrido.activo);
-  }
-  const comenzar=(capitulo:Capitulo)=>{setPaso(null);setAyuda(false);setBienvenidaCliente(false);void recorrido?.iniciar(capitulo);};
   const navegar = useNavigate();
-  const [paso, setPaso] = useState<number | null>(() =>
-    pathname === "/demo/coach" || pathname === "/demo/coach/" ? 0 : null,
-  );
-  const [ayuda, setAyuda] = useState(false);
-  const ir = (ruta: string) => {
-    setPaso(null);
-    setAyuda(false);
-    navegar(ruta);
+  const cliente = pathname.startsWith("/demo/cliente");
+  const clave = cliente ? `bienvenida:${ayuda.clienteId}` : "bienvenida:coach";
+  const [abierta, setAbierta] = useState(false);
+  const [repetir, setRepetir] = useState(false);
+  // Las entradas profundas no interrumpen una tarea con una bienvenida.
+  const entrada = /^\/demo\/(coach|cliente)\/?$/.test(pathname);
+  const bienvenida = repetir || (entrada && !ayuda.cerrados.has(clave));
+  const cerrar = () => {
+    ayuda.cerrar(clave);
+    setRepetir(false);
   };
-  const actual = paso === null ? null : pasos[paso];
+  const titulo = cliente ? "Prueba tu primera serie" : "Crea tu primer cliente";
   return (
     <>
       <button
         className="sfm-demo-help"
-        onClick={() => {recorrido?.pausar();setAyuda(true);}}
-        aria-label="Abrir guía de uso"
+        onClick={() => setAbierta(true)}
+        aria-label="Abrir ayuda"
       >
-        Guía de uso <span aria-hidden="true">?</span>
+        Ayuda <span aria-hidden="true">?</span>
       </button>
-      {bienvenidaCliente && !recorrido?.activo && pathname.startsWith('/demo/cliente') && (
-        <Hoja titulo="Tu primera entrada" cerrar={()=>setBienvenidaCliente(false)} clase="sfm-guia">
-          <p className="sfm-eyebrow">TU ESPACIO · TU RITMO</p>
-          <h3>Tu coach preparó tu espacio.</h3>
-          <p className="sfm-guia-copy">Vamos a probar tu primera serie. Te acompañaremos sobre los controles reales: registrar, corregir y encontrar tu progreso.</p>
-          <p className="sfm-guia-sandbox">Una práctica ficticia. Nada sale de esta demo.</p>
-          <button className="sfm-primary" onClick={()=>comenzar('cliente')}>Empezar con ayuda</button>
-          <button className="sfm-text-button" onClick={()=>setBienvenidaCliente(false)}>Ahora no</button>
-        </Hoja>
-      )}
-      {actual && (
-        <Hoja
-          titulo="Bienvenido, Santiago"
-          cerrar={() => setPaso(null)}
-          clase="sfm-guia"
-        >
-          <div
-            className="sfm-guia-progress"
-            aria-label={`Paso ${paso! + 1} de ${pasos.length}`}
-          >
-            {pasos.map((p, i) => (
-              <span key={p.etiqueta} className={i <= paso! ? "activo" : ""} />
-            ))}
-          </div>
-          <section
-            className="sfm-guia-step"
-            key={paso}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <p className="sfm-eyebrow">{actual.etiqueta}</p>
-            <h3>{actual.titulo}</h3>
-            <p className="sfm-guia-copy">{actual.texto}</p>
-            <div className="sfm-guia-scene" aria-label="El recorrido">
-              <span className="sfm-guia-symbol">
-                <Icono nombre={actual.icono} size={30} />
-              </span>
-              <ol>
-                {actual.tarjetas.map((texto, i) => (
-                  <li key={texto}>
-                    <span>0{i + 1}</span>
-                    {texto}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </section>
+      {bienvenida && !abierta && (
+        <Hoja titulo={titulo} cerrar={cerrar} clase="sfm-guia">
+          <p className="sfm-guia-copy">
+            {cliente
+              ? "Abre el entrenamiento y registra una serie con nuestra ayuda."
+              : "Añade sus datos, revisa su plan y déjalo listo para entrenar."}
+          </p>
           <p className="sfm-guia-sandbox">
-            Demo con personas ficticias. Prueba con libertad; al recargar, todo
-            vuelve al inicio.
+            Demo con datos ficticios. Al recargar, se reinicia.
           </p>
           <div className="sfm-guia-actions">
-            {paso! < pasos.length - 1 ? (
-              <button
-                className="sfm-primary"
-                onClick={() => setPaso(paso! + 1)}
-              >
-                {paso === 0 ? "Conocer mi espacio" : "Continuar"}
-                <Icono nombre="flecha" />
-              </button>
-            ) : (
-              <>
-                <button
-                  className="sfm-primary"
-                  onClick={() => comenzar("crear")}
-                >
-                  Crear mi primer cliente con ayuda
-                  <Icono nombre="mas" />
-                </button>
-                <button
-                  className="sfm-secondary"
-                  onClick={() => ir("/demo/cliente")}
-                >
-                  Vivirlo como Cliente
-                </button>
-              </>
-            )}
-            <div className="sfm-guia-foot">
-              {paso! > 0 && (
-                <button onClick={() => setPaso(paso! - 1)}>Atrás</button>
-              )}
-              <button onClick={() => setPaso(null)}>
-                {paso === 3 ? "Explorar por mi cuenta" : "Ahora no"}
-              </button>
-              <span>
-                {paso! + 1} / {pasos.length}
-              </span>
-            </div>
+            <button
+              className="sfm-primary"
+              onClick={() => {
+                cerrar();
+                navegar(cliente ? "/demo/cliente" : "/demo/coach/nuevo");
+              }}
+            >
+              {cliente ? "Ver mi entrenamiento" : "Crear cliente"}
+            </button>
+            <button className="sfm-secondary" onClick={cerrar}>
+              Explorar
+            </button>
           </div>
         </Hoja>
       )}
-      {ayuda && (
+      {abierta && (
         <Hoja
-          titulo="Tu guía de uso"
-          cerrar={() => setAyuda(false)}
-          clase="sfm-guia sfm-guia--ayuda"
+          titulo={cliente ? "Ayuda para entrenar" : "Ayuda para el Coach"}
+          cerrar={() => setAbierta(false)}
+          clase="sfm-guia"
         >
-          <p className="sfm-guia-copy">
-            Del primer plan a la siguiente serie. Elige lo que quieres hacer.
-          </p>
-          <button
-            className="sfm-guia-replay"
-            onClick={() => {
-              setAyuda(false);
-              setPaso(0);
-            }}
-          >
-            <span>
-              <small>¿Primera vez?</small>
-              <strong>Ver la bienvenida</strong>
-            </span>
-            <Icono nombre="flecha" />
-          </button>
-          <div className="sfm-tour-next">
-            {([['crear','Crear un cliente paso a paso'],['gestionar','Manejar un cliente paso a paso'],['preview','Practicar Vista previa'],['cliente','Practicar mi primera serie']] as const).map(([id,label])=><button key={id} onClick={()=>comenzar(id)}>{label} →</button>)}
-          </div>
+          <p className="sfm-guia-copy">Elige lo que necesitas hacer.</p>
           <div className="sfm-guia-temas">
-            {temas.map((tema, i) => (
-              <details key={tema.titulo}>
+            {(cliente ? temasCliente : temasCoach).map(([titulo, texto]) => (
+              <details key={titulo}>
                 <summary>
-                  <span>0{i + 1}</span>
-                  {tema.titulo}
+                  {titulo}
                   <Icono nombre="mas" size={18} />
                 </summary>
-                <p>{tema.texto}</p>
-                <button className="sfm-secondary" onClick={() => ir(tema.ruta)}>
-                  {tema.accion}
-                  <Icono nombre="flecha" size={18} />
-                </button>
+                <p>{texto}</p>
               </details>
             ))}
           </div>
+          <button
+            className="sfm-secondary"
+            onClick={() => {
+              setAbierta(false);
+              setRepetir(true);
+            }}
+          >
+            Ver bienvenida
+          </button>
           <p className="sfm-guia-sandbox">
-            Esta guía siempre está en la barra superior. La demo no modifica
-            cuentas reales.
+            Demo con datos ficticios. Al recargar, se reinicia.
           </p>
         </Hoja>
       )}

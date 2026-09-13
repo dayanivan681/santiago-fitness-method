@@ -1,4 +1,3 @@
-import { useRecorrido } from "./recorrido-contexto";
 import { useEffect, useState } from "react";
 import type { Cambio } from "../../shared/v2/contratos";
 import type { Repositorio } from "../datos/repositorio";
@@ -292,7 +291,6 @@ function ListaSesiones({
   sesiones: Sesion[];
   obtenerSeries: (id: string) => Promise<SerieRegistrada[]>;
 }) {
-  const guia=useRecorrido();
   const [detalle, setDetalle] = useState<{
     sesion: Sesion;
     series: SerieRegistrada[];
@@ -314,7 +312,7 @@ function ListaSesiones({
                 key={s.id}
                 onClick={() =>
                   void obtenerSeries(s.id).then((series) =>
-                    {setDetalle({ sesion: s, series });guia?.emitir("historial-abierto");},
+                    {setDetalle({ sesion: s, series });},
                   )
                 }
               >
@@ -341,7 +339,7 @@ function ListaSesiones({
       {detalle && (
         <Hoja
           titulo={detalle.sesion.prescripcion?.nombre ?? "Entrenamiento"}
-          cerrar={() => {setDetalle(null);guia?.emitir("historial-cerrado");}}
+          cerrar={() => {setDetalle(null);}}
         >
           <p className="sfm-hint" data-tour="detalle-historial">
             <FechaBonita fecha={detalle.sesion.fecha} /> ·{" "}
