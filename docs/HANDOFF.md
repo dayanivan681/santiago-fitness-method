@@ -7,11 +7,28 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-13T01:12:59.268Z
+- **Última sincronización:** 2026-09-13T14:02:47.613Z
+
+## Guías sin scroll manual — 2026-09-13
+
+- Código `e51d7a5`, preview `cf9110d4`, QA remoto PASS.
+- Durante el recorrido se bloquean scroll manual, navegación fuera del foco
+  y tabulación hacia controles ajenos. Pausar/salir/desmontar libera el bloqueo.
+  La guía desplaza automáticamente el control necesario; permite editar texto.
+- Alta guiada campo a campo con Listo, continuar: nombre, objetivo, frecuencia,
+  limitaciones y notas. Los campos opcionales admiten continuar vacíos. Revisión
+  del plan por sesión/ejercicio mediante controles propios, sin arrastrar.
+- 706 pruebas/70 archivos, lint y build PASS. Regresión añadida para bloqueo,
+  teclado de edición, pausa y limpieza al desmontar. Recorridos completos de
+  ambos roles y preview en 320/375/390/430/768/1024 PASS. QA remoto a 320 PASS;
+  rueda, gesto táctil, PageDown, bloqueo de exploración, avance y retorno PASS.
+- QA adicional de teclado numérico, pausa, doble toque, regreso y recarga PASS.
+  Evidencias `/tmp/sfm-lock-*.log` y capturas `/tmp/sfm-tour-*.png`.
+  Navegador emulado, sin iPhone físico. Sin API, cloud ni migraciones; PDFs intactos.
 
 ## Corrección de scroll de las guías — 2026-09-12
 
@@ -952,6 +969,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-13T14:02:47.614Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Guías demo sin scroll manual ni exploración fuera del foco, con avance entre campos y revisión del plan por partes
+- **Verificación:** 706 tests PASS; lint PASS; build PASS; seis tamaños y QA remoto PASS
+- **Siguiente:** Verificar deployment canónico y cerrar entrega
+
 
 ### 2026-09-13T01:12:59.269Z | codex | CLAIM
 - **Estado:** active
