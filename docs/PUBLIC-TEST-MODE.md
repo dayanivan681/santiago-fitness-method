@@ -36,3 +36,12 @@ vencimiento. No incluye raíz, Admin, API ni otros deployments.
 La aplicación privada `Santiago Fitness Method` y su audiencia siguen intactas.
 Al publicar v2 en el hostname canónico, `/demo` será igualmente pública por el
 middleware; la excepción del alias sólo permite enseñar avances ya revisados.
+
+## Descanso automático — decisión del dueño, 2026-09-13
+
+Al completar y guardar cada serie, el entrenamiento inicia el descanso del
+Coach. Aplica también a series marcadas como calentamiento; cero segundos no
+muestra temporizador. Omitir lo cierra y +30s añade tiempo. Corregir una serie
+no lo reinicia; terminar la sesión lo cierra tras confirmar el guardado.
+Se aplica a Cliente real, demo y simulación de Vista previa. Esta decisión
+sustituye el comportamiento manual descrito en los PDFs, que permanecen intactos.

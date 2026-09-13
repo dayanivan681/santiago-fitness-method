@@ -88,15 +88,15 @@ export function Descanso() {
     >
       <span className="descanso__rotulo">{terminado ? 'Descanso terminado' : 'Descanso'}</span>
       {!terminado && <span className="descanso__tiempo">{formatearSegundos(restantes)}</span>}
-      <button type="button" className="descanso__boton" onClick={prorrogar}>
+      <button type="button" className="descanso__boton" aria-label={`Añadir ${PRORROGA_SEGUNDOS} segundos`} onClick={prorrogar}>
         +{PRORROGA_SEGUNDOS}s
       </button>
       <button
         type="button"
         data-tour="cerrar-descanso" className="descanso__boton descanso__boton--fuerte"
-        onClick={()=>{terminar();}}
+        onClick={terminar}
       >
-        Listo
+        {terminado ? 'Listo' : 'Omitir'}
       </button>
     </div>
   )

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { EntrenamientoHoy } from './EntrenamientoHoy'
 import { Entrenamiento } from './Entrenamiento'
 import { useMemoria } from '../../aplicacion/memoria'
+import { useControlDescanso } from '../../aplicacion/contextoDescanso'
 import { ProveedorDescanso } from '../../aplicacion/ProveedorDescanso'
 import { Descanso } from '../../componentes/Descanso'
 import { baseDePrueba } from '../../pruebas/base'
@@ -60,6 +61,10 @@ function idDeLaPrimeraSerie(numeroSerie = 1) {
  * día elegido y el ejercicio en curso, y el cronómetro cuelga de fuera de los
  * dos para que no se detenga al cambiar de pantalla.
  */
+function FinDescanso() {
+  const { estado } = useControlDescanso()
+  return <span hidden data-testid="fin-descanso">{estado.estado === 'activo' ? estado.terminaEn : ''}</span>
+}
 function Pantalla() {
   const memoriaDia = useMemoria<string | null>(null)
   const memoriaAbierta = useMemoria(0)
@@ -82,6 +87,7 @@ function Pantalla() {
         />
       )}
       <Descanso />
+      <FinDescanso />
     </ProveedorDescanso>
   )
 }
@@ -428,9 +434,9 @@ describe('temporizador de descanso (criterio 5)', () => {
   const cronometro = () =>
     screen.queryByRole('status', { name: 'Temporizador de descanso' })
 
-  test('guardar una serie de trabajo no inicia el descanso manual', async () => {
-    // El plan aprobado mantiene el temporizador manual. El descanso medido
-    // sigue derivándose de las marcas de tiempo de las series.
+  test('guardar una serie de trabajo inicia el descanso prescrito', async () => {
+    // El cronómetro arranca después del guardado; el descanso medido sigue
+    // derivándose de las marcas de tiempo de las series.
     // Arrange
     await abrirUpperA()
 
@@ -439,12 +445,11 @@ describe('temporizador de descanso (criterio 5)', () => {
     await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
 
     // Assert
-    expect(cronometro()).not.toBeInTheDocument()
+    expect(await screen.findByRole('status', { name: 'Temporizador de descanso' })).toHaveTextContent('3:00')
   })
 
-  test('un calentamiento no arranca el descanso', async () => {
-    // Es preparación: encadenar tres minutos entre aproximaciones alarga la
-    // sesión sin motivo.
+  test('guardar un calentamiento también inicia el descanso de ese ejercicio', async () => {
+    // Se aplica a cada serie nueva, según la duración indicada por el Coach.
     // Arrange
     await abrirUpperA()
 
@@ -456,7 +461,7 @@ describe('temporizador de descanso (criterio 5)', () => {
     await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
 
     // Assert
-    expect(cronometro()).not.toBeInTheDocument()
+    expect(await screen.findByRole('status', { name: 'Temporizador de descanso' })).toHaveTextContent('3:00')
   })
 
   test('corregir una serie ya guardada no arranca el descanso', async () => {
@@ -465,6 +470,7 @@ describe('temporizador de descanso (criterio 5)', () => {
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
     await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+    await userEvent.click(await screen.findByRole('button', { name: 'Omitir' }))
     await waitFor(() => expect(cronometro()).not.toBeInTheDocument())
 
     // Act
@@ -475,6 +481,49 @@ describe('temporizador de descanso (criterio 5)', () => {
     await waitFor(() =>
       expect(screen.getByLabelText(`Editar la serie 1 de ${PRESS}`)).toBeInTheDocument(),
     )
+    expect(cronometro()).not.toBeInTheDocument()
+  })
+
+  test('respeta la duración del Coach, no reinicia al corregir y sustituye al guardar otra serie', async () => {
+    const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!
+    await repositorio.guardarPlantilla(actualizarSlot(plantilla, 1, { descansoSegundos: 75 }))
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    expect(await screen.findByRole('status', { name: 'Temporizador de descanso' })).toHaveTextContent('1:15')
+    await userEvent.click(screen.getByRole('button', { name: 'Añadir 30 segundos' }))
+    const fin = screen.getByTestId('fin-descanso').textContent
+    await userEvent.click(screen.getByLabelText(`Editar la serie 1 de ${PRESS}`))
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+    expect(screen.getByTestId('fin-descanso')).toHaveTextContent(fin!)
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 2 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 2 de ${PRESS}`)
+    expect(screen.getAllByRole('status', { name: 'Temporizador de descanso' })).toHaveLength(1)
+    expect(Number(screen.getByTestId('fin-descanso').textContent)).toBeLessThan(Number(fin))
+  })
+
+  test('un guardado pendiente o fallido no inicia descanso y el doble toque no duplica la serie', async () => {
+    await abrirUpperA()
+    let fallar!: () => void
+    const pendiente = new Promise<void>((_, reject) => { fallar = () => reject(new Error('Fallo al guardar')) })
+    const guardar = vi.spyOn(repositorio, 'registrarSerie').mockReturnValueOnce(pendiente)
+    const boton = screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`)
+    fireEvent.click(boton)
+    fireEvent.click(boton)
+    await waitFor(() => expect(guardar).toHaveBeenCalledTimes(1))
+    expect(cronometro()).not.toBeInTheDocument()
+    fallar()
+    await screen.findByText('Fallo al guardar')
+    expect(cronometro()).not.toBeInTheDocument()
+    guardar.mockRestore()
+  })
+
+  test('guardar con descanso de cero no muestra temporizador', async () => {
+    const plantilla = (await repositorio.obtenerPlantilla(idDeDia(participanteId, 'upper-a')))!
+    await repositorio.guardarPlantilla(actualizarSlot(plantilla, 1, { descansoSegundos: 0 }))
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
     expect(cronometro()).not.toBeInTheDocument()
   })
 
@@ -505,7 +554,7 @@ describe('temporizador de descanso (criterio 5)', () => {
     ).toHaveTextContent('Descanso')
 
     // Y se apaga cuando él quiere, sin esperar a que termine
-    await userEvent.click(screen.getByRole('button', { name: 'Listo' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Omitir' }))
     await waitFor(() => expect(cronometro()).not.toBeInTheDocument())
   })
 })
@@ -978,6 +1027,7 @@ describe('barra de progreso de la sesión', () => {
       ).not.toBeInTheDocument(),
     )
     expect(screen.getByText(/Sesión terminada/)).toBeInTheDocument()
+    expect(screen.queryByRole('status', { name: 'Temporizador de descanso' })).not.toBeInTheDocument()
   })
 })
 

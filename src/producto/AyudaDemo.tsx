@@ -81,7 +81,7 @@ export function ConsejoCliente({
     return entrenando ? (
       <ConsejoDemo id={`guardada:${ayuda.clienteId}`}>
         <strong>Serie guardada.</strong>
-        <p>Puedes descansar o seguir con la siguiente.</p>
+        <p>Si tu plan incluye descanso, ya está en marcha. Puedes omitirlo o añadir tiempo.</p>
       </ConsejoDemo>
     ) : null;
   return (

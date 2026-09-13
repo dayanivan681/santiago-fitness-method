@@ -41,7 +41,7 @@ const temasCliente = [
   ],
   [
     "Descansar",
-    "Toca Descanso cuando lo necesites. El temporizador no empieza solo. Toca Listo para cerrarlo.",
+    "Al completar una serie, empieza el descanso indicado por tu Coach. Puedes omitirlo o añadir 30 segundos. Si el descanso está en cero, no aparece el temporizador. Corregir una serie no lo reinicia.",
   ],
   [
     "Terminar y ver tu historial",

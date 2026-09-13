@@ -71,7 +71,7 @@ export function Entrenamiento({
   const [identidadVisible,setIdentidadVisible]=useState(true)
   const [errorCierre,setErrorCierre]=useState('')
   const [cerrando,setCerrando]=useState(false)
-  const { arrancar: arrancarDescanso, declararBarraDeSesion } = useControlDescanso()
+  const { arrancar: arrancarDescanso, terminar: terminarDescanso, declararBarraDeSesion } = useControlDescanso()
 
   /**
    * El cronómetro vive en App y no sabe si hay una sesión abierta, pero los dos
@@ -187,7 +187,8 @@ export function Entrenamiento({
           onDescansar={() => {arrancarDescanso(item.ejercicio.id, item.slot.descansoSegundos);}}
           onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
             await registrarSerie(ejercicioId, numeroSerie, valores)
-            // El descanso se inicia con el botón Descansar, a elección del cliente.
+            // Sólo una serie nueva confirmada inicia el descanso prescrito.
+            arrancarDescanso(ejercicioId, item.slot.descansoSegundos)
             avanzarSiTermino(numeroSerie, item.slot.seriesObjetivo)
           }}
           onCorregirSerie={corregirSerie}
@@ -248,7 +249,7 @@ export function Entrenamiento({
               {seriesHechas} de {seriesObjetivo} series
             </span>
           </div>
-          <button type="button" data-tour="terminar" className="progreso-sesion__terminar" disabled={cerrando} onClick={()=>{setCerrando(true);setErrorCierre('');void terminarSesion().then(()=>{setResumenAbierto(true);}).catch(e=>setErrorCierre(e.message)).finally(()=>setCerrando(false))}}>
+          <button type="button" data-tour="terminar" className="progreso-sesion__terminar" disabled={cerrando} onClick={()=>{setCerrando(true);setErrorCierre('');void terminarSesion().then(()=>{terminarDescanso();setResumenAbierto(true);}).catch(e=>setErrorCierre(e.message)).finally(()=>setCerrando(false))}}>
             Terminar sesión
           </button>
         </div>

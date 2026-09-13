@@ -109,17 +109,17 @@ describe('cronómetro global', () => {
     expect(screen.getByRole('status', CRONOMETRO)).toHaveTextContent('0:30')
 
     // Act
-    pulsar('+30s')
+    pulsar('Añadir 30 segundos')
 
     // Assert
     expect(screen.getByRole('status', CRONOMETRO)).toHaveTextContent('1:00')
   })
 
-  test('Listo lo apaga en el acto', () => {
+  test('Omitir lo apaga en el acto', () => {
     render(<Aplicacion />)
     pulsar('Arrancar')
 
-    pulsar('Listo')
+    pulsar('Omitir')
 
     expect(screen.queryByRole('status', CRONOMETRO)).not.toBeInTheDocument()
   })
