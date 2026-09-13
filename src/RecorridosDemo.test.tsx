@@ -46,7 +46,12 @@ it("recorre alta, gestión y preview con eventos confirmados y sin nube ni almac
   await tocar("Continuar");
   await screen.findByRole("alert");
   await paso("crear-persona");
-  await tocar("Usar un ejemplo ficticio");
+  fireEvent.change(screen.getByLabelText("Nombre"), {
+    target: { value: "Elena · práctica" },
+  });
+  fireEvent.change(screen.getByLabelText("Objetivo compartido"), {
+    target: { value: "Ganar fuerza y constancia" },
+  });
   await tocar("Continuar");
   await paso("crear-contexto");
   await tocar("Continuar");
@@ -169,7 +174,12 @@ it("fallar al guardar no confirma el paso ni crea un cliente", async () => {
     new Error("Fallo de prueba"),
   );
   await comenzarCrear();
-  await tocar("Usar un ejemplo ficticio");
+  fireEvent.change(screen.getByLabelText("Nombre"), {
+    target: { value: "Elena · práctica" },
+  });
+  fireEvent.change(screen.getByLabelText("Objetivo compartido"), {
+    target: { value: "Ganar fuerza y constancia" },
+  });
   await tocar("Continuar");
   await paso("crear-contexto");
   await tocar("Continuar");
@@ -197,4 +207,43 @@ it("repetir prepara otra persona ficticia sin borrar la anterior; nunca opera en
   await expect(
     new ServicioCoach().escenarioDemo("demo-persona-1"),
   ).rejects.toThrow(/sólo.*demo/);
+});
+
+it("bloquea scroll durante la guía y lo libera al pausar o desmontar", async () => {
+  await comenzarCrear();
+  expect(document.documentElement).toHaveClass("sfm-tour-locked");
+  const rueda = new WheelEvent("wheel", {
+    bubbles: true,
+    cancelable: true,
+    deltaY: 300,
+  });
+  document.body.dispatchEvent(rueda);
+  expect(rueda.defaultPrevented).toBe(true);
+  const pagina = new KeyboardEvent("keydown", {
+    bubbles: true,
+    cancelable: true,
+    key: "PageDown",
+  });
+  document.body.dispatchEvent(pagina);
+  expect(pagina.defaultPrevented).toBe(true);
+  const escribir = new KeyboardEvent("keydown", {
+    bubbles: true,
+    cancelable: true,
+    key: "ArrowDown",
+  });
+  screen.getByLabelText("Nombre").dispatchEvent(escribir);
+  expect(escribir.defaultPrevented).toBe(false);
+  fireEvent.click(within(guia()).getByRole("button", { name: "Pausar" }));
+  expect(document.documentElement).not.toHaveClass("sfm-tour-locked");
+  const libre = new WheelEvent("wheel", {
+    bubbles: true,
+    cancelable: true,
+    deltaY: 300,
+  });
+  document.body.dispatchEvent(libre);
+  expect(libre.defaultPrevented).toBe(false);
+  fireEvent.click(within(guia()).getByRole("button", { name: "Continuar" }));
+  expect(document.documentElement).toHaveClass("sfm-tour-locked");
+  cleanup();
+  expect(document.documentElement).not.toHaveClass("sfm-tour-locked");
 });

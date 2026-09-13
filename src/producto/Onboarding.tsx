@@ -229,7 +229,7 @@ export function Onboarding({
           <label className="sfm-field">
             <span>Limitaciones y contexto</span>
             <textarea
-              value={p.limitaciones}
+              data-tour="alta-limitaciones" value={p.limitaciones}
               placeholder="Movimientos a evitar, molestias o adaptaciones necesarias"
               maxLength={4000}
               onChange={(e) =>
@@ -266,7 +266,7 @@ export function Onboarding({
           <label className="sfm-field">
             <span>Notas privadas del Coach</span>
             <textarea
-              value={p.notas}
+              data-tour="alta-notas" value={p.notas}
               placeholder="Sólo tú podrás leerlas"
               maxLength={4000}
               onChange={(e) =>

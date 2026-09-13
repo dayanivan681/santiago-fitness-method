@@ -330,3 +330,25 @@ html:has(.sfm-tour-card) .sfm-hoja[open]:not(.sfm-guia) {
   width: 144px;
   justify-content: center;
 }
+/* Durante la práctica sólo el controlador desplaza la página a su próximo punto.
+   overflow:hidden conserva scrollIntoView; no fija el body ni pierde su posición. */
+html.sfm-tour-locked,
+.sfm-tour-locked body,
+.sfm-tour-locked .sfm-hoja {
+  overflow: hidden !important;
+  overflow-anchor: none;
+  overscroll-behavior: none;
+}
+.sfm-tour-parts {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+.sfm-tour-parts button {
+  flex: 1;
+  background: #ffffff12;
+}
+
+.sfm-tour-locked .sfm-tour-example {
+  display: none;
+}

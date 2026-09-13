@@ -26,7 +26,7 @@ export const recorridos: Record<Capitulo, PasoRecorrido[]> = {
     paso(
       "crear-abrir",
       "Todo empieza por una persona.",
-      "Toca Nuevo cliente. Vamos a preparar un espacio ficticio, paso a paso.",
+      "Toca Nuevo cliente. Te llevaremos de un punto al siguiente. Pausa la guía cuando quieras explorar.",
       "nuevo",
       "coach",
       "abrir-alta",
@@ -34,7 +34,7 @@ export const recorridos: Record<Capitulo, PasoRecorrido[]> = {
     paso(
       "crear-persona",
       "Conoce su objetivo.",
-      "Añade nombre y objetivo. Puedes usar el ejemplo ficticio; después toca Continuar.",
+      "Añade nombre y objetivo. Toca Listo, continuar para pasar al siguiente campo.",
       "alta-persona",
       "alta",
       "alta-contexto",
@@ -42,7 +42,7 @@ export const recorridos: Record<Capitulo, PasoRecorrido[]> = {
     paso(
       "crear-contexto",
       "Una semana que le encaje.",
-      "Elige la frecuencia. Revisa limitaciones y notas privadas: sólo el Coach las verá. Después continúa.",
+      "Elige la frecuencia. Después te llevaremos a limitaciones y notas privadas; puedes dejarlas vacías si no las necesitas.",
       "alta-contexto",
       "alta",
       "alta-plan",
@@ -50,7 +50,7 @@ export const recorridos: Record<Capitulo, PasoRecorrido[]> = {
     paso(
       "crear-plan",
       "Revisa antes de publicar.",
-      "Abre cada sesión y comprueba ejercicios, series y prescripción. Ninguna guía puede revisar por ti.",
+      "Elige una sesión y toca Revisar ejercicios para verlos uno a uno. Repite con las demás sesiones antes de continuar.",
       "editor-plan",
       "alta",
     ),

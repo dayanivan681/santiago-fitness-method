@@ -405,6 +405,9 @@ function FocoRecorrido({
 }) {
   const tarjeta = useRef<HTMLDivElement>(null);
   const teclado = useRef(false);
+  const [campoActivo, setCampoActivo] = useState(false);
+  const [partePlan, setPartePlan] = useState(0);
+  const [partesPlan, setPartesPlan] = useState(0);
   const [indicacion, setIndicacion] = useState("Mira aquí");
   const [pulso, setPulso] = useState(0);
   const [quieto, setQuieto] = useState(false);
@@ -427,6 +430,7 @@ function FocoRecorrido({
     setAnterior(actualPaso);
     setActualPaso(paso);
     setRepaso(false);
+    setPartePlan(0);
   }
   useLayoutEffect(() => {
     let frame = 0,
@@ -489,10 +493,17 @@ function FocoRecorrido({
         }
         if (paso.id === "crear-contexto") {
           const frecuencia = buscar("alta-frecuencia");
+          const limitaciones = buscar("alta-limitaciones"),
+            notas = buscar("alta-notas");
           objetivo =
             frecuencia && !editados.has(frecuencia)
               ? frecuencia
-              : buscar("alta-continuar");
+              : limitaciones &&
+                  (!editados.has(limitaciones) || editando(limitaciones))
+                ? limitaciones
+                : notas && (!editados.has(notas) || editando(notas))
+                  ? notas
+                  : buscar("alta-continuar");
         }
         if (paso.id === "crear-publicar") {
           const revision = buscar("alta-revision");
@@ -536,13 +547,23 @@ function FocoRecorrido({
             buscar("guardar-serie");
           if (campo && editados.has(campo)) objetivo = buscar("guardar-serie");
         }
-        if (paso.id === "cliente-peso" || paso.id === "cliente-reps")
-          objetivo =
-            objetivo?.querySelector<HTMLElement>(
-              'input,button[aria-label^="Subir"]',
-            ) ?? objetivo;
+      }
+      if (paso?.id === "crear-plan" && !pausa) {
+        const editor = buscar("editor-plan");
+        const partes = editor
+          ? Array.from(
+              editor.querySelectorAll<HTMLElement>(
+                ".sfm-segmentos, .sfm-plan-row",
+              ),
+            )
+          : [];
+        setPartesPlan(partes.length);
+        objetivo = partes[Math.min(partePlan, partes.length - 1)] ?? objetivo;
       }
       if (objetivo?.matches(":disabled")) objetivo = null;
+      setCampoActivo(
+        Boolean(objetivo?.matches("input:not([type=checkbox]),textarea")),
+      );
       setEncontrado(Boolean(objetivo));
       if (objetivo) {
         objetivo.setAttribute("aria-describedby", "sfm-tour-instruccion");
@@ -562,7 +583,11 @@ function FocoRecorrido({
           setIndicacion(tipo);
           objetivo.setAttribute(
             "data-tour-highlight",
-            objetivo.matches("button,a") ? "accion" : "campo",
+            paso?.id === "crear-plan" && partePlan > 0
+              ? "lectura"
+              : objetivo.matches("button,a")
+                ? "accion"
+                : "campo",
           );
           setQuieto(false);
           setPulso((n) => n + 1);
@@ -641,7 +666,10 @@ function FocoRecorrido({
     });
     const resize =
       typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(reajustar)
+        ? new ResizeObserver(() => {
+            recolocar = true;
+            solicitar();
+          })
         : null;
     if (tarjeta.current) resize?.observe(tarjeta.current);
     const interactuar = (e: Event) => {
@@ -677,6 +705,24 @@ function FocoRecorrido({
     };
     const buscarSerie = () =>
       document.querySelector<HTMLElement>('[data-tour="serie-activa"]');
+    const avanzarCampo = () => {
+      if (!ultimo) return;
+      if (
+        ultimo instanceof HTMLInputElement ||
+        ultimo instanceof HTMLTextAreaElement
+      ) {
+        if (paso?.id === "crear-persona" && !ultimo.value.trim()) {
+          ultimo.focus();
+          return;
+        }
+        if (!ultimo.reportValidity()) return;
+        editados.add(ultimo);
+        ultimo.blur();
+      }
+      recolocar = true;
+      solicitar();
+    };
+    document.addEventListener("sfm-tour-campo-listo", avanzarCampo);
     const eventos = ["input", "change", "focusout", "click", "pointerdown"];
     eventos.forEach((e) => document.addEventListener(e, interactuar, true));
     window.addEventListener("resize", reajustar);
@@ -691,6 +737,7 @@ function FocoRecorrido({
     solicitar();
     return () => {
       cancelAnimationFrame(frame);
+      document.removeEventListener("sfm-tour-campo-listo", avanzarCampo);
       observer.disconnect();
       resize?.disconnect();
       window.removeEventListener("resize", reajustar);
@@ -704,7 +751,85 @@ function FocoRecorrido({
       );
       document.documentElement.style.removeProperty("--tour-space");
     };
-  }, [paso, pausa, host, clienteId]);
+  }, [paso, pausa, host, clienteId, partePlan]);
+  useLayoutEffect(() => {
+    if (pausa) return;
+    document.documentElement.classList.add("sfm-tour-locked");
+    const campoTexto = (e: Event) =>
+      e.target instanceof HTMLElement &&
+      e.target.matches("textarea,input,select");
+    const bloquearRueda = (e: WheelEvent) => {
+      if (!e.ctrlKey && !campoTexto(e)) e.preventDefault();
+    };
+    const bloquearArrastre = (e: TouchEvent) => {
+      if (e.touches.length === 1 && !campoTexto(e)) e.preventDefault();
+    };
+    const permitido = (el: Element) =>
+      Boolean(
+        el.closest(
+          '.sfm-tour-card,[data-tour-highlight]:not([data-tour-highlight="lectura"])',
+        ),
+      );
+    const bloquearExploracion = (e: MouseEvent) => {
+      if (
+        document.querySelector("[data-tour-highlight]") &&
+        e.target instanceof Element &&
+        !permitido(e.target)
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    const tecladoGuiado = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        const controles = Array.from(
+          (
+            document.querySelector("dialog[open]") ?? document
+          ).querySelectorAll<HTMLElement>(
+            'button,a,input,textarea,select,[tabindex="0"]',
+          ),
+        ).filter(
+          (el) =>
+            permitido(el) &&
+            !el.matches(":disabled") &&
+            el.getClientRects().length > 0,
+        );
+        if (controles.length) {
+          e.preventDefault();
+          const i = controles.indexOf(document.activeElement as HTMLElement);
+          controles[
+            (i + (e.shiftKey ? -1 : 1) + controles.length) % controles.length
+          ]?.focus({ preventScroll: true });
+        }
+      } else if (
+        !campoTexto(e) &&
+        [
+          "ArrowDown",
+          "ArrowUp",
+          "PageDown",
+          "PageUp",
+          "Home",
+          "End",
+          " ",
+        ].includes(e.key) &&
+        !(e.key === " " && (e.target as HTMLElement)?.matches?.("button"))
+      )
+        e.preventDefault();
+    };
+    document.addEventListener("wheel", bloquearRueda, { passive: false });
+    document.addEventListener("touchmove", bloquearArrastre, {
+      passive: false,
+    });
+    document.addEventListener("click", bloquearExploracion, true);
+    document.addEventListener("keydown", tecladoGuiado, true);
+    return () => {
+      document.documentElement.classList.remove("sfm-tour-locked");
+      document.removeEventListener("wheel", bloquearRueda);
+      document.removeEventListener("touchmove", bloquearArrastre);
+      document.removeEventListener("click", bloquearExploracion, true);
+      document.removeEventListener("keydown", tecladoGuiado, true);
+    };
+  }, [pausa]);
   useEffect(() => {
     const f = (e: KeyboardEvent) => {
       if (e.key === "Tab") teclado.current = true;
@@ -795,6 +920,33 @@ function FocoRecorrido({
           </span>
         )}
         {repaso ? <p>{anterior?.texto}</p> : children}
+        {!pausa && campoActivo && (
+          <button
+            className="sfm-tour-primary"
+            onClick={() =>
+              document.dispatchEvent(new Event("sfm-tour-campo-listo"))
+            }
+          >
+            Listo, continuar
+          </button>
+        )}
+        {!pausa && paso?.id === "crear-plan" && partesPlan > 1 && (
+          <div className="sfm-tour-parts">
+            <button
+              disabled={partePlan === 0}
+              onClick={() => setPartePlan((n) => Math.max(0, n - 1))}
+            >
+              Anterior
+            </button>
+            <button onClick={() => setPartePlan((n) => (n + 1) % partesPlan)}>
+              {partePlan === 0
+                ? "Revisar ejercicios"
+                : partePlan === partesPlan - 1
+                  ? "Elegir otra sesión"
+                  : "Siguiente ejercicio"}
+            </button>
+          </div>
+        )}
         {!pausa && paso && !encontrado && (
           <small role="status">
             Abre el control indicado para continuar. Puedes pausar y volver a
