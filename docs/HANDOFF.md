@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-13T00:36:08.873Z
+- **Última sincronización:** 2026-09-13T01:12:59.268Z
 
 ## Corrección de scroll de las guías — 2026-09-12
 
@@ -952,6 +952,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-13T01:12:59.269Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Guía demo sin scroll manual con avance enfocado entre campos y controles
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-13T00:36:08.875Z | codex | PUBLISH
 - **Estado:** complete
