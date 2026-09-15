@@ -106,6 +106,8 @@ export interface SlotPlantilla {
   readonly repMin: number
   readonly repMax: number
   readonly descansoSegundos: number
+  /** Peso editable sugerido por el Coach, en la unidad de registro del ejercicio. */
+  readonly pesoSugeridoLb?: number
   /**
    * Recomendación fijada por el coach para este ejercicio.
    *

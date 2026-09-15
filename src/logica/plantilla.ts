@@ -67,7 +67,11 @@ export function actualizarSlot(
   return {
     ...plantilla,
     slots: plantilla.slots.map((slot) =>
-      slot.orden === orden ? { ...slot, ...cambios, orden: slot.orden } : slot,
+      slot.orden === orden ? {
+        ...slot,
+        ...(cambios.ejercicioId && cambios.ejercicioId !== slot.ejercicioId ? { pesoSugeridoLb: undefined } : {}),
+        ...cambios, orden: slot.orden,
+      } : slot,
     ),
   }
 }

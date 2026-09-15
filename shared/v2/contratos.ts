@@ -25,6 +25,7 @@ export const Slot = z
     seriesObjetivo: z.number().int().min(1).max(12),
     repMin: z.number().int().min(1).max(100),
     repMax: z.number().int().min(1).max(100),
+    pesoSugeridoLb: z.number().min(0).max(3000).optional(),
     descansoSegundos: z.number().int().min(0).max(1800),
     progresionFijada: z
       .enum(["mantener", "subirReps", "subirCarga", "revisarReducir"])

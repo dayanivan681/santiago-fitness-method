@@ -144,14 +144,17 @@ export function CuerpoEjercicio({
         <span className="entreno__objetivo-valor">
           {slot.seriesObjetivo} × {slot.repMin}–{slot.repMax}
         </span>
-        <span className={`recomendacion recomendacion--${sugerencia.tipo}`}>
+        {slot.pesoSugeridoLb === undefined && <span className={`recomendacion recomendacion--${sugerencia.tipo}`}>
           {ETIQUETA_SUGERENCIA[sugerencia.tipo]}
           {/* Si la fijó el coach, que no parezca un cálculo de la app. */}
           {slot.progresionFijada && ' · del coach'}
-        </span>
-        {detalle && <span className="recomendacion__detalle">{detalle}</span>}
+        </span>}
+        {slot.pesoSugeridoLb === undefined && detalle && <span className="recomendacion__detalle">{detalle}</span>}
       </p>
 
+      {slot.pesoSugeridoLb !== undefined && <p className="sfm-hint">
+        Peso sugerido por tu Coach: <strong>{slot.pesoSugeridoLb} lb{ejercicio.tipoCarga === 'porLado' ? ' por lado' : ''}</strong>. Puedes ajustarlo.
+      </p>}
       <div className="entreno__series">
         {numerosDeSerie.map((numeroSerie) => (
           <FilaSerie
@@ -159,6 +162,8 @@ export function CuerpoEjercicio({
             numeroSerie={numeroSerie}
             ejercicio={ejercicio}
             repMin={slot.repMin}
+            repMax={slot.repMax}
+            pesoSugeridoLb={slot.pesoSugeridoLb}
             registrada={seriesDeHoy.find((serie) => serie.numeroSerie === numeroSerie)}
             referencia={referenciaDe(numeroSerie)}
             partida={partidaDe(numeroSerie)}

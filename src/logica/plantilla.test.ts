@@ -9,6 +9,7 @@ import {
   rangoDeEjercicio,
   MAX_EJERCICIOS_POR_DIA,
 } from './plantilla'
+import { aplicarSustituciones } from './sustitucion'
 import type { PlantillaDia } from '../dominio/tipos'
 
 const UPPER_A: PlantillaDia = {
@@ -279,4 +280,18 @@ describe('moverSlot — el coach ordena el día', () => {
   test('una posición que no existe es un error de quien llama', () => {
     expect(() => moverSlot(UPPER_A, 9, 'arriba')).toThrow()
   })
+})
+
+test('el peso sugerido no se traslada al cambiar de ejercicio', () => {
+  const plan = actualizarSlot(UPPER_A, 1, { pesoSugeridoLb: 42.5 })
+  expect(actualizarSlot(plan, 1, { repMin: 3 }).slots[0].pesoSugeridoLb).toBe(42.5)
+  expect(reemplazarEjercicio(plan, 1, 'otra-maquina').slots[0].pesoSugeridoLb).toBeUndefined()
+  expect(plan.slots[0].pesoSugeridoLb).toBe(42.5)
+})
+
+test('la variante temporal no usa el peso sugerido de la original y volver lo recupera', () => {
+  const plan = actualizarSlot(UPPER_A, 1, { pesoSugeridoLb: 42.5 })
+  const temporal = aplicarSustituciones(plan, [{ id: 'cambio', participanteId: '001', fecha: '2026-09-15', plantillaDiaId: plan.id, orden: 1, ejercicioId: 'otra-maquina' }])
+  expect(temporal.slots[0].pesoSugeridoLb).toBeUndefined()
+  expect(aplicarSustituciones(plan, []).slots[0].pesoSugeridoLb).toBe(42.5)
 })

@@ -31,6 +31,8 @@ export function EditorPlan({
     });
   }
   const item = editar === null ? null : d.slots[editar];
+  const ejercicioEditado = BIBLIOTECA_INICIAL.find(e => e.id === item?.ejercicioId);
+  const unidadPeso = ejercicioEditado?.tipoCarga === "porLado" ? "lb por lado" : "lb";
   const validacion = ValidarPlan.safeParse({
     ...plan,
     estado: "publicado",
@@ -85,6 +87,7 @@ export function EditorPlan({
                   <small>
                     {s.seriesObjetivo} × {s.repMin}–{s.repMax} ·{" "}
                     {s.descansoSegundos / 60} min
+                    {s.pesoSugeridoLb !== undefined && ` · ${s.pesoSugeridoLb} ${e?.tipoCarga === "porLado" ? "lb por lado" : "lb"} sugeridas`}
                   </small>
                   {perfil.ejerciciosEvitados.includes(s.ejercicioId) && (
                     <small className="sfm-alert-text">
@@ -321,6 +324,14 @@ export function EditorPlan({
               </label>
             ))}
           </div>
+          <label className="sfm-field">
+            <span>Peso sugerido · {unidadPeso} (opcional)</span>
+            <input type="number" inputMode="decimal" min={0} max={3000} step="any"
+              value={item.pesoSugeridoLb ?? ""} placeholder="Sin peso sugerido"
+              onChange={e => cambiar(d.slots.map((s, i) => i === editar
+                ? { ...s, pesoSugeridoLb: e.target.value === "" ? undefined : Number(e.target.value) } : s))} />
+          </label>
+          <p className="sfm-hint">El Cliente recibirá este peso y podrá ajustarlo. Déjalo vacío para usar su historial.</p>
           <label className="sfm-field">
             <span>Estímulo</span>
             <select

@@ -33,7 +33,7 @@ const temasCoach = [
 const temasCliente = [
   [
     "Registrar una serie",
-    "Toca Comenzar entrenamiento. Introduce peso y repeticiones. RIR indica cuántas repeticiones más podrías hacer. Toca Completar serie para guardarla.",
+    "Toca Comenzar entrenamiento. Si tu Coach indicó un peso, ya aparece escrito y puedes ajustarlo. Introduce las repeticiones realizadas. RIR indica cuántas repeticiones más podrías hacer. Toca Completar serie para guardarla.",
   ],
   [
     "Corregir una serie",

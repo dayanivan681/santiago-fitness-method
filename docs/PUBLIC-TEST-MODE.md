@@ -45,3 +45,19 @@ muestra temporizador. Omitir lo cierra y +30s añade tiempo. Corregir una serie
 no lo reinicia; terminar la sesión lo cierra tras confirmar el guardado.
 Se aplica a Cliente real, demo y simulación de Vista previa. Esta decisión
 sustituye el comportamiento manual descrito en los PDFs, que permanecen intactos.
+
+## Peso sugerido y opciones de serie — 2026-09-15
+
+El Coach puede indicar un peso sugerido opcional en Prescripción, en las mismas
+libras que registra el Cliente (por lado cuando corresponde). Cero es válido;
+vacío conserva el historial como punto de partida. La sugerencia publicada
+precede al historial al comenzar; una serie guardada, borrador o ajuste del
+Cliente se conserva. La siguiente serie toma lo utilizado hoy. Las reps del
+historial se precargan dentro del rango vigente; los registros reales no se
+recortan. Una variante distinta no hereda el peso de la original.
+
+El campo opcional viaja con el plan y la prescripción histórica de la sesión;
+los planes anteriores siguen siendo válidos y no requieren migración. Si hay
+peso del Coach, se muestra identificado y no otra carga calculada contradictoria.
+Más opciones se abre dentro del contenido, con Cerrar opciones, Escape y cierre
+al tocar fuera. Cerrar conserva técnica, calentamiento y nota, sin guardar la serie.

@@ -1,3 +1,4 @@
+import { OpcionesSerie } from "./OpcionesSerie";
 import { useAyudaDemo } from "../../producto/ayuda-demo-contexto";
 /**
  * Una serie: peso, reps y RIR.
@@ -30,6 +31,8 @@ interface Props {
   readonly numeroSerie: number
   readonly ejercicio: Ejercicio
   readonly repMin: number
+  readonly repMax?: number
+  readonly pesoSugeridoLb?: number
   readonly registrada?: SerieRegistrada
   readonly referencia?: SerieComparable
   /** La última serie efectiva de hoy: lo que se está levantando ahora mismo. */
@@ -58,6 +61,8 @@ export function FilaSerie({
   numeroSerie,
   ejercicio,
   repMin,
+  repMax = 100,
+  pesoSugeridoLb,
   registrada,
   referencia,
   partida,
@@ -79,8 +84,8 @@ export function FilaSerie({
     : 0
 
   // Lo de hoy manda sobre la referencia de la sesión anterior.
-  const pesoDePartida = partida?.pesoRegistradoLb ?? pesoDeReferencia
-  const repsDePartida = partida?.repsRealizadas ?? referencia?.reps ?? repMin
+  const pesoDePartida = partida?.pesoRegistradoLb ?? pesoSugeridoLb ?? pesoDeReferencia
+  const repsDePartida = partida?.repsRealizadas ?? Math.min(repMax, Math.max(repMin, referencia?.reps ?? repMin))
 
   const [editando, setEditando] = useState(false)
   const [desplegada, setDesplegada] = useState(false)
@@ -324,7 +329,7 @@ export function FilaSerie({
             )}
           </span>
         ) : (
-          <details className="serie__opciones"><summary>Más opciones</summary>
+          <OpcionesSerie>
             <button
               type="button"
               className={`marca marca--${tecnica} marca--tocable`}
@@ -347,7 +352,7 @@ export function FilaSerie({
               Calentamiento
             </button>
 <label className="sfm-field sfm-field--compact"><span>Nota de esta serie</span><textarea className="sfm-series-note" aria-label={`Nota de la ${etiqueta}`} maxLength={4000} value={nota} onChange={e=>{setTocado(true);setNota(e.target.value)}} placeholder="Algo que recordar"/></label>
-          </details>
+          </OpcionesSerie>
         )}
       </div>
 

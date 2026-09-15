@@ -1759,13 +1759,23 @@ a.sfm-primary:active {
   flex-wrap: wrap;
 }
 .serie__opciones[open] {
-  position: absolute;
-  z-index: 12;
-  right: 0;
-  top: 0;
-  width: min(280px, 90vw);
+  position: relative;
+  flex-basis: 100%;
+  min-width: 0;
   padding: 8px 14px;
-  box-shadow: 0 16px 50px #0009;
+}
+.serie__cabecera:has(.serie__opciones[open]) { flex-wrap: wrap; }
+.serie__cerrar-opciones {
+  display: block;
+  min-height: 48px;
+  width: 100%;
+  margin-top: 12px;
+  border: 1px solid var(--sfm-line);
+  border-radius: 10px;
+  background: var(--sfm-surface);
+  color: var(--sfm-white);
+  font: inherit;
+  font-size: 14px;
 }
 .serie__cabecera {
   position: relative;

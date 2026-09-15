@@ -43,7 +43,7 @@ export function aplicarSustituciones(
     // Sólo cambia el ejercicio: series, rango, estímulo y descanso se quedan (§23).
     slots: plantilla.slots.map((slot) => {
       const ejercicioId = ejercicioPorOrden.get(slot.orden)
-      return ejercicioId ? { ...slot, ejercicioId } : slot
+      return ejercicioId && ejercicioId !== slot.ejercicioId ? { ...slot, ejercicioId, pesoSugeridoLb: undefined } : slot
     }),
   }
 }

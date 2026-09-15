@@ -489,7 +489,7 @@ describe('temporizador de descanso (criterio 5)', () => {
     await repositorio.guardarPlantilla(actualizarSlot(plantilla, 1, { descansoSegundos: 75 }))
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    expect(await screen.findByRole('status', { name: 'Temporizador de descanso' })).toHaveTextContent('1:15')
+    await waitFor(() => expect(screen.getByRole('status', { name: 'Temporizador de descanso' })).toHaveTextContent('1:15'))
     await userEvent.click(screen.getByRole('button', { name: 'Añadir 30 segundos' }))
     const fin = screen.getByTestId('fin-descanso').textContent
     await userEvent.click(screen.getByLabelText(`Editar la serie 1 de ${PRESS}`))
@@ -949,7 +949,7 @@ describe('el ejercicio terminado se pliega y pasa el turno', () => {
 
     const hoja = await screen.findByRole('dialog', { name: 'Ejercicios del día' })
     const fila = within(hoja).getByRole('button', { name: (texto) => texto.includes(PRESS) })
-    expect(fila).toHaveTextContent('4/4')
+    await waitFor(() => expect(fila).toHaveTextContent('4/4'))
   })
 
   test('se puede volver al ejercicio terminado para corregir', async () => {

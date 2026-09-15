@@ -447,3 +447,22 @@ describe("fronteras de acceso", () => {
     ).toBeNull();
   });
 });
+
+it("conserva el peso sugerido publicado en SQL y en la prescripción histórica del Cliente", async () => {
+  const nuevo = structuredClone(plan);
+  nuevo.dias[0].slots[0].pesoSugeridoLb = 42.5;
+  await aplicar(local.db, "test-a", { ...ctx, rol: "coach" }, op("plan", "programa", nuevo, 1));
+  const publicado = JSON.parse((await actual(local.db, "test-a", "plan", "programa"))!.datos_json);
+  expect(publicado.dias[0].slots[0].pesoSugeridoLb).toBe(42.5);
+  await aplicar(local.db, "test-a", ctx, op("entrenamiento", entrenamiento.id, { ...entrenamiento, prescripcion: nuevo.dias[0], planRevision: 2 }));
+  const sesion = JSON.parse((await actual(local.db, "test-a", "entrenamiento", entrenamiento.id))!.datos_json);
+  expect(sesion.prescripcion.slots[0].pesoSugeridoLb).toBe(42.5);
+});
+it("acepta planes antiguos y cero, y rechaza pesos sugeridos inválidos", () => {
+  expect(Plan.safeParse(plan).success).toBe(true);
+  for (const peso of [0, 42.5, -1, 3001, Number.NaN, Number.POSITIVE_INFINITY]) {
+    const nuevo = structuredClone(plan);
+    nuevo.dias[0].slots[0].pesoSugeridoLb = peso;
+    expect(Plan.safeParse(nuevo).success).toBe(peso === 0 || peso === 42.5);
+  }
+});
