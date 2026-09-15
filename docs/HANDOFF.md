@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-15T15:26:31.859Z
+- **Última sincronización:** 2026-09-15T16:33:31.627Z
 
 ## Peso sugerido del Coach y cierre de opciones — 2026-09-15
 
@@ -1044,6 +1044,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-15T16:33:31.629Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Arreglos E2E: flujo Maestro, CSP del shell, cobertura real y menores
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-15T15:26:31.860Z | codex | PUBLISH
 - **Estado:** complete
