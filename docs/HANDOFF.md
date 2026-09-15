@@ -7,11 +7,40 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-15T15:19:13.148Z
+- **Última sincronización:** 2026-09-15T15:26:31.859Z
+
+## Peso sugerido del Coach y cierre de opciones — 2026-09-15
+
+- Código `e13a9af`, preview `954dde22`; QA remoto del alias público PASS.
+- Campo opcional `pesoSugeridoLb` en Slot y Prescripción del Coach, con unidades
+  de registro del ejercicio (lb por lado cuando corresponde), 0–3000 lb y
+  decimales. Vacío mantiene el comportamiento anterior; cero es válido.
+- Cliente precarga el peso del Coach antes del historial, sin sobrescribir
+  valores guardados, borradores o ajustes del Cliente. La siguiente serie toma
+  lo usado hoy. Las reps históricas iniciales se acotan al rango del plan;
+  los registros reales permanecen intactos. Se identifica el peso del Coach y
+  no se muestra otra sugerencia de carga calculada en conflicto.
+- Peso conservado en plan y prescripción histórica; probado con SQL local.
+  No requiere migración. Sustituciones temporales o permanentes no heredan
+  el peso de otra variante. Los PDFs permanecen intactos.
+- Más opciones se despliega dentro del contenido, con Cerrar opciones, Escape
+  y toque exterior. Botón/Escape devuelve foco al resumen. Cerrar conserva la
+  nota, técnica y calentamiento; no hay eliminación de datos ni guardado implícito.
+- 719 pruebas/71 archivos, lint/build PASS. Cobertura de prioridad de datos,
+  borradores, unidades, cero/ausencia/inválidos, contrato y SQL, variantes y cierre.
+  Dos aserciones existentes ahora esperan la actualización asíncrona del reloj
+  y del contador de series antes de evaluar sus valores; mismo resultado esperado.
+- Playwright/Chrome a 320/390/1024 y preview remoto a 390 PASS. Coach publica
+  42.5 lb por lado y 8–12 reps; Cliente recibe 42.5/8, ajusta a 45 y lo conserva
+  en la siguiente serie. Nota, cierre, Escape/exterior, geometría y descanso PASS.
+  Sin errores de consola ni peticiones privadas de demo. Evidencias
+  `/tmp/sfm-weight-*.log` y `/tmp/sfm-weight-*.png`.
+  Sin iPhone físico ni lector de pantalla real; Browser plugin no disponible.
+- La publicación dispara el deployment canónico; verificar el artefacto servido.
 
 ## Descanso automático por serie — 2026-09-13
 
@@ -1015,6 +1044,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-15T15:26:31.860Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Peso sugerido del Coach precargado y editable, reps iniciales dentro del rango y Más opciones con cierre accesible; preview 954dde22 verificado
+- **Verificación:** npm test: 719/719; npm run lint: PASS; npm run build: PASS; SQL local y Playwright 320/390/1024 y remoto 390: PASS
+- **Siguiente:** ninguno
+
 
 ### 2026-09-15T15:19:13.149Z | codex | CLAIM
 - **Estado:** active
