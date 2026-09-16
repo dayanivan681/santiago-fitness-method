@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(npx tsc *)",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "Bash(awk '{print $NF, $5}')",
+      "Bash(echo \"TSC=$?\")",
+      "Bash(awk '/CREATE TABLE/{t=$0} /cliente_id/{print t\" -> \"$0}' migrations/0008_coaching_cloud.sql)"
     ]
   }
 }

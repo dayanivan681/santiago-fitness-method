@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-15T16:33:31.627Z
+- **Última sincronización:** 2026-09-16T00:57:49.747Z
 
 ## Peso sugerido del Coach y cierre de opciones — 2026-09-15
 
@@ -1044,6 +1044,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-16T00:57:49.748Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Arreglos del E2E: flujo Maestro corregido (la bienvenida de la demo se tragaba el primer toque, faltaba scroll antes de Completar serie y el descanso ahora es automatico), CSP y X-Frame-Options en el shell via functions/lib/cabecerasShell.ts con frame-ancestors self para no romper el iframe de /presentacion, cobertura ampliada a src/functions/shared con umbrales en el suelo real (72,01%) y limpieza de fichas de QA en local
+- **Verificación:** npm test 725/72; tsc -b; npm run lint; npm run build; test:coverage con umbrales; test:http 35/35; test:movil 34/34; cabeceras verificadas en runtime local; navegador sin violaciones de CSP; iframe de presentacion intacto
+- **Siguiente:** Verificar produccion tras el despliegue. Pendiente y no verificado: Safari real de iPhone y PWA instalada. El hueco de cobertura hacia el 80% esta en src/producto (47,5%), src/nube (55,2%) y functions (66,1%)
+
 
 ### 2026-09-15T16:33:31.629Z | claude-code | CLAIM
 - **Estado:** active
