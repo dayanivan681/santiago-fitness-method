@@ -22,6 +22,7 @@ import {
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
 import { origenSeguro } from './lib/v2/seguridad'
+import { conCabecerasDeShell } from './lib/cabecerasShell'
 
 type Entorno = {
   readonly ACCESO: D1Database
@@ -162,5 +163,6 @@ async function atenderApp(
 ): Promise<Response> {
   // El shell no contiene datos personales. Cada API valida identidad y permisos;
   // esto permite una demo pública en memoria y recuperar el shell offline.
-  return next()
+  // Lo que sí lleva es CSP y anti-framing: ver lib/cabecerasShell.ts.
+  return conCabecerasDeShell(await next())
 }

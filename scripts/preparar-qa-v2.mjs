@@ -15,6 +15,8 @@ const texto = await readFile(config, "utf8");
 const parte = remoto ? texto.split("[[env.preview.d1_databases]]")[1] : texto;
 if (!parte?.includes(`database_id = "${id}"`))
   throw Error("La configuración no coincide con la base aislada de QA.");
+const NOMBRE_QA = "Lucía · QA aislado";
+const literalQA = "'" + NOMBRE_QA.replaceAll("'", "''") + "'";
 await mkdir(".qa-local", { recursive: true, mode: 0o700 });
 function ejecutar(args) {
   const salida = execFileSync(
@@ -66,6 +68,39 @@ const nombre = ejecutar([
 ])[0]?.results?.[0]?.nombre;
 if (nombre !== entorno)
   throw Error("La base pertenece a otro entorno. No se sembró QA.");
+
+// Cada preparación deja una sola ficha de QA. Sin esto se acumulaban «Lucía ·
+// QA aislado» duplicadas en la lista del Coach, una por ejecución. Sólo en
+// local: en staging vive evidencia de QA que no es nuestra.
+if (!remoto) {
+  const tablas = (
+    ejecutar(["--command", "SELECT name FROM sqlite_master WHERE type='table'"])[0]
+      ?.results ?? []
+  ).map((t) => t.name);
+  // Primero las hijas: hay claves foráneas hacia clientes(id).
+  const hijas = [
+    "sesiones",
+    "invitaciones",
+    "entrenamientos",
+    "medios",
+    "importaciones_partidas",
+    "importaciones_revisiones",
+    "importaciones",
+    "conflictos",
+    "cambios",
+    "rutinas",
+  ].filter((t) => tablas.includes(t));
+  const deQA = `cliente_id IN (SELECT id FROM clientes WHERE nombre=${literalQA})`;
+  await writeFile(
+    ".qa-local/limpieza-local.sql",
+    [
+      ...hijas.map((t) => `DELETE FROM ${t} WHERE ${deQA};`),
+      `DELETE FROM clientes WHERE nombre=${literalQA};`,
+    ].join("\n"),
+    { mode: 0o600 },
+  );
+  ejecutar(["--file", ".qa-local/limpieza-local.sql"]);
+}
 // Transpila exclusivamente el módulo canónico sin dependencias del catálogo.
 const fuente = ts.transpileModule(
   await readFile("shared/plantillas-base.ts", "utf8"),
@@ -82,7 +117,7 @@ const { PLANTILLAS_BASE } = await import(
 const cliente = "sfm-qa-" + randomUUID().replaceAll("-", "");
 const perfil = {
   id: cliente,
-  nombre: "Lucía · QA aislado",
+  nombre: NOMBRE_QA,
   sexo: null,
   edad: null,
   estaturaCm: null,

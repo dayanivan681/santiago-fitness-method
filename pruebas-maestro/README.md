@@ -1,45 +1,51 @@
 # QA móvil con Maestro
 
-Flujo de interfaz que recorre el cliente de punta a punta en Chromium.
+Flujo de interfaz que recorre el cliente de la demo de punta a punta en Chromium,
+tocando los controles de verdad.
 
 ## Por qué existe
 
-Los simuladores de iOS necesitan Xcode y la máquina de desarrollo sólo tiene las
-Command Line Tools. Esto **no sustituye a Safari real**, que sigue pendiente de
-verificar, pero convierte en repetible el recorrido que antes se comprobaba a
-mano en el navegador.
+Los tests de jsdom disparan eventos directamente sobre los elementos y
+**atraviesan las capas**: un diálogo que tapa un botón, o un botón escondido bajo la
+barra de pestañas, no les afecta. Este flujo sí lo detecta. El 2026-09-15 encontró
+los dos casos mientras las 719 pruebas unitarias seguían en verde.
+
+**No sustituye a Safari real**, que sigue sin verificar: los simuladores de iOS
+necesitan Xcode completo, y el Chromium de Maestro no es WebKit.
 
 ## Cómo se ejecuta
 
-Necesita el servidor local en marcha y un enlace de acceso de un solo uso:
-
 ```bash
-npx wrangler pages dev --port 8788 --local &
+npm run build
+npm run qa:preparar -- --local
+npm run qa:servir     # en otra terminal: Functions en localhost:8788
+npm run qa:acceso     # en otra terminal: proxy en 127.0.0.1:8789
 npm run test:movil
 ```
 
-`enlace-local.mjs` acuña la invitación contra la D1 **local** a propósito: probar
-no debe crear invitaciones en la base real. Igual que en producción, sólo el
-SHA-256 llega a la base.
+La demo vive en memoria, así que el flujo no escribe en ninguna base.
+`qa-movil.yaml` sólo delega en `qa-v2.yaml`, por compatibilidad con el nombre
+antiguo.
 
 ## Qué cubre y qué no
 
-**Sí:** enlace de acceso, guardar una serie de trabajo, descanso automático,
-reabrir la serie con "Editar", cambiar técnica, marcar calentamiento, y que el
-descanso sobreviva a salir a Biblioteca y volver. Toca los controles de verdad,
-así que un control que no responda al toque hace fallar el flujo.
+**Sí:** cerrar la bienvenida, elegir Upper A, entrar al entrenamiento, escribir
+peso y reps, elegir RIR, completar la serie, que el descanso arranque solo, ir a
+Biblioteca y buscar con el descanso en marcha, volver al ejercicio, corregir la
+serie, omitir el descanso y terminar la sesión.
 
-**No:** la geometría de QA-MOB-01. Se comprobó reintroduciendo el fallo a
-propósito y el flujo siguió pasando: Maestro desplaza el elemento a la vista
-antes de tocarlo, y la ventana de Chromium no es un viewport de móvil, así que
-nunca reproduce el solapamiento.
-
-Esa parte la protege `src/pruebas/shellMovil.test.ts`, que sí falla con el fallo
-reintroducido.
+**No:**
+- Safari ni iOS.
+- La geometría fina de móvil: Chromium abre una ventana de escritorio. Esa parte la
+  protege `src/pruebas/shellMovil.test.ts`.
+- El Coach, las invitaciones reales y la sincronización: eso es `npm run test:http`.
 
 ## Estado
 
-`clearState` al principio deja IndexedDB y la cookie limpias. Sin eso el flujo
-depende de lo que quedara de la sesión anterior: una serie marcada como
+`clearState` al principio deja IndexedDB y las cookies limpias. Sin eso, el flujo
+dependería de lo que quedara de la ejecución anterior: una serie marcada como
 calentamiento no arranca descanso —comportamiento correcto— y parecería un fallo
 del cronómetro.
+
+Si el flujo falla en un toque que «debería» funcionar, lo primero es mirar la
+captura en `~/.maestro/tests/<fecha>/`: casi siempre hay algo encima del control.

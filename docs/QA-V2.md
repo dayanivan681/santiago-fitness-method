@@ -116,3 +116,68 @@ cerrada y no ejecutó comandos; no se cuenta ese intento como una prueba aprobad
 La guía de demo en español se verificó local y remotamente a 320/375/390/430/768/
 1024 px: bienvenida, retorno, cambio a Cliente, ayuda y onboarding ficticio;
 sin errores de ejecución, overflow ni controles inferiores a 48 px en la guía.
+
+## Revisión y arreglos del 2026-09-15
+
+E2E completo sobre `0fea287` (tipado, suites, API local, Maestro, navegador y
+producción en lectura). El producto pasó de punta a punta; falló la red que debía
+vigilarlo. Tres arreglos:
+
+**1. El flujo de Maestro estaba roto desde `f996e07` y nadie lo notó.** Tres causas,
+todas en el test y ninguna en la app: la demo abre sola «Prueba tu primera serie» y
+el diálogo se tragaba el primer toque —el flujo acababa en Lower A sin haber elegido
+Upper A—; «Completar serie» carga bajo la barra de pestañas y el toque caía en la
+barra; y desde `1b46fa1` el descanso arranca solo y su botón dice «Omitir». Corregido
+en `qa-v2.yaml`, con las tres decisiones explicadas en su cabecera.
+
+Lección para futuras revisiones: los tests de jsdom disparan eventos sobre los
+elementos y **atraviesan las capas**. Un diálogo encima de un botón o un control
+tapado por una barra no los rompe. Sólo Maestro los ve.
+
+**2. La app salía sin CSP ni protección contra framing.** `/`, `/demo/*` y `/admin`
+sirven el mismo index.html y sólo llevaban `Referrer-Policy` y `nosniff`: cualquier
+web podía incrustar la app en un iframe. Nuevo `functions/lib/cabecerasShell.ts`,
+aplicado en el middleware y en el handler de `/admin`. `frame-ancestors 'self'` y no
+`'none'` a propósito: `/presentacion` incrusta `/demo/cliente` en su maqueta.
+`public/_headers` no servía: sólo casa con `/` y `/index.html`, y `/demo/coach` llega
+con las cabeceras por defecto de Cloudflare.
+
+**3. La cobertura del 95 % era engañosa.** Medía sólo `dominio`, `logica` y `datos`:
+594 sentencias de unas 18.000 líneas. Ampliada a `src`, `functions` y `shared`. Cifra
+real y umbrales fijados en ese suelo, de modo que pueda subir pero no bajar:
+
+| | Real | Umbral |
+|---|---|---|
+| Sentencias | 72,01 % | 72 |
+| Ramas | 64,40 % | 64 |
+| Funciones | 68,76 % | 68 |
+| Líneas | 73,79 % | 73 |
+
+Distancia al 80 % del contrato, por zona: `src/producto` 47,5 %, `src/nube` 55,2 %,
+`functions` 66,1 %. El resto ya está por encima (`logica` 99,6 %, `datos` 89,9 %,
+`pantallas` 89,1 %, `aplicacion` 88,5 %).
+
+### Evidencia de esta revisión
+
+- Suite completa 725 pruebas / 72 archivos PASS; `tsc -b`, lint y build limpios.
+- API local: 35 comprobaciones PASS. Maestro Chromium: 34 comandos PASS con el flujo
+  corregido, ejecutado desde el fichero del repositorio.
+- Cabeceras en el runtime local: CSP y `X-Frame-Options: SAMEORIGIN` en `/`,
+  `/demo/coach`, `/demo/cliente/entrenar` y `/admin`; `/presentacion` conserva la suya;
+  APIs, `sw.js` y el manifiesto siguen sin tocar.
+- Navegador sin una sola violación de CSP en: demo cliente completo, demo Coach,
+  `/admin` real, `/qa/cliente` y `/presentacion` con su iframe cargando `/demo/cliente`.
+- `qa:preparar --local` ya no acumula fichas: dos preparaciones seguidas dejan una
+  sola «Lucía · QA aislado» (antes, una por ejecución).
+
+### Pendiente y no verificado
+
+- **Safari real de iPhone y PWA instalada siguen sin verificar.** Todo es Chromium.
+- Cinco tests emitían avisos `act(...)` el 15 de septiembre por la mañana, con el
+  navegador y dos servidores en marcha: `GuiaDemo`, `RecorridosDemo` (×3),
+  `EntrenamientoHoy` (borrador) y `PanelProgreso` (borrar medición). **No se han
+  podido reproducir** en seis suites completas, incluidas dos simultáneas para cargar
+  la máquina. No se tocaron los tests: cambiarlos sin poder verificar el efecto
+  arriesga debilitar sus aserciones. Si reaparecen, el patrón es una actualización
+  asíncrona que llega después de la última aserción; se arregla esperando el estado
+  final, no envolviendo código en `act`.

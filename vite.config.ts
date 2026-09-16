@@ -31,7 +31,16 @@ export default defineConfig({
     testTimeout: 20000,
     coverage: {
       provider: 'v8',
-      include: ['src/dominio/**', 'src/logica/**', 'src/datos/**'],
+      // Todo el código: interfaz y servidor incluidos. Hasta el 2026-09-15 sólo se
+      // medían dominio, logica y datos, y el 95 % que salía no representaba la app.
+      include: ['src/**/*.{ts,tsx}', 'functions/**/*.ts', 'shared/**/*.ts'],
+      exclude: ['**/*.test.{ts,tsx}', 'src/pruebas/**', '**/*.d.ts', 'src/main.tsx'],
+      /*
+       * Suelo medido el 2026-09-15, no objetivo: la cobertura puede subir, pero
+       * no bajar sin que falle la suite. Falta para el 80 % del contrato:
+       * el hueco está en src/producto (47,5 %), functions (66,1 %) y src/nube (55,2 %).
+       */
+      thresholds: { statements: 72, branches: 64, functions: 68, lines: 73 },
     },
   },
 })

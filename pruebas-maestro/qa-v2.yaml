@@ -1,5 +1,16 @@
 # Flujos de componentes reales en demo volátil. Nunca escribe en D1 ni abre
 # la caché privada. El QA cloud usa exclusivamente los fixtures de staging/local.
+#
+# Tres decisiones que no hay que deshacer (E2E del 2026-09-15):
+# - La demo abre sola «Prueba tu primera serie». Hay que cerrarla antes de nada:
+#   el <dialog> modal se traga el primer toque real, y el flujo acababa en el
+#   día por defecto (Lower A) sin haber elegido Upper A.
+# - «Completar serie» carga debajo de la barra de pestañas. Sin scroll, el toque
+#   cae en la barra y la serie no se guarda.
+# - Desde 1b46fa1 el descanso arranca solo al guardar y su botón dice «Omitir»
+#   mientras corre; ya no hay que pulsar «Descanso».
+# Los tests de jsdom no ven nada de esto: disparan eventos directamente sobre
+# los elementos y atraviesan las capas. Para eso existe este flujo.
 url: http://127.0.0.1:8789/demo/cliente
 name: Santiago V2 · entrenamiento y continuidad
 tags: [web, v2, demo]
@@ -9,6 +20,8 @@ tags: [web, v2, demo]
 - extendedWaitUntil:
     visible: Comenzar entrenamiento
     timeout: 20000
+- tapOn:
+    id: Cerrar
 - tapOn: Upper A
 - tapOn: Comenzar entrenamiento
 - assertVisible: Ejercicio 1 de 5
@@ -22,15 +35,15 @@ tags: [web, v2, demo]
 - inputText: '5'
 - tapOn:
     id: RIR 2 de la serie 1 de Press inclinado bajo \(15°\) en Smith
+- scrollUntilVisible:
+    element:
+      id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
 - assertVisible:
     id: Editar la serie 1 de Press inclinado bajo \(15°\) en Smith
-- scrollUntilVisible:
-    element: Descanso
-    direction: DOWN
-    centerElement: true
-- tapOn: Descanso
 - assertVisible:
     id: Temporizador de descanso
 - tapOn: Biblioteca
@@ -42,14 +55,22 @@ tags: [web, v2, demo]
 - assertVisible: Ejercicio 1 de 5
 - assertVisible:
     id: Temporizador de descanso
+- scrollUntilVisible:
+    element:
+      id: Editar la serie 1 de Press inclinado bajo \(15°\) en Smith
+    direction: UP
+    centerElement: true
 - tapOn:
     id: Editar la serie 1 de Press inclinado bajo \(15°\) en Smith
 - waitForAnimationToEnd
-- assertVisible:
-    id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
+- scrollUntilVisible:
+    element:
+      id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: Guardar la serie 1 de Press inclinado bajo \(15°\) en Smith
-- tapOn: Listo
+- tapOn: Omitir
 - scrollUntilVisible:
     element: Terminar sesión
     direction: DOWN
