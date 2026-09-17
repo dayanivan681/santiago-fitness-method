@@ -7,11 +7,25 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-17T01:56:55.145Z
+- **Última sincronización:** 2026-09-17T02:11:19.640Z
+
+## Validación Safari/PWA con Xcode — 2026-09-16
+
+- Xcode 27.0, simulador QA iPhone 16 Pro / iOS 27.0. Demo canónica validada
+  mediante Safari y PWA instalada desde la hoja Compartir.
+- PASS: bienvenida, ayuda opcional, cierre de opciones con scroll, teclado decimal,
+  guardado y precarga de siguiente serie, descanso automático, +30s/Omitir,
+  Home/regreso sin reinicio del contador, instalación y apertura standalone,
+  corrección de reps sin nuevo descanso, navegación Hoy/Biblioteca/Progreso.
+- Sin cambios de producto ni datos reales. 725 pruebas/72 archivos, lint/build PASS.
+- Informe y límites: `docs/QA-XCODE-2026-09-16.md`. No valida hardware físico,
+  VoiceOver, offline ni el flujo autenticado. No se repitió Coach → peso sugerido.
+- Puntos 2–4 aplazados por el dueño: ayuda para cuentas reales, equivalencias del
+  catálogo y acceso/piloto de Santiago.
 
 ## Peso sugerido del Coach y cierre de opciones — 2026-09-15
 
@@ -1044,6 +1058,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-17T02:11:19.641Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Validacion Safari y PWA en simulador Xcode: teclado, series, opciones, descanso, segundo plano e instalacion; informe con limites
+- **Verificación:** npm test: 725 PASS; npm run lint: PASS; npm run build: PASS; Safari y PWA iOS Simulator: PASS en alcance documentado
+- **Siguiente:** Puntos 2-4 aplazados por el dueno. Pendientes hardware fisico, VoiceOver y offline; ver QA-XCODE-2026-09-16.md
+
 
 ### 2026-09-17T01:56:55.151Z | codex | CLAIM
 - **Estado:** active
