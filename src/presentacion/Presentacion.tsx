@@ -39,7 +39,7 @@ export function Presentacion() {
           <a href="#pantallas">La app</a>
           <a href="#coach">Para el coach</a>
           <a className="landing-access" href="/">
-            Ya tengo acceso ↗
+            Ya tengo acceso{"\u00a0"}<span aria-hidden="true">↗︎</span>
           </a>
         </nav>
       </header>
@@ -67,7 +67,7 @@ export function Presentacion() {
                 Ver cómo usar la app ↓
               </a>
               <a className="landing-secondary" href="/">
-                Ya tengo acceso ↗
+                Ya tengo acceso{"\u00a0"}<span aria-hidden="true">↗︎</span>
               </a>
             </div>
             <p className="landing-small">
@@ -153,7 +153,7 @@ export function Presentacion() {
           <div className="landing-captures">
             {CAPTURAS.map((item) => (
               <figure key={item.id}>
-                <a className="landing-view-link" href={item.id==='coach'?'/demo/coach':`/demo/cliente${item.id==='hoy'?'':'/'+item.id}`}>Explorar {item.titulo} ↗</a>
+                <a className="landing-view-link" href={item.id==='coach'?'/demo/coach':`/demo/cliente${item.id==='hoy'?'':'/'+item.id}`}>Explorar {item.titulo}{"\u00a0"}<span aria-hidden="true">↗︎</span></a>
                 <figcaption>
                   <h3>{item.titulo}</h3>
                   <p>{item.texto}</p>
@@ -276,7 +276,7 @@ export function Presentacion() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Entrar como coach ↗
+            Entrar como coach{"\u00a0"}<span aria-hidden="true">↗︎</span>
           </a>
         </section>
         <section className="landing-section landing-practical">
@@ -333,7 +333,7 @@ export function Presentacion() {
           EMPIEZA AQUÍ.
         </h2>
         <a className="landing-primary" href="/">
-          Abrir Santiago Fitness Method ↗
+          Abrir Santiago Fitness Method{"\u00a0"}<span aria-hidden="true">↗︎</span>
         </a>
         <p>Acceso privado mediante invitación de tu coach.</p>
         <a href="#inicio">Volver al inicio ↑</a>

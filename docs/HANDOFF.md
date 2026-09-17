@@ -13,6 +13,30 @@ trabaja y lo publica antes de que el otro continúe.
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
 - **Última sincronización:** 2026-09-17T02:41:06.204Z
 
+## Flecha ↗ como emoji en iOS — corregida 2026-09-16
+
+- Safari de iPhone pintaba `↗` como emoji azul en «Ver ejercicio ↗» y «Ya tengo
+  acceso ↗»: un cuadrado de color en una paleta de negro, blanco y rojo. Chromium
+  la pinta como glifo de texto, así que ninguna prueba ni QA anterior lo vio.
+- Arreglo: selector de variación `U+FE0E` en las 6 apariciones, y espacio
+  irrompible para que la flecha no se separe de su texto. En la presentación va
+  envuelta en `<span aria-hidden="true">`, de modo que el nombre accesible pasa a
+  ser «Explorar Coach» y VoiceOver deja de leer «flecha noreste».
+- En `CuerpoEjercicio` la flecha va como texto, NO envuelta: la regla
+  `.sfm-workout-image span` es de descendiente y posicionaba en absoluto
+  cualquier span interno, despegando la flecha de la píldora. El nombre accesible
+  ahí ya lo da el `aria-label` del botón.
+- Nueva prueba `src/pruebas/glifos.test.ts`: ningún símbolo de la lista de
+  conflictivos puede quedar sin el selector de texto. Se comprobó que sabe fallar.
+- Verificado en Safari real (simulador iOS 27): flecha de texto, en línea, en la
+  presentación y en el entrenamiento. 734 pruebas/74 archivos, tsc, lint, build.
+
+**Trampa que costó tres capturas falsas:** `scripts/servir-qa-v2.mjs:34` copia
+`dist` a `.qa-local/runtime/dist` **una sola vez al arrancar**, y nunca limpia:
+había once versiones del mismo chunk acumuladas. Tras reconstruir hay que
+reiniciar `qa:servir`, o el navegador y el simulador siguen sirviendo el build
+anterior y parece que el arreglo no funciona.
+
 ## Ayuda contextual para cuentas reales — completada por claude-code 2026-09-16
 
 Continuación del checkpoint de codex (sección siguiente), adoptado en `703ed19`.

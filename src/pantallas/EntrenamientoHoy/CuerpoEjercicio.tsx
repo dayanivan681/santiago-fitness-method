@@ -102,7 +102,7 @@ export function CuerpoEjercicio({
   return (
     <section className="entreno__ejercicio">
       <header ref={identidad} className="entreno__identidad">
-        <button type="button" className="sfm-workout-image" onClick={onAbrirFicha} aria-label="Ver ficha del ejercicio"><img src={ejercicio.imagen} alt=""/><span>Ver ejercicio ↗</span></button>
+        <button type="button" className="sfm-workout-image" onClick={onAbrirFicha} aria-label="Ver ficha del ejercicio"><img src={ejercicio.imagen} alt=""/><span>Ver ejercicio{"\u00a0"}↗︎</span></button>
         <span className={`ejercicio__tag tinta--${slot.estimulo}`}>
           <span className={`ejercicio__punto punto--${slot.estimulo}`} />
           {ETIQUETA_ESTIMULO[slot.estimulo]}

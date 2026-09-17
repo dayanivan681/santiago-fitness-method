@@ -32,7 +32,7 @@ describe("Presentación pública fiel", () => {
     expect(container.textContent).not.toMatch(
       /\bkg\b|Copia de seguridad|vídeo|sincronización entre dispositivos|Press militar/,
     );
-    expect(screen.getByRole("link",{name:"Explorar Coach ↗"})).toHaveAttribute("href","/demo/coach");
+    expect(screen.getByRole("link",{name:"Explorar Coach"})).toHaveAttribute("href","/demo/coach");
     expect(container.querySelector("iframe")).toHaveAttribute("src", "/demo/cliente");
     expect(container.querySelector("iframe")).toHaveAttribute("referrerpolicy", "no-referrer");
     expect(
