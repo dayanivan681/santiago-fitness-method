@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-17T02:41:06.204Z
+- **Última sincronización:** 2026-09-17T03:02:32.092Z
 
 ## Flecha ↗ como emoji en iOS — corregida 2026-09-16
 
@@ -1148,6 +1148,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-17T03:02:32.093Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** La flecha arriba-derecha dejaba de ser glifo de texto en Safari de iPhone y salia como emoji azul en Ver ejercicio y Ya tengo acceso. Selector de variacion U+FE0E en las seis apariciones, espacio irrompible, span aria-hidden en la presentacion para limpiar el nombre accesible, y flecha como texto en el chip del entrenamiento porque su CSS posiciona en absoluto cualquier span descendiente
+- **Verificación:** npm test 734/74; tsc -b; lint; build; Safari real del simulador iOS 27 en presentacion y entrenamiento; glifos.test.ts comprobado que sabe fallar
+- **Siguiente:** Aviso util: servir-qa-v2.mjs copia dist una sola vez al arrancar y nunca limpia, asi que tras reconstruir hay que reiniciar qa:servir o se sirve el build anterior. Sigue pendiente Safari fisico, VoiceOver y offline
+
 
 ### 2026-09-17T02:41:06.205Z | claude-code | CLAIM
 - **Estado:** active
