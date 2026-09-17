@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-17T02:25:55.426Z
+- **Última sincronización:** 2026-09-17T02:33:38.471Z
 
 ## Ayuda contextual para cuentas reales — completada por claude-code 2026-09-16
 
@@ -1124,6 +1124,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-17T02:33:38.472Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Adoptada y completada la ayuda contextual para cuentas reales que dejo codex sin terminar: se corrigio el test que chocaba con la nueva redaccion unificada del alta y se anadio AyudaReal.test.tsx con la QA que faltaba (persistencia, aislamiento entre cuentas, almacenamiento corrupto o bloqueado, historial previo y frontera de Vista previa)
+- **Verificación:** npm test 733/73; tsc -b; lint; build; test:http 35/35; navegador movil 375 y escritorio 1280 con cuentas sinteticas locales
+- **Siguiente:** Pendiente: Safari real de iPhone y PWA instalada PARA ESTA FUNCION (la validacion de Xcode del 16 es anterior a estos cambios); VoiceOver; offline. Puntos 3-4 siguen aplazados por el dueno. Recordatorio: el JWT del fixture local dura 24 h; si test:http da 401 Coach firmado, repreparar y reiniciar el runtime antes de sospechar del codigo
+
 
 ### 2026-09-17T02:25:55.427Z | claude-code | ADOPT
 - **Estado:** active
