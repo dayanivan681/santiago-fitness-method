@@ -50,9 +50,9 @@ import type {
   BorradorDeSerie,
 } from "./dominio/tipos";
 import "./producto/producto.css";
-import { ProveedorAyudaDemo } from "./producto/AyudaDemo";
-import { useAyudaDemo } from "./producto/ayuda-demo-contexto";
-import { GuiaDemo } from "./producto/GuiaDemo";
+import { ProveedorAyudaDemo, ProveedorAyudaReal } from "./producto/Ayuda";
+import { useAyuda } from "./producto/ayuda-contexto";
+import { GuiaAyuda } from "./producto/GuiaAyuda";
 export function App() {
   return (
     <RecuperarPantalla>
@@ -175,7 +175,7 @@ function ClienteReal() {
 }
 function CoachReal() {
   const [servicio] = useState(() => new ServicioCoach());
-  const [autorizado, setAutorizado] = useState(false);
+  const [contexto, setContexto] = useState<Contexto | null>(null);
   const [comprobado, setComprobado] = useState(false);
   const nav = useNavigate();
   useRevision();
@@ -183,13 +183,13 @@ function CoachReal() {
     let vivo = true;
     const validar = async () => {
       try {
-        await new ClienteApi(true).pedir<Contexto>("/contexto");
+        const ctx = await new ClienteApi(true).pedir<Contexto>("/contexto");
         if (vivo) {
           estadoCambiar({ bloqueado: false });
-          setAutorizado(true);
+          setContexto(ctx);
         }
       } catch (e) {
-        if (vivo && e instanceof ErrorAcceso) setAutorizado(false);
+        if (vivo && e instanceof ErrorAcceso) setContexto(null);
       } finally {
         if (vivo) setComprobado(true);
       }
@@ -212,7 +212,7 @@ function CoachReal() {
         <p role="status">Verificando tu acceso…</p>
       </div>
     );
-  if (!autorizado || estadoNube.bloqueado)
+  if (!contexto || estadoNube.bloqueado)
     return (
       <div className="sfm-door">
         <Marca />
@@ -227,6 +227,7 @@ function CoachReal() {
       </div>
     );
   return (
+    <ProveedorAyudaReal key={`${contexto.entorno}:${contexto.rol}:${contexto.identidad}`} contexto={contexto}>
     <Routes>
       <Route
         path="vista/:clienteId/*"
@@ -250,6 +251,7 @@ function CoachReal() {
         }
       />
     </Routes>
+    </ProveedorAyudaReal>
   );
 }
 function Demo() {
@@ -257,7 +259,7 @@ function Demo() {
   return <ProveedorAyudaDemo><ContenidoDemo servicio={servicio}/></ProveedorAyudaDemo>;
 }
 function ContenidoDemo({servicio}:{servicio:ServicioCoach}) {
-  const personaDemo=useAyudaDemo()?.clienteId;
+  const personaDemo=useAyuda()?.clienteId;
   const loc = useLocation();
   const nav = useNavigate();
   const coach = loc.pathname.includes("/coach");
@@ -265,7 +267,7 @@ function ContenidoDemo({servicio}:{servicio:ServicioCoach}) {
     <>
       <aside className="sfm-demo-banner">
         <strong>DEMO</strong>
-        <GuiaDemo />
+        <GuiaAyuda />
         <span>Datos ficticios · Nada se guarda</span>
         <Link to={coach ? "/demo/cliente" : "/demo/coach"}>
           {coach ? "Ver Cliente" : "Ver Coach"}{" "}
@@ -308,7 +310,7 @@ function ContenidoDemo({servicio}:{servicio:ServicioCoach}) {
   );
 }
 function ClienteDemo({ servicio }: { servicio: ServicioCoach }) {
-  const clienteDemo = useAyudaDemo()?.clienteId ?? "demo-persona-1";
+  const clienteDemo = useAyuda()?.clienteId ?? "demo-persona-1";
   const [repo, setRepo] = useState<RepositorioMemoria | null>(null);
   useEffect(() => {
     let vivo = true;

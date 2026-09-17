@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Hoja, Icono } from "./ui";
-import { useAyudaDemo } from "./ayuda-demo-contexto";
+import { useAyuda } from "./ayuda-contexto";
 import "./guia-demo.css";
 
 const temasCoach = [
@@ -56,22 +56,24 @@ const temasCliente = [
     "Desde tu avatar accedes a tu perfil. En Progreso puedes consultar medidas y fotos; tú decides si compartes las fotos con tu Coach.",
   ],
 ];
-export function GuiaDemo() {
-  const ayuda = useAyudaDemo()!;
+export function GuiaAyuda({ base, permitirBienvenida = true }: { base?: string; permitirBienvenida?: boolean }) {
+  const ayuda = useAyuda();
   const { pathname } = useLocation();
   const navegar = useNavigate();
-  const cliente = pathname.startsWith("/demo/cliente");
-  const clave = cliente ? `bienvenida:${ayuda.clienteId}` : "bienvenida:coach";
+  const cliente = ayuda?.esCliente ?? false;
+  const raiz = base ?? (cliente ? "/demo/cliente" : "/demo/coach");
+  const clave = cliente ? `bienvenida:${ayuda?.clienteId}` : "bienvenida:coach";
   const [abierta, setAbierta] = useState(false);
   const [repetir, setRepetir] = useState(false);
   // Las entradas profundas no interrumpen una tarea con una bienvenida.
-  const entrada = /^\/demo\/(coach|cliente)\/?$/.test(pathname);
-  const bienvenida = repetir || (entrada && !ayuda.cerrados.has(clave));
+  if (!ayuda) return null;
+  const entrada = pathname === (raiz || "/") || pathname === `${raiz}/`;
+  const bienvenida = ayuda.preparada && (repetir || (entrada && permitirBienvenida && !ayuda.tieneActividad && !ayuda.cerrados.has(clave)));
   const cerrar = () => {
     ayuda.cerrar(clave);
     setRepetir(false);
   };
-  const titulo = cliente ? "Prueba tu primera serie" : "Crea tu primer cliente";
+  const titulo = cliente ? (ayuda.demo ? "Prueba tu primera serie" : "Tu entrenamiento, a mano") : "Crea tu primer cliente";
   return (
     <>
       <button
@@ -88,15 +90,15 @@ export function GuiaDemo() {
               ? "Abre el entrenamiento y registra una serie con nuestra ayuda."
               : "Añade sus datos, revisa su plan y déjalo listo para entrenar."}
           </p>
-          <p className="sfm-guia-sandbox">
+          {ayuda.demo && <p className="sfm-guia-sandbox">
             Demo con datos ficticios. Al recargar, se reinicia.
-          </p>
+          </p>}
           <div className="sfm-guia-actions">
             <button
               className="sfm-primary"
               onClick={() => {
                 cerrar();
-                navegar(cliente ? "/demo/cliente" : "/demo/coach/nuevo");
+                navegar(cliente ? raiz || "/" : `${raiz}/nuevo`);
               }}
             >
               {cliente ? "Ver mi entrenamiento" : "Crear cliente"}
@@ -121,7 +123,7 @@ export function GuiaDemo() {
                   {titulo}
                   <Icono nombre="mas" size={18} />
                 </summary>
-                <p>{texto}</p>
+                <p>{!ayuda.demo && titulo === "Invitar a un cliente" ? "Después de publicar su plan, toca Preparar invitación en su ficha. Copia el enlace privado y compártelo personalmente con el cliente. El enlace es de un uso; la app no envía mensajes por ti." : texto}</p>
               </details>
             ))}
           </div>
@@ -134,9 +136,9 @@ export function GuiaDemo() {
           >
             Ver bienvenida
           </button>
-          <p className="sfm-guia-sandbox">
+          {ayuda.demo && <p className="sfm-guia-sandbox">
             Demo con datos ficticios. Al recargar, se reinicia.
-          </p>
+          </p>}
         </Hoja>
       )}
     </>

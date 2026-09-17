@@ -1,4 +1,6 @@
-import { ConsejoCliente } from "./AyudaDemo";
+import { GuiaAyuda } from "./GuiaAyuda";
+import { ProveedorAyudaReal } from "./Ayuda";
+import { ConsejoCliente } from "./Ayuda";
 import { useState } from "react";
 import {
   Link,
@@ -23,7 +25,15 @@ import { ProgresoCliente, Fotos } from "./Progreso";
 import { AvatarCuenta } from "./AvatarCuenta";
 import { Recuperacion } from "./Recuperacion";
 import { Conflictos } from "./Conflictos";
-export function ClienteApp({
+export function ClienteApp(props: Parameters<typeof ContenidoCliente>[0]) {
+  const { conexion, modo = "real", repo } = props;
+  if (modo === "real" && conexion) {
+    const ctx = conexion.ctx;
+    return <ProveedorAyudaReal key={`${ctx.entorno}:${ctx.rol}:${ctx.identidad}`} contexto={ctx} repo={repo}><ContenidoCliente {...props} /></ProveedorAyudaReal>;
+  }
+  return <ContenidoCliente {...props} />;
+}
+function ContenidoCliente({
   repo,
   base,
   conexion,
@@ -76,9 +86,12 @@ export function ClienteApp({
         )}
         <div className="sfm-brandbar">
           <Marca />
+          <div className="sfm-brand-actions">
+          {modo === "real" && <GuiaAyuda base={base} />}
           <Link data-tour="perfil-cliente" data-tour-action="perfil-cliente-abierto" to={`${base}/perfil`} aria-label="Mi perfil">
             <AvatarCuenta nombre={participante.nombre} conexion={conexion} />
           </Link>
+          </div>
         </div>
         {conexion && (
           <button
@@ -118,7 +131,7 @@ export function ClienteApp({
                       month: "long",
                     })}
                   />
-                  {modo === "demo" && <ConsejoCliente />}
+                  {(modo === "demo" || modo === "real") && <ConsejoCliente />}
                   <EntrenamientoHoy
                     repositorio={repo}
                     memoriaDia={dia}
@@ -131,7 +144,7 @@ export function ClienteApp({
               path="entrenar"
               element={
                 <>
-                {modo === "demo" && <ConsejoCliente entrenando />}
+                {(modo === "demo" || modo === "real") && <ConsejoCliente entrenando />}
                 <Entrenamiento
                   repositorio={repo}
                   memoriaDia={dia}

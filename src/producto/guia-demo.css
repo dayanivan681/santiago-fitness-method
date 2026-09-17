@@ -1,3 +1,8 @@
+.sfm-brand-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .sfm-demo-help {
   display: flex;
   align-items: center;

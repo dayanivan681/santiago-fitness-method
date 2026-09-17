@@ -1,5 +1,5 @@
 import { OpcionesSerie } from "./OpcionesSerie";
-import { useAyudaDemo } from "../../producto/ayuda-demo-contexto";
+import { useAyuda } from "../../producto/ayuda-contexto";
 /**
  * Una serie: peso, reps y RIR.
  * Guía del proyecto §5 (registro serie por serie), §8 (evaluación contra la
@@ -93,7 +93,7 @@ export function FilaSerie({
   // Las reps también arrancan en la referencia: con el rango de fuerza (1–5),
   // empezar en el mínimo obligaría a pulsar cuatro veces cada serie.
   const [reps, setReps] = useState(registrada?.repsRealizadas ?? repsDePartida)
-  const ayuda = useAyudaDemo();
+  const ayuda = useAyuda();
   const [rir, setRir] = useState(registrada?.rir ?? 2)
 
   // Técnica y calentamiento se marcan sólo cuando se salen de lo normal: por

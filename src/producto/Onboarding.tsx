@@ -1,5 +1,5 @@
-import { useAyudaDemo } from "./ayuda-demo-contexto";
-import { ConsejoDemo } from "./AyudaDemo";
+import { useAyuda } from "./ayuda-contexto";
+import { Consejo } from "./Ayuda";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Alta as ValidarAlta, type Alta } from "../../shared/v2/contratos";
@@ -14,7 +14,7 @@ export function Onboarding({
   servicio: ServicioCoach;
   base: string;
 }) {
-  const ayuda = useAyudaDemo();
+  const ayuda = useAyuda();
   const { borradorId } = useParams();
   const navegar = useNavigate();
   const [alta, setAlta] = useState<Alta | null>(null);
@@ -153,15 +153,15 @@ export function Onboarding({
     <section className="sfm-onboarding">
       <Cabecera
         titulo={
-          (servicio.demo ? ["Datos del cliente", "Días y limitaciones", "Revisa el plan"] : ["Conocer a la persona", "Diseñar su semana", "Su primer plan"])[
+          ["Datos del cliente", "Días y limitaciones", "Revisa el plan"][
             a.paso - 1
           ]
         }
-        kicker={servicio.demo ? "Nuevo cliente" : "Nuevo proceso de coaching"}
+        kicker="Nuevo cliente"
         volver={`${base}/clientes`}
       />
       <div className="sfm-stepper" aria-label={`Paso ${a.paso} de 3`}>
-        {(servicio.demo ? ["Datos", "Días", "Plan"] : ["Persona", "Contexto", "Plan"]).map((s, i) => (
+        {["Datos", "Días", "Plan"].map((s, i) => (
           <button
             key={s}
             className={i + 1 <= a.paso ? "is-active" : ""}
@@ -176,7 +176,7 @@ export function Onboarding({
       </div>
       {a.paso === 1 && (
         <div className="sfm-form" data-tour="alta-persona">
-          {servicio.demo ? <ConsejoDemo id="alta-datos"><p>Añade su nombre y lo que quiere conseguir.</p></ConsejoDemo> : <p className="sfm-lead">Todo empieza por lo que quiere conseguir.</p>}
+          <Consejo id="alta-datos"><p>Añade su nombre y lo que quiere conseguir.</p></Consejo>
           <label className="sfm-field">
             <span>Nombre</span>
             <input
@@ -190,11 +190,11 @@ export function Onboarding({
             />
           </label>
           <label className="sfm-field">
-            <span>{servicio.demo ? "Objetivo" : "Objetivo compartido"}</span>
+            <span>Objetivo</span>
             <textarea
               data-tour="alta-objetivo" value={p.objetivo}
               maxLength={4000}
-              placeholder={servicio.demo ? "Por ejemplo: ganar fuerza" : "¿Qué le gustaría lograr con tu acompañamiento?"}
+              placeholder="Por ejemplo: ganar fuerza"
               onChange={(e) =>
                 setAlta({ ...a, perfil: { ...p, objetivo: e.target.value } })
               }
@@ -226,7 +226,7 @@ export function Onboarding({
             ))}
           </div>
           <label className="sfm-field">
-            <span>{servicio.demo ? "Limitaciones (opcional)" : "Limitaciones y contexto"}</span>
+            <span>Limitaciones (opcional)</span>
             <textarea
               data-tour="alta-limitaciones" value={p.limitaciones}
               placeholder="Movimientos a evitar, molestias o adaptaciones necesarias"
@@ -263,7 +263,7 @@ export function Onboarding({
             ))}
           </details>
           <label className="sfm-field">
-            <span>{servicio.demo ? "Notas privadas (opcional)" : "Notas privadas del Coach"}</span>
+            <span>Notas privadas (opcional)</span>
             <textarea
               data-tour="alta-notas" value={p.notas}
               placeholder="Sólo tú podrás leerlas"

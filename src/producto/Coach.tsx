@@ -1,5 +1,6 @@
-import { ConsejoDemo } from "./AyudaDemo";
-import { useAyudaDemo } from "./ayuda-demo-contexto";
+import { GuiaAyuda } from "./GuiaAyuda";
+import { Consejo } from "./Ayuda";
+import { useAyuda } from "./ayuda-contexto";
 import { useCallback, useEffect, useState } from "react";
 import {
   Link,
@@ -73,7 +74,10 @@ export function Coach({
     <div className="sfm-shell sfm-shell--coach">
       <div className="sfm-brandbar">
         <Marca />
-        <span className="sfm-role">Coach</span>
+        <div className="sfm-brand-actions">
+          {!servicio.demo && <GuiaAyuda base={base} permitirBienvenida={listo && clientes.length === 0 && borradores.length === 0} />}
+          <span className="sfm-role">Coach</span>
+        </div>
       </div>
       <main className="sfm-main">
         <ErrorVisible error={error} />
@@ -535,7 +539,7 @@ function FichaCliente({
           volver={`${base}/clientes`}
           accion={<Avatar nombre={c.perfil.nombre} />}
         />
-        <ClienteCreadoDemo id={c.perfil.id} />
+        <ClienteCreado id={c.perfil.id} />
         <p className="sfm-client-goal">
           {c.perfil.objetivo || "Objetivo por conversar"}
         </p>
@@ -972,7 +976,7 @@ function BibliotecaCoach() {
   );
 }
 
-function ClienteCreadoDemo({ id }: { id: string }) {
-  const ayuda = useAyudaDemo();
-  return ayuda?.completados.has(`creado:${id}`) ? <ConsejoDemo id={`creado:${id}`}><strong>Cliente creado. Su plan está listo.</strong></ConsejoDemo> : null;
+function ClienteCreado({ id }: { id: string }) {
+  const ayuda = useAyuda();
+  return ayuda?.completados.has(`creado:${id}`) ? <Consejo id={`creado:${id}`}><strong>Cliente creado. Su plan está listo.</strong></Consejo> : null;
 }

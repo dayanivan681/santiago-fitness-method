@@ -173,7 +173,7 @@ it("guarda y retoma el alta sin perder los datos al cerrar ayuda o navegar", asy
     screen.queryByRole("complementary", { name: "Consejo" }),
   ).not.toBeInTheDocument();
 });
-it("el alta de cuentas reales conserva su presentación y no incorpora ayuda de demo", async () => {
+it("el alta de cuentas reales usa la redacción simple y no muestra ayuda sin proveedor", async () => {
   const servicio = new ServicioCoach();
   vi.spyOn(servicio, "cambios").mockResolvedValue([]);
   render(
@@ -181,8 +181,11 @@ it("el alta de cuentas reales conserva su presentación y no incorpora ayuda de 
       <Onboarding servicio={servicio} base="/admin" />
     </MemoryRouter>,
   );
-  await screen.findByRole("heading", { name: "Conocer a la persona" });
-  expect(screen.getByLabelText("Objetivo compartido")).toBeInTheDocument();
+  // El alta dejó de tener dos redacciones: cuentas reales y demo comparten la
+  // misma, más corta. Lo que sigue garantizado es que la ayuda es opcional:
+  // sin proveedor no se cuela ningún consejo ni bienvenida.
+  await screen.findByRole("heading", { name: "Datos del cliente" });
+  expect(screen.getByLabelText("Objetivo")).toBeInTheDocument();
   expect(
     screen.queryByRole("complementary", { name: "Consejo" }),
   ).not.toBeInTheDocument();

@@ -7,11 +7,47 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
+- **Owner:** claude-code
 - **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-17T02:12:27.098Z
+- **Última sincronización:** 2026-09-17T02:25:55.426Z
+
+## En curso: ayuda contextual para cuentas reales — 2026-09-16
+
+El dueño pidió trabajar el punto 2 y dejar handoff para que Claude pueda retomar
+si Codex agota créditos.
+
+**Liberación del turno (claude-code, 2026-09-16):** codex agotó créditos con el
+turno aún en `active`, y `handoff:adopt` se niega mientras haya dueño. Siguiendo
+su propia indicación de retomar con el protocolo de adopción, se liberó el turno
+a mano para poder adoptar. Ningún cambio suyo se descartó. Puntos 3–4 siguen aplazados. Esta sección es un checkpoint,
+no una declaración de implementación terminada ni de QA aprobado.
+
+- Turno reclamado por codex, commit `ec5f2ce`. Se parte del QA Xcode publicado
+  en `ce3e703`. Revisar `git status` y el diff antes de adoptar trabajo sin commit.
+- Objetivo: bienvenida breve y ayuda contextual opcional para Coach y Cliente
+  autenticados, sin bloqueos de navegación ni cambios de datos. Recordar consejos
+  cerrados por identidad/rol/entorno en este dispositivo. Demo sólo en memoria.
+- Cambios en curso: renombrados `AyudaDemo.tsx` → `Ayuda.tsx` y
+  `ayuda-demo-contexto.ts` → `ayuda-contexto.ts`; imports/hooks compartidos
+  actualizados. `ProveedorAyudaReal` añadido pero todavía NO conectado a las rutas.
+  Lee preferencias locales tolerando JSON inválido/almacenamiento bloqueado,
+  consulta actividad previa para no insistir con consejos de primera serie,
+  y registra completado sólo desde callbacks de guardado correcto.
+- Falta: conectar proveedor autenticado con key por cuenta/entorno/rol, generalizar
+  `GuiaDemo` para rutas y textos reales (invitación real, sin aviso de datos ficticios),
+  botón Ayuda en cabeceras reales, consejos en alta/Cliente y textos simples del alta.
+  Preservar aislamiento de Vista previa y Entrenar juntos.
+- Falta QA: tests de persistencia/remontaje/aislamiento entre cuentas, almacenamiento
+  inválido/bloqueado, historial existente, guardado fallido, demo sin escrituras;
+  regresiones de acceso, `npm test`, lint/build y navegador móvil/escritorio con
+  cuentas sintéticas locales. Browser plugin ausente: usar Playwright instalado.
+- Todavía no se han ejecutado pruebas sobre estos cambios parciales. No publicar
+  como complete hasta terminar e inspeccionar el resultado servido.
+- Para retomar, revisar este checkpoint y todo el diff; usar el protocolo de
+  adopción del repositorio con agente claude-code cuando corresponda. No descartar
+  cambios ni modificar `docs/cliente`. No tocar cuentas/datos reales para QA.
 
 ## Validación Safari/PWA con Xcode — 2026-09-16
 
@@ -1058,6 +1094,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-17T02:25:55.427Z | claude-code | ADOPT
+- **Estado:** active
+- **Tarea:** Adoptar la ayuda contextual para cuentas reales de codex y completar su QA pendiente
+- **Cambios adoptados:** docs/HANDOFF.md, src/App.tsx, src/RecorridosDemo.test.tsx, src/pantallas/EntrenamientoHoy/FilaSerie.tsx, src/producto/AyudaDemo.tsx, src/producto/Cliente.tsx, src/producto/Coach.tsx, src/producto/GuiaDemo.tsx, src/producto/Onboarding.tsx, src/producto/ayuda-demo-contexto.ts, src/producto/guia-demo.css, src/producto/Ayuda.tsx, src/producto/GuiaAyuda.tsx, src/producto/ayuda-contexto.ts
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-09-17T02:12:27.099Z | codex | CLAIM
 - **Estado:** active
