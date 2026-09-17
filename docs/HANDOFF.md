@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** complete
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-16T00:57:49.747Z
+- **Última sincronización:** 2026-09-17T01:56:55.145Z
 
 ## Peso sugerido del Coach y cierre de opciones — 2026-09-15
 
@@ -1044,6 +1044,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-17T01:56:55.151Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Validar Safari y PWA en simulador Xcode; puntos 2-4 aplazados
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-16T00:57:49.748Z | claude-code | PUBLISH
 - **Estado:** complete
