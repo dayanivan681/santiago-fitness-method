@@ -13,7 +13,37 @@ trabaja y lo publica antes de que el otro continúe.
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
 - **Última sincronización:** 2026-09-17T02:25:55.426Z
 
-## En curso: ayuda contextual para cuentas reales — 2026-09-16
+## Ayuda contextual para cuentas reales — completada por claude-code 2026-09-16
+
+Continuación del checkpoint de codex (sección siguiente), adoptado en `703ed19`.
+
+- **Lo que ya estaba hecho** y la nota de codex daba por pendiente: `ProveedorAyudaReal`
+  sí estaba conectado, con key por entorno/rol/identidad, en Coach (`App.tsx`) y en
+  Cliente (`Cliente.tsx`); `GuiaAyuda` generalizada con textos reales; botón Ayuda en
+  ambas cabeceras; consejos en alta y Cliente.
+- **Lo que faltaba y se ha hecho:** la QA que codex dejó enumerada.
+  - Un test fallaba (`RecorridosDemo`): el alta real dejó de tener redacción propia
+    —codex la unificó con la de la demo, según su nota— y el test garantizaba lo
+    contrario. Se actualizó a la intención nueva conservando lo que sigue valiendo:
+    sin proveedor de ayuda no se cuela ningún consejo ni bienvenida.
+  - Nuevo `src/AyudaReal.test.tsx` (8 pruebas): persistencia entre montajes,
+    aislamiento entre cuentas del mismo dispositivo, preferencias corruptas,
+    almacenamiento bloqueado, historial previo, espera antes de decidir, frontera de
+    Vista previa/Entrenar juntos y demo sin escrituras.
+- **Verificado en el runtime local con cuentas sintéticas:** Coach real con botón
+  Ayuda, hoja de 6 temas, texto de invitación real y sin aviso de datos ficticios;
+  clave `sfm-ayuda:v1:local:coach:…` por identidad; Vista previa sin consejos de
+  Cliente; y lo esencial: tras registrar una serie y recargar, la bienvenida y el
+  consejo de primera vez dejan de aparecer y el botón Ayuda permanece.
+- 733 pruebas/73 archivos, `tsc -b`, lint y build PASS. 35 comprobaciones HTTP PASS.
+- **Nota de método:** la primera ejecución de `test:http` dio 401 «Coach firmado».
+  No era regresión: el JWT local del fixture dura 24 h y había caducado. Repreparar
+  y reiniciar el runtime lo resolvió. Conviene recordarlo antes de culpar al código.
+- **No verificado:** Safari real de iPhone y PWA instalada **para esta función**
+  (la validación de Xcode del 2026-09-16 es anterior a estos cambios); VoiceOver;
+  offline. Puntos 3–4 siguen aplazados por el dueño.
+
+## Checkpoint original de codex: ayuda contextual — 2026-09-16
 
 El dueño pidió trabajar el punto 2 y dejar handoff para que Claude pueda retomar
 si Codex agota créditos.
