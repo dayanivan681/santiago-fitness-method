@@ -1,4 +1,5 @@
 import { GuiaAyuda } from "./GuiaAyuda";
+import { CopiarInvitacion } from "./CopiarInvitacion";
 import { segunCantidad } from "../logica/plural";
 import { Consejo } from "./Ayuda";
 import { useAyuda } from "./ayuda-contexto";
@@ -687,21 +688,7 @@ function FichaCliente({
                   {enlace && (
                     <div className="sfm-invitation" data-tour="invitacion">
                       <p>{servicio.demo?"Simulación: no se crea ni se envía ninguna invitación.":"Lista para compartir personalmente."}</p>
-                      <input
-                        aria-label="Invitación privada"
-                        readOnly
-                        value={enlace}
-                      />
-                      <button
-                        className="sfm-secondary"
-                        onClick={() =>
-                          void navigator.clipboard
-                            .writeText(enlace)
-                            .then(() => setMensaje("Invitación copiada."))
-                        }
-                      >
-                        Copiar invitación
-                      </button>
+                      <CopiarInvitacion enlace={enlace} />
                     </div>
                   )}
                 </div>

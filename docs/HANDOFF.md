@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T05:21:00.778Z
+- **Última sincronización:** 2026-09-26T05:25:24.679Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1154,6 +1154,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T05:25:24.680Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Copiar invitación: el aviso 'Invitación copiada.' salía arriba de la ficha, 264 px fuera de la pantalla en móvil, y si el navegador negaba el portapapeles no pasaba nada (NotAllowedError sin capturar, reproducido en producción). Nuevo src/producto/CopiarInvitacion.tsx: el botón cambia a 'Copiada' y confirma debajo durante 4 s; si falla o no hay API, selecciona el enlace y explica cómo copiarlo a mano. 3 tests nuevos (CopiarInvitacion.test.tsx). Verificado en navegador a 375x812 con build local (éxito y fallo). PREGUNTA ABIERTA para el dueño: la sesión del cliente dura 7 días fijos sin renovarse (functions/lib/sesion.ts VIDA_DE_SESION); a la semana necesita una invitación nueva. No se cambió: es decisión de producto/seguridad.
+- **Verificación:** npm test (740/76); npm run lint; npx tsc -b; npm run build; npm run test:http (35/35, runtime local)
+- **Siguiente:** Decidir con el dueño si la sesión del cliente debe renovarse al usarla. Santiago entra en /admin.
+
 
 ### 2026-09-26T05:21:00.779Z | claude-code | CLAIM
 - **Estado:** active

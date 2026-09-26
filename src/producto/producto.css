@@ -594,6 +594,19 @@ a.sfm-primary:active {
   color: var(--sfm-muted);
   margin-bottom: 24px;
 }
+.sfm-invitation {
+  display: grid;
+  gap: 10px;
+}
+.sfm-invitation-estado {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--sfm-muted);
+}
+.sfm-invitation-estado:empty {
+  display: none;
+}
 .sfm-invitation input {
   width: 100%;
   background: #111;
