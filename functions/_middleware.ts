@@ -31,6 +31,7 @@ import { origenSeguro } from './lib/v2/seguridad'
 import { conCabecerasDeShell } from './lib/cabecerasShell'
 import { resumen } from './lib/cripto'
 import { borrarEstadoGoogle, googleConfigurado, iniciarGoogle, terminarGoogle } from './lib/google'
+import { crearStripe, procesarWebhook, stripeConfigurado } from './lib/stripe'
 
 type Entorno = {
   readonly ACCESO: D1Database
@@ -39,6 +40,10 @@ type Entorno = {
   readonly GOOGLE_CLIENT_SECRET?: string
   readonly GOOGLE_HABILITADO?: string
   readonly SFM_ENV?: string
+  readonly STRIPE_SECRET_KEY?: string
+  readonly STRIPE_WEBHOOK_SECRET?: string
+  readonly STRIPE_HABILITADO?: string
+  readonly STRIPE_MODO_REAL?: string
 }
 
 /** Rutas que gestiona el propio middleware. */
@@ -48,6 +53,7 @@ const RUTA_RESTABLECER = '/restablecer'
 const RUTA_GOOGLE = '/auth/google'
 const RUTA_GOOGLE_RETORNO = '/auth/google/retorno'
 const RUTA_SALIR = '/salir'
+const RUTA_WEBHOOK_STRIPE = '/api/stripe/webhook'
 
 /**
  * `/admin` lo protege Cloudflare Access con el OTP del coach. El middleware lo
@@ -61,6 +67,9 @@ const RUTA_SW = '/sw.js'
 export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   const { request, env, next } = contexto
   const url = new URL(request.url)
+  // Stripe no envía Origin: el webhook se autentica con su firma, antes del
+  // filtro de origen que protege los formularios del navegador.
+  if (url.pathname === RUTA_WEBHOOK_STRIPE) return atenderWebhookStripe(request, env)
   if (!origenSeguro(request)) return new Response('Origen no autorizado', { status: 403 })
 
   if (esRutaPresentacion(url.pathname)) return servirPresentacion(request, env.ASSETS)
@@ -84,6 +93,20 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   if (url.pathname === RUTA_SALIR) return atenderSalir(request, env)
 
   return atenderApp(request, env, next)
+}
+
+/** Webhook de Stripe: sólo POST firmado. Sin configuración, 404 y nada más. */
+async function atenderWebhookStripe(request: Request, env: Entorno): Promise<Response> {
+  if (!stripeConfigurado(env)) return new Response('No disponible', { status: 404 })
+  if (request.method !== 'POST') return new Response('Método no permitido', { status: 405 })
+  try {
+    const status = await procesarWebhook(request, env.ACCESO, crearStripe(env), env.STRIPE_WEBHOOK_SECRET!)
+    return new Response(status === 200 ? 'ok' : 'Firma no válida', { status })
+  } catch (e) {
+    // 500 hace que Stripe reintente; el evento no quedó registrado.
+    console.error('SFM Stripe webhook failure', e instanceof Error ? e.message : 'unknown')
+    return new Response('Error', { status: 500 })
+  }
 }
 
 /**

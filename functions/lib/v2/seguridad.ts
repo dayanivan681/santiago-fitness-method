@@ -19,6 +19,10 @@ export type EntornoV2 = {
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
   GOOGLE_HABILITADO?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+  STRIPE_HABILITADO?: string;
+  STRIPE_MODO_REAL?: string;
 };
 const claves = new Map<string, JWTVerifyGetKey>();
 export async function verificarCoach(

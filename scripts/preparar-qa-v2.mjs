@@ -56,6 +56,7 @@ for (const archivo of [
   ".qa-local/schema-roles.sql",
   "migrations/0008_coaching_cloud.sql",
   "migrations/0010_cuentas.sql",
+  "migrations/0011_suscripciones.sql",
 ])
   ejecutar(["--file", archivo]);
 const entorno = remoto ? "staging" : "local";

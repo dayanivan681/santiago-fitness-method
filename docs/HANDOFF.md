@@ -48,11 +48,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T22:40:56.455Z
+- **Última sincronización:** 2026-09-26T22:57:15.587Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1195,6 +1195,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T22:57:15.588Z | claude-code | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Fase 3 backend de Stripe en modo prueba, apagada hasta tener secretos. Nuevo: migrations/0011_suscripciones.sql (aplicada con respaldo en staging y producción; prod 6 clientes, 0 cuentas, 0 suscripciones), functions/lib/suscripcion.ts (regla de acceso: activa/gracia 7 días/vencida/pausada/sin_suscripcion/exenta), functions/lib/stripe.ts (SDK stripe@22: Checkout, portal, pausar/reanudar/cancelar/mantener, exento, precios; webhook firmado que relee la suscripción en Stripe, idempotente y sin reasignar clientes), functions/lib/v2/suscripcionApi.ts (rutas cliente y coach) y POST /api/stripe/webhook antes del filtro de origen. Falla cerrado: sin STRIPE_SECRET_KEY y STRIPE_WEBHOOK_SECRET el webhook da 404 y los pagos 503; sk_live_ rechazada sin STRIPE_MODO_REAL=true; producción exige STRIPE_HABILITADO=true. Sin interfaz todavía (fases 4 y 5). La cobertura ya estaba bajo el suelo en f482979 (71.22%); ahora 72.17/64.56/69.61/74.21. Pasos del dueño en docs/SUSCRIPCIONES.md.
+- **Verificación:** npm test 768/768 (81 archivos); npm run test:coverage PASS; npm run lint; npx tsc -b; npm run build; git diff --check; npm run test:http 66/66 local; d1:v2 staging y produccion ensayo + aplicar
+- **Siguiente:** Dueño: pasos 1-6 de docs/SUSCRIPCIONES.md (cuenta Stripe test, precio mensual, portal, webhook, secretos en producción). Agentes: fase 4 (solo lectura en app del cliente) y fase 5 (pestaña Suscripción del coach) pueden empezar ya con Stripe apagado.
+
 
 ### 2026-09-26T22:40:56.456Z | claude-code | CLAIM
 - **Estado:** active

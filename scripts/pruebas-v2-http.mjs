@@ -160,6 +160,29 @@ await codigo(
   401,
   "Cliente no entra al Coach",
 );
+// Suscripción: sin claves de Stripe todo falla cerrado y nadie toca lo ajeno.
+await codigo(
+  await fetch(new URL("/api/stripe/webhook", base), { method: "POST", body: "{}", redirect: "manual" }),
+  404,
+  "Webhook de Stripe cerrado sin configuración",
+);
+const miSuscripcion = await (
+  await codigo(await pedir("/api/v2/suscripcion?cliente=otro-cliente", cliente), 200, "Cliente ve su suscripción")
+).json();
+assert.equal(miSuscripcion.clienteId, id, "El parámetro cliente no cambia la identidad");
+assert.equal(miSuscripcion.acceso.estado, "sin_suscripcion");
+assert.equal(miSuscripcion.pagosDisponibles, false);
+checks += 3;
+await codigo(await pedir("/api/v2/suscripcion/pagar", cliente, {}), 503, "Pagar falla cerrado sin Stripe");
+await codigo(await pedir("/api/v2/suscripcion/exento", cliente, { exento: true }), 404, "Cliente no se marca exento");
+await codigo(await pedir(cbase + "/suscripcion/exento", coach, { exento: true }), 400, "Coach debe elegir cliente");
+await codigo(await pedir(cbase + "/suscripcion/exento?cliente=" + id, coach, { exento: true }), 200, "Coach marca exento");
+const exenta = await (await codigo(await pedir("/api/v2/suscripcion", cliente), 200, "Cliente exento")).json();
+assert.equal(exenta.acceso.estado, "exenta");
+checks++;
+const todas = await (await codigo(await pedir(cbase + "/suscripciones", coach), 200, "Coach ve suscripciones")).json();
+assert.ok(todas.suscripciones.some((s) => s.clienteId === id && s.exento));
+checks++;
 await codigo(
   await pedir("/api/v2/sincronizar", cliente, {
     operaciones: [op("perfil", id, perfil, 1)],

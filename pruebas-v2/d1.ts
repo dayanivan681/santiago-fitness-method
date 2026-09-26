@@ -70,6 +70,7 @@ export function sqliteD1() {
     "0002_role_split.sql",
     "0008_coaching_cloud.sql",
     "0010_cuentas.sql",
+    "0011_suscripciones.sql",
   ])
     ejecutar(
       readFileSync(new URL("../migrations/" + m, import.meta.url), "utf8"),

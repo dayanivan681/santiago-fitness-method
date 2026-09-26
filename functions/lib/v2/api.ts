@@ -23,6 +23,7 @@ import { crearInvitacion } from "../invitacion";
 import { archivarCliente } from "../roles";
 import { resumen } from "../cripto";
 import { prepararRestablecimiento } from "../cuentas";
+import { rutaDeSuscripcion } from "./suscripcionApi";
 export async function api(
   request: Request,
   env: EntornoV2,
@@ -61,6 +62,8 @@ export async function api(
       if (!existe || (ctx.entorno === "production" && cliente === "dayan-test"))
         return json({ error: "Cliente no disponible." }, 404);
     }
+    const suscripcion = await rutaDeSuscripcion(request, env, ctx, cliente, ruta);
+    if (suscripcion) return suscripcion;
     if (ruta === "/inicio" && request.method === "GET") {
       const [perfil, plan] = await Promise.all([
         perfilActual(env.ACCESO, cliente),

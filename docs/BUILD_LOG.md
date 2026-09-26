@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-26 — Fase 3: Stripe en modo prueba (backend) — claude-code
+
+- Nuevo: `migrations/0011_suscripciones.sql`, `functions/lib/suscripcion.ts` (regla de acceso con 7 días de gracia), `functions/lib/stripe.ts` (SDK oficial `stripe@22`, Checkout, portal, acciones del coach, webhook que relee la suscripción en Stripe), `functions/lib/v2/suscripcionApi.ts` y webhook `POST /api/stripe/webhook` antes del filtro de origen. Todo falla cerrado sin secretos; `sk_live_` se rechaza sin `STRIPE_MODO_REAL=true`; producción exige `STRIPE_HABILITADO=true`.
+- D1: `0011` ensayada y aplicada con respaldo en staging y en producción. Producción tras aplicar: 6 clientes, 0 cuentas y 0 suscripciones; tablas originales conservadas.
+- Pruebas: 3 archivos nuevos (19 pruebas) con Stripe simulado; `npm run test:http` 66/66 sobre runtime local. La cobertura global volvió por encima del suelo (antes de este cambio, en `f482979`, estaba en 71.22 % de sentencias, por debajo del 72 %).
+- Pendiente del dueño: cuenta Stripe en modo prueba, precio mensual, portal de cliente guardado, webhook y secretos. Pasos en `docs/SUSCRIPCIONES.md`.
+
 ## 2026-09-26 — Google OAuth, configuración externa y preview
 
 - Código: `main` en `5068a68f7211e298a8a8f69e35ce3b9296ec5036`; turno reclamado por `codex` para configurar y verificar Google OAuth. No se modificó `docs/cliente`.

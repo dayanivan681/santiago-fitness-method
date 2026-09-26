@@ -100,7 +100,7 @@ const antes = inventario();
 const sql =
   (
     await Promise.all(
-      ["0008_coaching_cloud.sql", "0009_versiones_originales.sql", "0010_cuentas.sql"].map((f) =>
+      ["0008_coaching_cloud.sql", "0009_versiones_originales.sql", "0010_cuentas.sql", "0011_suscripciones.sql"].map((f) =>
         readFile(`migrations/${f}`, "utf8"),
       ),
     )
