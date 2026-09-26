@@ -14,6 +14,16 @@
 
 ### Fase 2 — código preparado; activación externa pendiente
 
+#### Configuración externa de Google, 2026-09-26 — turno codex en curso
+
+- El dueño pidió que toda acción y resultado quede en este handoff y en `docs/BUILD_LOG.md` para que Claude Code pueda continuar. Esta sección es un checkpoint, no una declaración de fase terminada.
+- Se creó en la cuenta Google `yayo1716@gmail.com` el proyecto Cloud `Santiago Fitness Method`, ID `santiago-fitness-method`. El dueño aceptó personalmente la Política de Datos de Usuario de Google. Pantalla OAuth: nombre `Santiago Fitness Method`, audiencia External en Testing, correo de soporte y contacto técnico `yayo1716@gmail.com` (soporte provisional; confirmar si se conservará para clientes).
+- Se creó el cliente OAuth Web `Santiago Fitness Method web`, ID `1017512201105-6jv25bti46naj9lrfftk6rgkc62ughqs.apps.googleusercontent.com`, con retornos exactos `https://santiago-fitness-method.pages.dev/auth/google/retorno` y `https://codex-google-fase2.santiago-fitness-method.pages.dev/auth/google/retorno`. No requiere origen JavaScript: el flujo usa código en servidor y PKCE. El secreto nunca se imprimió ni guardó en Git; solo se copió directamente a Cloudflare Pages.
+- En Cloudflare Pages, entorno **preview**, se añadieron como secretos cifrados `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` mediante Wrangler. Producción sigue sin esos secretos y con `GOOGLE_HABILITADO` ausente; el acceso Google continúa apagado allí.
+- Se ejecutaron `npm test` (749/749, 78 archivos), `npm run lint` y `npm run build`, todos PASS. Se volvió a publicar preview `codex-google-fase2` desde el commit `5068a68f7211e298a8a8f69e35ce3b9296ec5036`; despliegue `https://34751049.santiago-fitness-method.pages.dev`, alias `https://codex-google-fase2.santiago-fitness-method.pages.dev`.
+- QA real en Chrome: Cloudflare Access aceptó el OTP del dueño; `/entrar` del preview mostró `Continuar con Google`; Google mostró la app y solicitó solo nombre, foto y email; al elegir `yayo1716@gmail.com` se retornó a la app con `No pudimos entrar con Google`, resultado compatible con que esa identidad no tiene cuenta de cliente vinculada. Ese mensaje es genérico, por lo que todavía falta una prueba con invitación sintética para confirmar el intercambio y alta de punta a punta.
+- **Siguiente:** comprobar si el cliente sintético de staging puede invitarse (en la ficha de `Lucía · QA aislado`, `Preparar invitación` aparecía deshabilitado porque `tieneCuenta` aún era `null`); usar una invitación sintética válida y probar alta Google, sesión, cierre y nuevo acceso. Revisar que el callback de preview conserve el estado OAuth bajo Cloudflare Access. Después, añadir secretos a producción, desplegar y habilitar `GOOGLE_HABILITADO=true` solo tras la prueba completa. No iniciar Stripe hasta cerrar esta fase.
+
 - OAuth Google implementado con código, PKCE S256, state y nonce de 10 minutos, intercambio en servidor y validación del ID token firmado mediante JWKS. Solo crea cuenta desde invitación; entrar requiere `google_sub` ya vinculado. Para vincular una cuenta con contraseña se exige primero su sesión válida, porque su email aún no se verifica por correo.
 - Revisión de seguridad detectó que las sesiones antiguas de preview sin invitación podrían volverse válidas al crearse una cuenta. Corregido: tanto las sesiones nuevas con contraseña como las de Google conservan la invitación consumida, y toda validación exige esa referencia. Hay prueba de regresión.
 - `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` no figuran entre los secretos de Pages ni en producción ni en preview (consulta de 2026-09-26). El botón permanece oculto y las rutas fallan cerradas. Producción requiere además `GOOGLE_HABILITADO=true`; no se habilita con solo añadir los dos secretos.
@@ -29,11 +39,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T22:13:58.053Z
+- **Última sincronización:** 2026-09-26T22:18:50.999Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1176,6 +1186,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T22:18:51.000Z | codex | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Google Cloud OAuth creado; secretos solo en preview; preview desplegado; QA real llego hasta retorno con cuenta no vinculada; docs/BUILD_LOG.md y handoff actualizados
+- **Verificación:** npm test 749/749; npm run lint PASS; npm run build PASS; preview Chrome Access y Google hasta retorno
+- **Siguiente:** Claude Code: probar alta con invitacion sintetica en staging, resolver boton de invitacion deshabilitado, verificar sesion Google; luego configurar produccion con gate habilitado solo tras QA
+
 
 ### 2026-09-26T22:13:58.054Z | codex | CLAIM
 - **Estado:** active
