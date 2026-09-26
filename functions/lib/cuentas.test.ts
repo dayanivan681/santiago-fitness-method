@@ -28,11 +28,11 @@ describe('límite de intentos', () => {
   it('bloquea al quinto fallo y permite otro intento tras 15 minutos', async () => {
     const db = sqliteD1(); bases.push(db)
     for (let i = 0; i < 5; i++) {
-      expect(await intentosAgotados(db.db, 'persona@example.test', '192.0.2.1', 1000)).toBe(false)
-      await registrarFallo(db.db, 'persona@example.test', '192.0.2.1', 1000)
+      expect(await intentosAgotados(db.db, 'persona@example.test', 1000)).toBe(false)
+      await registrarFallo(db.db, 'persona@example.test', 1000)
     }
-    expect(await intentosAgotados(db.db, 'persona@example.test', '192.0.2.1', 1000)).toBe(true)
-    expect(await intentosAgotados(db.db, 'persona@example.test', '192.0.2.1', 1901)).toBe(false)
+    expect(await intentosAgotados(db.db, 'persona@example.test', 1000)).toBe(true)
+    expect(await intentosAgotados(db.db, 'persona@example.test', 1901)).toBe(false)
   })
 })
 

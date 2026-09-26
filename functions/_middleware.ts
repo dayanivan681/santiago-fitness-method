@@ -164,7 +164,7 @@ async function atenderLogin(request: Request, env: Entorno): Promise<Response> {
   const email = String(formulario.get('email') ?? '')
   const clave = String(formulario.get('clave') ?? '')
   if (email.length > 254 || clave.length > 1024) return paginaLogin(true)
-  const cookie = await entrarConClave(env.ACCESO, email, clave, request.headers.get('CF-Connecting-IP'))
+  const cookie = await entrarConClave(env.ACCESO, email, clave)
   return cookie ? respuestaDeEntrada(cookie) : paginaLogin(true)
 }
 
@@ -180,11 +180,10 @@ async function atenderRestablecimiento(request: Request, env: Entorno): Promise<
   const clave = String(formulario.get('clave') ?? '')
   if (token.length !== 43 || clave.length > 1024) return paginaRestablecer('', true)
   const claveIntento = `reset:${await resumen(token)}`
-  const ip = request.headers.get('CF-Connecting-IP')
-  if (await intentosAgotados(env.ACCESO, claveIntento, ip)) return paginaRestablecer('', true)
+  if (await intentosAgotados(env.ACCESO, claveIntento)) return paginaRestablecer('', true)
   try {
     if (await cambiarClave(env.ACCESO, token, clave)) return paginaClaveCambiada()
-    await registrarFallo(env.ACCESO, claveIntento, ip)
+    await registrarFallo(env.ACCESO, claveIntento)
     return paginaRestablecer('', true)
   }
   catch { return paginaRestablecer('', true) }

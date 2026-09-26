@@ -73,34 +73,36 @@ export async function registrarConInvitacion(db: D1Database, token: string, emai
   return await db.prepare('SELECT id FROM sesiones WHERE id=?').bind(sesionHash).first() ? cookie : null
 }
 
-function clavesDeIntento(email: string, ip?: string | null): string[] {
-  return [`email:${email}`, ...(ip && ip.length <= 80 ? [`ip:${ip}`] : [])]
+function clavesDeIntento(email: string): string[] {
+  // Una IP puede representar a muchos clientes (red móvil o gimnasio). Limitar
+  // por email evita que un fallo de otra persona bloquee a todos los demás.
+  return [`email:${email}`]
 }
 
-export async function intentosAgotados(db: D1Database, email: string, ip?: string | null, ahora = ahoraEnSegundos()): Promise<boolean> {
-  for (const clave of clavesDeIntento(email, ip)) {
+export async function intentosAgotados(db: D1Database, email: string, ahora = ahoraEnSegundos()): Promise<boolean> {
+  for (const clave of clavesDeIntento(email)) {
     const fila = await db.prepare('SELECT ventana, cuenta FROM intentos_de_acceso WHERE clave=?').bind(clave).first<{ ventana: number; cuenta: number }>()
     if (fila && fila.ventana > ahora - VENTANA_DE_INTENTOS && fila.cuenta >= MAX_INTENTOS) return true
   }
   return false
 }
 
-export async function registrarFallo(db: D1Database, email: string, ip?: string | null, ahora = ahoraEnSegundos()): Promise<void> {
-  await db.batch(clavesDeIntento(email, ip).map((clave) => db.prepare(`INSERT INTO intentos_de_acceso(clave,ventana,cuenta) VALUES(?1,?2,1)
+export async function registrarFallo(db: D1Database, email: string, ahora = ahoraEnSegundos()): Promise<void> {
+  await db.batch(clavesDeIntento(email).map((clave) => db.prepare(`INSERT INTO intentos_de_acceso(clave,ventana,cuenta) VALUES(?1,?2,1)
     ON CONFLICT(clave) DO UPDATE SET ventana=CASE WHEN ventana<=?3 THEN ?2 ELSE ventana END,
       cuenta=CASE WHEN ventana<=?3 THEN 1 ELSE cuenta+1 END`).bind(clave, ahora, ahora - VENTANA_DE_INTENTOS)))
 }
 
-export async function entrarConClave(db: D1Database, email: string, clave: string, ip?: string | null, ahora = ahoraEnSegundos()): Promise<string | null> {
+export async function entrarConClave(db: D1Database, email: string, clave: string, ahora = ahoraEnSegundos()): Promise<string | null> {
   const correo = normalizarEmail(email)
-  if (!correo || await intentosAgotados(db, correo, ip, ahora)) return null
+  if (!correo || await intentosAgotados(db, correo, ahora)) return null
   const cuenta = await db.prepare(`SELECT a.cliente_id,a.clave_hash,a.clave_sal,a.clave_iteraciones FROM cuentas a
     JOIN clientes c ON c.id=a.cliente_id WHERE a.email=? AND c.activo=1`).bind(correo).first<Cuenta>()
   // El trabajo criptográfico también ocurre si el email es desconocido.
   const valida = await verificarClave(clave, cuenta?.clave_hash && cuenta.clave_sal && cuenta.clave_iteraciones
     ? { hash: cuenta.clave_hash, sal: cuenta.clave_sal, iteraciones: cuenta.clave_iteraciones }
     : { hash: '0'.repeat(64), sal: '0'.repeat(32), iteraciones: ITERACIONES_DE_CLAVE })
-  if (!cuenta || !valida) { await registrarFallo(db, correo, ip, ahora); return null }
+  if (!cuenta || !valida) { await registrarFallo(db, correo, ahora); return null }
   const sesion = await crearSesion(db, cuenta.cliente_id, null, ahora)
   await db.prepare('UPDATE cuentas SET ultimo_acceso_en=? WHERE cliente_id=?').bind(ahora, cuenta.cliente_id).run()
   await db.prepare('DELETE FROM intentos_de_acceso WHERE clave=?').bind(`email:${correo}`).run()
