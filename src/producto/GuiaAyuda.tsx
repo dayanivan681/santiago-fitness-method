@@ -73,7 +73,7 @@ export function GuiaAyuda({ base, permitirBienvenida = true }: { base?: string; 
     ayuda.cerrar(clave);
     setRepetir(false);
   };
-  const titulo = cliente ? (ayuda.demo ? "Prueba tu primera serie" : "Tu entrenamiento, a mano") : "Crea tu primer cliente";
+  const titulo = cliente ? (ayuda.demo ? "Prueba tu primera serie" : "Tu entrenamiento, a mano") : ayuda.demo ? "Crea un cliente de prueba" : "Crea tu primer cliente";
   return (
     <>
       <button

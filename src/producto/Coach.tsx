@@ -1,4 +1,5 @@
 import { GuiaAyuda } from "./GuiaAyuda";
+import { segunCantidad } from "../logica/plural";
 import { Consejo } from "./Ayuda";
 import { useAyuda } from "./ayuda-contexto";
 import { useCallback, useEffect, useState } from "react";
@@ -210,7 +211,7 @@ function HoyCoach({
       <div className="sfm-metrics">
         <div>
           <strong>{listo ? clientes.length : "—"}</strong>
-          <span>Clientes activos</span>
+          <span>{segunCantidad(listo ? clientes.length : 0, "Cliente activo", "Clientes activos")}</span>
         </div>
         <div>
           <strong>
@@ -218,7 +219,13 @@ function HoyCoach({
               ? clientes.reduce((n, c) => n + (c.actividad?.semana ?? 0), 0)
               : "—"}
           </strong>
-          <span>Sesiones esta semana</span>
+          <span>
+            {segunCantidad(
+              listo ? clientes.reduce((n, c) => n + (c.actividad?.semana ?? 0), 0) : 0,
+              "Sesión esta semana",
+              "Sesiones esta semana",
+            )}
+          </span>
         </div>
         <div>
           <strong>{listo ? borradores.length : "—"}</strong>

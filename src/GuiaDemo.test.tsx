@@ -24,7 +24,7 @@ it("ofrece una bienvenida por rol, ayuda opcional y no escribe fuera de la demo"
   vi.stubGlobal("fetch", red);
   render(<App />);
   const bienvenida = await screen.findByRole("dialog", {
-    name: "Crea tu primer cliente",
+    name: "Crea un cliente de prueba",
   });
   expect(within(bienvenida).getByText(/Añade sus datos/)).toBeInTheDocument();
   fireEvent.click(within(bienvenida).getByRole("button", { name: "Explorar" }));
@@ -68,13 +68,13 @@ it("restaura el foco al cerrar ayuda, permite repasar la bienvenida y reinicia s
   fireEvent.click(ayuda);
   fireEvent.click(screen.getByRole("button", { name: "Ver bienvenida" }));
   expect(
-    screen.getByRole("dialog", { name: "Crea tu primer cliente" }),
+    screen.getByRole("dialog", { name: "Crea un cliente de prueba" }),
   ).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Explorar" }));
   cleanup();
   render(<App />);
   expect(
-    await screen.findByRole("dialog", { name: "Crea tu primer cliente" }),
+    await screen.findByRole("dialog", { name: "Crea un cliente de prueba" }),
   ).toBeInTheDocument();
 });
 it("una entrada profunda permite trabajar sin bienvenida", async () => {

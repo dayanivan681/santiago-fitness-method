@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { segunCantidad } from "../logica/plural";
 import type { Cambio } from "../../shared/v2/contratos";
 import type { Repositorio } from "../datos/repositorio";
 import { fechaDeHoy } from "../datos/repositorio";
@@ -77,11 +78,17 @@ export function ProgresoCliente({
       <div className="sfm-metrics sfm-metrics--two">
         <div>
           <strong>{datos.sesiones.filter((s) => s.completadaEn).length}</strong>
-          <span>Entrenamientos completados</span>
+          <span>
+            {segunCantidad(
+              datos.sesiones.filter((s) => s.completadaEn).length,
+              "Entrenamiento completado",
+              "Entrenamientos completados",
+            )}
+          </span>
         </div>
         <div>
           <strong>{datos.medidas.length}</strong>
-          <span>Registros de medidas</span>
+          <span>{segunCantidad(datos.medidas.length, "Registro de medidas", "Registros de medidas")}</span>
         </div>
       </div>
       <div className="sfm-segmentos">
@@ -249,7 +256,7 @@ export function ResumenSesiones({
       <div className="sfm-section-heading">
         <h2>Su historia de progreso</h2>
       </div>
-      <div className="sfm-segmentos">
+      <div className="sfm-segmentos sfm-segmentos--ajustar">
         {["sesiones", "medidas", "fotos"].map((id) => (
           <button
             key={id}
@@ -299,8 +306,8 @@ function ListaSesiones({
     <>
       {!sesiones.length ? (
         <Vacio
-          titulo="Tu primera sesión abre el camino"
-          detalle="Los entrenamientos que registres aparecerán aquí, junto con cada serie y sus correcciones."
+          titulo="Todavía no ha entrenado"
+          detalle="Cuando registre su primera sesión, aparecerá aquí con cada serie y sus correcciones."
         />
       ) : (
         <div className="sfm-list">

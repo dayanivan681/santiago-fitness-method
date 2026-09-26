@@ -530,6 +530,12 @@ a.sfm-primary:active {
   border-radius: 10px;
   white-space: nowrap;
 }
+/* Para controles con alguna etiqueta larga («Fotos compartidas»): mejor dos
+   líneas que un texto cortado con barra de desplazamiento. */
+.sfm-segmentos--ajustar button {
+  white-space: normal;
+  line-height: 1.15;
+}
 .sfm-segmentos button[aria-pressed="true"] {
   background: #2a2b2e;
   color: var(--sfm-white);
@@ -1830,15 +1836,14 @@ a.sfm-primary:active {
     padding-left: 20px;
     padding-right: 20px;
   }
+  /* Dos filas (1–4 / 5–7) y no una fila que se desliza: con siete botones de
+     48 px no caben en un móvil y el 7 quedaba oculto sin ninguna pista. */
   .sfm-frecuencia {
-    display: flex;
-    overflow-x: auto;
-    gap: 6px;
-    padding-bottom: 4px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
   }
   .sfm-frecuencia button {
     min-width: 48px;
-    flex: 1;
   }
   .sfm-main--client .campo .valor {
     min-width: 48px;
