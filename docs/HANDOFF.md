@@ -7,11 +7,17 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
+- **Owner:** claude-code
 - **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-17T20:23:16.116Z
+- **Última sincronización:** 2026-09-26T01:07:44.723Z
+
+**Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
+para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
+commits ni cambios sin commitear. El dueño pidió retomarlo. No había trabajo que
+rescatar: se libera a mano porque `handoff:claim` y `adopt` se niegan mientras
+haya dueño.
 
 ## Flecha ↗ como emoji en iOS — corregida 2026-09-16
 
@@ -1148,6 +1154,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T01:07:44.724Z | claude-code | ADOPT
+- **Estado:** active
+- **Tarea:** Retomar el turno de codex (parado desde el 17): revisar el repositorio y el estado de la app en producción
+- **Cambios adoptados:** docs/HANDOFF.md
+- **Verificación:** Cambios revisados por el agente; docs/cliente permanece sin modificaciones.
+- **Siguiente:** Continuar la tarea y publicar las comprobaciones al terminar.
+
 
 ### 2026-09-17T20:23:16.117Z | codex | CLAIM
 - **Estado:** active
