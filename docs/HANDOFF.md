@@ -7,6 +7,10 @@
 - Supuestos reversibles: precios creados en Stripe y asignados por el coach; una sola cuenta de coach; sin impuestos ni cupones en esta versión. Stripe y Google se configuran con secretos de Pages, nunca en Git.
 - Secuencia: 1) cuentas y sesiones renovables; 2) Google OAuth; 3) Stripe en modo prueba; 4) solo lectura del cliente; 5) panel de suscripciones. Cada fase requiere pruebas propias antes de producción. El modo real de Stripe necesita aprobación explícita del dueño.
 - La fase 1 añade `0010_cuentas.sql`. La migración es aditiva y se respalda y ensaya antes de aplicarla. Los clientes actuales crearán cuenta con una invitación nueva; las cuentas archivadas se revocan.
+- **Fase 1, codex:** implementadas alta por invitación, acceso con email/contraseña, recuperación desde el coach, sesiones de 30 días renovables, límite de cinco fallos en 15 minutos y revocación al archivar. Revisión de seguridad del cambio: origen de formularios, uso único y hash de tokens, sal y PBKDF2, y separación Coach/Cliente revisados sin hallazgos pendientes.
+- **Verificación:** 744 pruebas en 77 archivos, lint, build y 49 comprobaciones HTTP locales ejecutadas dos veces; formulario de acceso inspeccionado en Chromium. La segunda ejecución detectó que el límite global por IP bloqueaba otros emails; se corrigió a límite por email y ambas repeticiones pasaron. `0010` ensayada y aplicada en staging y producción con respaldo previo, restauración local, integridad y conservación de las cuatro tablas originales.
+- **Límite de QA:** el preview `codex-cuentas-fase1` (commit `e0d8e17`) redirige todas las rutas a Cloudflare Access; sin una sesión autorizada no se pudo probar visualmente el flujo remoto. No se introdujeron credenciales reales ni se tocaron los PDFs de `docs/cliente`.
+- **Siguiente:** fase 2, Google OAuth con PKCE y validación del `id_token` en preview. Antes, validar la cuenta de un cliente invitado en el dominio canónico con el coach y revisar que Access no cubra por accidente las rutas públicas del preview.
 
 
 Este archivo es el registro compartido entre Codex y Claude Code. GitHub es la fuente
@@ -16,11 +20,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T21:20:54.745Z
+- **Última sincronización:** 2026-09-26T21:40:00.525Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1163,6 +1167,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T21:40:00.526Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Fase 1: cuentas invitadas con email y contraseña, recuperación de un uso, sesiones renovables y migración 0010 aplicada en staging y producción
+- **Verificación:** npm test 744/744; npm run lint; npm run build; npm run test:http 49/49 dos veces; migraciones staging y producción ensayadas y aplicadas
+- **Siguiente:** Fase 2: Google OAuth; validar flujo remoto con sesión autorizada y confirmar exclusión de Access para rutas públicas de preview
+
 
 ### 2026-09-26T21:20:54.746Z | codex | CLAIM
 - **Estado:** active
