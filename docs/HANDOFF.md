@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T05:08:30.249Z
+- **Última sincronización:** 2026-09-26T05:08:32.483Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1154,6 +1154,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T05:08:32.484Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** El dueño añadió saangelm50@gmail.com a la política Allow 'Cliente y coach' de la app de Access 'Santiago Fitness Method' (2026-09-26). Con COACH_EMAILS de ff66dba (desplegado en producción), Santiago ya puede entrar en /admin. Comprobado desde fuera: / /demo/* /presentacion 200, /admin/ 302 a Access, /api/v2/inicio 401. Safari de iOS (simulador) recorrió la demo de producción completa sin fallos de la app.
+- **Verificación:** curl de límites en producción; wrangler pages deployment list (ff66dba en Production)
+- **Siguiente:** Santiago entra en /admin y prepara invitaciones para sus clientes. Esperar respuestas del cuestionario (D1 sfm-variantes) para el punto 3.
+
 
 ### 2026-09-26T05:08:30.250Z | claude-code | CLAIM
 - **Estado:** active
