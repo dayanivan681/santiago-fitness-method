@@ -6,6 +6,7 @@ import {
 } from "jose";
 import { leerCookie, validarSesion } from "../sesion";
 import type { Contexto } from "../../../shared/v2/contratos";
+import { googleConfigurado } from "../google";
 export type EntornoV2 = {
   ACCESO: D1Database;
   ASSETS: Fetcher;
@@ -15,6 +16,9 @@ export type EntornoV2 = {
   SFM_ENV?: string;
   COACH_EMAILS?: string;
   LOCAL_ACCESS_JWKS?: string;
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
+  GOOGLE_HABILITADO?: string;
 };
 const claves = new Map<string, JWTVerifyGetKey>();
 export async function verificarCoach(
@@ -107,15 +111,8 @@ export async function autenticar(
     .bind(sesion.clienteId)
     .first<{ nombre: string }>();
   if (!cliente) return null;
-  // Previews antiguos crearon sesiones sin invitación. Las cuentas nuevas sí
-  // inician sesión sin invitación, por eso comprobamos su cuenta en ese caso.
-  const valida = await env.ACCESO.prepare(
-    `SELECT s.id FROM sesiones s WHERE s.id=? AND
-      (s.invitacion IS NOT NULL OR EXISTS(SELECT 1 FROM cuentas a WHERE a.cliente_id=s.cliente_id))`,
-  )
-    .bind(await (await import("../cripto")).resumen(cookie!))
-    .first();
-  if (!valida) return null;
+  // validarSesion exige una invitación ligada a la sesión. Las sesiones
+  // históricas de preview sin invitación no se convierten en acceso real.
   return {
     rol,
     identidad: sesion.clienteId,
@@ -124,6 +121,7 @@ export async function autenticar(
     validadoEn: Date.now(),
     entorno,
     medios: !!env.FOTOS,
+    googleDisponible: googleConfigurado(env),
   };
 }
 export function json(datos: unknown, status = 200) {

@@ -94,6 +94,7 @@ export async function validarSesion(
       `SELECT cliente_id, expira_en
          FROM sesiones
         WHERE id = ?1
+          AND invitacion IS NOT NULL
           AND revocada_en IS NULL
           AND expira_en > ?2`,
     )
@@ -108,12 +109,21 @@ export async function validarSesion(
 /** Extiende sólo sesiones de cuentas activas cuando queda menos de media vida. */
 export async function renovarSesion(db: D1Database, valor: string, ahora = ahoraEnSegundos()): Promise<boolean> {
   const hash = await resumen(valor)
-  const resultado = await db.prepare(`UPDATE sesiones SET expira_en=?1 WHERE id=?2 AND revocada_en IS NULL
+  const resultado = await db.prepare(`UPDATE sesiones SET expira_en=?1 WHERE id=?2 AND invitacion IS NOT NULL AND revocada_en IS NULL
     AND expira_en>?3 AND expira_en<?4 AND EXISTS(
       SELECT 1 FROM cuentas a JOIN clientes c ON c.id=a.cliente_id
       WHERE a.cliente_id=sesiones.cliente_id AND c.activo=1)`)
     .bind(ahora + VIDA_DE_SESION, hash, ahora, ahora + VIDA_DE_SESION / 2).run()
   return (resultado.meta.changes ?? 0) > 0
+}
+
+/** Cada cuenta nace de una invitación consumida. También las sesiones abiertas
+ * después con contraseña o Google conservan esa prueba de origen. */
+export async function crearSesionDeCuenta(db: D1Database, clienteId: string, ahora = ahoraEnSegundos()): Promise<{ cookie: string; expiraEn: number }> {
+  const fila = await db.prepare(`SELECT token_hash FROM invitaciones WHERE cliente_id=? AND consumida_en IS NOT NULL
+    ORDER BY consumida_en DESC LIMIT 1`).bind(clienteId).first<{ token_hash: string }>()
+  if (!fila) throw new Error('Cuenta sin invitación consumida')
+  return crearSesion(db, clienteId, fila.token_hash, ahora)
 }
 
 /** Revoca la sesión de esta cookie. Idempotente: revocar dos veces no rompe. */

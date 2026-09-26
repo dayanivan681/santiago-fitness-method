@@ -198,6 +198,7 @@ export type Contexto = {
   validadoEn: number;
   entorno: "production" | "staging" | "local";
   medios: boolean;
+  googleDisponible?: boolean;
 };
 export const esquemas = {
   perfil: Perfil,

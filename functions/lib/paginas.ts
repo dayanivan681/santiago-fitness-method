@@ -58,6 +58,8 @@ function envolver(titulo: string, cuerpo: string): string {
   a{color:${TEXTO};text-decoration:underline;text-underline-offset:3px}
   .ayuda{font-size:14px;margin:16px 0 0}
   .error{color:#ffaba6}
+  .boton-google{display:block;margin-top:12px;padding:13px;border:1px solid ${BORDE};
+    border-radius:12px;text-decoration:none;font-size:15px;font-weight:600}
   .barra{width:34px;height:3px;background:${ROJO};border-radius:2px;margin:0 auto 20px}
   @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style>
@@ -88,7 +90,7 @@ function respuesta(html: string, estado: number, cabeceras: HeadersInit = {}): R
  * el enlace llegaría gastado. Sólo el POST de este botón lo consume, y los
  * rastreadores no envían POST.
  */
-export function paginaEntrar(token: string, error = false): Response {
+export function paginaEntrar(token: string, error = false, google = false): Response {
   return respuesta(
     envolver(
       'Crea tu cuenta · Santiago Fitness Method',
@@ -103,6 +105,7 @@ export function paginaEntrar(token: string, error = false): Response {
          <label for="clave">Contraseña (10 caracteres mínimo)</label><input id="clave" name="clave" type="password" autocomplete="new-password" minlength="10" required>
          <button type="submit">Crear cuenta</button>
        </form>
+       ${google ? `<a class="boton-google" href="/auth/google?origen=invitacion&amp;t=${escapar(encodeURIComponent(token))}">Continuar con Google</a>` : ''}
        <p class="ayuda">¿Ya tienes cuenta? <a href="/entrar">Entrar</a></p>`,
     ),
     error ? 400 : 200,
@@ -115,7 +118,7 @@ export function paginaEntrar(token: string, error = false): Response {
   )
 }
 
-export function paginaLogin(error = false): Response {
+export function paginaLogin(error = false, google = false): Response {
   return respuesta(envolver('Entrar · Santiago Fitness Method',
     `<div class="barra"></div><p class="marca">Santiago Fitness Method</p><h1>Bienvenido de nuevo</h1>
      ${error ? '<p class="error">No pudimos iniciar sesión. Revisa tus datos o inténtalo más tarde.</p>' : '<p>Entra a tu espacio con tu cuenta.</p>'}
@@ -123,8 +126,14 @@ export function paginaLogin(error = false): Response {
        <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required>
        <label for="clave">Contraseña</label><input id="clave" name="clave" type="password" autocomplete="current-password" required>
        <button type="submit">Entrar</button></form>
+     ${google ? '<a class="boton-google" href="/auth/google?origen=entrar">Continuar con Google</a>' : ''}
      <p class="ayuda">¿Olvidaste tu contraseña? Pide a tu coach un enlace para cambiarla.</p>
      <p class="ayuda"><a href="/demo">Explorar la demo</a> · <a href="/admin">Acceso del Coach</a></p>`), error ? 401 : 200)
+}
+
+export function paginaGoogleError(): Response {
+  return respuesta(envolver('Acceso con Google · Santiago Fitness Method',
+    '<div class="barra"></div><h1>No pudimos entrar con Google</h1><p>Si ya tienes cuenta, entra con tu contraseña y conecta Google desde tu perfil. Si eres nuevo, pide una invitación a tu coach.</p><a href="/entrar">Volver a entrar</a>'), 401)
 }
 
 export function paginaRestablecer(token: string, error = false): Response {

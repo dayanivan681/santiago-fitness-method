@@ -21,6 +21,7 @@ import {
   paginaEnlaceNoValido,
   paginaEnlaceUsado,
   paginaEntrar,
+  paginaGoogleError,
   paginaLogin,
   paginaRestablecer,
   paginaSesionCerrada,
@@ -29,16 +30,23 @@ import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
 import { origenSeguro } from './lib/v2/seguridad'
 import { conCabecerasDeShell } from './lib/cabecerasShell'
 import { resumen } from './lib/cripto'
+import { borrarEstadoGoogle, googleConfigurado, iniciarGoogle, terminarGoogle } from './lib/google'
 
 type Entorno = {
   readonly ACCESO: D1Database
   readonly ASSETS: Fetcher
+  readonly GOOGLE_CLIENT_ID?: string
+  readonly GOOGLE_CLIENT_SECRET?: string
+  readonly GOOGLE_HABILITADO?: string
+  readonly SFM_ENV?: string
 }
 
 /** Rutas que gestiona el propio middleware. */
 const RUTA_ACCESO = '/access'
 const RUTA_ENTRAR = '/entrar'
 const RUTA_RESTABLECER = '/restablecer'
+const RUTA_GOOGLE = '/auth/google'
+const RUTA_GOOGLE_RETORNO = '/auth/google/retorno'
 const RUTA_SALIR = '/salir'
 
 /**
@@ -68,6 +76,10 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   if (url.pathname === RUTA_ENTRAR) return atenderLogin(request, env)
 
   if (url.pathname === RUTA_RESTABLECER) return atenderRestablecimiento(request, env)
+
+  if (url.pathname === RUTA_GOOGLE) return atenderGoogle(request, env)
+
+  if (url.pathname === RUTA_GOOGLE_RETORNO) return atenderRetornoGoogle(request, env)
 
   if (url.pathname === RUTA_SALIR) return atenderSalir(request, env)
 
@@ -107,7 +119,7 @@ async function atenderAcceso(request: Request, env: Entorno): Promise<Response> 
     // Sólo lectura: un previsualizador de enlaces no puede gastar la invitación.
     switch (await estadoDeInvitacion(env.ACCESO, token)) {
       case 'valida':
-        return paginaEntrar(token)
+        return paginaEntrar(token, false, googleConfigurado(env))
       case 'consumida':
         return paginaEnlaceUsado()
       case 'expirada':
@@ -132,10 +144,10 @@ async function atenderAcceso(request: Request, env: Entorno): Promise<Response> 
   const clave = String(formulario.get('clave') ?? '')
   let cookie: string | null = null
   try { cookie = await registrarConInvitacion(env.ACCESO, token, email, clave, ahora) }
-  catch { return paginaEntrar(token, true) }
+  catch { return paginaEntrar(token, true, googleConfigurado(env)) }
   if (!cookie) {
     const estado = await estadoDeInvitacion(env.ACCESO, token, ahora)
-    return estado === 'valida' ? paginaEntrar(token, true) : paginaDelEstado(estado)
+    return estado === 'valida' ? paginaEntrar(token, true, googleConfigurado(env)) : paginaDelEstado(estado)
   }
 
   // Redirección a la raíz: el token desaparece de la barra y del historial.
@@ -158,14 +170,42 @@ function respuestaDeEntrada(cookie: string): Response {
 }
 
 async function atenderLogin(request: Request, env: Entorno): Promise<Response> {
-  if (request.method === 'GET') return paginaLogin()
+  if (request.method === 'GET') return paginaLogin(false, googleConfigurado(env))
   if (request.method !== 'POST') return new Response('Método no permitido', { status: 405 })
   const formulario = await request.formData()
   const email = String(formulario.get('email') ?? '')
   const clave = String(formulario.get('clave') ?? '')
-  if (email.length > 254 || clave.length > 1024) return paginaLogin(true)
+  if (email.length > 254 || clave.length > 1024) return paginaLogin(true, googleConfigurado(env))
   const cookie = await entrarConClave(env.ACCESO, email, clave)
-  return cookie ? respuestaDeEntrada(cookie) : paginaLogin(true)
+  return cookie ? respuestaDeEntrada(cookie) : paginaLogin(true, googleConfigurado(env))
+}
+
+async function atenderGoogle(request: Request, env: Entorno): Promise<Response> {
+  if (request.method !== 'GET') return new Response('Método no permitido', { status: 405 })
+  try {
+    const respuesta = await iniciarGoogle(request, env)
+    return respuesta ?? paginaGoogleError()
+  } catch { return paginaGoogleError() }
+}
+
+async function atenderRetornoGoogle(request: Request, env: Entorno): Promise<Response> {
+  if (request.method !== 'GET') return new Response('Método no permitido', { status: 405 })
+  try {
+    const resultado = await terminarGoogle(request, env)
+    if (!resultado.ok) {
+      const error = paginaGoogleError()
+      error.headers.append('Set-Cookie', borrarEstadoGoogle())
+      return error
+    }
+    const headers = new Headers({ Location: '/', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' })
+    headers.append('Set-Cookie', borrarEstadoGoogle())
+    if (resultado.cookie) headers.append('Set-Cookie', crearCabeceraDeCookie(resultado.cookie, VIDA_DE_SESION))
+    return new Response(null, { status: 302, headers })
+  } catch {
+    const error = paginaGoogleError()
+    error.headers.append('Set-Cookie', borrarEstadoGoogle())
+    return error
+  }
 }
 
 async function atenderRestablecimiento(request: Request, env: Entorno): Promise<Response> {

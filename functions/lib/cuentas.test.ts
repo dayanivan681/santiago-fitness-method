@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { sqliteD1 } from '../../pruebas-v2/d1'
-import { crearCuenta, intentosAgotados, normalizarEmail, registrarFallo, verificarClave } from './cuentas'
+import { crearCuenta, intentosAgotados, normalizarEmail, registrarConInvitacion, registrarFallo, verificarClave } from './cuentas'
 import { crearSesion, renovarSesion, validarSesion, VIDA_DE_SESION } from './sesion'
+import { consumirInvitacion, crearInvitacion } from './invitacion'
 
 describe('contraseñas', () => {
   it('usa sal distinta y verifica la contraseña sin aceptar otra', async () => {
@@ -41,10 +42,24 @@ describe('sesión renovable', () => {
     const local = sqliteD1()
     try {
       local.ejecutar("INSERT INTO cuentas(cliente_id,email,creada_en) VALUES('santiago','santiago@example.test',1000)")
-      const sesion = await crearSesion(local.db, 'santiago', null, 1000)
+      const invitacion = await crearInvitacion(local.db, 'santiago', 1000)
+      const consumida = await consumirInvitacion(local.db, invitacion.token, 1000)
+      const sesion = await crearSesion(local.db, 'santiago', consumida!.tokenHash, 1000)
       local.ejecutar("UPDATE sesiones SET expira_en=2000 WHERE cliente_id='santiago'")
       expect(await renovarSesion(local.db, sesion.cookie, 1500)).toBe(true)
       expect((await validarSesion(local.db, sesion.cookie, 1500))?.expiraEn).toBe(1500 + VIDA_DE_SESION)
+    } finally { local.cerrar() }
+  })
+
+  it('una sesión antigua sin invitación sigue inválida después de crear la cuenta', async () => {
+    const local = sqliteD1()
+    try {
+      const antigua = await crearSesion(local.db, 'santiago', null)
+      const invitacion = await crearInvitacion(local.db, 'santiago')
+      const nueva = await registrarConInvitacion(local.db, invitacion.token, 'santiago@example.test', 'Clave-de-prueba-123')
+      expect(nueva).toBeTruthy()
+      expect(await validarSesion(local.db, antigua.cookie)).toBeNull()
+      expect(await validarSesion(local.db, nueva!)).not.toBeNull()
     } finally { local.cerrar() }
   })
 })

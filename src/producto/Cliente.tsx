@@ -218,6 +218,9 @@ function ContenidoCliente({
                         vuelves.
                       </p>
                       <Recuperacion conexion={conexion} />
+                      {conexion.ctx.googleDisponible && <a className="sfm-secondary" href="/auth/google?origen=enlazar">
+                        Conectar Google con esta cuenta
+                      </a>}
                       <form
                         method="post"
                         action="/salir"

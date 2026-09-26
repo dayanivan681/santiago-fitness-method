@@ -1,6 +1,6 @@
 import { resumen, tokenNuevo } from './cripto'
 import { ahoraEnSegundos } from './invitacion'
-import { crearSesion } from './sesion'
+import { crearSesionDeCuenta } from './sesion'
 
 export const ITERACIONES_DE_CLAVE = 100_000
 export const VIDA_DE_RESTABLECIMIENTO = 24 * 60 * 60
@@ -103,7 +103,7 @@ export async function entrarConClave(db: D1Database, email: string, clave: strin
     ? { hash: cuenta.clave_hash, sal: cuenta.clave_sal, iteraciones: cuenta.clave_iteraciones }
     : { hash: '0'.repeat(64), sal: '0'.repeat(32), iteraciones: ITERACIONES_DE_CLAVE })
   if (!cuenta || !valida) { await registrarFallo(db, correo, ahora); return null }
-  const sesion = await crearSesion(db, cuenta.cliente_id, null, ahora)
+  const sesion = await crearSesionDeCuenta(db, cuenta.cliente_id, ahora)
   await db.prepare('UPDATE cuentas SET ultimo_acceso_en=? WHERE cliente_id=?').bind(ahora, cuenta.cliente_id).run()
   await db.prepare('DELETE FROM intentos_de_acceso WHERE clave=?').bind(`email:${correo}`).run()
   return sesion.cookie
