@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## Cuentas y suscripción — plan del dueño, 2026-09-26
+
+- Modelo aprobado: el coach invita; el cliente crea cuenta con email y contraseña o Google; Stripe cobra automáticamente. No hay registro público.
+- Al vencer, habrá 7 días de gracia y luego acceso de solo lectura. El coach podrá marcar clientes exentos; los exentos nunca se bloquean.
+- Supuestos reversibles: precios creados en Stripe y asignados por el coach; una sola cuenta de coach; sin impuestos ni cupones en esta versión. Stripe y Google se configuran con secretos de Pages, nunca en Git.
+- Secuencia: 1) cuentas y sesiones renovables; 2) Google OAuth; 3) Stripe en modo prueba; 4) solo lectura del cliente; 5) panel de suscripciones. Cada fase requiere pruebas propias antes de producción. El modo real de Stripe necesita aprobación explícita del dueño.
+- La fase 1 añade `0010_cuentas.sql`. La migración es aditiva y se respalda y ensaya antes de aplicarla. Los clientes actuales crearán cuenta con una invitación nueva; las cuentas archivadas se revocan.
+
+
 Este archivo es el registro compartido entre Codex y Claude Code. GitHub es la fuente
 de verdad del código y este archivo es la fuente de verdad del turno actual. La
 colaboración automática es deliberadamente serializada: un agente reclama el turno,

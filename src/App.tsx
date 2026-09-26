@@ -95,9 +95,10 @@ function Puerta({ error = "" }: { error?: string }) {
         es tuyo.
       </h1>
       <p>
-        Entra con la invitación privada de tu coach para continuar tu programa.
+        Entra con tu cuenta para continuar tu programa.
       </p>
       <ErrorVisible error={error} />
+      <a className="sfm-text-button" href="/entrar">Entrar con email</a>
       <Link className="sfm-primary" to="/demo">
         Explorar el método <Icono nombre="flecha" />
       </Link>
@@ -153,7 +154,9 @@ function ClienteReal() {
           } catch {
             setError("No se pudo recuperar la cuenta en este dispositivo.");
           }
-        } else if (!(e instanceof ErrorAcceso)) setError((e as Error).message);
+        } else if (e instanceof ErrorAcceso) {
+          window.location.replace('/entrar');
+        } else setError((e as Error).message);
       } finally {
         if (vivo) setListo(true);
       }

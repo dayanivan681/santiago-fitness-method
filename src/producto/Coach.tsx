@@ -455,12 +455,21 @@ function FichaCliente({
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [enlace, setEnlace] = useState("");
+  const [tieneCuenta, setTieneCuenta] = useState<boolean | null>(null);
   const [confirmar, setConfirmar] = useState<"archivar" | "revocar" | null>(
     null,
   );
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [ocupado, setOcupado] = useState(false);
   const navegar = useNavigate();
+  useEffect(() => {
+    if (!clienteId) return;
+    let vivo = true;
+    void servicio.estadoCuenta(clienteId).then((estado) => {
+      if (vivo) setTieneCuenta(estado.tieneCuenta);
+    }).catch((e) => { if (vivo) setError((e as Error).message); });
+    return () => { vivo = false; };
+  }, [clienteId, servicio]);
   useEffect(() => {
     let vivo = true;
     const f = () =>
@@ -529,6 +538,13 @@ function FichaCliente({
     } finally {
       setOcupado(false);
     }
+  }
+  async function restablecerClave() {
+    setOcupado(true);
+    setError("");
+    try { setEnlace(await servicio.restablecerClave(cliente.perfil.id)); }
+    catch (e) { setError((e as Error).message); }
+    finally { setOcupado(false); }
   }
   return (
     <div className="sfm-client-detail-layout">
@@ -672,17 +688,16 @@ function FichaCliente({
                 <div className="sfm-access-card">
                   <div>
                     <h2>Su acceso privado</h2>
-                    <p>
-                      La invitación se utiliza una vez. Puedes preparar otra
-                      para un nuevo dispositivo.
-                    </p>
+                    <p>{tieneCuenta
+                      ? "Si olvidó su contraseña, prepara un enlace de un solo uso válido por 24 horas."
+                      : "La invitación se utiliza una vez para crear su cuenta."}</p>
                   </div>
                   <button
                     className="sfm-primary"
-                    disabled={ocupado}
-                    data-tour="invitar" onClick={() => void invitar()}
+                    disabled={ocupado || tieneCuenta === null}
+                    data-tour="invitar" onClick={() => void (tieneCuenta ? restablecerClave() : invitar())}
                   >
-                    {servicio.demo ? "Probar invitación" : "Preparar invitación"}
+                    {tieneCuenta ? "Preparar enlace para cambiar contraseña" : servicio.demo ? "Probar invitación" : "Preparar invitación"}
                   </button>
                   {servicio.demo && <p className="sfm-hint">Simulación: no da acceso real ni envía mensajes.</p>}
                   {enlace && (

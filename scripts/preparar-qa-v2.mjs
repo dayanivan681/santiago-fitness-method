@@ -55,6 +55,7 @@ for (const archivo of [
   "migrations/0001_acceso.sql",
   ".qa-local/schema-roles.sql",
   "migrations/0008_coaching_cloud.sql",
+  "migrations/0010_cuentas.sql",
 ])
   ejecutar(["--file", archivo]);
 const entorno = remoto ? "staging" : "local";
@@ -79,6 +80,8 @@ if (!remoto) {
   ).map((t) => t.name);
   // Primero las hijas: hay claves foráneas hacia clientes(id).
   const hijas = [
+    "restablecimientos",
+    "cuentas",
     "sesiones",
     "invitaciones",
     "entrenamientos",

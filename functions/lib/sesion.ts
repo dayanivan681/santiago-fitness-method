@@ -15,7 +15,7 @@ import { ahoraEnSegundos } from './invitacion'
 export const NOMBRE_DE_COOKIE = 'sfm_sesion'
 
 /** Vigencia de una sesión, en segundos. */
-export const VIDA_DE_SESION = 7 * 24 * 60 * 60
+export const VIDA_DE_SESION = 30 * 24 * 60 * 60
 
 export type Sesion = {
   readonly clienteId: string
@@ -103,6 +103,17 @@ export async function validarSesion(
   if (!fila) return null
 
   return { clienteId: fila.cliente_id, expiraEn: fila.expira_en }
+}
+
+/** Extiende sólo sesiones de cuentas activas cuando queda menos de media vida. */
+export async function renovarSesion(db: D1Database, valor: string, ahora = ahoraEnSegundos()): Promise<boolean> {
+  const hash = await resumen(valor)
+  const resultado = await db.prepare(`UPDATE sesiones SET expira_en=?1 WHERE id=?2 AND revocada_en IS NULL
+    AND expira_en>?3 AND expira_en<?4 AND EXISTS(
+      SELECT 1 FROM cuentas a JOIN clientes c ON c.id=a.cliente_id
+      WHERE a.cliente_id=sesiones.cliente_id AND c.activo=1)`)
+    .bind(ahora + VIDA_DE_SESION, hash, ahora, ahora + VIDA_DE_SESION / 2).run()
+  return (resultado.meta.changes ?? 0) > 0
 }
 
 /** Revoca la sesión de esta cookie. Idempotente: revocar dos veces no rompe. */

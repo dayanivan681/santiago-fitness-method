@@ -36,7 +36,7 @@ npx --no-install wrangler pages deploy dist --project-name santiago-fitness-meth
 ## Respaldo y migraciones aditivas
 
 El comando por defecto es de sólo lectura remota: exporta D1, restaura la copia
-en SQLite aislado, ejecuta `0008` y `0009` dos veces y comprueba integridad y
+en SQLite aislado, ejecuta `0008`, `0009` y `0010` dos veces y comprueba integridad y
 conservación exacta de clientes, rutinas, invitaciones y sesiones. Guarda SQL,
 base de ensayo y manifiesto en `.recovery/`, fuera de Git y con permisos privados.
 
@@ -55,7 +55,7 @@ npm run d1:v2 -- --produccion --aplicar
 
 `--aplicar` es una mutación real. Sólo usar producción después de aprobar staging
 y preparar una versión privada de recuperación compatible. El comando fija el
-UUID esperado, verifica el marcador de entorno y ejecuta exclusivamente las dos
+UUID esperado, verifica el marcador de entorno y ejecuta exclusivamente las tres
 migraciones revisadas. Nunca recorrer todas las migraciones antiguas: contienen
 semillas y cambios del piloto que no deben repetirse. Una diferencia posterior
 puede ser actividad concurrente; se investiga, nunca se restaura automáticamente.

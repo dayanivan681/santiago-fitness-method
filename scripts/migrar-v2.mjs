@@ -100,7 +100,7 @@ const antes = inventario();
 const sql =
   (
     await Promise.all(
-      ["0008_coaching_cloud.sql", "0009_versiones_originales.sql"].map((f) =>
+      ["0008_coaching_cloud.sql", "0009_versiones_originales.sql", "0010_cuentas.sql"].map((f) =>
         readFile(`migrations/${f}`, "utf8"),
       ),
     )
@@ -171,6 +171,11 @@ if (process.argv.includes("--aplicar")) {
   assert.equal(
     consulta("SELECT nombre FROM entorno_sfm WHERE id=1")[0]?.nombre,
     ambiente,
+  );
+  assert.equal(
+    consulta("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('cuentas','restablecimientos','intentos_de_acceso')").length,
+    3,
+    "Faltan tablas de cuentas tras la migración.",
   );
   manifest.aplicado = true;
   await writeFile(

@@ -56,8 +56,8 @@ describe('archivarCliente', () => {
 
     const sql = lotes[0].map((sentencia) => plano(sentencia.sql))
     expect(sql.some((texto) => /UPDATE clientes SET activo = 0/.test(texto))).toBe(true)
-    // Nada de DELETE: la programación tiene que seguir ahí para poder deshacer.
-    expect(sql.some((texto) => /DELETE/i.test(texto))).toBe(false)
+    // La programación se conserva; las credenciales sí se eliminan.
+    expect(sql.some((texto) => /DELETE FROM cuentas/.test(texto))).toBe(true)
     expect(sql.some((texto) => /rutinas/i.test(texto))).toBe(false)
   })
 
@@ -84,7 +84,7 @@ describe('archivarCliente', () => {
     expect(sesiones!.parametros).toContain('cliente1')
   })
 
-  it('manda las tres sentencias en un solo lote', async () => {
+  it('manda la baja y la revocación en un solo lote', async () => {
     // Por separado, un fallo entre medias dejaría al cliente fuera de la lista
     // pero con la sesión abierta: el peor de los dos estados posibles.
     const { db, lotes, preparadas } = baseFalsa()
@@ -92,16 +92,16 @@ describe('archivarCliente', () => {
     await archivarCliente(db, 'cliente1')
 
     expect(lotes).toHaveLength(1)
-    expect(lotes[0]).toHaveLength(3)
-    expect(preparadas).toHaveLength(3)
+    expect(lotes[0]).toHaveLength(5)
+    expect(preparadas).toHaveLength(5)
   })
 
-  it('sella el instante de la baja en las tres sentencias', async () => {
+  it('sella el instante de la baja en las sentencias temporales', async () => {
     const { db, lotes } = baseFalsa()
 
     await archivarCliente(db, 'cliente1')
 
-    const instantes = lotes[0].map((sentencia) => sentencia.parametros[0])
+    const instantes = lotes[0].slice(0, 3).map((sentencia) => sentencia.parametros[0])
     expect(instantes.every((valor) => typeof valor === 'number' && Number.isInteger(valor))).toBe(true)
     expect(new Set(instantes).size).toBe(1)
   })

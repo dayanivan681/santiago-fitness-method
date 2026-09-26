@@ -22,6 +22,7 @@ import { medios } from "./medios";
 import { crearInvitacion } from "../invitacion";
 import { archivarCliente } from "../roles";
 import { resumen } from "../cripto";
+import { prepararRestablecimiento } from "../cuentas";
 export async function api(
   request: Request,
   env: EntornoV2,
@@ -185,6 +186,8 @@ export async function api(
       return json({ id: p.id }, 201);
     }
     if (coach && ruta === "/invitar" && request.method === "POST") {
+      const cuenta = await env.ACCESO.prepare('SELECT cliente_id FROM cuentas WHERE cliente_id=?').bind(cliente).first();
+      if (cuenta) return json({ error: 'Este cliente ya tiene cuenta. Prepara un enlace para cambiar su contraseña.' }, 409);
       const { plan } = await planActual(env.ACCESO, cliente);
       if (
         !plan.revisado ||
@@ -199,6 +202,15 @@ export async function api(
         enlace: `${url.origin}/access?t=${invitacion.token}`,
         expiraEn: invitacion.expiraEn,
       });
+    }
+    if (coach && ruta === "/estado-cuenta" && request.method === "GET") {
+      const cuenta = await env.ACCESO.prepare('SELECT email FROM cuentas WHERE cliente_id=?').bind(cliente).first<{ email: string }>();
+      return json({ tieneCuenta: !!cuenta, email: cuenta?.email ?? null });
+    }
+    if (coach && ruta === "/restablecer-clave" && request.method === "POST") {
+      const enlace = await prepararRestablecimiento(env.ACCESO, cliente);
+      if (!enlace) return json({ error: 'Este cliente aún no tiene cuenta.' }, 404);
+      return json({ enlace: `${url.origin}/restablecer?t=${enlace.token}`, expiraEn: enlace.expiraEn });
     }
     if (coach && ruta === "/revocar" && request.method === "POST") {
       await env.ACCESO.batch([

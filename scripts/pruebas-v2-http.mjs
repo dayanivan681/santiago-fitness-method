@@ -120,6 +120,8 @@ const invitacion = await (
   )
 ).json();
 const enlace = new URL(invitacion.enlace);
+const email = `qa-${id}@example.test`;
+const clave = `Qa-${crypto.randomUUID()}!`;
 const aceptar = (invitacionUrl = enlace) =>
   fetch(new URL("/access", base), {
     method: "POST",
@@ -128,8 +130,9 @@ const aceptar = (invitacionUrl = enlace) =>
       Origin: base.origin,
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: new URLSearchParams({ t: invitacionUrl.searchParams.get("t") }),
+    body: new URLSearchParams({ t: invitacionUrl.searchParams.get("t"), email, clave }),
   });
+await codigo(await pedir(enlace.pathname + enlace.search), 200, "Formulario de cuenta sin consumir invitación");
 const entrar = await aceptar();
 await codigo(entrar, 302, "Invitación de un uso");
 const cookie = entrar.headers.get("set-cookie").split(";")[0];
@@ -214,18 +217,13 @@ const otro = await (
 ).json();
 assert.equal(otro.perfil.id, id, "La URL no cambia la identidad");
 checks++;
-// Otro dispositivo tiene otra sesión y ninguna copia local del entrenamiento.
-const invitacion2 = await (
-  await codigo(
-    await pedir(cbase + "/invitar?cliente=" + id, coach, {}),
-    200,
-    "Invitación para segundo dispositivo",
-  )
-).json();
+// Otro dispositivo usa email y contraseña: la invitación original sigue gastada.
 const entrar2 = await codigo(
-  await aceptar(new URL(invitacion2.enlace)),
+  await fetch(new URL('/entrar', base), { method: 'POST', redirect: 'manual',
+    headers: { Origin: base.origin, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ email, clave }) }),
   302,
-  "Acceso independiente",
+  "Acceso independiente con contraseña",
 );
 const dispositivo2 = {
   Cookie: entrar2.headers.get("set-cookie").split(";")[0],
@@ -254,6 +252,31 @@ assert.equal(
   previewAntes.cursor,
 );
 checks++;
+const pedirFormulario = (ruta, campos) => fetch(new URL(ruta, base), {
+  method: 'POST', redirect: 'manual',
+  headers: { Origin: base.origin, 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams(campos),
+});
+const enlaceClave = await (await codigo(
+  await pedir(cbase + '/restablecer-clave?cliente=' + id, coach, {}), 200,
+  'Coach prepara recuperación',
+)).json();
+const urlClave = new URL(enlaceClave.enlace);
+await codigo(await pedir(urlClave.pathname + urlClave.search), 200, 'El enlace de recuperación abre sin gastarse');
+const claveNueva = `Nueva-${crypto.randomUUID()}!`;
+await codigo(await pedirFormulario('/restablecer', { t: urlClave.searchParams.get('t'), clave: claveNueva }),
+  200, 'Recuperación de un solo uso');
+await codigo(await pedirFormulario('/restablecer', { t: urlClave.searchParams.get('t'), clave: claveNueva }),
+  400, 'Recuperación gastada');
+await codigo(await pedir('/api/v2/inicio', cliente), 401, 'Recuperación revoca sesión anterior');
+await codigo(await pedirFormulario('/entrar', { email, clave }), 401, 'Contraseña anterior rechazada');
+const entrar3 = await codigo(await pedirFormulario('/entrar', { email, clave: claveNueva }),
+  302, 'Contraseña nueva aceptada');
+const dispositivo3 = { Cookie: entrar3.headers.get('set-cookie').split(';')[0] };
+for (let i = 0; i < 5; i++) await codigo(await pedirFormulario('/entrar',
+  { email: `desconocido-${id}@example.test`, clave: 'Incorrecta-123' }), 401, 'Fallo de acceso limitado');
+await codigo(await pedirFormulario('/entrar',
+  { email: `desconocido-${id}@example.test`, clave: 'Incorrecta-123' }), 401, 'Límite de intentos activo');
 await codigo(
   await pedir(cbase + "/revocar?cliente=" + id, coach, {}),
   200,
@@ -269,6 +292,7 @@ await codigo(
   401,
   "Revocación en el segundo dispositivo",
 );
+await codigo(await pedir('/api/v2/inicio', dispositivo3), 401, 'Revocación tras recuperar contraseña');
 await codigo(
   await pedir(cbase + "/archivar?cliente=" + id, coach, {}),
   200,

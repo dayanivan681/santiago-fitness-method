@@ -107,9 +107,11 @@ export async function autenticar(
     .bind(sesion.clienteId)
     .first<{ nombre: string }>();
   if (!cliente) return null;
-  // Previews antiguos crearon sesiones sin invitación: no son acceso de un cliente.
+  // Previews antiguos crearon sesiones sin invitación. Las cuentas nuevas sí
+  // inician sesión sin invitación, por eso comprobamos su cuenta en ese caso.
   const valida = await env.ACCESO.prepare(
-    "SELECT id FROM sesiones WHERE id=? AND invitacion IS NOT NULL",
+    `SELECT s.id FROM sesiones s WHERE s.id=? AND
+      (s.invitacion IS NOT NULL OR EXISTS(SELECT 1 FROM cuentas a WHERE a.cliente_id=s.cliente_id))`,
   )
     .bind(await (await import("../cripto")).resumen(cookie!))
     .first();

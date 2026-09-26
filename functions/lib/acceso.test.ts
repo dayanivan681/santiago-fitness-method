@@ -77,11 +77,11 @@ describe('cookie de sesión', () => {
     expect(cabecera).toContain('Secure')
     expect(cabecera).toContain('SameSite=Lax')
     expect(cabecera).toContain('Path=/')
-    expect(cabecera).toContain('Max-Age=604800')
+    expect(cabecera).toContain('Max-Age=2592000')
   })
 
-  it('caduca a los 7 días, igual que la invitación', () => {
-    expect(VIDA_DE_SESION).toBe(7 * 24 * 60 * 60)
+  it('caduca a los 30 días; la invitación mantiene 7', () => {
+    expect(VIDA_DE_SESION).toBe(30 * 24 * 60 * 60)
     expect(VIDA_DE_INVITACION).toBe(7 * 24 * 60 * 60)
   })
 

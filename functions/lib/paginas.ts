@@ -52,6 +52,12 @@ function envolver(titulo: string, cuerpo: string): string {
          letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
   button:active{transform:scale(.99)}
   button:focus-visible{outline:2px solid ${ROJO};outline-offset:3px}
+  input{width:100%;min-height:48px;margin:0 0 12px;padding:12px;border:1px solid ${BORDE};
+        border-radius:10px;background:${FONDO};color:${TEXTO};font:inherit}
+  label{display:block;text-align:left;font-size:14px;margin:0 0 6px}
+  a{color:${TEXTO};text-decoration:underline;text-underline-offset:3px}
+  .ayuda{font-size:14px;margin:16px 0 0}
+  .error{color:#ffaba6}
   .barra{width:34px;height:3px;background:${ROJO};border-radius:2px;margin:0 auto 20px}
   @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style>
@@ -68,6 +74,7 @@ function respuesta(html: string, estado: number, cabeceras: HeadersInit = {}): R
       'Cache-Control': 'no-store',
       // El token viaja en la URL de esta página: que no salga hacia terceros.
       'Referrer-Policy': 'no-referrer',
+      'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'",
       ...cabeceras,
     },
   })
@@ -81,20 +88,24 @@ function respuesta(html: string, estado: number, cabeceras: HeadersInit = {}): R
  * el enlace llegaría gastado. Sólo el POST de este botón lo consume, y los
  * rastreadores no envían POST.
  */
-export function paginaEntrar(token: string): Response {
+export function paginaEntrar(token: string, error = false): Response {
   return respuesta(
     envolver(
-      'Entrar · Santiago Fitness Method',
+      'Crea tu cuenta · Santiago Fitness Method',
       `<div class="barra"></div>
        <p class="marca">Santiago Fitness Method</p>
-       <h1>Tu acceso está listo</h1>
-       <p>Toca el botón para entrar. No hace falta contraseña ni cuenta.</p>
+       <h1>Crea tu cuenta</h1>
+       <p>Tu coach te invitó. Elige un email y una contraseña para volver cuando quieras.</p>
+       ${error ? '<p class="error">No pudimos crear la cuenta. Revisa los datos o pide un enlace nuevo a tu coach.</p>' : ''}
        <form method="POST" action="/access">
          <input type="hidden" name="t" value="${escapar(token)}">
-         <button type="submit">Entrar</button>
-       </form>`,
+         <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required>
+         <label for="clave">Contraseña (10 caracteres mínimo)</label><input id="clave" name="clave" type="password" autocomplete="new-password" minlength="10" required>
+         <button type="submit">Crear cuenta</button>
+       </form>
+       <p class="ayuda">¿Ya tienes cuenta? <a href="/entrar">Entrar</a></p>`,
     ),
-    200,
+    error ? 400 : 200,
     {
       // no-referrer convierte Origin en null en un POST de formulario. Enviar
       // sólo el origen permite validar CSRF sin revelar la ruta ni el token.
@@ -102,6 +113,32 @@ export function paginaEntrar(token: string): Response {
       'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'",
     },
   )
+}
+
+export function paginaLogin(error = false): Response {
+  return respuesta(envolver('Entrar · Santiago Fitness Method',
+    `<div class="barra"></div><p class="marca">Santiago Fitness Method</p><h1>Bienvenido de nuevo</h1>
+     ${error ? '<p class="error">No pudimos iniciar sesión. Revisa tus datos o inténtalo más tarde.</p>' : '<p>Entra a tu espacio con tu cuenta.</p>'}
+     <form method="POST" action="/entrar">
+       <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required>
+       <label for="clave">Contraseña</label><input id="clave" name="clave" type="password" autocomplete="current-password" required>
+       <button type="submit">Entrar</button></form>
+     <p class="ayuda">¿Olvidaste tu contraseña? Pide a tu coach un enlace para cambiarla.</p>
+     <p class="ayuda"><a href="/demo">Explorar la demo</a> · <a href="/admin">Acceso del Coach</a></p>`), error ? 401 : 200)
+}
+
+export function paginaRestablecer(token: string, error = false): Response {
+  return respuesta(envolver('Cambiar contraseña · Santiago Fitness Method',
+    `<div class="barra"></div><p class="marca">Santiago Fitness Method</p><h1>Cambiar contraseña</h1>
+     ${error ? '<p class="error">No se pudo cambiar. Pide un enlace nuevo a tu coach.</p>' : '<p>Elige una contraseña de al menos 10 caracteres.</p>'}
+     <form method="POST" action="/restablecer"><input type="hidden" name="t" value="${escapar(token)}">
+       <label for="clave">Nueva contraseña</label><input id="clave" name="clave" type="password" autocomplete="new-password" minlength="10" required>
+       <button type="submit">Guardar contraseña</button></form>`), error ? 400 : 200, { 'Referrer-Policy': 'strict-origin' })
+}
+
+export function paginaClaveCambiada(): Response {
+  return respuesta(envolver('Contraseña actualizada · Santiago Fitness Method',
+    '<div class="barra"></div><h1>Contraseña actualizada</h1><p>Ya puedes entrar con tu cuenta.</p><a href="/entrar">Ir a entrar</a>'), 200)
 }
 
 /**
@@ -197,7 +234,7 @@ export function paginaSesionCerrada(cookieBorrada: string): Response {
       `<div class="barra"></div>
        <p class="marca">Santiago Fitness Method</p>
        <h1>Sesión cerrada</h1>
-       <p>Ya no hay sesión en este dispositivo. Para volver a entrar necesitas un enlace nuevo.</p>`,
+       <p>Ya no hay sesión en este dispositivo.</p><a href="/entrar">Volver a entrar</a>`,
     ),
     200,
     { 'Set-Cookie': cookieBorrada },

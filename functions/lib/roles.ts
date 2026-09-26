@@ -507,6 +507,8 @@ export async function archivarCliente(db: D1Database, id: string): Promise<void>
     db
       .prepare('UPDATE sesiones SET revocada_en = ?1 WHERE cliente_id = ?2 AND revocada_en IS NULL')
       .bind(ahora, id),
+    db.prepare('DELETE FROM cuentas WHERE cliente_id = ?').bind(id),
+    db.prepare('DELETE FROM restablecimientos WHERE cliente_id = ?').bind(id),
   ])
 }
 

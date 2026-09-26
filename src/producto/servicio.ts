@@ -239,6 +239,14 @@ export class ServicioCoach {
       await new ClienteApi(true, id).pedir<{ enlace: string }>("/invitar", {})
     ).enlace;
   }
+  async estadoCuenta(id: string): Promise<{ tieneCuenta: boolean; email: string | null }> {
+    if (this.demo) return { tieneCuenta: false, email: null };
+    return new ClienteApi(true, id).pedir("/estado-cuenta");
+  }
+  async restablecerClave(id: string) {
+    if (this.demo) return "Simulación: enlace para cambiar contraseña.";
+    return (await new ClienteApi(true, id).pedir<{ enlace: string }>("/restablecer-clave", {})).enlace;
+  }
   async accion(id: string, accion: "archivar" | "revocar") {
     if (this.demo) {
       if (accion === "archivar")

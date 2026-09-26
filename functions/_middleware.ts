@@ -8,21 +8,27 @@ import {
   cabeceraDeCookieBorrada,
   cerrarSesion,
   crearCabeceraDeCookie,
-  entrarConInvitacion,
   leerCookie,
+  renovarSesion,
+  validarSesion,
   VIDA_DE_SESION,
 } from './lib/sesion'
+import { cambiarClave, entrarConClave, intentosAgotados, registrarConInvitacion, registrarFallo, restablecimientoValido } from './lib/cuentas'
 import {
+  paginaClaveCambiada,
   paginaEnlaceExpirado,
   paginaEnlaceInactivo,
   paginaEnlaceNoValido,
   paginaEnlaceUsado,
   paginaEntrar,
+  paginaLogin,
+  paginaRestablecer,
   paginaSesionCerrada,
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
 import { origenSeguro } from './lib/v2/seguridad'
 import { conCabecerasDeShell } from './lib/cabecerasShell'
+import { resumen } from './lib/cripto'
 
 type Entorno = {
   readonly ACCESO: D1Database
@@ -31,6 +37,8 @@ type Entorno = {
 
 /** Rutas que gestiona el propio middleware. */
 const RUTA_ACCESO = '/access'
+const RUTA_ENTRAR = '/entrar'
+const RUTA_RESTABLECER = '/restablecer'
 const RUTA_SALIR = '/salir'
 
 /**
@@ -56,6 +64,10 @@ export const onRequest: PagesFunction<Entorno> = async (contexto) => {
   if (url.pathname === PREFIJO_ADMIN || url.pathname.startsWith(`${PREFIJO_ADMIN}/`)) return next()
 
   if (url.pathname === RUTA_ACCESO) return atenderAcceso(request, env)
+
+  if (url.pathname === RUTA_ENTRAR) return atenderLogin(request, env)
+
+  if (url.pathname === RUTA_RESTABLECER) return atenderRestablecimiento(request, env)
 
   if (url.pathname === RUTA_SALIR) return atenderSalir(request, env)
 
@@ -90,7 +102,7 @@ async function atenderServiceWorker(next: () => Promise<Response>): Promise<Resp
 async function atenderAcceso(request: Request, env: Entorno): Promise<Response> {
   if (request.method === 'GET') {
     const token = new URL(request.url).searchParams.get('t')
-    if (!token) return paginaEnlaceNoValido()
+    if (!token || token.length !== 43) return paginaEnlaceNoValido()
 
     // Sólo lectura: un previsualizador de enlaces no puede gastar la invitación.
     switch (await estadoDeInvitacion(env.ACCESO, token)) {
@@ -113,12 +125,18 @@ async function atenderAcceso(request: Request, env: Entorno): Promise<Response> 
 
   const formulario = await request.formData()
   const token = String(formulario.get('t') ?? '')
-  if (!token) return paginaEnlaceNoValido()
+  if (!token || token.length !== 43) return paginaEnlaceNoValido()
 
   const ahora = ahoraEnSegundos()
-  const entrada=await entrarConInvitacion(env.ACCESO,token,ahora)
-  if(!entrada)return paginaDelEstado(await estadoDeInvitacion(env.ACCESO,token,ahora))
-  const {cookie}=entrada
+  const email = String(formulario.get('email') ?? '')
+  const clave = String(formulario.get('clave') ?? '')
+  let cookie: string | null = null
+  try { cookie = await registrarConInvitacion(env.ACCESO, token, email, clave, ahora) }
+  catch { return paginaEntrar(token, true) }
+  if (!cookie) {
+    const estado = await estadoDeInvitacion(env.ACCESO, token, ahora)
+    return estado === 'valida' ? paginaEntrar(token, true) : paginaDelEstado(estado)
+  }
 
   // Redirección a la raíz: el token desaparece de la barra y del historial.
   return new Response(null, {
@@ -130,6 +148,46 @@ async function atenderAcceso(request: Request, env: Entorno): Promise<Response> 
       'Referrer-Policy': 'no-referrer',
     },
   })
+}
+
+function respuestaDeEntrada(cookie: string): Response {
+  return new Response(null, { status: 302, headers: {
+    Location: '/', 'Set-Cookie': crearCabeceraDeCookie(cookie, VIDA_DE_SESION),
+    'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer',
+  } })
+}
+
+async function atenderLogin(request: Request, env: Entorno): Promise<Response> {
+  if (request.method === 'GET') return paginaLogin()
+  if (request.method !== 'POST') return new Response('Método no permitido', { status: 405 })
+  const formulario = await request.formData()
+  const email = String(formulario.get('email') ?? '')
+  const clave = String(formulario.get('clave') ?? '')
+  if (email.length > 254 || clave.length > 1024) return paginaLogin(true)
+  const cookie = await entrarConClave(env.ACCESO, email, clave, request.headers.get('CF-Connecting-IP'))
+  return cookie ? respuestaDeEntrada(cookie) : paginaLogin(true)
+}
+
+async function atenderRestablecimiento(request: Request, env: Entorno): Promise<Response> {
+  if (request.method === 'GET') {
+    const token = new URL(request.url).searchParams.get('t') ?? ''
+    return token && await restablecimientoValido(env.ACCESO, token)
+      ? paginaRestablecer(token) : paginaRestablecer('', true)
+  }
+  if (request.method !== 'POST') return new Response('Método no permitido', { status: 405 })
+  const formulario = await request.formData()
+  const token = String(formulario.get('t') ?? '')
+  const clave = String(formulario.get('clave') ?? '')
+  if (token.length !== 43 || clave.length > 1024) return paginaRestablecer('', true)
+  const claveIntento = `reset:${await resumen(token)}`
+  const ip = request.headers.get('CF-Connecting-IP')
+  if (await intentosAgotados(env.ACCESO, claveIntento, ip)) return paginaRestablecer('', true)
+  try {
+    if (await cambiarClave(env.ACCESO, token, clave)) return paginaClaveCambiada()
+    await registrarFallo(env.ACCESO, claveIntento, ip)
+    return paginaRestablecer('', true)
+  }
+  catch { return paginaRestablecer('', true) }
 }
 
 /** Traduce un estado a su pantalla. El rechazo ya ocurrió antes de llamar aquí. */
@@ -157,12 +215,23 @@ async function atenderSalir(request: Request, env: Entorno): Promise<Response> {
  * la URL a secas puede no haber tenido nunca uno.
  */
 async function atenderApp(
-  _request: Request,
-  _env: Entorno,
+  request: Request,
+  env: Entorno,
   next: () => Promise<Response>,
 ): Promise<Response> {
   // El shell no contiene datos personales. Cada API valida identidad y permisos;
   // esto permite una demo pública en memoria y recuperar el shell offline.
   // Lo que sí lleva es CSP y anti-framing: ver lib/cabecerasShell.ts.
-  return conCabecerasDeShell(await next())
+  const cookie = leerCookie(request)
+  if (new URL(request.url).pathname === '/' && (!cookie || !await validarSesion(env.ACCESO, cookie)))
+    return new Response(null, { status: 302, headers: { Location: '/entrar', 'Cache-Control': 'no-store' } })
+  // La API que sirve /inicio ya recibe la fecha nueva en su contexto.
+  const renovada = cookie ? await renovarSesion(env.ACCESO, cookie) : false
+  const respuesta = conCabecerasDeShell(await next())
+  if (renovada && cookie) {
+    const salida = new Response(respuesta.body, respuesta)
+    salida.headers.set('Set-Cookie', crearCabeceraDeCookie(cookie, VIDA_DE_SESION))
+    return salida
+  }
+  return respuesta
 }
