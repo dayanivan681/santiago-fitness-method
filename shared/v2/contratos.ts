@@ -199,6 +199,7 @@ export type Contexto = {
   entorno: "production" | "staging" | "local";
   medios: boolean;
   googleDisponible?: boolean;
+  googleVinculado?: boolean;
 };
 export const esquemas = {
   perfil: Perfil,

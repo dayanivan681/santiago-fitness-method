@@ -5,6 +5,7 @@ import { crearInvitacion } from './invitacion'
 import { googleConfigurado, iniciarGoogle, terminarGoogle, verificarGoogleId } from './google'
 import { registrarConInvitacion } from './cuentas'
 import { NOMBRE_DE_COOKIE } from './sesion'
+import { autenticar, type EntornoV2 } from './v2/seguridad'
 
 const clienteId = 'cliente-google-test'
 const secreto = 'secret-for-local-test'
@@ -93,8 +94,13 @@ describe('código OAuth y PKCE', () => {
       return terminarGoogle(callback, env, firmado.clave,
         async () => new Response(JSON.stringify({ id_token: firmado.token }), { status: 200 }))
     }
+    const contexto = () => autenticar(new Request(`${origen}/api/v2/contexto`,
+      { headers: { Cookie: `${NOMBRE_DE_COOKIE}=${claveSesion}` } }), env as unknown as EntornoV2, 'cliente')
+    expect((await contexto())?.googleVinculado).toBe(false)
     expect((await iniciar('entrar')).ok).toBe(false)
     expect((await iniciar('enlazar', claveSesion!)).ok).toBe(true)
     expect((await iniciar('entrar')).ok).toBe(true)
+    // El perfil deja de ofrecer «Conectar Google» cuando la cuenta ya lo tiene.
+    expect((await contexto())?.googleVinculado).toBe(true)
   })
 })

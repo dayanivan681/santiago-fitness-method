@@ -106,10 +106,12 @@ export async function autenticar(
   const sesion = cookie ? await validarSesion(env.ACCESO, cookie) : null;
   if (!sesion) return null;
   const cliente = await env.ACCESO.prepare(
-    "SELECT nombre FROM clientes WHERE id=? AND activo=1",
+    `SELECT c.nombre, cu.google_sub IS NOT NULL AS google
+     FROM clientes c LEFT JOIN cuentas cu ON cu.cliente_id=c.id
+     WHERE c.id=? AND c.activo=1`,
   )
     .bind(sesion.clienteId)
-    .first<{ nombre: string }>();
+    .first<{ nombre: string; google: number }>();
   if (!cliente) return null;
   // validarSesion exige una invitación ligada a la sesión. Las sesiones
   // históricas de preview sin invitación no se convierten en acceso real.
@@ -122,6 +124,7 @@ export async function autenticar(
     entorno,
     medios: !!env.FOTOS,
     googleDisponible: googleConfigurado(env),
+    googleVinculado: cliente.google === 1,
   };
 }
 export function json(datos: unknown, status = 200) {

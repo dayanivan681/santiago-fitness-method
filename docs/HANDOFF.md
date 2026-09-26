@@ -48,11 +48,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T22:33:53.635Z
+- **Última sincronización:** 2026-09-26T22:37:18.523Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1195,6 +1195,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T22:37:18.524Z | claude-code | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Verificado producción tras fases 1-2 (commit 1a11169/f482979): / -> /entrar 302, /entrar 200 con CSP default-src none y no-store, /auth/google 302 a Google, retorno y /access falsos 401, /admin/ 302 a Access, /api/v2/inicio 401, demo y presentacion 200. Corregido el hallazgo de Codex: el perfil ya no ofrece 'Conectar Google' si la cuenta tiene google_sub; el contexto del cliente expone googleVinculado (seguridad.ts, contratos.ts, Cliente.tsx) con prueba de regresión en google.test.ts. Fase 3 (Stripe modo prueba) BLOQUEADA hasta que el dueño cree la cuenta de Stripe, el producto y el precio mensual en modo prueba y cargue STRIPE_SECRET_KEY y STRIPE_WEBHOOK_SECRET como secretos de Pages en preview.
+- **Verificación:** npm test 749/749; npm run lint; npx tsc -b; npm run build; npm run test:http 53/53 local; curl producción
+- **Siguiente:** Dueño: cuenta Stripe en modo prueba + precio mensual + secretos en preview. Después Claude Code o Codex implementan fase 3.
+
 
 ### 2026-09-26T22:33:53.636Z | claude-code | CLAIM
 - **Estado:** active
