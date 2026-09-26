@@ -41,8 +41,46 @@ responde 404 y las rutas de pago 503.
 suscripción en Stripe y guarda esa copia. Por eso los reintentos y el orden de llegada
 no dejan estados viejos. Una suscripción ya ligada a un cliente no pasa a otro.
 
-**Todavía no hay interfaz.** Las fases 4 (bloqueo de solo lectura en la app del cliente)
-y 5 (pestaña Suscripción en el panel del coach) vienen después.
+### Fase 4: solo lectura del cliente
+
+- **Servidor.** `bloqueoPorSuscripcion` (en `suscripcionApi.ts`) responde **402** a las
+  escrituras del cliente sin acceso: `/sincronizar` y los `PUT/PATCH/DELETE` de `/medios`.
+  - Las lecturas siguen funcionando y el coach nunca se bloquea.
+  - **Con Stripe apagado no se bloquea a nadie.**
+- **Sincronización** (`src/nube/cloud.ts`). Un 402 detiene el envío, pero lo pendiente
+  sigue en la cola del dispositivo y se siguen recibiendo los cambios del coach
+  (`estadoNube.suscripcionInactiva`). Al renovar se envía todo. Lo cubre
+  `pruebas-v2/cola.test.ts`.
+- **App del cliente** (`SuscripcionCuenta.tsx`, `useSuscripcion.ts`):
+  - En gracia, un aviso con la fecha límite y el botón «Actualizar pago».
+  - Sin acceso, la tarjeta «Activa tu suscripción para entrenar» con «Pagar suscripción»
+    o «Actualizar pago».
+  - «Comenzar» no abre la sesión y `/entrenar` redirige a Hoy.
+  - En el perfil, «Mi suscripción».
+  - Tras pagar (`?suscripcion=ok`), la app espera al webhook hasta 30 s.
+
+### Fase 5: panel del coach
+
+- En la lista de clientes aparece una insignia por cliente: Al día, En gracia, Vencida,
+  Pausada, Sin suscripción o Exento. También hay un filtro «Pagos pendientes».
+- En Hoy, una tarjeta «Pagos» cuenta cuántos clientes tienen el pago pendiente.
+- La ficha tiene una pestaña **Pago** (`SuscripcionCliente.tsx`):
+  - estado y próximo cobro;
+  - elegir el plan y preparar el enlace de pago para copiarlo;
+  - pausar o reanudar cobros;
+  - cancelar al final del periodo, con confirmación, o mantener la suscripción;
+  - marcar como exento.
+- La demo pública muestra lo mismo con datos ficticios (`servicioSuscripciones.ts`):
+  - Alicia está al día;
+  - Marcos está en gracia;
+  - Nora no tiene suscripción.
+
+### Antes de encender Stripe en producción
+
+Al activar `STRIPE_HABILITADO`, **todo cliente sin suscripción pasa a solo lectura**. Antes
+de hacerlo, en la pestaña Pago de cada ficha:
+- marca como **Exento** a Santiago, a los clientes de cortesía y a los de pruebas;
+- a los demás, elígeles el plan y mándales el enlace de pago.
 
 ## Lo que tiene que hacer el dueño
 

@@ -12,6 +12,7 @@
  */
 import Stripe from 'stripe'
 import { estadoDeAcceso, filaDesdeStripe, type FilaSuscripcion, type SuscripcionStripe } from './suscripcion'
+import type { Precio, ResumenSuscripcion } from '../../shared/v2/suscripcion'
 
 export type EntornoStripe = {
   SFM_ENV?: string
@@ -80,7 +81,6 @@ async function asegurarFila(db: D1Database, clienteId: string): Promise<void> {
     .bind(clienteId, ahoraEnSegundos()).run()
 }
 
-export type Precio = { id: string; nombre: string; importe: number | null; moneda: string; intervalo: string }
 
 export async function listarPrecios(stripe: Stripe): Promise<Precio[]> {
   const { data } = await stripe.prices.list({ active: true, type: 'recurring', limit: 20, expand: ['data.product'] })
@@ -115,7 +115,7 @@ export async function marcarExento(db: D1Database, clienteId: string, exento: bo
  */
 export async function crearPago(db: D1Database, stripe: Stripe, clienteId: string, origen: string): Promise<string> {
   const fila = await leerSuscripcion(db, clienteId)
-  if (!fila?.precio_id) throw new ErrorSuscripcion('El coach todavía no ha elegido el plan de este cliente.', 409)
+  if (!fila?.precio_id) throw new ErrorSuscripcion('Todavía no hay un plan elegido: el coach tiene que asignarlo antes del pago.', 409)
   if (fila.stripe_subscription_id && fila.estado && !TERMINADAS.has(fila.estado)) {
     throw new ErrorSuscripcion('Ya hay una suscripción en curso. Gestiónala desde «Gestionar pago».', 409)
   }
@@ -159,15 +159,6 @@ export async function accionDelCoach(db: D1Database, stripe: Stripe, clienteId: 
   await guardarDesdeStripe(db, clienteId, sub as unknown as SuscripcionStripe)
 }
 
-export type ResumenSuscripcion = {
-  clienteId: string
-  precioId: string | null
-  estadoStripe: string | null
-  periodoFin: number | null
-  cancelarAlFinal: boolean
-  exento: boolean
-  acceso: ReturnType<typeof estadoDeAcceso>
-}
 
 export function resumir(clienteId: string, fila: FilaSuscripcion | null, ahora = ahoraEnSegundos()): ResumenSuscripcion {
   return {

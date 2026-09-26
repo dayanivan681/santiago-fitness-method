@@ -1,5 +1,7 @@
 import { GuiaAyuda } from "./GuiaAyuda";
 import { CopiarInvitacion } from "./CopiarInvitacion";
+import { InsigniaSuscripcion, SuscripcionCliente } from "./SuscripcionCliente";
+import { ContextoPagos, pagoPendiente, usePagos, type Pagos } from "./pagos-contexto";
 import { segunCantidad } from "../logica/plural";
 import { Consejo } from "./Ayuda";
 import { useAyuda } from "./ayuda-contexto";
@@ -49,10 +51,16 @@ export function Coach({
   const [borradores, setBorradores] = useState<Cambio[]>([]);
   const [error, setError] = useState("");
   const [listo, setListo] = useState(false);
+  const [pagos, setPagos] = useState<Pagos>({ disponibles: false, porCliente: new Map() });
   const cargar = useCallback(async () => {
     try {
       const [c, b] = await Promise.all([servicio.listar(), servicio.cambios()]);
       setClientes(c);
+      // Los pagos nunca impiden ver a los clientes: si fallan, sin insignias.
+      void servicio.suscripciones
+        .listar(c.map((x) => x.perfil.id))
+        .then((r) => setPagos({ disponibles: r.pagosDisponibles, porCliente: new Map(r.suscripciones.map((x) => [x.clienteId, x])) }))
+        .catch(() => setPagos({ disponibles: false, porCliente: new Map() }));
       setBorradores(
         ultimos(b, "alta").filter((v) => !(v.datos as Alta).completado),
       );
@@ -73,6 +81,7 @@ export function Coach({
     return () => clearInterval(t);
   }, [cargar]);
   return (
+    <ContextoPagos.Provider value={pagos}>
     <div className="sfm-shell sfm-shell--coach">
       <div className="sfm-brandbar">
         <Marca />
@@ -150,6 +159,7 @@ export function Coach({
         ))}
       </nav>
     </div>
+    </ContextoPagos.Provider>
   );
 }
 function HoyCoach({
@@ -169,6 +179,10 @@ function HoyCoach({
       b.actividad!.ultima!.fecha.localeCompare(a.actividad!.ultima!.fecha),
     )
     .slice(0, 4);
+  const pagos = usePagos();
+  const pagosPendientes = pagos.disponibles
+    ? clientes.filter((c) => pagoPendiente(pagos.porCliente.get(c.perfil.id))).length
+    : 0;
   const pendientes = clientes.filter(
     (c) =>
       c.plan.estado !== "publicado" ||
@@ -204,6 +218,17 @@ function HoyCoach({
             <small>El siguiente paso</small>
             <strong>
               Revisar el plan de {pendientes[0].perfil.nombre.split(" ")[0]}
+            </strong>
+          </span>
+          <Icono nombre="flecha" />
+        </Link>
+      )}
+      {pagosPendientes > 0 && (
+        <Link className="sfm-next-card" to={`${base}/clientes?pagos=pendientes`}>
+          <span>
+            <small>Pagos</small>
+            <strong>
+              {segunCantidad(pagosPendientes, "1 cliente con el pago pendiente", `${pagosPendientes} clientes con el pago pendiente`)}
             </strong>
           </span>
           <Icono nombre="flecha" />
@@ -314,6 +339,8 @@ function HoyCoach({
   );
 }
 function FilaCliente({ c, base }: { c: Cliente; base: string }) {
+  const pagos = usePagos();
+  const suscripcion = pagos.disponibles ? pagos.porCliente.get(c.perfil.id) : undefined;
   const incompleto =
     c.plan.estado !== "publicado" ||
     !c.plan.revisado ||
@@ -324,6 +351,7 @@ function FilaCliente({ c, base }: { c: Cliente; base: string }) {
       <Avatar nombre={c.perfil.nombre} />
       <span className="sfm-row-body">
         <strong>{c.perfil.nombre}</strong>
+        {suscripcion && <InsigniaSuscripcion acceso={suscripcion.acceso} />}
         <small>
           {incompleto
             ? "Programa por revisar"
@@ -350,7 +378,12 @@ function ListaClientes({
   listo: boolean;
 }) {
   const [q, setQ] = useState("");
-  const visibles = clientes.filter((c) =>
+  const pagos = usePagos();
+  const [soloPagos, setSoloPagos] = useState(
+    () => new URLSearchParams(location.search).get("pagos") === "pendientes",
+  );
+  const conPagoPendiente = clientes.filter((c) => pagoPendiente(pagos.porCliente.get(c.perfil.id)));
+  const visibles = (pagos.disponibles && soloPagos ? conPagoPendiente : clientes).filter((c) =>
     c.perfil.nombre
       .toLocaleLowerCase("es")
       .includes(q.trim().toLocaleLowerCase("es")),
@@ -377,6 +410,11 @@ function ListaClientes({
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
+      {pagos.disponibles && conPagoPendiente.length > 0 && (
+        <button className="sfm-chip" aria-pressed={soloPagos} onClick={() => setSoloPagos(!soloPagos)}>
+          Pagos pendientes ({conPagoPendiente.length})
+        </button>
+      )}
       <div className="sfm-list">
         {visibles.map((c) => (
           <FilaCliente c={c} base={base} key={c.perfil.id} />
@@ -445,11 +483,10 @@ function FichaCliente({
 }) {
   const { clienteId } = useParams();
   const c = clientes.find((c) => c.perfil.id === clienteId);
-  const [seccion, setSeccion] = useState(() =>
-    new URLSearchParams(location.search).get("seccion") === "actividad"
-      ? "actividad"
-      : "programa",
-  );
+  const [seccion, setSeccion] = useState(() => {
+    const pedida = new URLSearchParams(location.search).get("seccion");
+    return pedida === "actividad" || pedida === "suscripcion" ? pedida : "programa";
+  });
   const [plan, setPlan] = useState<Plan | null>(null);
   const [cambios, setCambios] = useState<Cambio[]>([]);
   const [error, setError] = useState("");
@@ -575,15 +612,16 @@ function FichaCliente({
             Entrenar juntos
           </button>
         </div>
-        <div className="sfm-segmentos" aria-label="Ficha del cliente">
+        <div className="sfm-segmentos sfm-segmentos--ajustar" aria-label="Ficha del cliente">
           {[
             ["programa", "Programa"],
             ["actividad", "Actividad"],
+            ["suscripcion", "Pago"],
             ["perfil", "Perfil"],
           ].map(([key, label]) => (
             <button
               key={key}
-              data-tour={`tab-${key}`} data-tour-action={key==='actividad'?'actividad-abierta':key==='perfil'?'perfil-abierto':'programa-abierto'} aria-pressed={seccion === key}
+              data-tour={`tab-${key}`} data-tour-action={key==='actividad'?'actividad-abierta':key==='perfil'?'perfil-abierto':key==='suscripcion'?'suscripcion-abierta':'programa-abierto'} aria-pressed={seccion === key}
               onClick={() => setSeccion(key)}
             >
               {label}
@@ -717,6 +755,14 @@ function FichaCliente({
             cliente={c.perfil.id}
             api={servicio.demo ? undefined : new ClienteApi(true, c.perfil.id)}
           /></div>
+        )}
+        {seccion === "suscripcion" && (
+          <SuscripcionCliente
+            key={c.perfil.id}
+            servicio={servicio.suscripciones}
+            clienteId={c.perfil.id}
+            alCambiar={() => void actualizar()}
+          />
         )}
         {seccion === "perfil" && (
           <>

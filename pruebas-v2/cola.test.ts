@@ -19,6 +19,7 @@ let cookie = "";
 let red = true;
 let perderConfirmacion = false;
 let revocada = false;
+let conStripe = false;
 const ctx = () => ({ ...contexto(), medios: false });
 async function conexion(dispositivo: string) {
   vi.stubGlobal("location", { host: dispositivo, origin: "http://localhost" });
@@ -45,6 +46,7 @@ beforeEach(async () => {
   red = true;
   perderConfirmacion = false;
   revocada = false;
+  conStripe = false;
   estadoCambiar({
     bloqueado: false,
     pendientes: 0,
@@ -84,6 +86,7 @@ beforeEach(async () => {
       const respuesta = await api(req, {
         ACCESO: local.db,
         SFM_ENV: "local",
+        ...(conStripe ? { STRIPE_SECRET_KEY: "sk_test_x", STRIPE_WEBHOOK_SECRET: "whsec_x" } : {}),
       } as EntornoV2);
       if (perderConfirmacion && String(url).includes("/sincronizar")) {
         perderConfirmacion = false;
@@ -143,6 +146,27 @@ describe("caché y cola durable", () => {
         .prepare("SELECT COUNT(*) n FROM cambios WHERE tipo='serie'")
         .first("n"),
     ).toBe(1);
+  });
+  it("sin suscripción conserva lo registrado, sigue recibiendo cambios y lo envía al renovar", async () => {
+    conStripe = true;
+    const c = await conexion("suscripcion");
+    await crear(c);
+    await c.repositorio.registrarSerie(serie);
+    await quieta(c);
+    expect(await c.db.cola.count()).toBe(2);
+    expect(estadoNube.suscripcionInactiva).toBe(true);
+    expect(estadoNube.conectado).toBe(true);
+    const pedidas = vi.mocked(fetch).mock.calls.map(([u]) => String(u));
+    expect(pedidas.findLastIndex((u) => u.includes("/cambios"))).toBeGreaterThan(
+      pedidas.findLastIndex((u) => u.includes("/sincronizar")),
+    );
+    await local.db
+      .prepare("INSERT INTO suscripciones (cliente_id, exento, actualizado_en) VALUES (?, 1, 1)")
+      .bind(perfil.id)
+      .run();
+    await quieta(c);
+    expect(await c.db.cola.count()).toBe(0);
+    expect(estadoNube.suscripcionInactiva).toBe(false);
   });
   it("reintenta una confirmación perdida sin duplicar el entrenamiento", async () => {
     const c = await conexion("retry");

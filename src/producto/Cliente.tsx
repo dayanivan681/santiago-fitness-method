@@ -4,6 +4,7 @@ import { ConsejoCliente } from "./Ayuda";
 import { useState } from "react";
 import {
   Link,
+  Navigate,
   NavLink,
   Route,
   Routes,
@@ -25,6 +26,8 @@ import { ProgresoCliente, Fotos } from "./Progreso";
 import { AvatarCuenta } from "./AvatarCuenta";
 import { Recuperacion } from "./Recuperacion";
 import { Conflictos } from "./Conflictos";
+import { AvisoSuscripcion, MiSuscripcion } from "./SuscripcionCuenta";
+import { suscripcionBloquea, useSuscripcion } from "./useSuscripcion";
 export function ClienteApp(props: Parameters<typeof ContenidoCliente>[0]) {
   const { conexion, modo = "real", repo } = props;
   if (modo === "real" && conexion) {
@@ -51,7 +54,16 @@ function ContenidoCliente({
   const [retomar, setRetomar] = useState(() =>
     ubicacion.pathname.endsWith("/entrenar"),
   );
+  const { resumen: suscripcion, volviendoDePago } = useSuscripcion(
+    modo === "real" ? conexion?.api : undefined,
+  );
+  const bloqueada = suscripcionBloquea(suscripcion);
   const comenzar = () => {
+    // Solo lectura: el aviso explica cómo renovar en vez de abrir la sesión.
+    if (bloqueada) {
+      document.getElementById("suscripcion-aviso")?.focus();
+      return;
+    }
     setRetomar(true);
 
     navegar(`${base}/entrenar`);
@@ -87,7 +99,7 @@ function ContenidoCliente({
         <div className="sfm-brandbar">
           <Marca />
           <div className="sfm-brand-actions">
-          {modo === "real" && <GuiaAyuda base={base} />}
+          {modo === "real" && <GuiaAyuda base={base} permitirBienvenida={!bloqueada} />}
           <Link data-tour="perfil-cliente" data-tour-action="perfil-cliente-abierto" to={`${base}/perfil`} aria-label="Mi perfil">
             <AvatarCuenta nombre={participante.nombre} conexion={conexion} />
           </Link>
@@ -106,7 +118,9 @@ function ContenidoCliente({
             <span>
               {estadoNube.conflictos
                 ? `${estadoNube.conflictos} cambio(s) por revisar`
-                : estadoNube.pendientes
+                : estadoNube.pendientes && estadoNube.suscripcionInactiva
+                  ? `${estadoNube.pendientes} pendiente(s) · se enviarán al renovar`
+                  : estadoNube.pendientes
                   ? `${estadoNube.pendientes} pendiente(s) de sincronizar`
                   : estadoNube.conectado
                     ? "Guardado en tu cuenta"
@@ -117,6 +131,13 @@ function ContenidoCliente({
         <main className="sfm-main sfm-main--client">
           {conexion && modo === "real" && (
             <Recuperacion conexion={conexion} compacto />
+          )}
+          {conexion && modo === "real" && (
+            <AvisoSuscripcion
+              resumen={suscripcion}
+              api={conexion.api}
+              volviendoDePago={volviendoDePago}
+            />
           )}
           <Routes>
             <Route
@@ -143,7 +164,7 @@ function ContenidoCliente({
             <Route
               path="entrenar"
               element={
-                <>
+                bloqueada ? <Navigate to={base || "/"} replace /> : <>
                 {(modo === "demo" || modo === "real") && <ConsejoCliente entrenando />}
                 <Entrenamiento
                   repositorio={repo}
@@ -217,6 +238,7 @@ function ContenidoCliente({
                         cuenta. Los cambios sin conexión se sincronizan cuando
                         vuelves.
                       </p>
+                      <MiSuscripcion resumen={suscripcion} api={conexion.api} />
                       <Recuperacion conexion={conexion} />
                       {conexion.ctx.googleDisponible && !conexion.ctx.googleVinculado && <a className="sfm-secondary" href="/auth/google?origen=enlazar">
                         Conectar Google con esta cuenta

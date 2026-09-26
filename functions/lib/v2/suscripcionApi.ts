@@ -1,6 +1,7 @@
 import { z } from "zod";
 import Stripe from "stripe";
 import type { Contexto } from "../../../shared/v2/contratos";
+import { estadoDeAcceso } from "../suscripcion";
 import {
   accionDelCoach,
   asignarPrecio,
@@ -89,4 +90,24 @@ export async function rutaDeSuscripcion(
     }
     throw e;
   }
+}
+
+/**
+ * Solo lectura: con Stripe encendido, un cliente sin acceso no puede escribir
+ * entrenamientos, mediciones ni fotos. Lee su historial con normalidad y el
+ * coach nunca queda bloqueado. Con Stripe apagado no se bloquea a nadie:
+ * nadie podría pagar.
+ */
+export async function bloqueoPorSuscripcion(
+  env: EntornoV2,
+  ctx: Contexto,
+  cliente: string,
+): Promise<Response | null> {
+  if (ctx.rol !== "cliente" || !stripeConfigurado(env)) return null;
+  const acceso = estadoDeAcceso(await leerSuscripcion(env.ACCESO, cliente), Math.floor(Date.now() / 1000));
+  if (acceso.puedeEntrenar) return null;
+  return json(
+    { error: "Tu suscripción no está activa. Lo que registres se guarda en este dispositivo hasta que la renueves.", acceso },
+    402,
+  );
 }

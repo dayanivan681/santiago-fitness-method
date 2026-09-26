@@ -97,7 +97,7 @@ describe('suscripciones con Stripe simulado', () => {
 
   it('el pago exige plan elegido y lleva cliente y email a Checkout', async () => {
     const { db, stripe, llamadas } = await preparar()
-    await expect(crearPago(db, stripe, 'lucia', ORIGEN)).rejects.toThrow('todavía no ha elegido el plan')
+    await expect(crearPago(db, stripe, 'lucia', ORIGEN)).rejects.toThrow('Todavía no hay un plan elegido')
     await asignarPrecio(db, stripe, 'lucia', 'price_mensual')
     expect(await crearPago(db, stripe, 'lucia', ORIGEN)).toBe('https://checkout.stripe.com/c/pay/cs_1')
     const checkout = llamadas.find((l) => l.ruta === '/v1/checkout/sessions')!.cuerpo

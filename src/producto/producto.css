@@ -1953,3 +1953,76 @@ a.sfm-primary:active {
 .sfm-main--client .serie {
   scroll-margin-top: 64px;
 }
+
+/* Suscripción: insignias del coach, aviso del cliente y pestaña Pago. */
+.sfm-insignia {
+  display: inline-block;
+  align-self: flex-start;
+  justify-self: start;
+  margin: 2px 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--sfm-line);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--sfm-muted);
+}
+.sfm-insignia--ok {
+  color: #7fd19b;
+  border-color: #7fd19b40;
+}
+.sfm-insignia--aviso {
+  color: #f0b44c;
+  border-color: #f0b44c50;
+}
+.sfm-insignia--alerta {
+  color: #ff7a70;
+  border-color: #ff7a7055;
+}
+.sfm-chip {
+  min-height: 44px;
+  padding: 8px 16px;
+  margin: 12px 0 0;
+  border-radius: 999px;
+  border: 1px solid var(--sfm-line);
+  background: var(--sfm-surface);
+  color: var(--sfm-white);
+  font: inherit;
+  font-size: 14px;
+}
+.sfm-chip[aria-pressed="true"] {
+  background: var(--sfm-white);
+  color: var(--sfm-bg);
+}
+.sfm-suscripcion-aviso h2,
+.sfm-suscripcion h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+.sfm-suscripcion-aviso,
+.sfm-suscripcion,
+.sfm-suscripcion-coach,
+.sfm-suscripcion-acciones {
+  display: grid;
+  gap: 12px;
+}
+.sfm-suscripcion-aviso:focus {
+  outline: 2px solid var(--sfm-red);
+  outline-offset: 2px;
+}
+.sfm-suscripcion-estado {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+.sfm-suscripcion-estado p {
+  margin: 0;
+  color: #bdbdc1;
+  line-height: 1.6;
+}
+.sfm-suscripcion-estado .sfm-insignia {
+  font-size: 13px;
+  padding: 4px 12px;
+}

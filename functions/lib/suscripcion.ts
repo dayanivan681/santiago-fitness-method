@@ -7,6 +7,10 @@
  * coach y los clientes exentos.
  */
 
+import type { EstadoDeAcceso } from '../../shared/v2/suscripcion'
+
+export type { EstadoDeAcceso }
+
 /** Días que un cliente sigue entrenando después de un cobro fallido. */
 export const DIAS_DE_GRACIA = 7
 
@@ -22,11 +26,6 @@ export type FilaSuscripcion = {
   pausada: number
   exento: number
 }
-
-export type EstadoDeAcceso =
-  | { estado: 'activa' | 'exenta'; puedeEntrenar: true }
-  | { estado: 'gracia'; puedeEntrenar: true; graciaHasta: number }
-  | { estado: 'vencida' | 'pausada' | 'sin_suscripcion'; puedeEntrenar: false }
 
 /** Estados de Stripe que nunca llegaron a cobrarse: no hay nada que mantener. */
 const SIN_COBRO = new Set(['incomplete', 'incomplete_expired'])

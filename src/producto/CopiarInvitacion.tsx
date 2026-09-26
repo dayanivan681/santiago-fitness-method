@@ -10,7 +10,15 @@ const DURACION_CONFIRMACION_MS = 4000;
  * arriba de la página queda fuera de la pantalla. Si el navegador no deja
  * escribir en el portapapeles, se selecciona el enlace para copiarlo a mano.
  */
-export function CopiarInvitacion({ enlace }: { enlace: string }) {
+export function CopiarInvitacion({
+  enlace,
+  etiqueta = "Invitación privada",
+  texto = "Copiar invitación",
+}: {
+  enlace: string;
+  etiqueta?: string;
+  texto?: string;
+}) {
   const [estado, setEstado] = useState<Estado>("listo");
   const campo = useRef<HTMLInputElement>(null);
 
@@ -41,13 +49,13 @@ export function CopiarInvitacion({ enlace }: { enlace: string }) {
     <>
       <input
         ref={campo}
-        aria-label="Invitación privada"
+        aria-label={etiqueta}
         readOnly
         value={enlace}
         onFocus={(e) => e.currentTarget.select()}
       />
       <button className="sfm-secondary" onClick={() => void copiar()}>
-        {estado === "copiada" ? "Copiada" : "Copiar invitación"}
+        {estado === "copiada" ? "Copiada" : texto}
       </button>
       <p className="sfm-invitation-estado" role="status">
         {estado === "copiada" && "Enlace copiado. Pégalo en tu mensaje al cliente."}

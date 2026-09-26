@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-26 — Fases 4 y 5: solo lectura y panel de pagos — claude-code
+
+- Servidor: 402 en escrituras del cliente sin acceso (`/sincronizar`, `/medios` no GET) sólo con Stripe encendido; el coach nunca se bloquea. Tipos compartidos en `shared/v2/suscripcion.ts`.
+- Cliente: la cola conserva lo pendiente ante 402 y sigue recibiendo cambios; aviso de gracia, tarjeta de solo lectura, «Comenzar» bloqueado, `/entrenar` redirige, «Mi suscripción» en el perfil y espera del webhook tras pagar. La bienvenida no invita a entrenar si está bloqueado.
+- Coach: insignias, filtro «Pagos pendientes», tarjeta Pagos en Hoy y pestaña Pago en la ficha (plan, enlace de pago, pausar/reanudar, cancelar/mantener, exento). Demo con datos ficticios.
+- Verificación: 784 pruebas en 84 archivos, cobertura 72.92/65.24/70.46/74.94, `tsc`, lint, build, `npm run test:http` 66/66. Navegador a 375x812: cliente real local con claves de Stripe falsas `sk_test_local_falsa` en `.dev.vars` (regenerado después): aviso, bloqueo, 402 y perfil; demo del coach: tarjeta Pagos, filtro, insignias y pestaña Pago.
+- Pendiente del dueño: pasos de `docs/SUSCRIPCIONES.md`. Antes de encender Stripe, marcar exentos o mandar enlaces de pago.
+
 ## 2026-09-26 — Fase 3: Stripe en modo prueba (backend) — claude-code
 
 - Nuevo: `migrations/0011_suscripciones.sql`, `functions/lib/suscripcion.ts` (regla de acceso con 7 días de gracia), `functions/lib/stripe.ts` (SDK oficial `stripe@22`, Checkout, portal, acciones del coach, webhook que relee la suscripción en Stripe), `functions/lib/v2/suscripcionApi.ts` y webhook `POST /api/stripe/webhook` antes del filtro de origen. Todo falla cerrado sin secretos; `sk_live_` se rechaza sin `STRIPE_MODO_REAL=true`; producción exige `STRIPE_HABILITADO=true`.

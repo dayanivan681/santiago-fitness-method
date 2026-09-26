@@ -23,7 +23,7 @@ import { crearInvitacion } from "../invitacion";
 import { archivarCliente } from "../roles";
 import { resumen } from "../cripto";
 import { prepararRestablecimiento } from "../cuentas";
-import { rutaDeSuscripcion } from "./suscripcionApi";
+import { bloqueoPorSuscripcion, rutaDeSuscripcion } from "./suscripcionApi";
 export async function api(
   request: Request,
   env: EntornoV2,
@@ -84,6 +84,8 @@ export async function api(
       return json(await leerCambios(env.ACCESO, cliente, cursor, ctx.rol));
     }
     if (ruta === "/sincronizar" && request.method === "POST") {
+      const bloqueo = await bloqueoPorSuscripcion(env, ctx, cliente);
+      if (bloqueo) return bloqueo;
       if (Number(request.headers.get("Content-Length") ?? 0) > 524288)
         return json({ error: "Lote demasiado grande." }, 413);
       const body = await request.text();
@@ -234,8 +236,11 @@ export async function api(
       return await importar(request, env.ACCESO, ctx);
     if (ruta === "/importaciones")
       return await revisarImportaciones(request, env.ACCESO, ctx, cliente);
-    if (ruta.startsWith("/medios"))
+    if (ruta.startsWith("/medios")) {
+      const bloqueo = request.method === "GET" ? null : await bloqueoPorSuscripcion(env, ctx, cliente);
+      if (bloqueo) return bloqueo;
       return await medios(request, env, ctx, cliente, ruta.split("/")[2]);
+    }
     if (ruta === "/conflictos" && request.method === "GET") {
       const { results } = await env.ACCESO.prepare(
         "SELECT id,operacion_json,actual_json FROM conflictos WHERE cliente_id=? AND resuelto_en IS NULL AND (?='coach' OR actor=?)",

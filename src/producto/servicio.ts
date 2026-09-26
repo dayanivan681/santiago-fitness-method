@@ -1,3 +1,4 @@
+import { ServicioSuscripciones } from "./servicioSuscripciones";
 import type {
   Alta,
   Cambio,
@@ -23,8 +24,10 @@ export class ServicioCoach {
   clientes: Cliente[] = [];
   registros = new Map<string, Cambio[]>();
   repos = new Map<string, RepositorioMemoria>();
+  readonly suscripciones: ServicioSuscripciones;
   constructor(demo = false) {
     this.demo = demo;
+    this.suscripciones = new ServicioSuscripciones(demo);
     if (demo) {
       for (const [i, nombre] of [
         "Alicia Rivera",

@@ -31,6 +31,8 @@ export let estadoNube = {
   mensaje: "",
   bloqueado: false,
   conectado: true,
+  /** El servidor rechazó escrituras por la suscripción (402). Lo local se conserva. */
+  suscripcionInactiva: false,
 };
 export function estadoCambiar(parcial: Partial<typeof estadoNube>) {
   estadoNube = { ...estadoNube, ...parcial };
@@ -381,9 +383,10 @@ export class ConexionCloud {
       const bloqueadas = new Set(
         cola.filter((o) => o.estado === "conflicto").map((o) => o.clave),
       );
+      let suscripcionInactiva = false;
       for (const o of cola) {
         if (bloqueadas.has(o.clave)) continue;
-        const { resultados } = await this.api.pedir<{
+        const respuesta = await this.api.pedir<{
           resultados: { confirmacion?: Cambio; conflicto?: unknown }[];
         }>("/sincronizar", {
           operaciones: [
@@ -396,8 +399,17 @@ export class ConexionCloud {
               eliminado: o.eliminado,
             },
           ],
+        }).catch((e: unknown) => {
+          // Solo lectura: se deja de enviar, pero lo pendiente sigue en la
+          // cola y se siguen recibiendo los cambios del coach.
+          if (e instanceof ErrorRespuesta && e.status === 402) return null;
+          throw e;
         });
-        const r = resultados[0];
+        if (!respuesta) {
+          suscripcionInactiva = true;
+          break;
+        }
+        const r = respuesta.resultados[0];
         await this.db.transaction("rw", this.db.tables, async () => {
           if (r.confirmacion) {
             await this.db.cola.delete(o.opId);
@@ -422,7 +434,7 @@ export class ConexionCloud {
         });
         mas = r.mas;
       }
-      for (const fila of await this.db.meta
+      for (const fila of suscripcionInactiva ? [] : await this.db.meta
         .where("id")
         .startsWith("foto-pendiente:")
         .toArray()) {
@@ -459,7 +471,7 @@ export class ConexionCloud {
           );
         await this.db.meta.delete(fila.id);
       }
-      estadoCambiar({ conectado: true, mensaje: "" });
+      estadoCambiar({ conectado: true, mensaje: "", suscripcionInactiva });
     } catch (e) {
       if (e instanceof ErrorAcceso) {
         estadoCambiar({ bloqueado: true });

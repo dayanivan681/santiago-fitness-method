@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { sqliteD1 } from '../../../pruebas-v2/d1'
 import type { Contexto } from '../../../shared/v2/contratos'
-import { rutaDeSuscripcion } from './suscripcionApi'
+import { bloqueoPorSuscripcion, rutaDeSuscripcion } from './suscripcionApi'
 import type { EntornoV2 } from './seguridad'
 
 const ORIGEN = 'https://santiago-fitness-method.pages.dev'
@@ -64,5 +64,26 @@ describe('rutas de suscripción', () => {
     const caido = await pedir('coach', '/precios', undefined, '')
     expect(caido!.status).toBe(502)
     expect(await caido!.json()).toEqual({ error: 'Stripe no respondió. Inténtalo de nuevo en un momento.' })
+  })
+
+  it('solo lectura: bloquea al cliente sin acceso sólo con Stripe encendido, nunca al coach', async () => {
+    const local = sqliteD1(); bases.push(local)
+    await local.db.prepare("INSERT INTO clientes (id, nombre, creado_en, actualizado_en) VALUES ('lucia', 'Lucía', 1, 1)").run()
+    const apagado = { ACCESO: local.db } as unknown as EntornoV2
+    const encendido = { ACCESO: local.db, ...STRIPE } as unknown as EntornoV2
+    expect(await bloqueoPorSuscripcion(apagado, ctx('cliente'), 'lucia')).toBeNull()
+    expect(await bloqueoPorSuscripcion(encendido, ctx('coach'), 'lucia')).toBeNull()
+    const bloqueo = await bloqueoPorSuscripcion(encendido, ctx('cliente'), 'lucia')
+    expect(bloqueo?.status).toBe(402)
+    expect(await bloqueo!.json()).toMatchObject({ acceso: { estado: 'sin_suscripcion', puedeEntrenar: false } })
+    const ahora = Math.floor(Date.now() / 1000)
+    await local.db.prepare("INSERT INTO suscripciones (cliente_id, stripe_subscription_id, estado, periodo_fin, actualizado_en) VALUES ('lucia', 'sub_1', 'past_due', ?, 1)")
+      .bind(ahora - 3600).run()
+    // Cobro fallido reciente: sigue en gracia y puede entrenar.
+    expect(await bloqueoPorSuscripcion(encendido, ctx('cliente'), 'lucia')).toBeNull()
+    await local.db.prepare("UPDATE suscripciones SET periodo_fin=? WHERE cliente_id='lucia'").bind(ahora - 30 * 86400).run()
+    expect((await bloqueoPorSuscripcion(encendido, ctx('cliente'), 'lucia'))?.status).toBe(402)
+    await local.db.prepare("UPDATE suscripciones SET exento=1 WHERE cliente_id='lucia'").run()
+    expect(await bloqueoPorSuscripcion(encendido, ctx('cliente'), 'lucia')).toBeNull()
   })
 })

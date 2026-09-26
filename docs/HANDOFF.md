@@ -48,11 +48,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T23:11:01.415Z
+- **Última sincronización:** 2026-09-26T23:25:54.998Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1195,6 +1195,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T23:25:54.998Z | claude-code | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Fases 4 y 5 completas con Stripe apagado. Fase 4: 402 en escrituras del cliente sin acceso sólo con Stripe encendido (bloqueoPorSuscripcion); la cola del cliente conserva lo pendiente y sigue recibiendo cambios del coach; app del cliente con aviso de gracia, tarjeta de solo lectura, Comenzar bloqueado, /entrenar redirige, Mi suscripción en perfil, espera del webhook tras pagar. Fase 5: insignias y filtro Pagos pendientes en la lista, tarjeta Pagos en Hoy, pestaña Pago en la ficha (plan, enlace de pago, pausar/reanudar, cancelar/mantener, exento), demo con datos ficticios. AVISO: al encender STRIPE_HABILITADO todo cliente sin suscripción pasa a solo lectura; antes, marcar exentos o mandar enlaces (docs/SUSCRIPCIONES.md).
+- **Verificación:** npm test 784/784 (84 archivos); npm run test:coverage 72.92/65.24/70.46/74.94; npx tsc -b; npm run lint; npm run build; git diff --check; npm run test:http 66/66; navegador 375x812 cliente local con claves Stripe falsas y demo del coach
+- **Siguiente:** Dueño: pasos 1-6 de docs/SUSCRIPCIONES.md y marcar exentos antes de encender. Después: prueba de pago real en modo prueba con tarjeta 4242 y test clock para gracia y vencimiento.
+
 
 ### 2026-09-26T23:11:01.416Z | claude-code | CLAIM
 - **Estado:** active
