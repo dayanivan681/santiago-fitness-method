@@ -58,6 +58,7 @@ const entradaSinGoogle = await codigo(await pedir('/entrar'), 200, 'Entrada disp
 assert.ok(!(await entradaSinGoogle.text()).includes('Continuar con Google'));
 checks++;
 await codigo(await pedir('/auth/google?origen=entrar'), 401, 'Google falla cerrado sin secretos');
+await codigo(await pedir('/auth/google/retorno'), 401, 'Retorno de Google falla cerrado sin estado');
 await codigo(
   await pedir("/admin/api/clientes", coach),
   410,

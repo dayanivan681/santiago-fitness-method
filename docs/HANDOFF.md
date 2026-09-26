@@ -19,6 +19,7 @@
 - `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` no figuran entre los secretos de Pages ni en producción ni en preview (consulta de 2026-09-26). El botón permanece oculto y las rutas fallan cerradas. Producción requiere además `GOOGLE_HABILITADO=true`; no se habilita con solo añadir los dos secretos.
 - Preview del código: `codex-google-fase2`, commit `e156d43`. Cloudflare Access protege todos los previews; para probar Google allí se necesita sesión autorizada y registrar en Google Cloud la URI exacta del alias `/auth/google/retorno` además de la URI canónica.
 - Verificación local: 749 pruebas/78 archivos, lint, build, 52 comprobaciones HTTP; Google usa JWKS local firmado para probar audiencia, email verificado, state/nonce, alta, entrada y vinculación. La prueba real con Google queda pendiente hasta configurar el proveedor y acceder al preview.
+- **Corrección de rutas en producción (codex, 2026-09-26):** el primer despliegue de fase 2 devolvía el shell estático en `/auth/google` y `/auth/google/retorno`. Se añadieron los archivos de ruta de Pages que reutilizan el middleware. El despliegue `a69ac1d` se verificó en el dominio canónico: ambas rutas responden 401 con Google apagado; antes respondían 200. La suite HTTP ahora comprueba las dos rutas (53/53); 749 pruebas, lint y build pasan. No se activó Google.
 
 
 Este archivo es el registro compartido entre Codex y Claude Code. GitHub es la fuente
@@ -28,11 +29,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T21:56:10.553Z
+- **Última sincronización:** 2026-09-26T21:57:26.154Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1175,6 +1176,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T21:57:26.154Z | codex | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Corregidas rutas anidadas de Google en Cloudflare Pages; dominio canónico confirma respuesta cerrada 401; Google continúa apagado hasta configurar secretos y probar preview
+- **Verificación:** npm test 749/749; npm run lint; npm run build; npm run test:http 53/53; GET producción /auth/google y /auth/google/retorno 401
+- **Siguiente:** Configurar GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET en preview, URI OAuth del alias y acceso a preview; completar prueba real, después activar producción con GOOGLE_HABILITADO=true
+
 
 ### 2026-09-26T21:56:10.554Z | codex | ADOPT
 - **Estado:** active
