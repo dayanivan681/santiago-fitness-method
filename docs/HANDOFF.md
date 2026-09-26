@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T03:09:11.864Z
+- **Última sincronización:** 2026-09-26T03:10:21.287Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1154,6 +1154,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T03:10:21.288Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Santiago (saangelm50@gmail.com) añadido a COACH_EMAILS de producción en wrangler.toml. Staging sin cambios. Falta que el dueño añada el correo a la política Allow de la app de Cloudflare Access 'Santiago Fitness Method' para que Santiago pase el OTP.
+- **Verificación:** npm test (737); npm run lint; npm run build
+- **Siguiente:** Dueño: añadir saangelm50@gmail.com a la política de Access. Luego Santiago entra en /admin.
+
 
 ### 2026-09-26T03:09:11.866Z | claude-code | CLAIM
 - **Estado:** active

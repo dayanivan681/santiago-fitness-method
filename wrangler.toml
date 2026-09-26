@@ -7,7 +7,7 @@ SFM_ENV = "production"
 SHOW_QA_CLIENTS = "false"
 ACCESS_ISSUER = "https://cool-surf-8e6d.cloudflareaccess.com"
 ACCESS_AUD = "735cc022eab2972e53e307644fa69687945c09471a0ec7ee369f9671c3a93277"
-COACH_EMAILS = "yayo1716@gmail.com"
+COACH_EMAILS = "yayo1716@gmail.com,saangelm50@gmail.com"
 
 [[d1_databases]]
 binding = "ACCESO"
