@@ -12,7 +12,7 @@
 - **Límite de QA:** el preview `codex-cuentas-fase1` (commit `e0d8e17`) redirige todas las rutas a Cloudflare Access; sin una sesión autorizada no se pudo probar visualmente el flujo remoto. No se introdujeron credenciales reales ni se tocaron los PDFs de `docs/cliente`.
 - **Siguiente:** fase 2, Google OAuth con PKCE y validación del `id_token` en preview. Antes, validar la cuenta de un cliente invitado en el dominio canónico con el coach y revisar que Access no cubra por accidente las rutas públicas del preview.
 
-### Fase 2 — código preparado; activación externa pendiente
+### Fase 2 — Google OAuth activo; QA de cliente completada en staging
 
 #### Configuración externa de Google, 2026-09-26 — turno codex en curso
 
@@ -24,9 +24,18 @@
 - QA real en Chrome: Cloudflare Access aceptó el OTP del dueño; `/entrar` del preview mostró `Continuar con Google`; Google mostró la app y solicitó solo nombre, foto y email; al elegir `yayo1716@gmail.com` se retornó a la app con `No pudimos entrar con Google`, resultado compatible con que esa identidad no tiene cuenta de cliente vinculada. Ese mensaje es genérico, por lo que todavía falta una prueba con invitación sintética para confirmar el intercambio y alta de punta a punta.
 - **Siguiente:** comprobar si el cliente sintético de staging puede invitarse (en la ficha de `Lucía · QA aislado`, `Preparar invitación` aparecía deshabilitado porque `tieneCuenta` aún era `null`); usar una invitación sintética válida y probar alta Google, sesión, cierre y nuevo acceso. Revisar que el callback de preview conserve el estado OAuth bajo Cloudflare Access. Después, añadir secretos a producción, desplegar y habilitar `GOOGLE_HABILITADO=true` solo tras la prueba completa. No iniciar Stripe hasta cerrar esta fase.
 
+#### Cierre de QA y activación, 2026-09-26 — codex
+
+- El botón `Preparar invitación` de Lucía estuvo deshabilitado solo durante la carga inicial; al terminar la consulta de estado quedó habilitado. Se generó una invitación nueva desde la ficha del Coach en **staging**. No se guardó ni publicó el token en Git.
+- El alta real por Google desde esa invitación pasó: Chrome regresó al preview con sesión de `Lucía · QA aislado` y programa disponible. Después se cerró la sesión, se volvió a entrar con la misma identidad Google y la sesión sobrevivió una recarga. La consulta de solo lectura a D1 staging confirmó `google_sub` presente, cuenta sin contraseña, invitación consumida y una sesión activa. No se creó ningún cliente o cuenta sintética en producción.
+- Producción: se añadieron `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` y `GOOGLE_HABILITADO=true` como secretos cifrados de Cloudflare Pages. Se desplegó `main` desde `80e7cef1c96048fe2f2879929cae6cac6d960303` a `https://a65275a4.santiago-fitness-method.pages.dev`. En el dominio canónico, `/entrar` muestra el botón, `/auth/google?origen=entrar` da 302 a `accounts.google.com`, y `/auth/google/retorno` con estado falso da 401. Una entrada real con la cuenta Google del dueño regresó al mensaje de cuenta no vinculada, esperado: D1 producción confirma cero cuentas para ese email. El callback positivo se verificó en staging, no contra una cuenta real de producción.
+- Google Auth Platform permanece `External / Testing`. El código solicita solo `openid email profile`; [Google documenta una excepción para los alcances básicos de identidad](https://support.google.com/cloud/answer/15549945?hl=en), de modo que Testing no exige listar a cada usuario para este caso. No se publicaron Branding ni política de privacidad, y el correo visible de soporte sigue `yayo1716@gmail.com` de forma provisional. Antes de presentar el login a clientes comerciales conviene confirmar ese correo y completar la identidad pública de la app.
+- Hallazgo menor de UI: la página de perfil en staging muestra `Conectar Google con esta cuenta` incluso después de que la cuenta fue creada con Google. El enlace es redundante y la operación de vincular la misma identidad es idempotente; corregir el texto/visibilidad en un cambio enfocado antes del primer cliente comercial. No impide el alta ni el reingreso.
+- **Siguiente para Claude Code:** comprobar el estado publicado y el build log; no repetir el alta sintética ni crear cuentas en producción. Continuar con el siguiente bloque autorizado del plan (Stripe en modo prueba) una vez confirmado el correo público de soporte si es necesario. Mantener `docs/cliente` intacto.
+
 - OAuth Google implementado con código, PKCE S256, state y nonce de 10 minutos, intercambio en servidor y validación del ID token firmado mediante JWKS. Solo crea cuenta desde invitación; entrar requiere `google_sub` ya vinculado. Para vincular una cuenta con contraseña se exige primero su sesión válida, porque su email aún no se verifica por correo.
 - Revisión de seguridad detectó que las sesiones antiguas de preview sin invitación podrían volverse válidas al crearse una cuenta. Corregido: tanto las sesiones nuevas con contraseña como las de Google conservan la invitación consumida, y toda validación exige esa referencia. Hay prueba de regresión.
-- `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` no figuran entre los secretos de Pages ni en producción ni en preview (consulta de 2026-09-26). El botón permanece oculto y las rutas fallan cerradas. Producción requiere además `GOOGLE_HABILITADO=true`; no se habilita con solo añadir los dos secretos.
+- Estado anterior a la activación: `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` no figuraban entre los secretos de Pages (consulta de 2026-09-26). Véase el cierre de QA y activación arriba para el estado vigente.
 - Preview del código: `codex-google-fase2`, commit `e156d43`. Cloudflare Access protege todos los previews; para probar Google allí se necesita sesión autorizada y registrar en Google Cloud la URI exacta del alias `/auth/google/retorno` además de la URI canónica.
 - Verificación local: 749 pruebas/78 archivos, lint, build, 52 comprobaciones HTTP; Google usa JWKS local firmado para probar audiencia, email verificado, state/nonce, alta, entrada y vinculación. La prueba real con Google queda pendiente hasta configurar el proveedor y acceder al preview.
 - **Corrección de rutas en producción (codex, 2026-09-26):** el primer despliegue de fase 2 devolvía el shell estático en `/auth/google` y `/auth/google/retorno`. Se añadieron los archivos de ruta de Pages que reutilizan el middleware. El despliegue `a69ac1d` se verificó en el dominio canónico: ambas rutas responden 401 con Google apagado; antes respondían 200. La suite HTTP ahora comprueba las dos rutas (53/53); 749 pruebas, lint y build pasan. No se activó Google.
@@ -39,11 +48,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T22:19:24.711Z
+- **Última sincronización:** 2026-09-26T22:27:04.578Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1186,6 +1195,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T22:27:04.579Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Google OAuth configurado en Cloudflare preview y produccion; alta y reingreso Google verificados en staging; rutas publicas y fallo cerrado verificados en produccion; docs/HANDOFF.md y docs/BUILD_LOG.md actualizados
+- **Verificación:** npm test 749/749; npm run lint PASS; npm run build PASS; git diff --check PASS; QA Chrome staging; curl y D1 lectura produccion
+- **Siguiente:** Confirmar correo de soporte y Branding/privacidad de Google; corregir enlace de perfil redundante; continuar Stripe solo en modo prueba segun plan
+
 
 ### 2026-09-26T22:19:24.712Z | codex | CLAIM
 - **Estado:** active
