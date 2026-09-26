@@ -7,11 +7,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T01:07:44.723Z
+- **Última sincronización:** 2026-09-26T02:39:14.735Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1154,6 +1154,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T02:39:14.736Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Retomado el turno parado de codex. Recorrido de la app como coach y cliente reales (runtime local) y en la demo de produccion: cinco fallos arreglados (el 7 oculto al elegir dias en el alta, Fotos compartidas cortado, vacio de Actividad con la voz del cliente, plural con uno en las cifras, bienvenida de la demo que decia primer cliente con tres). Produccion sana pero SIN USO desde v2: 0 entrenamientos, 0 cambios de usuarios (los 12 son de la migracion), 0 sesiones vigentes, ultima invitacion canjeada el 4 de septiembre
+- **Verificación:** npm test 737/75; tsc -b; lint; build; test:http 35/35; test:movil 34/34; verificado en pantalla a 375 y 320 con cuentas sinteticas
+- **Siguiente:** Punto 4 a medias: el correo de Santiago es saangelm50@gmail.com. Anadirlo a COACH_EMAILS de produccion en wrangler.toml lo bloqueo el clasificador de permisos por ser una concesion de acceso; lo debe aplicar el dueno, y ademas anadirlo a la politica de Cloudflare Access de la app. Sin eso Santiago no puede entrar a /admin y la app sigue sin uso real
+
 
 ### 2026-09-26T01:07:44.724Z | claude-code | ADOPT
 - **Estado:** active
