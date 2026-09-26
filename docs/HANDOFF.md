@@ -48,11 +48,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** blocked
+- **Owner:** claude-code
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T22:37:18.523Z
+- **Última sincronización:** 2026-09-26T22:40:56.455Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1195,6 +1195,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T22:40:56.456Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Fase 3: Stripe en modo prueba (suscripciones, webhook, API cliente y coach) con Stripe simulado; apagado sin secretos
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-09-26T22:37:18.524Z | claude-code | PUBLISH
 - **Estado:** blocked
