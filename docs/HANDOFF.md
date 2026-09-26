@@ -12,6 +12,14 @@
 - **Límite de QA:** el preview `codex-cuentas-fase1` (commit `e0d8e17`) redirige todas las rutas a Cloudflare Access; sin una sesión autorizada no se pudo probar visualmente el flujo remoto. No se introdujeron credenciales reales ni se tocaron los PDFs de `docs/cliente`.
 - **Siguiente:** fase 2, Google OAuth con PKCE y validación del `id_token` en preview. Antes, validar la cuenta de un cliente invitado en el dominio canónico con el coach y revisar que Access no cubra por accidente las rutas públicas del preview.
 
+### Fase 2 — código preparado; activación externa pendiente
+
+- OAuth Google implementado con código, PKCE S256, state y nonce de 10 minutos, intercambio en servidor y validación del ID token firmado mediante JWKS. Solo crea cuenta desde invitación; entrar requiere `google_sub` ya vinculado. Para vincular una cuenta con contraseña se exige primero su sesión válida, porque su email aún no se verifica por correo.
+- Revisión de seguridad detectó que las sesiones antiguas de preview sin invitación podrían volverse válidas al crearse una cuenta. Corregido: tanto las sesiones nuevas con contraseña como las de Google conservan la invitación consumida, y toda validación exige esa referencia. Hay prueba de regresión.
+- `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` no figuran entre los secretos de Pages ni en producción ni en preview (consulta de 2026-09-26). El botón permanece oculto y las rutas fallan cerradas. Producción requiere además `GOOGLE_HABILITADO=true`; no se habilita con solo añadir los dos secretos.
+- Preview del código: `codex-google-fase2`, commit `e156d43`. Cloudflare Access protege todos los previews; para probar Google allí se necesita sesión autorizada y registrar en Google Cloud la URI exacta del alias `/auth/google/retorno` además de la URI canónica.
+- Verificación local: 749 pruebas/78 archivos, lint, build, 52 comprobaciones HTTP; Google usa JWKS local firmado para probar audiencia, email verificado, state/nonce, alta, entrada y vinculación. La prueba real con Google queda pendiente hasta configurar el proveedor y acceder al preview.
+
 
 Este archivo es el registro compartido entre Codex y Claude Code. GitHub es la fuente
 de verdad del código y este archivo es la fuente de verdad del turno actual. La
@@ -20,11 +28,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-26T21:42:12.504Z
+- **Última sincronización:** 2026-09-26T21:54:26.229Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1167,6 +1175,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-26T21:54:26.230Z | codex | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Google OAuth preparado con PKCE, state, nonce y vinculación autenticada; corregida validación de sesiones antiguas; Google queda apagado por falta de secretos y prueba real
+- **Verificación:** npm test 749/749; npm run lint; npm run build; npm run test:http 52/52; JWKS local firmado; preview codex-google-fase2
+- **Siguiente:** Dueño: configurar GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET en preview, autorizar la URI del alias y facilitar sesión Access para QA; después verificar Google real y activar producción con GOOGLE_HABILITADO=true
+
 
 ### 2026-09-26T21:42:12.504Z | codex | CLAIM
 - **Estado:** active
