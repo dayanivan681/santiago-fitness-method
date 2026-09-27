@@ -1182,6 +1182,42 @@ a.sfm-primary:active {
   background: var(--sfm-surface);
   filter: saturate(0.5);
 }
+.sfm-exercise-thumb--editor {
+  width: 44px;
+  height: 48px;
+}
+/* El cuadro de Hoy es un botón: abre la ficha del ejercicio. */
+.sfm-exercise-thumb--boton {
+  position: relative;
+  padding: 0;
+  border: 1px solid var(--sfm-line);
+  overflow: hidden;
+  cursor: pointer;
+  filter: none;
+}
+.sfm-exercise-thumb--boton img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.5);
+}
+.sfm-exercise-thumb--boton span {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #000000b3;
+  color: var(--sfm-white);
+  font-size: 11px;
+}
+.sfm-exercise-thumb--boton:focus-visible {
+  outline: 2px solid var(--sfm-red);
+  outline-offset: 2px;
+}
 .sfm-main--client .fila__titulo {
   font-size: 16px;
   line-height: 1.35;

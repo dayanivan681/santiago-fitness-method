@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-27 — Respuestas del coach (A1–A11), cuadro del ejercicio y Google del coach — claude-code
+
+- Respuestas del cuestionario leídas de D1 `sfm-variantes` (1 envío completo): A1 = barra V; A5 = dejar pendiente; A2–A4 y A6–A11 = mantener genérico. Registradas en `docs/BIBLIOTECA-FASE-3A-MAPPING-33.csv` (A1 → C159/S159, `confirmado_por_coach`; genéricos → `generico_por_coach`; A5 sigue pendiente).
+- A1 aplicado: `extension-triceps-polea` se llama «Extensión de tríceps en polea con barra V» y su explicación lo dice. Mismo id: historial y calibración intactos; los dispositivos refrescan nombre al sincronizar la biblioteca.
+- Petición del correo de Santiago (2026-09-26): en Hoy, cada ejercicio de «Tu sesión, paso a paso» es un cuadro que abre la ficha completa (foto, equipo, músculos, explicación, alternativas e historial) sin empezar la sesión. En el editor del coach, cada ejercicio elegido y cada opción de «Añadir ejercicio» muestran la misma foto.
+- Google en la pantalla de clientes: si Google verifica un correo de `COACH_EMAILS` sin cuenta de cliente, se redirige a `/admin/` en vez de mostrar el error. No crea sesión. El login del coach con Google en `/admin` depende de añadir Google como método en Cloudflare Access (acción del dueño).
+- Pendiente abierto del correo de Santiago: biblioteca más amplia con términos como «unilateral» y «prensa 45°».
+- Verificación: 788 pruebas en 85 archivos, `tsc`, lint, build; navegador 375x812 en demo cliente (cuadros y ficha) y demo coach (miniaturas del editor).
+
 ## 2026-09-26/27 — Revisión de SSO de clientes en producción — codex (en curso)
 
 - `handoff:sync` completado y turno reclamado como codex (`3950180`). Código limpio al comenzar. Se revisaron middleware, OAuth PKCE, las pantallas de acceso/perfil, secretos listados de Pages, despliegue canónico y configuración Google Auth Platform. No se modificaron cuentas ni configuración externa.

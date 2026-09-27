@@ -71,6 +71,12 @@ export async function verificarCoach(
     return null;
   }
 }
+/** El correo está en COACH_EMAILS (lista separada por comas, sin distinguir mayúsculas). */
+export function esCorreoDeCoach(lista: string | undefined, email: string): boolean {
+  const buscado = email.trim().toLowerCase();
+  if (!buscado) return false;
+  return (lista ?? "").toLowerCase().split(",").map((v) => v.trim()).includes(buscado);
+}
 export function origenSeguro(request: Request) {
   if (["GET", "HEAD", "OPTIONS"].includes(request.method)) return true;
   return (
@@ -92,11 +98,7 @@ export async function autenticar(
   if (rol === "coach") {
     const coach = await verificarCoach(request, env);
     if (!coach) return null;
-    const permitidos = (env.COACH_EMAILS ?? "")
-      .toLowerCase()
-      .split(",")
-      .map((v) => v.trim());
-    if (!permitidos.includes(coach.identidad)) return null;
+    if (!esCorreoDeCoach(env.COACH_EMAILS, coach.identidad)) return null;
     return {
       ...coach,
       rol,

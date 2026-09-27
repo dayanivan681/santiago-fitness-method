@@ -33,9 +33,10 @@ export const EJERCICIOS_BASE: readonly EjercicioBase[] = [
   { id: 'press-pecho-convergente', nombre: 'Press de pecho convergente horizontal' },
   { id: 'pec-deck', nombre: 'Pec deck / fly de pecho' },
   { id: 'fondos-triceps', nombre: 'Fondos en paralelas con énfasis en tríceps' },
-  // A confirmar: el catálogo ofrece pushdown con barra recta, con barra V y con
-  // cuerda. El historial existente no identifica el accesorio.
-  { id: 'extension-triceps-polea', nombre: 'Extensión de tríceps en polea' },
+  // Confirmado por el coach (cuestionario A1, 2026-09-26): los registros
+  // existentes son pushdown con barra V (catálogo C159). Mismo id: el historial
+  // no cambia. Barra recta y cuerda serán ejercicios propios si se añaden.
+  { id: 'extension-triceps-polea', nombre: 'Extensión de tríceps en polea con barra V' },
   { id: 'press-frances-barra-z', nombre: 'Extensión acostado con barra EZ / skull crusher' },
   { id: 'elevacion-lateral-mancuernas', nombre: 'Elevación lateral con mancuernas' },
   // A confirmar: unilateral o bilateral en cable.

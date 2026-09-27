@@ -131,7 +131,8 @@ async function enlazarGoogle(db: D1Database, request: Request, identidad: Identi
   return true
 }
 
-export async function terminarGoogle(request: Request, env: GoogleEnv, clave?: JWTVerifyGetKey, intercambiar = fetch): Promise<{ cookie?: string; ok: boolean }> {
+/** `email` sólo aparece si Google verificó la identidad pero no hay cuenta de cliente vinculada. */
+export async function terminarGoogle(request: Request, env: GoogleEnv, clave?: JWTVerifyGetKey, intercambiar = fetch): Promise<{ cookie?: string; ok: boolean; email?: string }> {
   if (!googleConfigurado(env)) return { ok: false }
   const url = new URL(request.url)
   const estado = leerEstado(request)
@@ -153,5 +154,6 @@ export async function terminarGoogle(request: Request, env: GoogleEnv, clave?: J
   const cookie = estado.origen === 'invitacion' && estado.token
     ? await registrarGoogle(env.ACCESO, estado.token, identidad, ahora)
     : await entrarGoogle(env.ACCESO, identidad, ahora)
-  return cookie ? { ok: true, cookie } : { ok: false }
+  if (cookie) return { ok: true, cookie }
+  return estado.origen === 'entrar' ? { ok: false, email: identidad.email } : { ok: false }
 }

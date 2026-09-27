@@ -5,7 +5,7 @@ import { crearInvitacion } from './invitacion'
 import { googleConfigurado, iniciarGoogle, terminarGoogle, verificarGoogleId } from './google'
 import { registrarConInvitacion } from './cuentas'
 import { NOMBRE_DE_COOKIE } from './sesion'
-import { autenticar, type EntornoV2 } from './v2/seguridad'
+import { autenticar, esCorreoDeCoach, type EntornoV2 } from './v2/seguridad'
 
 const clienteId = 'cliente-google-test'
 const secreto = 'secret-for-local-test'
@@ -97,10 +97,22 @@ describe('código OAuth y PKCE', () => {
     const contexto = () => autenticar(new Request(`${origen}/api/v2/contexto`,
       { headers: { Cookie: `${NOMBRE_DE_COOKIE}=${claveSesion}` } }), env as unknown as EntornoV2, 'cliente')
     expect((await contexto())?.googleVinculado).toBe(false)
-    expect((await iniciar('entrar')).ok).toBe(false)
+    // Sin cuenta vinculada no entra, pero se sabe qué correo verificó Google.
+    expect(await iniciar('entrar')).toEqual({ ok: false, email: 'sin-verificar@example.test' })
     expect((await iniciar('enlazar', claveSesion!)).ok).toBe(true)
     expect((await iniciar('entrar')).ok).toBe(true)
     // El perfil deja de ofrecer «Conectar Google» cuando la cuenta ya lo tiene.
     expect((await contexto())?.googleVinculado).toBe(true)
+  })
+})
+
+describe('correo del coach al entrar con Google', () => {
+  it('sólo reconoce los correos de COACH_EMAILS, sin importar mayúsculas ni espacios', () => {
+    const lista = 'yayo1716@gmail.com, SaAngelM50@gmail.com'
+    expect(esCorreoDeCoach(lista, 'saangelm50@gmail.com')).toBe(true)
+    expect(esCorreoDeCoach(lista, 'YAYO1716@gmail.com')).toBe(true)
+    expect(esCorreoDeCoach(lista, 'otro@gmail.com')).toBe(false)
+    expect(esCorreoDeCoach(undefined, 'yayo1716@gmail.com')).toBe(false)
+    expect(esCorreoDeCoach('', '')).toBe(false)
   })
 })

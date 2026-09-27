@@ -142,6 +142,23 @@ describe('el entrenamiento ya viene cargado (§3)', () => {
     // §4 y §10: el primer ejercicio es de fuerza, rango 1–5
     expect(screen.getByText('4 series · 1–5 reps')).toBeInTheDocument()
   })
+
+  test('antes de entrenar, el participante toca un ejercicio de su sesión y ve su ficha', async () => {
+    // Petición del coach (correo del 2026-09-26): al lado de cada ejercicio de
+    // la rutina, un cuadro que el participante toca para ver ese ejercicio.
+    await abrirResumen()
+
+    fireEvent.click(screen.getByRole('button', { name: `Ver ${PRESS}` }))
+
+    const ficha = await screen.findByRole('dialog', { name: PRESS })
+    expect(ficha.querySelector('img')).toHaveAttribute('src', PRESS_BANCA_15_SMITH.imagen)
+    expect(within(ficha).getByText(PRESS_BANCA_15_SMITH.explicacionCorta)).toBeInTheDocument()
+
+    fireEvent.click(within(ficha).getByRole('button', { name: 'Cerrar' }))
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: PRESS })).not.toBeInTheDocument())
+    // Ver la ficha no empieza la sesión.
+    expect(screen.getByRole('button', { name: 'Comenzar entrenamiento' })).toBeInTheDocument()
+  })
 })
 
 describe('referencia del entrenamiento anterior (§7)', () => {

@@ -106,7 +106,7 @@ export const EXTENSION_TRICEPS_POLEA: Ejercicio = {
   nombre: nombreDe('extension-triceps-polea'),
   equipo: 'cable',
   imagen: '/ejercicios/extension-triceps-polea.jpg',
-  explicacionCorta: 'Codos fijos al costado. Sólo se mueve el antebrazo.',
+  explicacionCorta: 'Con barra V. Codos fijos al costado; sólo se mueve el antebrazo.',
   musculoPrimario: 'triceps',
   musculosSecundarios: [],
   ...STACK,

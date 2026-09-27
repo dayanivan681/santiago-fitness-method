@@ -58,11 +58,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-27T02:40:51.638Z
+- **Última sincronización:** 2026-09-27T02:48:47.358Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1205,6 +1205,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-27T02:48:47.359Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Respuestas de Santiago leídas y registradas (A1 barra V; A5 pendiente; 9 genéricos) en BIBLIOTECA-FASE-3A-MAPPING-33.csv. A1 aplicado sin cambiar id. Cuadro pedido por el coach: en Hoy cada ejercicio abre su ficha; en el editor del coach, miniaturas. Google: correos de COACH_EMAILS sin cuenta de cliente se redirigen a /admin/ (sin sesión). Login del coach con Google en /admin requiere que el dueño añada Google como método en Cloudflare Access.
+- **Verificación:** npm test 788/788 (85 archivos); npx tsc -b; npm run lint; npm run build; git diff --check; navegador 375x812 demo cliente y coach
+- **Siguiente:** Dueño: añadir Google en Cloudflare Access (pasos en el chat). Siguiente trabajo: ampliar biblioteca con unilaterales y prensa 45° según el correo de Santiago.
+
 
 ### 2026-09-27T02:40:51.639Z | claude-code | CLAIM
 - **Estado:** active

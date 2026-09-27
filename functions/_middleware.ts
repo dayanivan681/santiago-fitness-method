@@ -27,7 +27,7 @@ import {
   paginaSesionCerrada,
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
-import { origenSeguro } from './lib/v2/seguridad'
+import { esCorreoDeCoach, origenSeguro } from './lib/v2/seguridad'
 import { conCabecerasDeShell } from './lib/cabecerasShell'
 import { resumen } from './lib/cripto'
 import { borrarEstadoGoogle, googleConfigurado, iniciarGoogle, terminarGoogle } from './lib/google'
@@ -40,6 +40,7 @@ type Entorno = {
   readonly GOOGLE_CLIENT_SECRET?: string
   readonly GOOGLE_HABILITADO?: string
   readonly SFM_ENV?: string
+  readonly COACH_EMAILS?: string
   readonly STRIPE_SECRET_KEY?: string
   readonly STRIPE_WEBHOOK_SECRET?: string
   readonly STRIPE_HABILITADO?: string
@@ -215,6 +216,13 @@ async function atenderRetornoGoogle(request: Request, env: Entorno): Promise<Res
   if (request.method !== 'GET') return new Response('Método no permitido', { status: 405 })
   try {
     const resultado = await terminarGoogle(request, env)
+    // El coach entra por /admin (Cloudflare Access), no con cuenta de cliente.
+    // Sólo se le redirige: no se crea ninguna sesión.
+    if (!resultado.ok && resultado.email && esCorreoDeCoach(env.COACH_EMAILS, resultado.email)) {
+      const headers = new Headers({ Location: '/admin/', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' })
+      headers.append('Set-Cookie', borrarEstadoGoogle())
+      return new Response(null, { status: 302, headers })
+    }
     if (!resultado.ok) {
       const error = paginaGoogleError()
       error.headers.append('Set-Cookie', borrarEstadoGoogle())

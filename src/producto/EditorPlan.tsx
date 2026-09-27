@@ -82,6 +82,8 @@ export function EditorPlan({
                 <span className="sfm-ordinal">
                   {String(i + 1).padStart(2, "0")}
                 </span>
+                {/* La misma foto que el cliente toca en su Hoy para ver el ejercicio. */}
+                {e && <img className="sfm-exercise-thumb sfm-exercise-thumb--editor" src={e.imagen} alt="" loading="lazy" />}
                 <span className="sfm-row-body">
                   <strong>{e?.nombre ?? "Variante pendiente"}</strong>
                   <small>
@@ -274,6 +276,7 @@ export function EditorPlan({
                   setAnadir(false);
                 }}
               >
+                <img className="sfm-exercise-thumb sfm-exercise-thumb--editor" src={e.imagen} alt="" loading="lazy" />
                 <span className="sfm-row-body">
                   <strong>{e.nombre}</strong>
                   <small>

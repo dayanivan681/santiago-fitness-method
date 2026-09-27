@@ -12,7 +12,10 @@
  * no el formulario: los ejercicios del día son filas de lectura, sin controles.
  */
 
+import { useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
+import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
+import type { Ejercicio } from '../../dominio/tipos'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Memoria } from '../../aplicacion/memoria'
@@ -31,12 +34,17 @@ export function EntrenamientoHoy({
   onComenzar,
 }: Props = {}) {
   const { datos, elegirPlantilla, cargando } = useEntrenamiento(repositorio, memoriaDia)
+  const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
 
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!datos) return <p className="aviso">No hay entrenamiento configurado todavía.</p>
 
-  const { plantilla, plantillas, ejerciciosDelDia, seriesHechas, seriesObjetivo, sesionDeHoy } =
+  const { plantilla, plantillas, ejerciciosDelDia, seriesHechas, seriesObjetivo, sesionDeHoy, participante } =
     datos
+  // La ficha deja saltar a las variantes equivalentes del día, como en el entrenamiento.
+  const bibliotecaDelDia = [
+    ...new Map(ejerciciosDelDia.flatMap((e) => e.variantes).map((e) => [e.id, e])).values(),
+  ]
 
   const enCurso = Boolean(sesionDeHoy && !sesionDeHoy.completadaEn)
   const terminada = Boolean(sesionDeHoy?.completadaEn)
@@ -101,7 +109,17 @@ export function EntrenamientoHoy({
                 const hechas = ejercicioDelDia.seriesDeHoy.length
                 return (
                   <div className="fila" key={ejercicioDelDia.ejercicio.id}>
-                    <img className="sfm-exercise-thumb" src={ejercicioDelDia.ejercicio.imagen} alt="" loading="lazy"/>
+                    {/* Petición del coach: un cuadro al lado de cada ejercicio que el
+                        participante toca para ver cómo se hace, antes de empezar. */}
+                    <button
+                      type="button"
+                      className="sfm-exercise-thumb sfm-exercise-thumb--boton"
+                      aria-label={`Ver ${ejercicioDelDia.ejercicio.nombre}`}
+                      onClick={() => setFichaDe(ejercicioDelDia.ejercicio)}
+                    >
+                      <img src={ejercicioDelDia.ejercicio.imagen} alt="" loading="lazy"/>
+                      <span aria-hidden="true">↗︎</span>
+                    </button>
                     <span className="fila__cuerpo">
                       <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>
                       <span className="fila__detalle">
@@ -121,6 +139,15 @@ export function EntrenamientoHoy({
           </>
         )}
       </div>
+      {fichaDe && (
+        <HojaEjercicio
+          ejercicio={fichaDe}
+          biblioteca={bibliotecaDelDia}
+          historial={{ participanteId: participante.id, repositorio }}
+          onElegir={setFichaDe}
+          onCerrar={() => setFichaDe(null)}
+        />
+      )}
     </>
   )
 }
