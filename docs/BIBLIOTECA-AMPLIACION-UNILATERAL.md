@@ -54,3 +54,10 @@ C062 «Remo con mancuerna a una mano» ya existía como `remo-mancuerna`.
   abre la ficha. Además se ofrecen como alternativa equivalente de su versión
   bilateral: la prensa 45° y la unilateral junto a «Prensa de piernas», los
   pushdown junto a la extensión de tríceps, etc. Cada una guarda su propio historial.
+
+## Preguntas enviadas al coach (2026-09-27)
+
+Las 12 preguntas B de la tabla anterior están en https://sfm-variantes.pages.dev
+(bloque B) y se le enviaron por correo en el mismo hilo que el bloque A. Las
+respuestas llegan a D1 `sfm-variantes`. Con ellas se decide qué unilaterales
+restantes se añaden y se cambia la foto provisional de la prensa unilateral.

@@ -58,11 +58,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-27T03:13:39.703Z
+- **Última sincronización:** 2026-09-27T03:14:09.967Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1205,6 +1205,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-27T03:14:09.968Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Bloque B del cuestionario (12 preguntas que desbloquean unilaterales) publicado en sfm-variantes.pages.dev y enviado a Santiago por correo. API acepta A y B. Una respuesta de prueba enviada por error a producción fue borrada (sólo esa fila); queda sólo la respuesta real del bloque A.
+- **Verificación:** npm test; npm run lint; npm run build; curl sitio y API del cuestionario
+- **Siguiente:** Esperar respuestas del bloque B en D1 sfm-variantes y aplicar.
+
 
 ### 2026-09-27T03:13:39.704Z | claude-code | CLAIM
 - **Estado:** active
