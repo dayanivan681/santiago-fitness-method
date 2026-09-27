@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Hoja, Icono } from "./ui";
 import { useAyuda } from "./ayuda-contexto";
+import { RecorridoCoach } from "./RecorridoCoach";
 import "./guia-demo.css";
 
 const temasCoach = [
@@ -56,7 +57,7 @@ const temasCliente = [
     "Desde tu avatar accedes a tu perfil. En Progreso puedes consultar medidas y fotos; tú decides si compartes las fotos con tu Coach.",
   ],
 ];
-export function GuiaAyuda({ base, permitirBienvenida = true }: { base?: string; permitirBienvenida?: boolean }) {
+export function GuiaAyuda({ base, permitirBienvenida = true, clientes = 0 }: { base?: string; permitirBienvenida?: boolean; clientes?: number }) {
   const ayuda = useAyuda();
   const { pathname } = useLocation();
   const navegar = useNavigate();
@@ -65,12 +66,21 @@ export function GuiaAyuda({ base, permitirBienvenida = true }: { base?: string; 
   const clave = cliente ? `bienvenida:${ayuda?.clienteId}` : "bienvenida:coach";
   const [abierta, setAbierta] = useState(false);
   const [repetir, setRepetir] = useState(false);
+  // El coach real ve el recorrido cada vez que abre el panel; «Saltar» lo
+  // cierra hasta la próxima visita (petición del dueño, 2026-09-27).
+  const [recorridoVisto, setRecorridoVisto] = useState(false);
   // Las entradas profundas no interrumpen una tarea con una bienvenida.
   if (!ayuda) return null;
+  const coachReal = !cliente && !ayuda.demo;
   const entrada = pathname === (raiz || "/") || pathname === `${raiz}/`;
   const bienvenida = ayuda.preparada && (repetir || (entrada && permitirBienvenida && !ayuda.tieneActividad && !ayuda.cerrados.has(clave)));
   const cerrar = () => {
     ayuda.cerrar(clave);
+    setRepetir(false);
+  };
+  const recorrido = coachReal && (repetir || (entrada && permitirBienvenida && !recorridoVisto));
+  const cerrarRecorrido = () => {
+    setRecorridoVisto(true);
     setRepetir(false);
   };
   const titulo = cliente ? (ayuda.demo ? "Prueba tu primera serie" : "Tu entrenamiento, a mano") : ayuda.demo ? "Crea un cliente de prueba" : "Crea tu primer cliente";
@@ -83,7 +93,14 @@ export function GuiaAyuda({ base, permitirBienvenida = true }: { base?: string; 
       >
         Ayuda <span aria-hidden="true">?</span>
       </button>
-      {bienvenida && !abierta && (
+      {recorrido && !abierta && (
+        <RecorridoCoach
+          clientes={clientes}
+          cerrar={cerrarRecorrido}
+          irAClientes={() => navegar(`${raiz}/clientes`)}
+        />
+      )}
+      {!coachReal && bienvenida && !abierta && (
         <Hoja titulo={titulo} cerrar={cerrar} clase="sfm-guia">
           <p className="sfm-guia-copy">
             {cliente
@@ -134,7 +151,7 @@ export function GuiaAyuda({ base, permitirBienvenida = true }: { base?: string; 
               setRepetir(true);
             }}
           >
-            Ver bienvenida
+            {coachReal ? "Ver recorrido" : "Ver bienvenida"}
           </button>
           {ayuda.demo && <p className="sfm-guia-sandbox">
             Demo con datos ficticios. Al recargar, se reinicia.

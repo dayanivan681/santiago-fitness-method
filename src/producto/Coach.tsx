@@ -86,7 +86,7 @@ export function Coach({
       <div className="sfm-brandbar">
         <Marca />
         <div className="sfm-brand-actions">
-          {!servicio.demo && <GuiaAyuda base={base} permitirBienvenida={listo && clientes.length === 0 && borradores.length === 0} />}
+          {!servicio.demo && <GuiaAyuda base={base} permitirBienvenida={listo} clientes={clientes.length} />}
           <span className="sfm-role">Coach</span>
         </div>
       </div>

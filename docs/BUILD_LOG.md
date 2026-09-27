@@ -1,5 +1,11 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-27 — Recorrido del coach en el panel real — claude-code
+
+- Antes, la bienvenida del coach real sólo aparecía con cero clientes; producción tiene tres, así que Santiago no la vería. Ahora el panel real muestra un recorrido de 4 pasos (Tus clientes, Su plan, Su acceso, Su progreso) cada vez que se abre, por petición del dueño, con «Saltar» en todos los pasos; se repite desde Ayuda → «Ver recorrido». Adapta el primer paso al número de clientes. La demo pública conserva su bienvenida.
+- Archivos: `src/producto/RecorridoCoach.tsx` (+ test), `GuiaAyuda.tsx`, `Coach.tsx`, `guia-demo.css`, `GuiaCoachReal.test.tsx`.
+- Verificación: 799 pruebas en 87 archivos, `tsc`, lint, build; navegador 375x812 en el panel real del runtime local.
+
 ## 2026-09-27 — Prueba de alta con Google de un cliente en producción — dueño + claude-code
 
 - Coach (Chrome del dueño) creó «Prueba SSO» con plan publicado y preparó una invitación. La página de invitación ofreció «Continuar con Google»; el inicio fue a Google con el cliente OAuth de la app, PKCE S256, state, nonce, alcances `openid email profile` y retorno `/auth/google/retorno` de producción. El dueño eligió la cuenta en Google.
