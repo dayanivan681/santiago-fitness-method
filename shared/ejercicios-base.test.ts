@@ -72,7 +72,18 @@ describe('integridad referencial de las plantillas', () => {
       'patada-gluteo-polea', 'abduccion-maquina', 'elevacion-talones-pie',
       'elevacion-talones-sentado',
     ]
-    expect(EJERCICIOS_BASE.map(({ id }) => id).sort()).toEqual(historicos.sort())
+    // Los históricos no se tocan; lo que se añade después son variantes nuevas.
+    const ids = new Set(EJERCICIOS_BASE.map(({ id }) => id))
+    expect(historicos.every((id) => ids.has(id))).toBe(true)
+    const nuevos = [...ids].filter((id) => !historicos.includes(id))
+    expect(nuevos.every((id) => /^sfm-catalog-c\d{3}$/.test(id))).toBe(true)
+  })
+
+  it('incluye lo que pidió el coach: prensa a 45° y variantes unilaterales (correo del 2026-09-26)', () => {
+    const nombres = EJERCICIOS_BASE.map(({ nombre }) => nombre)
+    expect(nombres).toContain('Prensa de piernas 45°')
+    expect(nombres).toContain('Prensa de piernas unilateral')
+    expect(nombres.filter((n) => /unilateral/i.test(n)).length).toBeGreaterThanOrEqual(11)
   })
 
   it('todos los ejercicios programados existen en el catálogo', () => {

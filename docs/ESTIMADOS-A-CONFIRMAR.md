@@ -113,3 +113,29 @@ el 1 es fuerza, del 2 al 4 hipertrofia y el 5 resistencia — así que no hay qu
 acordarse de la estructura.
 
 Si falta algún ejercicio que usas y no está en los 33, dime cuál y lo añado.
+
+---
+
+## Ampliación unilateral y prensa 45° (2026-09-27)
+
+Trece fichas nuevas, pedidas por el coach. El nombre y la variante vienen de su
+Biblioteca Maestra. Lo estimado es esto:
+
+| Ficha | Músculo principal · secundarios | Perfil de carga | Foto |
+|---|---|---|---|
+| Prensa de piernas 45° | Cuádriceps · glúteos | Discos por lado | La de «Prensa de piernas», que ya es una prensa a 45° |
+| Prensa de piernas unilateral | Cuádriceps · glúteos | Discos por lado | **Provisional**: la prensa a 45° con dos piernas. La máquina de la versión unilateral es la pregunta B30. |
+| Extensión de cuádriceps unilateral | Cuádriceps | Stack | Fiel |
+| Peso muerto unilateral con mancuerna | Femoral · glúteos, core | Mancuernas | **Provisional**: muestra una kettlebell |
+| Fly unilateral en cable | Pecho · deltoide anterior | Stack | Fiel |
+| Landmine press unilateral | Deltoide anterior · pecho, tríceps | Total cargado (saltos de 5 lb) | Fiel |
+| Extensión unilateral sobre cabeza con mancuerna | Tríceps | Mancuernas | Fiel |
+| Extensión unilateral sobre cabeza en cable | Tríceps | Stack | Fiel |
+| Pushdown unilateral agarre neutro | Tríceps | Stack | **Provisional**: la foto muestra agarre supinado |
+| Pushdown unilateral supinado | Tríceps | Stack | Fiel |
+| Jalón unilateral en polea alta | Espalda · bíceps | Stack | Fiel |
+| Preacher curl con mancuerna unilateral | Bíceps | Mancuernas | Fiel |
+| Curl unilateral en cable | Bíceps | Stack | Fiel |
+
+En las unilaterales se registra el peso de un lado: el del pin, el de la
+mancuerna o el de los discos de ese lado.

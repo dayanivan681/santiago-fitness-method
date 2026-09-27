@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-27 — Biblioteca: unilaterales y prensa 45° (correo del coach) — claude-code
+
+- Biblioteca programable de 33 a 46 fichas: prensa de piernas 45°, prensa unilateral y 11 variantes unilaterales (extensión de cuádriceps, peso muerto con mancuerna, fly en cable, landmine press, extensiones de tríceps sobre cabeza con mancuerna y cable, pushdown neutro y supinado, jalón en polea alta, preacher curl con mancuerna y curl en cable). Ids `sfm-catalog-cNNN` del catálogo maestro; los 33 históricos intactos.
+- Fotos de free-exercise-db (dominio público, misma fuente que las 33): 11 nuevas en `public/ejercicios/`; tres provisionales anotadas en ESTIMADOS-A-CONFIRMAR.md. Músculos y cargas estimados, igual que las fichas originales.
+- Fuera, con motivo, en `docs/BIBLIOTECA-AMPLIACION-UNILATERAL.md`: 3 sin foto fiel y 11 que dependen de preguntas B abiertas o de identidad ambigua.
+- Manifest 3B.1: `active_in_runtime_exercises=true` en las 13 activadas; los tests exigen que coincida con el catálogo operativo.
+- Verificación: 791 pruebas en 85 archivos, `tsc`, lint, build; navegador 375x812: Biblioteca muestra 46, la búsqueda «unilateral» y la ficha de la prensa con sus alternativas 45° y unilateral.
+
 ## 2026-09-27 — Respuestas del coach (A1–A11), cuadro del ejercicio y Google del coach — claude-code
 
 - Respuestas del cuestionario leídas de D1 `sfm-variantes` (1 envío completo): A1 = barra V; A5 = dejar pendiente; A2–A4 y A6–A11 = mantener genérico. Registradas en `docs/BIBLIOTECA-FASE-3A-MAPPING-33.csv` (A1 → C159/S159, `confirmado_por_coach`; genéricos → `generico_por_coach`; A5 sigue pendiente).

@@ -49,6 +49,7 @@ describe('fundación de la Biblioteca Maestra (§3B.1)', () => {
   const posicion = (nombre: string) => encabezados.indexOf(nombre)
   const valor = (fila: string[], nombre: string) => fila[posicion(nombre)]
   const filas = manifest.slice(1)
+  const operativos = new Set(EJERCICIOS_BASE.map((ejercicio) => ejercicio.id))
   const catalogo3a = leerCsv(
     readFileSync(resolve(process.cwd(), 'docs/BIBLIOTECA-FASE-3A-CATALOGO.csv'), 'utf8'),
   )
@@ -75,7 +76,7 @@ describe('fundación de la Biblioteca Maestra (§3B.1)', () => {
     )
     for (const fila of importadas) {
       expect(valor(fila, 'imported_to_catalog')).toBe('true')
-      expect(valor(fila, 'active_in_runtime_exercises')).toBe('false')
+      expect(valor(fila, 'active_in_runtime_exercises')).toBe(String(operativos.has(valor(fila, 'catalog_id'))))
       expect(valor(fila, 'decision_ids')).toBe('[]')
       expect(valor(fila, 'existing_ids_verified')).toBe('[]')
       expect(valor(fila, 'existing_ids_candidate_only')).toBe('[]')
@@ -89,14 +90,25 @@ describe('fundación de la Biblioteca Maestra (§3B.1)', () => {
     for (const fila of filas.filter((item) => valor(item, 'classification') !== 'SAFE_TO_IMPORT')) {
       expect(valor(fila, 'catalog_id')).toBe('')
       expect(valor(fila, 'imported_to_catalog')).toBe('false')
-      expect(valor(fila, 'active_in_runtime_exercises')).toBe('false')
+      // Una identidad excluida en 3B.1 sólo se activa cuando el coach resolvió
+      // su decisión (A1, A9, A10) y entra con el mismo id determinístico.
+      const id = `sfm-catalog-${valor(fila, 'canonical_ref').toLowerCase()}`
+      expect(valor(fila, 'active_in_runtime_exercises')).toBe(String(operativos.has(id)))
       expect(valor(fila, 'exclusion_reason')).not.toBe('')
     }
   })
 
   it('no reutiliza ninguno de los 33 IDs operativos', () => {
-    const existentes = new Set(EJERCICIOS_BASE.map((ejercicio) => ejercicio.id))
-    expect([...IDS_CATALOGO_MAESTRO_SEGURO].some((id) => existentes.has(id))).toBe(false)
+    const historicos = new Set([...operativos].filter((id) => !id.startsWith('sfm-catalog-')))
+    expect(historicos.size).toBe(33)
+    expect([...IDS_CATALOGO_MAESTRO_SEGURO].some((id) => historicos.has(id))).toBe(false)
+  })
+
+  it('toda ficha operativa del catálogo maestro figura como activa en el manifest', () => {
+    const activas = filas
+      .filter((fila) => valor(fila, 'active_in_runtime_exercises') === 'true')
+      .map((fila) => `sfm-catalog-${valor(fila, 'canonical_ref').toLowerCase()}`)
+    expect(activas.sort()).toEqual([...operativos].filter((id) => id.startsWith('sfm-catalog-')).sort())
   })
 
   it('conserva la metadata y procedencia del CSV de Phase 3A', () => {

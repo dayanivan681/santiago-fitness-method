@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { EditorPlan } from './EditorPlan';
 import { perfil, plan } from '../../pruebas-v2/fixtures';
 import { BIBLIOTECA_INICIAL } from '../datos/semilla/biblioteca';
+import { Plan } from '../../shared/v2/contratos';
 
 afterEach(cleanup);
 
@@ -20,4 +21,27 @@ it('al añadir un ejercicio, la lista enseña la foto de cada opción', () => {
   fireEvent.change(within(hoja).getByRole('textbox', { name: 'Buscar ejercicio' }), { target: { value: 'barra V' } });
   const opcion = within(hoja).getByText('Extensión de tríceps en polea con barra V').closest('button')!;
   expect(opcion.querySelector('img')).toHaveAttribute('src', '/ejercicios/extension-triceps-polea.jpg');
+});
+
+it('el coach encuentra lo que pidió buscando «45» y «unilateral», y el servidor acepta el plan', () => {
+  const cambiar = vi.fn();
+  render(<EditorPlan plan={plan} perfil={perfil} onChange={cambiar} />);
+  fireEvent.click(screen.getByRole('button', { name: /Añadir ejercicio/ }));
+  const hoja = screen.getByRole('dialog', { name: 'Añadir ejercicio' });
+  const buscar = within(hoja).getByRole('textbox', { name: 'Buscar ejercicio' });
+
+  fireEvent.change(buscar, { target: { value: '45' } });
+  expect(within(hoja).getByText('Prensa de piernas 45°')).toBeInTheDocument();
+
+  fireEvent.change(buscar, { target: { value: 'unilateral' } });
+  expect(within(hoja).getAllByText(/unilateral/i).length).toBeGreaterThanOrEqual(11);
+
+  fireEvent.change(buscar, { target: { value: '45' } });
+  fireEvent.click(within(hoja).getByText('Prensa de piernas 45°'));
+  const nuevo = cambiar.mock.calls.at(-1)![0];
+  expect(nuevo.dias[0].slots.at(-1).ejercicioId).toBe('sfm-catalog-c191');
+  // Editar deja el plan «por revisar»; una vez revisado, el id nuevo es válido.
+  expect(nuevo.revisado).toBe(false);
+  const validado = Plan.safeParse({ ...nuevo, revisado: true });
+  expect(validado.success ? '' : JSON.stringify(validado.error.issues)).toBe('');
 });

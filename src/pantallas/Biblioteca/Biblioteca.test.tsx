@@ -80,8 +80,8 @@ describe('ficha completa del ejercicio (punto H)', () => {
   })
 
   test('un ejercicio sin equivalentes lo dice, en vez de dejar el hueco vacío', async () => {
-    // La extensión de cuádriceps es la única de su patrón en la biblioteca.
-    const hoja = await abrirFicha('Extensión de cuádriceps')
+    // El landmine press es el único press de hombro de la biblioteca.
+    const hoja = await abrirFicha('Landmine press unilateral')
 
     expect(
       within(hoja).getByText('No hay otra variante de este movimiento.'),

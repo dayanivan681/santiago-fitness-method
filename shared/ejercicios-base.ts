@@ -76,6 +76,25 @@ export const EJERCICIOS_BASE: readonly EjercicioBase[] = [
   { id: 'abduccion-maquina', nombre: 'Abducción de cadera sentado en máquina' },
   { id: 'elevacion-talones-pie', nombre: 'Standing calf raise en máquina' },
   { id: 'elevacion-talones-sentado', nombre: 'Seated calf raise' },
+
+  // ---- Ampliación pedida por el coach (correo del 2026-09-26) ---------------
+  // «Unilateral» y «prensa de piernas 45 grados». Identidades del PDF (Cxxx) sin
+  // decisión pendiente, o cuya única decisión ya contestó (A1, A9, A10). Mismo
+  // id que la fundación del catálogo maestro. Quedan fuera las que dependen de
+  // preguntas B abiertas y las que no tienen foto fiel. Ver docs/BIBLIOTECA-AMPLIACION-UNILATERAL.md.
+  { id: 'sfm-catalog-c191', nombre: 'Prensa de piernas 45°' },
+  { id: 'sfm-catalog-c194', nombre: 'Prensa de piernas unilateral' },
+  { id: 'sfm-catalog-c196', nombre: 'Extensión de cuádriceps unilateral' },
+  { id: 'sfm-catalog-c203', nombre: 'Peso muerto unilateral con mancuerna' },
+  { id: 'sfm-catalog-c037', nombre: 'Fly unilateral en cable' },
+  { id: 'sfm-catalog-c103', nombre: 'Landmine press unilateral' },
+  { id: 'sfm-catalog-c154', nombre: 'Extensión unilateral sobre cabeza con mancuerna' },
+  { id: 'sfm-catalog-c165', nombre: 'Extensión unilateral sobre cabeza en cable' },
+  { id: 'sfm-catalog-c161', nombre: 'Pushdown unilateral agarre neutro' },
+  { id: 'sfm-catalog-c162', nombre: 'Pushdown unilateral supinado' },
+  { id: 'sfm-catalog-c056', nombre: 'Jalón unilateral en polea alta' },
+  { id: 'sfm-catalog-c137', nombre: 'Preacher curl con mancuerna unilateral' },
+  { id: 'sfm-catalog-c142', nombre: 'Curl unilateral en cable' },
 ]
 
 const POR_ID = new Map(EJERCICIOS_BASE.map((ejercicio) => [ejercicio.id, ejercicio.nombre]))

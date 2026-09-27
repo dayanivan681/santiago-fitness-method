@@ -25,10 +25,12 @@ import type { Ejercicio } from '../../../dominio/tipos'
 import { EMPUJE } from './empuje'
 import { TRACCION } from './traccion'
 import { PIERNA } from './pierna'
+import { AMPLIACION_UNILATERAL } from './unilaterales'
 
 export * from './empuje'
 export * from './traccion'
 export * from './pierna'
+export * from './unilaterales'
 export * from './cargas'
 
-export const BIBLIOTECA_INICIAL: readonly Ejercicio[] = [...EMPUJE, ...TRACCION, ...PIERNA]
+export const BIBLIOTECA_INICIAL: readonly Ejercicio[] = [...EMPUJE, ...TRACCION, ...PIERNA, ...AMPLIACION_UNILATERAL]

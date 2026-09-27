@@ -58,11 +58,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-27T02:57:14.706Z
+- **Última sincronización:** 2026-09-27T03:06:33.109Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1205,6 +1205,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-27T03:06:33.110Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca ampliada según el correo de Santiago: 33 → 46 fichas (prensa 45°, prensa unilateral y 11 unilaterales) con ids sfm-catalog-cNNN, fotos de dominio público y estimados anotados. Quedan fuera 14 unilaterales con motivo (sin foto fiel o preguntas B abiertas) en docs/BIBLIOTECA-AMPLIACION-UNILATERAL.md. Manifest 3B.1 marca las 13 activas y los tests lo exigen.
+- **Verificación:** npm test 791/791 (85 archivos); npx tsc -b; npm run lint; npm run build; navegador 375x812 demo Biblioteca y ficha de prensa
+- **Siguiente:** Mandar a Santiago las preguntas B que desbloquean el resto de unilaterales (B9, B12-13, B17-18, B22, B25, B27, B30, B33, B36-37) y confirmar estimados/fotos provisionales.
+
 
 ### 2026-09-27T02:57:14.707Z | claude-code | CLAIM
 - **Estado:** active
