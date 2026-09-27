@@ -1,5 +1,11 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-27 — Guía dinámica para Santiago y panel limpio — claude-code
+
+- Producción: el dueño archivó «Santiago»; por su indicación se archivaron «Ivan» y «Cliente nuevo». El panel de Santiago empieza sin clientes (el recorrido abre con «Empieza con Nuevo cliente»).
+- Guía dinámica pública, sin login, para acompañar el correo de bienvenida: https://guia-santiago-fitness.pages.dev (proyecto Pages `guia-santiago-fitness`). 16 pasos con capturas reales del simulador de iPhone (panel real en runtime local, cliente ficticio «María Pérez»; enlace de invitación difuminado). Fuente en `/Users/dayanmacbookpro/guia-santiago-fitness/`, fuera del repo.
+- El correo a Santiago sigue en borrador; el dueño lo revisará antes de enviarlo.
+
 ## 2026-09-27 — Recorrido del coach en el panel real — claude-code
 
 - Antes, la bienvenida del coach real sólo aparecía con cero clientes; producción tiene tres, así que Santiago no la vería. Ahora el panel real muestra un recorrido de 4 pasos (Tus clientes, Su plan, Su acceso, Su progreso) cada vez que se abre, por petición del dueño, con «Saltar» en todos los pasos; se repite desde Ayuda → «Ver recorrido». Adapta el primer paso al número de clientes. La demo pública conserva su bienvenida.
