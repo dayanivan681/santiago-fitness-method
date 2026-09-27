@@ -1,5 +1,14 @@
 # Suscripciones con Stripe
 
+> **Estado (2026-09-27): en el roadmap, decisión del dueño.**
+> - El código de las fases 3, 4 y 5 está en producción y **apagado**: sin secretos de
+>   Stripe, el webhook responde 404, pagar responde 503 y **no se bloquea a ningún cliente**.
+> - La pestaña Pago del coach dice que los cobros no están activados; el exento sí funciona.
+> - La demo pública muestra la parte de pagos con datos ficticios.
+> - Para retomarlo, basta con seguir «Lo que tiene que hacer el dueño» y «Antes de
+>   encender Stripe en producción». No hace falta cambiar código.
+> - Tablas `suscripciones` y `eventos_stripe` creadas y vacías en staging y producción.
+
 Fase 3 del plan de cuentas y suscripción (decisiones del dueño del 2026-09-26: cobro
 automático con Stripe, 7 días de gracia y después solo lectura, el coach invita y los
 clientes exentos nunca se bloquean).
