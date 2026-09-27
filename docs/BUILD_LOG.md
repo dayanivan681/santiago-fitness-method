@@ -1,5 +1,10 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-27 — Google SSO del coach en /admin — dueño + claude-code
+
+- El dueño creó un cliente OAuth propio para Cloudflare Access (distinto del de la app) y activó Google como método de login en la app de Access «Santiago Fitness Method», con One-time PIN como respaldo. Test users: yayo1716@gmail.com y saangelm50@gmail.com.
+- Verificado desde fuera: /admin y /admin/api 302 a Access; la página ofrece Google con retorno `cool-surf-8e6d.cloudflareaccess.com/cdn-cgi/access/callback` y alcances `openid email profile`; Google muestra su inicio de sesión sin error. El dueño entró con Google en /admin.
+
 ## 2026-09-27 — Biblioteca: unilaterales y prensa 45° (correo del coach) — claude-code
 
 - Biblioteca programable de 33 a 46 fichas: prensa de piernas 45°, prensa unilateral y 11 variantes unilaterales (extensión de cuádriceps, peso muerto con mancuerna, fly en cable, landmine press, extensiones de tríceps sobre cabeza con mancuerna y cable, pushdown neutro y supinado, jalón en polea alta, preacher curl con mancuerna y curl en cable). Ids `sfm-catalog-cNNN` del catálogo maestro; los 33 históricos intactos.
