@@ -58,11 +58,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-27T03:54:25.388Z
+- **Última sincronización:** 2026-09-27T03:54:55.579Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1205,6 +1205,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-27T03:54:55.581Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Alta de cliente con Google verificada en producción de punta a punta (invitación → Google → cuenta con google_sub → sesión → app). Cliente de prueba archivado. Sin cambios de código.
+- **Verificación:** npm test; npm run lint; npm run build; D1 lectura; navegador
+- **Siguiente:** Ninguno para SSO. Esperar respuestas del bloque B.
+
 
 ### 2026-09-27T03:54:25.389Z | claude-code | CLAIM
 - **Estado:** active

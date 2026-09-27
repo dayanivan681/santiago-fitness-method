@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-27 — Prueba de alta con Google de un cliente en producción — dueño + claude-code
+
+- Coach (Chrome del dueño) creó «Prueba SSO» con plan publicado y preparó una invitación. La página de invitación ofreció «Continuar con Google»; el inicio fue a Google con el cliente OAuth de la app, PKCE S256, state, nonce, alcances `openid email profile` y retorno `/auth/google/retorno` de producción. El dueño eligió la cuenta en Google.
+- D1 producción (lectura): cuenta creada con `google_sub`, sin contraseña; invitación consumida; una sesión activa. La app abrió como cliente («Vamos, Prueba.», plan Upper A) y `/api/v2/contexto` devolvió `rol=cliente`, `googleVinculado=true`.
+- Limpieza: cliente archivado; cuenta borrada y sesiones revocadas por `archivarCliente`. Quedan 3 clientes activos.
+- Observación: con la pestaña oculta, la ficha recién creada espera en «Abriendo cliente…» porque el refresco periódico sólo corre con la pestaña visible (comportamiento buscado); visible, abre en ≤4 s.
+
 ## 2026-09-27 — Google SSO del coach en /admin — dueño + claude-code
 
 - El dueño creó un cliente OAuth propio para Cloudflare Access (distinto del de la app) y activó Google como método de login en la app de Access «Santiago Fitness Method», con One-time PIN como respaldo. Test users: yayo1716@gmail.com y saangelm50@gmail.com.
