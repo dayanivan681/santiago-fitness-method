@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-26/27 — Revisión de SSO de clientes en producción — codex (en curso)
+
+- `handoff:sync` completado y turno reclamado como codex (`3950180`). Código limpio al comenzar. Se revisaron middleware, OAuth PKCE, las pantallas de acceso/perfil, secretos listados de Pages, despliegue canónico y configuración Google Auth Platform. No se modificaron cuentas ni configuración externa.
+- HTTP vivo: `/entrar` 200 y botón Google; `/auth/google?origen=entrar` 302 a Google con `redirect_uri` canónica y cookie de estado; callback de estado inválido 401. Google real desde `/entrar` con la identidad del dueño llegó a la app y mostró la página de acceso fallido.
+- D1 remoto, solo lectura: 1 cuenta; 0 `google_sub`; 0 invitaciones sin consumir vigentes. Perfil de cliente con sesión válida muestra enlace para conectar Google. Diagnóstico provisional: acceso directo rechazado porque no existe vínculo Google en producción; la ruta de vinculación requiere antes entrar con la contraseña y usar el mismo email Google. Falta que el dueño precise la prueba fallida para cerrar el caso.
+- La consola Google muestra External/Testing y 0 usuarios de prueba, pero la documentación oficial exceptúa `openid email profile`; el código solo solicita esos permisos. Se corrigió la hipótesis inicial de que Testing fuera la causa. No se añadieron usuarios de prueba ni se publicó la app OAuth.
+- En el preview `codex-google-fase2`, el ingreso Google real con la cuenta QA previamente vinculada sí devolvió la sesión de Lucía y su programa. No se creó ni modificó ninguna cuenta QA en esta repetición.
+- La cuenta única de producción tiene contraseña; ninguno de los Google conocidos del navegador coincide con su correo guardado. `npm test` 784/784 en 84 archivos, `npm run lint` PASS, `npm run build` PASS. Solo se editaron `docs/HANDOFF.md` y este archivo; no hubo cambio de código ni despliegue manual.
+
 ## 2026-09-26 — Fases 4 y 5: solo lectura y panel de pagos — claude-code
 
 - Servidor: 402 en escrituras del cliente sin acceso (`/sincronizar`, `/medios` no GET) sólo con Stripe encendido; el coach nunca se bloquea. Tipos compartidos en `shared/v2/suscripcion.ts`.

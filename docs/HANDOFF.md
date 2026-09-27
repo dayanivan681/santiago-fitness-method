@@ -1,5 +1,15 @@
 # Handoff de Santiago Fitness Method
 
+## Diagnóstico SSO de clientes en producción — codex, 2026-09-26/27 (en curso)
+
+- Turno reclamado en `main` con `npm run handoff:sync` y `handoff:claim` (`3950180`). El dueño reportó que Google SSO no le funcionó; se pidió aclarar si fue desde `/entrar`, una invitación o Perfil y el mensaje exacto. No se han modificado cuentas, invitaciones ni secretos.
+- Producción actual: `/entrar` responde 200 con `Continuar con Google`; `/auth/google?origen=entrar` responde 302 a Google con el retorno canónico y cookie de estado; un retorno sin estado válido responde 401 como corresponde. Los tres secretos Google aparecen cifrados en Pages, sin ver sus valores.
+- Prueba real en Chrome con la identidad Google del dueño desde `/entrar`: retorno a `No pudimos entrar con Google`. La consulta de solo lectura a D1 producción mostró **1 cuenta, 0 `google_sub` vinculados y 0 invitaciones vigentes**. Por diseño, `/entrar` con Google acepta solo un `google_sub` ya vinculado. Una pestaña nueva de `/perfil` con sesión de cliente válida muestra `Conectar Google con esta cuenta`; ésa es la ruta prevista para enlazar una cuenta creada con contraseña. Las identidades Google conocidas del navegador no coinciden con el email de esa única cuenta; no se intentó vincular una identidad distinta.
+- Google Auth Platform permanece External/Testing con cero usuarios de prueba. La consola muestra una advertencia general, pero la [documentación oficial de Google](https://support.google.com/cloud/answer/15549945?hl=en) exceptúa explícitamente a apps que solo solicitan `openid email profile`: pueden autorizar cualquier usuario sin estar en la lista. El flujo real llegó al callback de la app, así que Testing no causó este rechazo. La primera hipótesis de bloqueo por Testing fue rectificada al consultar la documentación.
+- Prueba positiva vigente: en el preview `codex-google-fase2`, la cuenta Google previamente vinculada retornó correctamente a la sesión de `Lucía · QA aislado` y mostró su programa. Eso confirma que el intercambio OAuth y la sesión siguen operativos en el código desplegado allí; producción carece de cualquier vínculo Google para repetir la prueba positiva sin tocar una cuenta real.
+- La única cuenta de producción tiene contraseña y aún no está vinculada. La ruta de Perfil requiere que el correo Google verificado coincida con el correo guardado en esa cuenta; las identidades Google probadas/visibles en Chrome no coinciden. No se modificó este control de seguridad. `npm test` 784/784 (84 archivos), `npm run lint` y `npm run build` pasaron; solo cambian este handoff y el build log.
+- Pendiente: respuesta del dueño sobre el paso exacto y correo Google que intentó usar; si es la cuenta existente, entrar con contraseña y usar Perfil > Conectar Google con el **mismo correo**. Si es nuevo cliente, crear invitación desde Coach y seguirla con Google. Verificar un retorno positivo en producción solo con una cuenta expresamente elegida para esa vinculación; evitar cuentas sintéticas en producción. Si el correo de la cuenta y el Google que desea usar son distintos, pedir decisión explícita antes de permitir vincular identidades distintas o cambiar la cuenta.
+
 ## Cuentas y suscripción — plan del dueño, 2026-09-26
 
 - Modelo aprobado: el coach invita; el cliente crea cuenta con email y contraseña o Google; Stripe cobra automáticamente. No hay registro público.
@@ -48,11 +58,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-27T00:20:14.432Z
+- **Última sincronización:** 2026-09-27T00:25:23.131Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1195,6 +1205,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-27T00:25:23.132Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** SSO Google investigado: OAuth y cuenta QA funcionan; producción tiene una cuenta con contraseña sin Google vinculado y sin invitaciones vigentes. Diagnóstico y pasos documentados en HANDOFF y BUILD_LOG.
+- **Verificación:** npm test 784/784; npm run lint; npm run build; git diff --check; QA OAuth positivo en staging
+- **Siguiente:** Dueño: indicar en qué paso falló y si el correo Google coincide con el de su cuenta. Si coincide, entrar con contraseña y enlazar desde Perfil; si es cliente nuevo, usar invitación. Claude puede retomar con estos registros.
+
 
 ### 2026-09-27T00:20:14.432Z | codex | CLAIM
 - **Estado:** active
