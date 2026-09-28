@@ -78,10 +78,8 @@ export const EJERCICIOS_BASE: readonly EjercicioBase[] = [
   { id: 'elevacion-talones-sentado', nombre: 'Seated calf raise' },
 
   // ---- Ampliación pedida por el coach (correo del 2026-09-26) ---------------
-  // «Unilateral» y «prensa de piernas 45 grados». Identidades del PDF (Cxxx) sin
-  // decisión pendiente, o cuya única decisión ya contestó (A1, A9, A10). Mismo
-  // id que la fundación del catálogo maestro. Quedan fuera las que dependen de
-  // preguntas B abiertas y las que no tienen foto fiel. Ver docs/BIBLIOTECA-AMPLIACION-UNILATERAL.md.
+  // Identidades del PDF (Cxxx); A y B resueltos con nombres genéricos.
+  // No redefinen las fichas históricas. Ver docs/BIBLIOTECA-AMPLIACION-UNILATERAL.md.
   { id: 'sfm-catalog-c191', nombre: 'Prensa de piernas 45°' },
   { id: 'sfm-catalog-c194', nombre: 'Prensa de piernas unilateral' },
   { id: 'sfm-catalog-c196', nombre: 'Extensión de cuádriceps unilateral' },
@@ -95,6 +93,17 @@ export const EJERCICIOS_BASE: readonly EjercicioBase[] = [
   { id: 'sfm-catalog-c056', nombre: 'Jalón unilateral en polea alta' },
   { id: 'sfm-catalog-c137', nombre: 'Preacher curl con mancuerna unilateral' },
   { id: 'sfm-catalog-c142', nombre: 'Curl unilateral en cable' },
+  { id: 'sfm-catalog-c026', nombre: 'Press unilateral convergente' },
+  { id: 'sfm-catalog-c059', nombre: 'Pulldown unilateral convergente' },
+  { id: 'sfm-catalog-c071', nombre: 'Remo sentado unilateral en cable' },
+  { id: 'sfm-catalog-c077', nombre: 'Remo unilateral en máquina' },
+  { id: 'sfm-catalog-c107', nombre: 'Elevación lateral unilateral en cable' },
+  { id: 'sfm-catalog-c147', nombre: 'Curl unilateral en máquina' },
+  { id: 'sfm-catalog-c217', nombre: 'Hip thrust unilateral' },
+  { id: 'sfm-catalog-c256', nombre: 'Calf raise unilateral' },
+  { id: 'sfm-catalog-c031', nombre: 'Press unilateral de pecho en cable' },
+  { id: 'sfm-catalog-c102', nombre: 'Press unilateral de hombro en máquina' },
+  { id: 'sfm-catalog-c204', nombre: 'Peso muerto rumano unilateral en cable' },
 ]
 
 const POR_ID = new Map(EJERCICIOS_BASE.map((ejercicio) => [ejercicio.id, ejercicio.nombre]))

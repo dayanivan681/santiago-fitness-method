@@ -9,8 +9,8 @@
  * §23 necesita que aquí haya de dónde elegir: sin una biblioteca amplia, el
  * coach no puede reemplazar nada ni definir Lower A, Upper B y Lower B (§28).
  *
- * IMÁGENES: free-exercise-db (https://github.com/yuhonas/free-exercise-db),
- * dominio público bajo Unlicense. Van empaquetadas en `public/ejercicios/`
+ * IMÁGENES: free-exercise-db (dominio público bajo Unlicense) y generación IA.
+ * Procedencia y prompts en public/ejercicios/PROCEDENCIA.md. Van empaquetadas en `public/ejercicios/`
  * porque §27 exige usar la app en el gimnasio, sin depender de la conexión.
  * Conviene reconfirmar la licencia antes de un lanzamiento comercial y
  * sustituirlas por fotos de las máquinas reales cuando las haya: §15 pide que

@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## Cierre de fotos unilaterales — codex, 2026-09-28
+
+- Turno reclamado limpio en `main` (`00ab311`). Dueño confirma que las 12 respuestas B son «Mantener genérico»; no se editaron PDFs ni respuestas de Santiago.
+- Biblioteca de 46 a 57 fichas: diez faltantes de foto y C071 (foto de dominio público disponible). Nuevas entradas en `unilaterales.ts` y `shared/ejercicios-base.ts`, 24 filas activas en manifest; fundación histórica de 123 identidades intacta.
+- 14 fotos 850×567 <100 KB: 12 generadas con `image_gen`, dos reales Unlicense (C071/C256); tres reemplazos C194/C203/C161 corrigen pierna, mancuerna y agarre. Fuente/condiciones, prompts y revisión en `public/ejercicios/PROCEDENCIA.md` + `procedencia.json`. Aviso IA visible en ficha. Equipo/cargas representativos y estimados documentados; nombres genéricos.
+- Verificación: 799/799 tests (87 archivos), lint y build PASS; QA de 14 fichas en Chrome local a 390×844 y 1280×900, imágenes cargadas y etiquetas IA correctas, sin errores de consola. Node/JSDOM emiten avisos durante tests. Prueba sin equivalentes adaptada porque C102 ahora ofrece alternativa a landmine.
+- Siguiente: ninguno dentro de esta tarea; queda desplegar cuando el dueño lo solicite. No se desplegó a producción ni se modificaron datos de clientes.
+
 ## Diagnóstico SSO de clientes en producción — codex, 2026-09-26/27 (en curso)
 
 - Turno reclamado en `main` con `npm run handoff:sync` y `handoff:claim` (`3950180`). El dueño reportó que Google SSO no le funcionó; se pidió aclarar si fue desde `/entrar`, una invitación o Perfil y el mensaje exacto. No se han modificado cuentas, invitaciones ni secretos.
@@ -58,11 +66,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-28T13:34:03.293Z
+- **Última sincronización:** 2026-09-28T13:46:41.304Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1205,6 +1213,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-28T13:46:41.305Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca 46→57: diez unilaterales genéricos y C071; 14 JPG fieles 850x567 <100KB, tres provisionales corregidas, procedencia/licencias/prompts y etiqueta IA; manifest y documentación actualizados
+- **Verificación:** npm test: 799/799 (87 archivos); npm run lint PASS; npm run build PASS; QA Chrome local 390x844 y 1280x900: 14 fichas y fotos, etiquetas IA, sin errores; JPG dimensiones/tamaño PASS; docs/cliente intacto
+- **Siguiente:** ninguno
+
 
 ### 2026-09-28T13:34:03.294Z | codex | CLAIM
 - **Estado:** active

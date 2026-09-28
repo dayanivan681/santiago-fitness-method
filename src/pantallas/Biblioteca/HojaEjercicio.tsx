@@ -75,6 +75,10 @@ export function HojaEjercicio({
           <img className="hoja__imagen" src={ejercicio.imagen} alt="" />
         )}
 
+        {ejercicio.imagenGenerada && (
+          <p className="hoja__texto">Imagen generada con IA · equipo representativo.</p>
+        )}
+
         <div className="rejilla-datos">
           <Dato etiqueta="Equipo" valor={etiquetaEquipo(ejercicio.equipo)} />
           <Dato etiqueta="Tipo de carga" valor={ETIQUETA_CARGA[ejercicio.tipoCarga]} />

@@ -5,10 +5,10 @@ unilateral, prensa para piernas 45 grados. Por eso te pedí que la biblioteca
 fuera más amplia». También van aquí las respuestas del cuestionario A1–A11 del
 mismo día.
 
-**Resultado:** la biblioteca programable pasa de 33 a **46 fichas**. Las 33
+**Resultado vigente (2026-09-28):** la biblioteca programable tiene **57 fichas**: 33 originales, 13 de la primera ampliación y 11 de este cierre. Las 33
 originales conservan su id, su historial y su calibración.
 
-## Añadidas (13)
+## Primera ampliación (13, 2026-09-27)
 
 Todas usan el id determinístico del catálogo maestro (`sfm-catalog-cNNN`) y
 figuran como `active_in_runtime_exercises=true` en `BIBLIOTECA-FASE-3B1-MANIFEST.csv`.
@@ -16,7 +16,7 @@ figuran como `active_in_runtime_exercises=true` en `BIBLIOTECA-FASE-3B1-MANIFEST
 | Ref | Ficha | Por qué se puede añadir |
 |---|---|---|
 | C191 | Prensa de piernas 45° | La pidió el coach por su nombre. A9 (histórico «Prensa de piernas») quedó genérico, así que esta es una variante nueva y separada. |
-| C194 | Prensa de piernas unilateral | Palabra clave del coach. El nombre no fija la máquina; eso es B30. |
+| C194 | Prensa de piernas unilateral | Palabra clave del coach. Nombre genérico conservado; B30 quedó «Mantener genérico». |
 | C196 | Extensión de cuádriceps unilateral | Sólo dependía de A10, que quedó genérico. |
 | C161, C162 | Pushdown unilateral neutro / supinado | Sólo dependían de A1, contestada: barra V. |
 | C203 | Peso muerto unilateral con mancuerna | Segura en 3B.1. |
@@ -27,22 +27,49 @@ figuran como `active_in_runtime_exercises=true` en `BIBLIOTECA-FASE-3B1-MANIFEST
 | C137 | Preacher curl con mancuerna unilateral | Segura en 3B.1. |
 | C142 | Curl unilateral en cable | Segura en 3B.1. |
 
-## Unilaterales que quedan fuera, y por qué
+## Cierre de fotos y bloque B (2026-09-28)
 
-| Ref | Ficha | Falta |
+El dueño confirma que Santiago respondió las 12 preguntas B con **«Mantener
+genérico»**. Se conserva el nombre del PDF; no se asigna marca, modelo,
+inclinación o agarre específico como decisión del coach. La foto representa
+una ejecución posible de esa identidad. El PDF enumera nombres y categorías,
+no especificaciones de postura ni modelos de aparato.
+
+| Ref | Nueva ficha | Imagen |
 |---|---|---|
-| C031 | Press unilateral de pecho en cable | Foto fiel |
-| C102 | Press unilateral de hombro en máquina | Foto fiel |
-| C204 | Peso muerto rumano unilateral en cable | Foto fiel |
-| C026 | Press unilateral convergente | B17, B18: qué máquina e inclinación |
-| C059 | Pulldown unilateral convergente | B22 |
-| C071 | Remo sentado unilateral en cable | A5 (pendiente) y B25: agarre |
-| C077 | Remo unilateral en máquina | B9 |
-| C107 | Elevación lateral unilateral en cable | B12, B13: si es la lean-away |
-| C147 | Curl unilateral en máquina | B27 |
-| C217 | Hip thrust unilateral | B33: equipo |
-| C256 | Calf raise unilateral | B36, B37 |
-| C057, C208, C209 | Jalón arrodillado / curl femoral de pie y arrodillado unilateral | Identidad ambigua en 3A |
+| C026 | Press unilateral convergente | Generada con IA: press de pecho con palancas independientes |
+| C059 | Pulldown unilateral convergente | Generada con IA: jalón en máquina de palancas independientes |
+| C077 | Remo unilateral en máquina | Generada con IA: remo con apoyo de pecho y una palanca activa |
+| C107 | Elevación lateral unilateral en cable | Generada con IA: polea baja, torso vertical; no lean-away |
+| C147 | Curl unilateral en máquina | Generada con IA: un brazo sobre apoyo de máquina |
+| C217 | Hip thrust unilateral | Generada con IA: espalda en banco, un pie apoyado, peso corporal |
+| C256 | Calf raise unilateral | Dominio público: de pie sobre una pierna, apoyo de equilibrio |
+| C031 | Press unilateral de pecho en cable | Generada con IA: empuje con un agarre desde polea a altura del pecho |
+| C102 | Press unilateral de hombro en máquina | Generada con IA: una palanca de press por encima de la cabeza |
+| C204 | Peso muerto rumano unilateral en cable | Generada con IA: bisagra sobre una pierna y agarre de polea baja |
+| C071 | Remo sentado unilateral en cable | Dominio público: remo sentado con un agarre; B25 genérico |
+
+C071 se incluye además de los diez solicitados porque ya tiene foto fiel y B25
+quedó resuelto. El A5 genérico de la ficha histórica no fusiona sus historiales.
+Las tres fotos provisionales se sustituyen: **C194** ahora usa una sola pierna,
+**C203** una mancuerna y **C161** agarre neutro con cuerda corta individual.
+
+Archivos: `public/ejercicios/sfm-catalog-cNNN.jpg`, 850×567, menos de 100 KB.
+Los 12 archivos sintéticos están marcados `imagenGenerada=true` y la ficha
+muestra «Imagen generada con IA · equipo representativo». Dos fotos reales
+(C071/C256) usan free-exercise-db bajo Unlicense, con copia de licencia local.
+La procedencia, licencia/condiciones, prompts y revisión visual de cada una
+están en `public/ejercicios/PROCEDENCIA.md` y `procedencia.json`.
+
+El manifest conserva la clasificación histórica 3B.1 y sus decisiones fuente,
+pero marca las **24 identidades operativas** como activas. Resolver B no importa
+automáticamente todas las identidades excluidas ni cambia la fundación de 123.
+
+## Unilaterales que siguen fuera
+
+| Ref | Ficha | Motivo |
+|---|---|---|
+| C057, C208, C209 | Jalón arrodillado / curl femoral de pie y arrodillado unilateral | Identidad ambigua en 3A; fuera del cierre de fotos solicitado |
 
 C062 «Remo con mancuerna a una mano» ya existía como `remo-mancuerna`.
 
@@ -55,9 +82,8 @@ C062 «Remo con mancuerna a una mano» ya existía como `remo-mancuerna`.
   bilateral: la prensa 45° y la unilateral junto a «Prensa de piernas», los
   pushdown junto a la extensión de tríceps, etc. Cada una guarda su propio historial.
 
-## Preguntas enviadas al coach (2026-09-27)
+## Respuestas del coach
 
-Las 12 preguntas B de la tabla anterior están en https://sfm-variantes.pages.dev
-(bloque B) y se le enviaron por correo en el mismo hilo que el bloque A. Las
-respuestas llegan a D1 `sfm-variantes`. Con ellas se decide qué unilaterales
-restantes se añaden y se cambia la foto provisional de la prensa unilateral.
+Bloque B enviado el 2026-09-27 en https://sfm-variantes.pages.dev. El cierre usa
+la confirmación del dueño del 2026-09-28: las 12 respuestas fueron «Mantener
+genérico». No se alteraron las respuestas del cuestionario ni los PDFs.

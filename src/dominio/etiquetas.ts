@@ -41,6 +41,7 @@ const ETIQUETA_EQUIPO: Readonly<Record<Equipo, string>> = {
   mancuernas: 'Mancuernas',
   barraLibre: 'Barra libre',
   maquinaTradicional: 'Máquina',
+  pesoCorporal: 'Peso corporal',
 }
 
 export function etiquetaEquipo(equipo: Equipo): string {

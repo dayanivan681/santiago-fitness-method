@@ -2,14 +2,14 @@
  * Ampliación pedida por el coach en su correo del 2026-09-26: «unilateral» y
  * «prensa para piernas 45 grados».
  *
- * Son identidades de su Biblioteca Maestra (C191, C194…) que no dependen de
- * ninguna pregunta abierta, o cuya única pregunta ya contestó (A1, A9, A10).
+ * Son identidades de su Biblioteca Maestra (C191, C194…). El bloque B quedó
+ * en «Mantener genérico» (12 respuestas, confirmado por el dueño 2026-09-28).
  * Usan el mismo id que la fundación del catálogo maestro.
  *
  * Los músculos, el patrón de movimiento y los perfiles de carga son ESTIMADOS,
  * igual que los de las 33 fichas originales: el PDF no los fija. Están en
- * ESTIMADOS-A-CONFIRMAR.md. Las fotos son de free-exercise-db (dominio
- * público); las provisionales también están anotadas allí.
+ * ESTIMADOS-A-CONFIRMAR.md. Fotos: dominio público y generación IA;
+ * procedencia, prompts y revisión en public/ejercicios/PROCEDENCIA.md.
  *
  * §16: cada variante unilateral es una fila propia. No comparte historial con
  * su versión a dos brazos o dos piernas; sólo el `movimiento`, que es lo que la
@@ -19,7 +19,7 @@
 import type { Ejercicio } from '../../../dominio/tipos'
 import type { PerfilCarga } from '../../../dominio/carga'
 import { nombreDe } from '../../../../shared/ejercicios-base'
-import { DISCOS_POR_LADO, MANCUERNAS, STACK } from './cargas'
+import { DISCOS_POR_LADO, MANCUERNAS, PESO_CORPORAL, STACK } from './cargas'
 
 /** Landmine: los discos van en un solo extremo de la barra; se registra lo cargado. */
 const LANDMINE: PerfilCarga = {
@@ -45,7 +45,8 @@ export const PRENSA_UNILATERAL: Ejercicio = {
   movimiento: 'sentadilla',
   nombre: nombreDe('sfm-catalog-c194'),
   equipo: 'maquinaTradicional',
-  imagen: '/ejercicios/prensa.jpg',
+  imagen: '/ejercicios/sfm-catalog-c194.jpg',
+  imagenGenerada: true,
   explicacionCorta: 'Una pierna cada vez, pie centrado en la plataforma. Misma profundidad con las dos piernas.',
   musculoPrimario: 'cuadriceps',
   musculosSecundarios: ['gluteos'],
@@ -70,6 +71,7 @@ export const PESO_MUERTO_UNILATERAL_MANCUERNA: Ejercicio = {
   nombre: nombreDe('sfm-catalog-c203'),
   equipo: 'mancuernas',
   imagen: '/ejercicios/sfm-catalog-c203.jpg',
+  imagenGenerada: true,
   explicacionCorta: 'Apoyado en una pierna, cadera atrás y espalda neutra; la otra pierna sube en línea con el torso.',
   musculoPrimario: 'femoral',
   musculosSecundarios: ['gluteos', 'core'],
@@ -131,6 +133,7 @@ export const PUSHDOWN_UNILATERAL_NEUTRO: Ejercicio = {
   equipo: 'cable',
   angulo: 'neutro',
   imagen: '/ejercicios/sfm-catalog-c161.jpg',
+  imagenGenerada: true,
   explicacionCorta: 'Un brazo cada vez, palma mirando hacia dentro. Codo pegado al costado; sólo se mueve el antebrazo.',
   musculoPrimario: 'triceps',
   musculosSecundarios: [],
@@ -186,6 +189,147 @@ export const CURL_UNILATERAL_CABLE: Ejercicio = {
   ...STACK,
 }
 
+export const PRESS_UNILATERAL_CONVERGENTE: Ejercicio = {
+  id: 'sfm-catalog-c026',
+  movimiento: 'press-pecho',
+  nombre: nombreDe('sfm-catalog-c026'),
+  equipo: 'convergente',
+  imagen: '/ejercicios/sfm-catalog-c026.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'Un brazo cada vez en una máquina con brazos independientes. Empujar delante del pecho sin separar la espalda del respaldo.',
+  musculoPrimario: 'pecho',
+  musculosSecundarios: ['deltoideAnterior', 'triceps'],
+  ...DISCOS_POR_LADO,
+}
+
+export const PULLDOWN_UNILATERAL_CONVERGENTE: Ejercicio = {
+  id: 'sfm-catalog-c059',
+  movimiento: 'jalon-vertical',
+  nombre: nombreDe('sfm-catalog-c059'),
+  equipo: 'convergente',
+  imagen: '/ejercicios/sfm-catalog-c059.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'Sentado con los muslos sujetos, tirar de un brazo de la máquina hacia el hombro. Llevar el codo hacia el costado sin girar el torso.',
+  musculoPrimario: 'espalda',
+  musculosSecundarios: ['biceps'],
+  ...DISCOS_POR_LADO,
+}
+
+export const REMO_SENTADO_UNILATERAL_CABLE: Ejercicio = {
+  id: 'sfm-catalog-c071',
+  movimiento: 'remo-horizontal',
+  nombre: nombreDe('sfm-catalog-c071'),
+  equipo: 'cable',
+  imagen: '/ejercicios/sfm-catalog-c071.jpg',
+  explicacionCorta: 'Un brazo cada vez desde la polea baja, torso estable. Llevar el agarre hacia las costillas sin balancearse.',
+  musculoPrimario: 'espalda',
+  musculosSecundarios: ['biceps'],
+  ...STACK,
+}
+
+export const REMO_UNILATERAL_MAQUINA: Ejercicio = {
+  id: 'sfm-catalog-c077',
+  movimiento: 'remo-horizontal',
+  nombre: nombreDe('sfm-catalog-c077'),
+  equipo: 'maquinaTradicional',
+  imagen: '/ejercicios/sfm-catalog-c077.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'Un brazo cada vez en una máquina con palancas independientes. Tirar hacia las costillas sin girar el torso.',
+  musculoPrimario: 'espalda',
+  musculosSecundarios: ['biceps'],
+  ...DISCOS_POR_LADO,
+}
+
+export const ELEVACION_LATERAL_UNILATERAL_CABLE: Ejercicio = {
+  id: 'sfm-catalog-c107',
+  movimiento: 'elevacion-lateral',
+  nombre: nombreDe('sfm-catalog-c107'),
+  equipo: 'cable',
+  imagen: '/ejercicios/sfm-catalog-c107.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'De pie junto a la polea baja, elevar un brazo hacia el costado hasta la altura del hombro. Codo ligeramente flexionado y torso estable.',
+  musculoPrimario: 'deltoideLateral',
+  musculosSecundarios: [],
+  ...STACK,
+}
+
+export const CURL_UNILATERAL_MAQUINA: Ejercicio = {
+  id: 'sfm-catalog-c147',
+  movimiento: 'curl-biceps',
+  nombre: nombreDe('sfm-catalog-c147'),
+  equipo: 'maquinaTradicional',
+  imagen: '/ejercicios/sfm-catalog-c147.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'Un brazo cada vez, brazo apoyado y codo fijo. Flexionar sin despegar el brazo del apoyo y bajar controlado.',
+  musculoPrimario: 'biceps',
+  musculosSecundarios: [],
+  ...STACK,
+}
+
+export const HIP_THRUST_UNILATERAL: Ejercicio = {
+  id: 'sfm-catalog-c217',
+  movimiento: 'extension-cadera',
+  nombre: nombreDe('sfm-catalog-c217'),
+  equipo: 'pesoCorporal',
+  imagen: '/ejercicios/sfm-catalog-c217.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'Espalda alta apoyada en un banco, un pie en el suelo y el otro elevado. Subir la cadera sin arquear la espalda ni girar la pelvis.',
+  musculoPrimario: 'gluteos',
+  musculosSecundarios: ['femoral', 'core'],
+  ...PESO_CORPORAL,
+}
+
+export const CALF_RAISE_UNILATERAL: Ejercicio = {
+  id: 'sfm-catalog-c256',
+  movimiento: 'gemelo',
+  nombre: nombreDe('sfm-catalog-c256'),
+  equipo: 'pesoCorporal',
+  imagen: '/ejercicios/sfm-catalog-c256.jpg',
+  explicacionCorta: 'De pie sobre una pierna y con apoyo para el equilibrio, elevar el talón y bajar controlado. La otra pierna no empuja.',
+  musculoPrimario: 'pantorrillas',
+  musculosSecundarios: [],
+  ...PESO_CORPORAL,
+}
+
+export const PRESS_UNILATERAL_PECHO_CABLE: Ejercicio = {
+  id: 'sfm-catalog-c031',
+  movimiento: 'press-pecho',
+  nombre: nombreDe('sfm-catalog-c031'),
+  equipo: 'cable',
+  imagen: '/ejercicios/sfm-catalog-c031.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'De espaldas a la polea a la altura del pecho, empujar un agarre hacia delante. Codo flexionado al inicio, torso estable y sin girar.',
+  musculoPrimario: 'pecho',
+  musculosSecundarios: ['deltoideAnterior', 'triceps'],
+  ...STACK,
+}
+
+export const PRESS_UNILATERAL_HOMBRO_MAQUINA: Ejercicio = {
+  id: 'sfm-catalog-c102',
+  movimiento: 'press-hombro',
+  nombre: nombreDe('sfm-catalog-c102'),
+  equipo: 'maquinaTradicional',
+  imagen: '/ejercicios/sfm-catalog-c102.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'Un brazo cada vez en una máquina de hombro con palancas independientes. Empujar arriba sin arquear la espalda y bajar controlado.',
+  musculoPrimario: 'deltoideAnterior',
+  musculosSecundarios: ['triceps', 'deltoideLateral'],
+  ...DISCOS_POR_LADO,
+}
+
+export const PESO_MUERTO_RUMANO_UNILATERAL_CABLE: Ejercicio = {
+  id: 'sfm-catalog-c204',
+  movimiento: 'bisagra-cadera',
+  nombre: nombreDe('sfm-catalog-c204'),
+  equipo: 'cable',
+  imagen: '/ejercicios/sfm-catalog-c204.jpg',
+  imagenGenerada: true,
+  explicacionCorta: 'Sobre una pierna, sostener con una mano el agarre de la polea baja. Llevar la cadera atrás con espalda neutra mientras la otra pierna se extiende atrás.',
+  musculoPrimario: 'femoral',
+  musculosSecundarios: ['gluteos', 'core'],
+  ...STACK,
+}
+
 export const AMPLIACION_UNILATERAL: readonly Ejercicio[] = [
   PRENSA_45,
   PRENSA_UNILATERAL,
@@ -200,4 +344,15 @@ export const AMPLIACION_UNILATERAL: readonly Ejercicio[] = [
   JALON_UNILATERAL_POLEA_ALTA,
   PREACHER_CURL_MANCUERNA_UNILATERAL,
   CURL_UNILATERAL_CABLE,
+  PRESS_UNILATERAL_CONVERGENTE,
+  PULLDOWN_UNILATERAL_CONVERGENTE,
+  REMO_SENTADO_UNILATERAL_CABLE,
+  REMO_UNILATERAL_MAQUINA,
+  ELEVACION_LATERAL_UNILATERAL_CABLE,
+  CURL_UNILATERAL_MAQUINA,
+  HIP_THRUST_UNILATERAL,
+  CALF_RAISE_UNILATERAL,
+  PRESS_UNILATERAL_PECHO_CABLE,
+  PRESS_UNILATERAL_HOMBRO_MAQUINA,
+  PESO_MUERTO_RUMANO_UNILATERAL_CABLE,
 ]

@@ -1,5 +1,15 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-28 — Fotos fieles y cierre de unilaterales genéricos — codex
+
+- Fuente: dueño confirma 12 respuestas B «Mantener genérico». Se consultó Biblioteca Maestra PDF sin tocar `docs/cliente`. Nombres genéricos preservados; aparatos/fotos representativos, perfiles y músculos estimados.
+- Biblioteca 46 → 57 fichas: diez pendientes (C026, C059, C077, C107, C147, C217, C256, C031, C102, C204) y C071 con foto pública ya fiel. Ids canónicos compartidos con Coach, historias separadas; 24 filas activas en manifest, clasificación histórica 3B.1 conservada.
+- 14 JPG 850×567 de 47.684 a 68.476 bytes: 11 para fichas nuevas y tres reemplazos. C194 ahora usa una pierna, C203 mancuerna y C161 cuerda individual con agarre neutro. 12 generadas con herramienta integrada `image_gen` y 2 reales de free-exercise-db bajo Unlicense (C071/C256). Fuente, condiciones comerciales, prompts y revisión por imagen en `public/ejercicios/PROCEDENCIA.md` y `procedencia.json`; copia local de Unlicense.
+- Imágenes sintéticas marcadas `imagenGenerada=true` y aviso visible en ficha. Equipo `pesoCorporal` para hip thrust/calves sin lastre, con registro de lastre añadido. Documentos de estimados/ampliación actualizados.
+- QA: 799/799 pruebas en 87 archivos, lint y build PASS. Se corrigió la prueba del estado sin alternativas: landmine ahora sí tiene C102 como alternativa; se usa abducción como caso sin alternativa. Avisos de Node MaxListeners y navegación JSDOM durante tests; no errores de consola en navegador.
+- Chrome headless con Playwright instalado (plugin Browser ausente; Chrome local usado porque faltaba el binario Chromium del bundle), `/demo/cliente/biblioteca`, 390×844 y 1280×900: 57 fichas, las 14 fotos decodifican a 850×567, etiqueta IA sólo en las 12 sintéticas, abrir/cerrar todas PASS, sin overlay ni errores/warnings de consola. Capturas revisadas fuera del repo.
+- Alcance: guardado y publicación Git; no despliegue de producción solicitado. No cambios en cuentas, rutinas del cliente ni respuestas del cuestionario.
+
 ## 2026-09-27 — Guía dinámica para Santiago y panel limpio — claude-code
 
 - Producción: el dueño archivó «Santiago»; por su indicación se archivaron «Ivan» y «Cliente nuevo». El panel de Santiago empieza sin clientes (el recorrido abre con «Empieza con Nuevo cliente»).

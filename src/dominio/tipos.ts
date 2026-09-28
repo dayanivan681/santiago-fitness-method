@@ -52,6 +52,7 @@ export type Equipo =
   | 'mancuernas'
   | 'barraLibre'
   | 'maquinaTradicional'
+  | 'pesoCorporal'
 
 /** Músculos con objetivo semanal (§20) más los que reciben trabajo indirecto (§21). */
 export type Musculo =
@@ -90,6 +91,8 @@ export interface Ejercicio extends PerfilCarga {
   readonly movimiento: string
   /** §15: la biblioteca es visual, sirve para identificar el ejercicio. */
   readonly imagen: string
+  /** Distingue una representación sintética de una fotografía real. */
+  readonly imagenGenerada?: boolean
   readonly explicacionCorta: string
   /** §21: sólo el primario suma contra los objetivos de volumen directo. */
   readonly musculoPrimario: Musculo

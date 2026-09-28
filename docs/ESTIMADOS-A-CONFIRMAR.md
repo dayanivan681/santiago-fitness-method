@@ -51,7 +51,7 @@ Upper A no se toca: §29 lo deja definido, con el Military Press ya retirado.
 
 ## Los seis perfiles que usa la biblioteca
 
-La biblioteca tiene 33 ejercicios, pero casi todos comparten uno de estos seis
+La biblioteca tiene 57 ejercicios, pero casi todos comparten uno de estos seis
 perfiles. Corregir el perfil corrige de golpe todos los ejercicios que lo usan.
 
 | Perfil | Se usa en | Peso base | Salto mínimo (total) | Real |
@@ -91,7 +91,9 @@ Si una máquina concreta se sale de su perfil — por ejemplo un stack que salta
 
 ## Imágenes
 
-Las de ahora son de un banco de imágenes de dominio público. Sirven para
+La biblioteca combina fotos de dominio público e imágenes generadas con IA,
+marcadas como tales en la ficha. La procedencia y condiciones están en
+`public/ejercicios/PROCEDENCIA.md`. Sirven para
 identificar el movimiento, que es lo que pide la guía, pero **no son las máquinas
 de tu gimnasio**.
 
@@ -112,7 +114,7 @@ de repeticiones y descanso. La app asigna sola el estímulo según la posición 
 el 1 es fuerza, del 2 al 4 hipertrofia y el 5 resistencia — así que no hay que
 acordarse de la estructura.
 
-Si falta algún ejercicio que usas y no está en los 33, dime cuál y lo añado.
+Si falta algún ejercicio que usas y no está en la biblioteca, dime cuál y lo añado.
 
 ---
 
@@ -124,14 +126,14 @@ Biblioteca Maestra. Lo estimado es esto:
 | Ficha | Músculo principal · secundarios | Perfil de carga | Foto |
 |---|---|---|---|
 | Prensa de piernas 45° | Cuádriceps · glúteos | Discos por lado | La de «Prensa de piernas», que ya es una prensa a 45° |
-| Prensa de piernas unilateral | Cuádriceps · glúteos | Discos por lado | **Provisional**: la prensa a 45° con dos piernas. La máquina de la versión unilateral es la pregunta B30. |
+| Prensa de piernas unilateral | Cuádriceps · glúteos | Discos por lado | Generada con IA: una pierna en plataforma de prensa 45°. B30 genérico; modelo representativo. |
 | Extensión de cuádriceps unilateral | Cuádriceps | Stack | Fiel |
-| Peso muerto unilateral con mancuerna | Femoral · glúteos, core | Mancuernas | **Provisional**: muestra una kettlebell |
+| Peso muerto unilateral con mancuerna | Femoral · glúteos, core | Mancuernas | Generada con IA: mancuerna y apoyo a una pierna |
 | Fly unilateral en cable | Pecho · deltoide anterior | Stack | Fiel |
 | Landmine press unilateral | Deltoide anterior · pecho, tríceps | Total cargado (saltos de 5 lb) | Fiel |
 | Extensión unilateral sobre cabeza con mancuerna | Tríceps | Mancuernas | Fiel |
 | Extensión unilateral sobre cabeza en cable | Tríceps | Stack | Fiel |
-| Pushdown unilateral agarre neutro | Tríceps | Stack | **Provisional**: la foto muestra agarre supinado |
+| Pushdown unilateral agarre neutro | Tríceps | Stack | Generada con IA: agarre neutro en cuerda corta individual |
 | Pushdown unilateral supinado | Tríceps | Stack | Fiel |
 | Jalón unilateral en polea alta | Espalda · bíceps | Stack | Fiel |
 | Preacher curl con mancuerna unilateral | Bíceps | Mancuernas | Fiel |
@@ -139,3 +141,32 @@ Biblioteca Maestra. Lo estimado es esto:
 
 En las unilaterales se registra el peso de un lado: el del pin, el de la
 mancuerna o el de los discos de ese lado.
+
+
+## Cierre de fotos y bloque B (2026-09-28)
+
+Las 12 respuestas B son «Mantener genérico», según confirma el dueño. Se añaden
+los diez ejercicios pendientes de foto y C071, que ya dispone de foto fiel de
+dominio público. Los nombres permanecen genéricos. Equipos y perfiles de carga
+son estimados representativos, corregibles por el coach durante el piloto.
+
+| Ref | Músculo principal · secundarios | Perfil estimado | Representación de la foto |
+|---|---|---|---|
+| C026 | Pecho · deltoide anterior, tríceps | Discos por lado | IA: convergente horizontal con palancas independientes |
+| C059 | Espalda · bíceps | Discos por lado | IA: jalón convergente de palancas independientes |
+| C071 | Espalda · bíceps | Stack | Dominio público: remo sentado de un brazo |
+| C077 | Espalda · bíceps | Discos por lado | IA: remo de palanca con apoyo de pecho |
+| C107 | Deltoide lateral | Stack | IA: polea baja y torso vertical |
+| C147 | Bíceps | Stack | IA: curl unilateral en máquina con apoyo |
+| C217 | Glúteos · femoral, core | Peso corporal / lastre añadido | IA: hip thrust de una pierna con espalda en banco |
+| C256 | Pantorrillas | Peso corporal / lastre añadido | Dominio público: calf raise de pie de una pierna con apoyo |
+| C031 | Pecho · deltoide anterior, tríceps | Stack | IA: press unilateral desde polea a altura de pecho |
+| C102 | Deltoide anterior · tríceps, deltoide lateral | Discos por lado | IA: press de hombro de una palanca |
+| C204 | Femoral · glúteos, core | Stack | IA: bisagra de una pierna con agarre de polea baja |
+
+Para C217 y C256, 0 lb significa sólo el peso corporal; registrar únicamente el
+lastre añadido. Las máquinas genéricas C077/C102 pueden usar discos o stack:
+el perfil inicial representa la foto y debe calibrarse para el aparato real.
+La imagen de C147 no fija el modelo ni los saltos de la máquina del gimnasio.
+Las fotos sintéticas se revisaron por equipo, unilateralidad, postura y agarre;
+son representaciones y no fotos de las máquinas de Santiago.

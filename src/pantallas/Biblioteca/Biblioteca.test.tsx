@@ -80,8 +80,8 @@ describe('ficha completa del ejercicio (punto H)', () => {
   })
 
   test('un ejercicio sin equivalentes lo dice, en vez de dejar el hueco vacío', async () => {
-    // El landmine press es el único press de hombro de la biblioteca.
-    const hoja = await abrirFicha('Landmine press unilateral')
+    // La abducción mantiene un patrón sin otra variante en la biblioteca.
+    const hoja = await abrirFicha('Abducción de cadera sentado en máquina')
 
     expect(
       within(hoja).getByText('No hay otra variante de este movimiento.'),
