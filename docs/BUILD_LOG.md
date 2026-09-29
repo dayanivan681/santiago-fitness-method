@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-28 — Mensaje 02 de Santiago archivado — codex
+
+- Segundo mensaje del dueño: «Biblioteca Maestra de Ejercicios — Santiago Fitness Method - Especificación inicial para la biblioteca del app». Se archiva como información recibida, sin implementar ni importar ejercicios a cuentas reales.
+- [Transcripción completa](aportes-santiago/2026-09-28-mensaje-02/TRANSCRIPCION.md): objetivo, organización, cinco páginas y doce grupos. [CSV](aportes-santiago/2026-09-28-mensaje-02/ejercicios.csv): 283 entradas sin deduplicar, con página, grupo, subgrupo, columna y nombre exacto del documento. Se preservan las continuaciones de Hombros, Glúteos y Tríceps y las dos columnas originales.
+- Cinco JPEG de las 13.05.54 trasladados de Downloads a `docs/aportes-santiago/2026-09-28-mensaje-02/originales`, siguiendo la petición de traslado del primer mensaje. SHA-256 y comparación byte por byte comprobados antes de retirar los originales de Downloads; comprobación final de integridad y ausencia en Downloads PASS. Procedencia en `fuentes.json`.
+- Índice compartido actualizado; `AGENTS.md` y `CLAUDE.md` ya apuntan a él. No se afirma equivalencia con el PDF previo de `docs/cliente` ni se asignan ids existentes: archivo del mensaje recibido, sin conciliación con el catálogo actual. `docs/cliente` intacto.
+- QA: cinco páginas, doce grupos, 283 entradas (35/69/68/65/46 por página), enlaces y hashes PASS. `npm test`: 837/837 (92 archivos); `npm run lint` y `npm run build`: PASS. Avisos conocidos Node MaxListeners y navegación JSDOM durante tests. `git diff --check`: PASS.
+- Siguiente: recibir nuevos mensajes o la tarea concreta de análisis/implementación del dueño.
+
 ## 2026-09-28 — Mensaje 01 de Santiago archivado — codex
 
 - Encargo del dueño: conservar el primer mensaje, rotulado «Listado de ejercicios por grupo muscular», y hacerlo accesible a Codex y Claude Code. No se solicitó implementar el informe.

@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-09-28 — Mensaje 02 de Santiago archivado — codex
+
+- Segundo mensaje del dueño: «Biblioteca Maestra de Ejercicios — Santiago Fitness Method - Especificación inicial para la biblioteca del app». Se archiva como información recibida, sin implementar ni importar ejercicios a cuentas reales.
+- [Transcripción completa](aportes-santiago/2026-09-28-mensaje-02/TRANSCRIPCION.md): objetivo, organización, cinco páginas y doce grupos. [CSV](aportes-santiago/2026-09-28-mensaje-02/ejercicios.csv): 283 entradas sin deduplicar, con página, grupo, subgrupo, columna y nombre exacto del documento. Se preservan las continuaciones de Hombros, Glúteos y Tríceps y las dos columnas originales.
+- Cinco JPEG de las 13.05.54 trasladados de Downloads a `docs/aportes-santiago/2026-09-28-mensaje-02/originales`, siguiendo la petición de traslado del primer mensaje. SHA-256 y comparación byte por byte comprobados antes de retirar los originales de Downloads; comprobación final de integridad y ausencia en Downloads PASS. Procedencia en `fuentes.json`.
+- Índice compartido actualizado; `AGENTS.md` y `CLAUDE.md` ya apuntan a él. No se afirma equivalencia con el PDF previo de `docs/cliente` ni se asignan ids existentes: archivo del mensaje recibido, sin conciliación con el catálogo actual. `docs/cliente` intacto.
+- QA: cinco páginas, doce grupos, 283 entradas (35/69/68/65/46 por página), enlaces y hashes PASS. `npm test`: 837/837 (92 archivos); `npm run lint` y `npm run build`: PASS. Avisos conocidos Node MaxListeners y navegación JSDOM durante tests. `git diff --check`: PASS.
+- Siguiente: recibir nuevos mensajes o la tarea concreta de análisis/implementación del dueño.
+
 ## 2026-09-28 — Mensaje 01 de Santiago archivado — codex
 
 - Encargo del dueño: conservar el primer mensaje, rotulado «Listado de ejercicios por grupo muscular», y hacerlo accesible a Codex y Claude Code. No se solicitó implementar el informe.
@@ -91,11 +100,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T03:20:57.885Z
+- **Última sincronización:** 2026-09-29T03:24:32.458Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1238,6 +1247,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T03:24:32.459Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Archivado mensaje 02 de Santiago: Biblioteca Maestra, 5 imágenes originales trasladadas de Downloads al proyecto, transcripción completa y CSV de 283 entradas en 12 grupos; índice compartido actualizado
+- **Verificación:** SHA-256, enlaces y traslado de 5 originales PASS; 283 entradas y 12 grupos verificados; npm test 837/837 en 92 archivos; npm run lint PASS; npm run build PASS; git diff --check PASS; avisos conocidos Node/JSDOM
+- **Siguiente:** Recibir nuevos mensajes o la tarea concreta de análisis o implementación del dueño
+
 
 ### 2026-09-29T03:20:57.885Z | codex | CLAIM
 - **Estado:** active

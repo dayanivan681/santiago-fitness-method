@@ -1,0 +1,42 @@
+{
+  "fecha_recepcion": "2026-09-28",
+  "mensaje": 2,
+  "titulo_documento": "Biblioteca Maestra de Ejercicios",
+  "paginas": [
+    {
+      "pagina": 1,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 13.05.54.jpeg",
+      "archivo_repositorio": "originales/pagina-01.jpeg",
+      "sha256": "b8dbdfc9a8e1a7d7ba1c748db40a50ecf67f4735cf5a083b05d32f1d118ef5bb",
+      "bytes": 139481
+    },
+    {
+      "pagina": 2,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 13.05.54 (1).jpeg",
+      "archivo_repositorio": "originales/pagina-02.jpeg",
+      "sha256": "af03d1801fd9ab8a97586992798363db235a4f3e86572a1b94191cd2517c3866",
+      "bytes": 146064
+    },
+    {
+      "pagina": 3,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 13.05.54 (2).jpeg",
+      "archivo_repositorio": "originales/pagina-03.jpeg",
+      "sha256": "ae7636c8c567eaba960f4dac8485b1c60aa293f72657e2e809200be0e469c446",
+      "bytes": 131821
+    },
+    {
+      "pagina": 4,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 13.05.54 (3).jpeg",
+      "archivo_repositorio": "originales/pagina-04.jpeg",
+      "sha256": "600364e471839624b4f5774949f5ce1ea460d06c50e6b4a6c690fb80dd3f0ad4",
+      "bytes": 135698
+    },
+    {
+      "pagina": 5,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 13.05.54 (4).jpeg",
+      "archivo_repositorio": "originales/pagina-05.jpeg",
+      "sha256": "fc8c0697b7bdad4f9dc21a80c9eac6a41a39045887c1d9957e402b16906c4258",
+      "bytes": 98819
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+pagina,grupo_documento,subgrupo_documento,columna,nombre_documento
+1,Pecho,Press horizontal,1,Bench Press con barra
+1,Pecho,Press horizontal,2,Bench Press con mancuernas
+1,Pecho,Press horizontal,1,Bench Press en Smith Machine
+1,Pecho,Press horizontal,2,Bench Press en máquina convergente
+1,Pecho,Press horizontal,1,Bench Press plate-loaded
+1,Pecho,Press horizontal,2,Chest Press selectorizado
+1,Pecho,Press horizontal,1,Chest Press sentado en cable
+1,Pecho,Press horizontal,2,Single-Arm Chest Press en cable
+1,Pecho,Press horizontal,1,Single-Arm Convergent Chest Press
+1,Pecho,Press inclinado,1,Incline Bench Press con barra
+1,Pecho,Press inclinado,2,Incline Dumbbell Press
+1,Pecho,Press inclinado,1,Incline Press Smith Machine
+1,Pecho,Press inclinado,2,Incline Press máquina convergente
+1,Pecho,Press inclinado,1,Incline Press plate-loaded
+1,Pecho,Press inclinado,2,Incline Chest Press en cable
+1,Pecho,Press inclinado,1,Incline Single-Arm Press
+1,Pecho,Press declinado,1,Decline Bench Press con barra
+1,Pecho,Press declinado,2,Decline Dumbbell Press
+1,Pecho,Press declinado,1,Decline Smith Press
+1,Pecho,Press declinado,2,Decline Convergent Press
+1,Pecho,Press declinado,1,Decline Plate-Loaded Press
+1,Pecho,Aperturas / aislamiento,1,Dumbbell Fly plano
+1,Pecho,Aperturas / aislamiento,2,Incline Dumbbell Fly
+1,Pecho,Aperturas / aislamiento,1,Pec Deck / Butterfly
+1,Pecho,Aperturas / aislamiento,2,Cable Fly
+1,Pecho,Aperturas / aislamiento,1,Low-to-High Cable Fly
+1,Pecho,Aperturas / aislamiento,2,High-to-Low Cable Fly
+1,Pecho,Aperturas / aislamiento,1,Mid Cable Fly
+1,Pecho,Aperturas / aislamiento,2,Single-Arm Cable Fly
+1,Pecho,Aperturas / aislamiento,1,Cable Crossover
+1,Pecho,Peso corporal,1,Push-Up
+1,Pecho,Peso corporal,2,Incline Push-Up
+1,Pecho,Peso corporal,1,Decline Push-Up
+1,Pecho,Peso corporal,2,Chest Dip
+1,Pecho,Peso corporal,1,Assisted Chest Dip
+2,Hombros,Press vertical,1,Military Press con barra
+2,Hombros,Press vertical,2,Seated Barbell Military Press
+2,Hombros,Press vertical,1,Dumbbell Shoulder Press
+2,Hombros,Press vertical,2,Arnold Press
+2,Hombros,Press vertical,1,Smith Machine Shoulder Press
+2,Hombros,Press vertical,2,Smith Machine Behind-the-Neck Press
+2,Hombros,Press vertical,1,Convergent Shoulder Press
+2,Hombros,Press vertical,2,Plate-Loaded Shoulder Press
+2,Hombros,Press vertical,1,Selectorized Shoulder Press
+2,Hombros,Press vertical,2,Cable Machine Shoulder Press
+2,Hombros,Press vertical,1,Single-Arm Machine Shoulder Press
+2,Hombros,Press vertical,2,Single-Arm Cable Shoulder Press
+2,Hombros,Press vertical,1,Landmine Press
+2,Hombros,Deltoide lateral,1,Dumbbell Lateral Raise
+2,Hombros,Deltoide lateral,2,Seated Dumbbell Lateral Raise
+2,Hombros,Deltoide lateral,1,Single-Arm Dumbbell Lateral Raise
+2,Hombros,Deltoide lateral,2,Cable Lateral Raise
+2,Hombros,Deltoide lateral,1,Cable Lateral Raise detrás del cuerpo
+2,Hombros,Deltoide lateral,2,Cuffed Cable Lateral Raise
+2,Hombros,Deltoide lateral,1,Lateral Raise Machine
+2,Hombros,Deltoide lateral,2,Lean-Away Cable Lateral Raise
+2,Hombros,Deltoide anterior,1,Dumbbell Front Raise
+2,Hombros,Deltoide anterior,2,Barbell Front Raise
+2,Hombros,Deltoide anterior,1,Plate Front Raise
+2,Hombros,Deltoide anterior,2,Cable Front Raise
+2,Hombros,Deltoide anterior,1,Single-Arm Cable Front Raise
+2,Hombros,Deltoide posterior,1,Reverse Pec Deck
+2,Hombros,Deltoide posterior,2,Rear Delt Fly con mancuernas
+2,Hombros,Deltoide posterior,1,Incline Bench Rear Delt Fly
+2,Hombros,Deltoide posterior,2,Cable Rear Delt Fly
+2,Hombros,Deltoide posterior,1,Single-Arm Rear Delt Cable Fly
+2,Hombros,Deltoide posterior,2,Face Pull
+2,Hombros,Deltoide posterior,1,High Cable Rear Delt Row
+2,Espalda,Jalones verticales,1,Lat Pulldown agarre ancho
+2,Espalda,Jalones verticales,2,Lat Pulldown agarre medio
+2,Espalda,Jalones verticales,1,Lat Pulldown agarre cerrado
+2,Espalda,Jalones verticales,2,Lat Pulldown agarre neutro
+2,Espalda,Jalones verticales,1,Reverse-Grip Lat Pulldown
+2,Espalda,Jalones verticales,2,Single-Arm Lat Pulldown
+2,Espalda,Jalones verticales,1,Kneeling Single-Arm Pulldown
+2,Espalda,Jalones verticales,2,Convergent Lat Pulldown
+2,Espalda,Jalones verticales,1,Plate-Loaded Lat Pulldown
+2,Espalda,Jalones verticales,2,Assisted Pull-Up
+2,Espalda,Jalones verticales,1,Pull-Up
+2,Espalda,Jalones verticales,2,Chin-Up
+2,Espalda,Remos,1,Barbell Row
+2,Espalda,Remos,2,Underhand Barbell Row
+2,Espalda,Remos,1,Pendlay Row
+2,Espalda,Remos,2,Dumbbell Row
+2,Espalda,Remos,1,One-Arm Dumbbell Row
+2,Espalda,Remos,2,Chest-Supported Dumbbell Row
+2,Espalda,Remos,1,T-Bar Row
+2,Espalda,Remos,2,Chest-Supported T-Bar Row
+2,Espalda,Remos,1,Landmine Row
+2,Espalda,Remos,2,Seated Cable Row
+2,Espalda,Remos,1,Wide-Grip Cable Row
+2,Espalda,Remos,2,Neutral-Grip Cable Row
+2,Espalda,Remos,1,Single-Arm Cable Row
+2,Espalda,Remos,2,High Cable Row
+2,Espalda,Remos,1,Low Cable Row
+2,Espalda,Remos,2,Convergent Row
+2,Espalda,Remos,1,Plate-Loaded Row
+2,Espalda,Remos,2,Iso-Lateral Row
+2,Espalda,Remos,1,Chest-Supported Machine Row
+2,Espalda,Pullover,1,Dumbbell Pullover
+2,Espalda,Pullover,2,Cable Straight-Arm Pulldown
+2,Espalda,Pullover,1,Rope Straight-Arm Pulldown
+2,Espalda,Pullover,2,Machine Pullover
+2,Espalda,Pullover,1,Single-Arm Cable Pullover
+3,Cuádriceps / sentadillas,Sentadillas,1,Back Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,High-Bar Back Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Low-Bar Back Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,Front Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Smith Machine Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,Smith Machine Front Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Goblet Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,Dumbbell Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Sumo Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,Dumbbell Sumo Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Smith Sumo Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,Box Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Belt Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,Machine Belt Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Landmine Squat
+3,Cuádriceps / sentadillas,Sentadillas,2,Cyclist Squat
+3,Cuádriceps / sentadillas,Sentadillas,1,Heel-Elevated Squat
+3,Cuádriceps / sentadillas,Máquinas,1,Hack Squat
+3,Cuádriceps / sentadillas,Máquinas,2,Reverse Hack Squat
+3,Cuádriceps / sentadillas,Máquinas,1,Linear Hack Squat
+3,Cuádriceps / sentadillas,Máquinas,2,Pendulum Squat
+3,Cuádriceps / sentadillas,Máquinas,1,Pendulum Squat 90°
+3,Cuádriceps / sentadillas,Máquinas,2,V-Squat
+3,Cuádriceps / sentadillas,Máquinas,1,B-Squat / Squat Machine
+3,Cuádriceps / sentadillas,Máquinas,2,Leverage Squat
+3,Cuádriceps / sentadillas,Máquinas,1,Power Squat
+3,Cuádriceps / sentadillas,Máquinas,2,Squat Press Machine
+3,Cuádriceps / sentadillas,Unilaterales,1,Bulgarian Split Squat con mancuernas
+3,Cuádriceps / sentadillas,Unilaterales,2,Bulgarian Split Squat Smith Machine
+3,Cuádriceps / sentadillas,Unilaterales,1,Bulgarian Split Squat en máquina
+3,Cuádriceps / sentadillas,Unilaterales,2,Bulgarian Split Squat con barra
+3,Cuádriceps / sentadillas,Unilaterales,1,Split Squat
+3,Cuádriceps / sentadillas,Unilaterales,2,Smith Split Squat
+3,Cuádriceps / sentadillas,Unilaterales,1,Reverse Lunge
+3,Cuádriceps / sentadillas,Unilaterales,2,Walking Lunge
+3,Cuádriceps / sentadillas,Unilaterales,1,Stationary Lunge
+3,Cuádriceps / sentadillas,Unilaterales,2,Forward Lunge
+3,Cuádriceps / sentadillas,Unilaterales,1,Step-Up
+3,Cuádriceps / sentadillas,Unilaterales,2,Lateral Lunge
+3,Cuádriceps / sentadillas,Prensa,1,45° Leg Press
+3,Cuádriceps / sentadillas,Prensa,2,Horizontal Leg Press
+3,Cuádriceps / sentadillas,Prensa,1,Vertical Leg Press
+3,Cuádriceps / sentadillas,Prensa,2,Seated Leg Press
+3,Cuádriceps / sentadillas,Prensa,1,Single-Leg Press
+3,Cuádriceps / sentadillas,Prensa,2,Wide-Stance Leg Press
+3,Cuádriceps / sentadillas,Prensa,1,Narrow-Stance Leg Press
+3,Cuádriceps / sentadillas,Aislamiento,1,Leg Extension
+3,Cuádriceps / sentadillas,Aislamiento,2,Single-Leg Extension
+3,Glúteos,Ejercicios,1,Barbell Hip Thrust
+3,Glúteos,Ejercicios,2,Smith Machine Hip Thrust
+3,Glúteos,Ejercicios,1,Machine Hip Thrust
+3,Glúteos,Ejercicios,2,Plate-Loaded Hip Thrust
+3,Glúteos,Ejercicios,1,Dumbbell Hip Thrust
+3,Glúteos,Ejercicios,2,Glute Bridge
+3,Glúteos,Ejercicios,1,Barbell Glute Bridge
+3,Glúteos,Ejercicios,2,Smith Glute Bridge
+3,Glúteos,Ejercicios,1,Cable Pull-Through
+3,Glúteos,Ejercicios,2,Cable Glute Kickback
+3,Glúteos,Ejercicios,1,Machine Glute Kickback
+3,Glúteos,Ejercicios,2,Kneeling Glute Kickback
+3,Glúteos,Ejercicios,1,Standing Glute Kickback
+3,Glúteos,Ejercicios,2,Cable Diagonal Kickback
+3,Glúteos,Ejercicios,1,Cable Abduction
+3,Glúteos,Ejercicios,2,Hip Abduction Machine
+3,Glúteos,Ejercicios,1,Lean-Forward Hip Abduction
+3,Glúteos,Ejercicios,2,Standing Hip Abduction
+3,Glúteos,Ejercicios,1,Frog Pump
+3,Glúteos,Ejercicios,2,Reverse Hyperextension
+4,Glúteos,Ejercicios,1,45° Back Extension con énfasis en glúteos
+4,Glúteos,Ejercicios,2,Step-Up con énfasis en glúteos
+4,Glúteos,Ejercicios,1,Reverse Lunge con énfasis en glúteos
+4,Femorales,Ejercicios,1,Romanian Deadlift con barra
+4,Femorales,Ejercicios,2,Romanian Deadlift con mancuernas
+4,Femorales,Ejercicios,1,Smith Romanian Deadlift
+4,Femorales,Ejercicios,2,Single-Leg Romanian Deadlift
+4,Femorales,Ejercicios,1,Stiff-Leg Deadlift
+4,Femorales,Ejercicios,2,Seated Leg Curl
+4,Femorales,Ejercicios,1,Lying Leg Curl
+4,Femorales,Ejercicios,2,Standing Leg Curl
+4,Femorales,Ejercicios,1,Single-Leg Curl
+4,Femorales,Ejercicios,2,Kneeling Leg Curl
+4,Femorales,Ejercicios,1,Nordic Hamstring Curl
+4,Femorales,Ejercicios,2,Assisted Nordic Curl
+4,Femorales,Ejercicios,1,Glute-Ham Raise
+4,Femorales,Ejercicios,2,Cable Leg Curl
+4,Femorales,Ejercicios,1,Stability Ball Leg Curl
+4,Peso muerto / cadena posterior,Ejercicios,1,Conventional Deadlift
+4,Peso muerto / cadena posterior,Ejercicios,2,Sumo Deadlift
+4,Peso muerto / cadena posterior,Ejercicios,1,Romanian Deadlift
+4,Peso muerto / cadena posterior,Ejercicios,2,Stiff-Leg Deadlift
+4,Peso muerto / cadena posterior,Ejercicios,1,Trap-Bar Deadlift
+4,Peso muerto / cadena posterior,Ejercicios,2,Rack Pull
+4,Peso muerto / cadena posterior,Ejercicios,1,Block Pull
+4,Peso muerto / cadena posterior,Ejercicios,2,Smith Machine Deadlift
+4,Peso muerto / cadena posterior,Ejercicios,1,Dumbbell Deadlift
+4,Peso muerto / cadena posterior,Ejercicios,2,Landmine Deadlift
+4,Bíceps,Ejercicios,1,Barbell Curl
+4,Bíceps,Ejercicios,2,EZ-Bar Curl
+4,Bíceps,Ejercicios,1,Dumbbell Curl
+4,Bíceps,Ejercicios,2,Alternating Dumbbell Curl
+4,Bíceps,Ejercicios,1,Simultaneous Dumbbell Curl
+4,Bíceps,Ejercicios,2,Hammer Curl
+4,Bíceps,Ejercicios,1,Alternating Hammer Curl
+4,Bíceps,Ejercicios,2,Cross-Body Hammer Curl
+4,Bíceps,Ejercicios,1,Incline Dumbbell Curl
+4,Bíceps,Ejercicios,2,Spider Curl
+4,Bíceps,Ejercicios,1,Concentration Curl
+4,Bíceps,Ejercicios,2,Preacher Curl / Scott Bench con barra EZ
+4,Bíceps,Ejercicios,1,Preacher Dumbbell Curl
+4,Bíceps,Ejercicios,2,Preacher Machine Curl
+4,Bíceps,Ejercicios,1,Single-Arm Preacher Curl
+4,Bíceps,Ejercicios,2,Cable Curl con barra
+4,Bíceps,Ejercicios,1,Cable Curl con barra EZ
+4,Bíceps,Ejercicios,2,Rope Hammer Curl
+4,Bíceps,Ejercicios,1,Single-Arm Cable Curl
+4,Bíceps,Ejercicios,2,Bayesian Cable Curl
+4,Bíceps,Ejercicios,1,High Cable Curl
+4,Bíceps,Ejercicios,2,Behind-the-Body Cable Curl
+4,Bíceps,Ejercicios,1,Machine Biceps Curl
+4,Tríceps,Ejercicios,1,Cable Pushdown con barra
+4,Tríceps,Ejercicios,2,Rope Pushdown
+4,Tríceps,Ejercicios,1,V-Bar Pushdown
+4,Tríceps,Ejercicios,2,Reverse-Grip Pushdown
+4,Tríceps,Ejercicios,1,Single-Arm Cable Pushdown
+4,Tríceps,Ejercicios,2,Single-Arm Reverse-Grip Pushdown
+4,Tríceps,Ejercicios,1,Overhead Rope Extension
+4,Tríceps,Ejercicios,2,Single-Arm Overhead Cable Extension
+4,Tríceps,Ejercicios,1,Dumbbell Overhead Extension
+4,Tríceps,Ejercicios,2,EZ-Bar Skull Crusher
+4,Tríceps,Ejercicios,1,Dumbbell Skull Crusher
+4,Tríceps,Ejercicios,2,Cable Skull Crusher
+4,Tríceps,Ejercicios,1,Close-Grip Bench Press
+4,Tríceps,Ejercicios,2,Smith Close-Grip Bench Press
+5,Tríceps,Ejercicios,1,Assisted Dip
+5,Tríceps,Ejercicios,2,Triceps Dip
+5,Tríceps,Ejercicios,1,Machine Dip
+5,Tríceps,Ejercicios,2,Triceps Extension Machine
+5,Tríceps,Ejercicios,1,Dumbbell Kickback
+5,Tríceps,Ejercicios,2,Cable Kickback
+5,Pantorrillas,Ejercicios,1,Standing Calf Raise
+5,Pantorrillas,Ejercicios,2,Seated Calf Raise
+5,Pantorrillas,Ejercicios,1,Leg Press Calf Raise
+5,Pantorrillas,Ejercicios,2,Smith Machine Calf Raise
+5,Pantorrillas,Ejercicios,1,Donkey Calf Raise
+5,Pantorrillas,Ejercicios,2,Single-Leg Calf Raise
+5,Pantorrillas,Ejercicios,1,Machine Calf Raise
+5,Pantorrillas,Ejercicios,2,Tibialis Raise
+5,Pantorrillas,Ejercicios,1,Tibialis Machine Raise
+5,Aductores y abductores,Ejercicios,1,Hip Adduction Machine
+5,Aductores y abductores,Ejercicios,2,Hip Abduction Machine
+5,Aductores y abductores,Ejercicios,1,Standing Cable Adduction
+5,Aductores y abductores,Ejercicios,2,Standing Cable Abduction
+5,Aductores y abductores,Ejercicios,1,Cuffed Cable Abduction
+5,Aductores y abductores,Ejercicios,2,Side-Lying Hip Abduction
+5,Aductores y abductores,Ejercicios,1,Copenhagen Adduction
+5,Aductores y abductores,Ejercicios,2,Lateral Band Walk
+5,Aductores y abductores,Ejercicios,1,Monster Walk
+5,Core / abdominales,Ejercicios,1,Machine Crunch
+5,Core / abdominales,Ejercicios,2,Cable Crunch
+5,Core / abdominales,Ejercicios,1,Kneeling Cable Crunch
+5,Core / abdominales,Ejercicios,2,Abdominal Crunch
+5,Core / abdominales,Ejercicios,1,Decline Crunch
+5,Core / abdominales,Ejercicios,2,Reverse Crunch
+5,Core / abdominales,Ejercicios,1,Hanging Knee Raise
+5,Core / abdominales,Ejercicios,2,Hanging Leg Raise
+5,Core / abdominales,Ejercicios,1,Captain's Chair Knee Raise
+5,Core / abdominales,Ejercicios,2,Lying Leg Raise
+5,Core / abdominales,Ejercicios,1,Ab Wheel Rollout
+5,Core / abdominales,Ejercicios,2,Plank
+5,Core / abdominales,Ejercicios,1,Side Plank
+5,Core / abdominales,Ejercicios,2,Weighted Plank
+5,Core / abdominales,Ejercicios,1,Pallof Press
+5,Core / abdominales,Ejercicios,2,Cable Wood Chop
+5,Core / abdominales,Ejercicios,1,Cable Rotation
+5,Core / abdominales,Ejercicios,2,Russian Twist
+5,Core / abdominales,Ejercicios,1,Dead Bug
+5,Core / abdominales,Ejercicios,2,Bird Dog
+5,Core / abdominales,Ejercicios,1,Farmer Carry
+5,Core / abdominales,Ejercicios,2,Suitcase Carry
