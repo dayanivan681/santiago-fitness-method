@@ -196,10 +196,10 @@ export const PRESS_UNILATERAL_CONVERGENTE: Ejercicio = {
   equipo: 'convergente',
   imagen: '/ejercicios/sfm-catalog-c026.jpg',
   imagenGenerada: true,
-  explicacionCorta: 'Un brazo cada vez en una máquina con brazos independientes. Empujar delante del pecho sin separar la espalda del respaldo.',
+  explicacionCorta: 'Un brazo cada vez en una máquina con brazos independientes. Seguir el arco de empuje delante del pecho sin separar la espalda del respaldo; la imagen muestra una variante inclinada.',
   musculoPrimario: 'pecho',
   musculosSecundarios: ['deltoideAnterior', 'triceps'],
-  ...DISCOS_POR_LADO,
+  ...STACK,
 }
 
 export const PULLDOWN_UNILATERAL_CONVERGENTE: Ejercicio = {
@@ -209,7 +209,7 @@ export const PULLDOWN_UNILATERAL_CONVERGENTE: Ejercicio = {
   equipo: 'convergente',
   imagen: '/ejercicios/sfm-catalog-c059.jpg',
   imagenGenerada: true,
-  explicacionCorta: 'Sentado con los muslos sujetos, tirar de un brazo de la máquina hacia el hombro. Llevar el codo hacia el costado sin girar el torso.',
+  explicacionCorta: 'Tirar de una palanca superior llevando el codo hacia el costado. La imagen muestra una variante sentada de lado, con la mano libre en el soporte fijo y el torso estable.',
   musculoPrimario: 'espalda',
   musculosSecundarios: ['biceps'],
   ...DISCOS_POR_LADO,
@@ -314,7 +314,7 @@ export const PRESS_UNILATERAL_HOMBRO_MAQUINA: Ejercicio = {
   explicacionCorta: 'Un brazo cada vez en una máquina de hombro con palancas independientes. Empujar arriba sin arquear la espalda y bajar controlado.',
   musculoPrimario: 'deltoideAnterior',
   musculosSecundarios: ['triceps', 'deltoideLateral'],
-  ...DISCOS_POR_LADO,
+  ...STACK,
 }
 
 export const PESO_MUERTO_RUMANO_UNILATERAL_CABLE: Ejercicio = {

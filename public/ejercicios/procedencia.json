@@ -9,9 +9,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c026 exercise library. Generate ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral light, grey gym machines and beige walls, full body and relevant apparatus visible, sharp hands and handles. Single arm converging chest press on a realistic plate-loaded machine with independent pivot arms. Seated upright with back on backrest, right hand pushing one handle forward at chest height, elbow partly extended, left hand resting on thigh, unused handle stationary. Visible coherent lever linkage, plates on separate loading horns. Horizontal chest press, not overhead. Anatomically correct two arms, two legs, five fingers per hand with natural closed grip, straight wrists, neutral spine. No logos, text, watermarks, collage, diagram or labels. Equipment must have realistic connected load-bearing parts; no floating cables or impossible handles.",
-      "review": "Press de pecho: una palanca adelantada, brazo opuesto libre, respaldo y palancas con pivotes visibles.",
-      "visual_review_date": "2026-09-28"
+      "review": "Press inclinado con palancas independientes, respaldo, pies apoyados y mano libre en pecho. Máquina con stack.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.youtube.com/watch?v=0AZp7HQYrHo",
+        "title": "Live Lean TV · Single Arm Incline Machine Chest Press",
+        "frame": "Fotograma ~0:28",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Press inclinado con palancas independientes, respaldo, pies apoyados y mano libre en pecho. Máquina con stack.",
+      "sha256": "969d756087db84b08c94eef0718edbba81b068b973bffcf902a02dace22dfb4e"
     },
     {
       "id": "c031",
@@ -21,9 +29,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c031 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Standing single arm cable chest press. Athlete faces away from adjustable cable tower, split stance, upright stable torso. One right D-handle at chest height pushed forward, elbow about 30 degrees bent, palm inward, cable runs clearly from handle behind shoulder to chest-height pulley. Left hand resting on hip, no second active handle. Not a fly: elbow visibly bent and pushing forward. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists, neutral spine. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Press en cable: agarre individual, empuje delante del pecho, cable a altura de pecho y postura dividida.",
-      "visual_review_date": "2026-09-28"
+      "review": "Postura dividida, empuje horizontal, una mano en agarre y cable continuo hacia polea posterior.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.muscleandfitness.com/exercise/workouts/chest-exercises/single-arm-cable-chest-press/",
+        "title": "Muscle & Fitness · Single-Arm Cable Chest Press",
+        "frame": "Fotografía 271_B.jpg",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Postura dividida, empuje horizontal, una mano en agarre y cable continuo hacia polea posterior.",
+      "sha256": "83602186249d443a9ba7b17fed702bbcd3a480d4eed6c3613ca41c10102a1a97"
     },
     {
       "id": "c059",
@@ -33,9 +49,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c059 exercise library. Generate ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral light, grey gym machines and beige walls, full body and relevant apparatus visible, sharp hands and handles. Single arm converging lat pulldown on a plate-loaded independent-arm lever machine. Seated facing machine with thighs securely under thigh pads. Right hand grips overhead lever handle and pulls it down to upper chest/shoulder, right elbow points down beside ribs. Left arm relaxed on thigh, other machine lever remains overhead. Entire realistic machine including high pivots and weight plates visible. Anatomically correct two arms, two legs, five fingers per hand with natural closed grip, straight wrists, neutral spine. No logos, text, watermarks, collage, diagram or labels. Equipment must have realistic connected load-bearing parts; no floating cables or impossible handles.",
-      "review": "Pulldown: una palanca baja hacia el hombro, otra permanece alta, muslos bajo soporte y discos visibles.",
-      "visual_review_date": "2026-09-28"
+      "review": "Variante sentada de lado, mano libre en soporte fijo, una palanca superior y discos; posición inicial del jalón.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.youtube.com/watch?v=nStpo9_Rqw4",
+        "title": "Live Lean TV · Single Arm Sideways Machine Lat Pulldown",
+        "frame": "Fotograma de posición inicial",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Variante sentada de lado, mano libre en soporte fijo, una palanca superior y discos; posición inicial del jalón.",
+      "sha256": "49f3536eb6a14734337556bfb5aff8b3ee70715de0ed36c3ee572e18c539e20c"
     },
     {
       "id": "c077",
@@ -45,9 +69,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c077 exercise library. Generate ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral light, grey gym machines and beige walls, full body and relevant apparatus visible, sharp hands and handles. Single arm seated machine row on a realistic independent-arm plate-loaded lever row machine. Chest pressed against chest support pad, feet on foot platforms. Right hand pulling neutral vertical handle toward ribs, elbow close to body and behind torso. Left hand rests relaxed on thigh. Unused left lever remains extended in front. Clear mechanically coherent row machine pivots and loading horns. Anatomically correct two arms, two legs, five fingers per hand with natural closed grip, straight wrists, neutral spine. No logos, text, watermarks, collage, diagram or labels. Equipment must have realistic connected load-bearing parts; no floating cables or impossible handles.",
-      "review": "Remo: apoyo de pecho, un agarre junto a las costillas, palanca opuesta extendida y pies en plataformas.",
-      "visual_review_date": "2026-09-28"
+      "review": "Posición inicial del remo con pecho apoyado, agarre neutro unilateral, mano libre en muslo y palanca conectada a discos.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://vimeo.com/206193732",
+        "title": "IHM · Single Arm Machine Row",
+        "frame": "Miniatura real del video",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Posición inicial del remo con pecho apoyado, agarre neutro unilateral, mano libre en muslo y palanca conectada a discos.",
+      "sha256": "a02212df99229b4bd9634eeb767a3e7588eefd8ff3bbfe7b5750d72671015cf7"
     },
     {
       "id": "c102",
@@ -57,9 +89,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c102 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Seated single arm overhead shoulder press on a realistic plate-loaded machine with two independent overhead lever arms. Back on nearly upright backrest, feet planted. Right hand pushing handle overhead, elbow slightly bent and forearm vertical, left hand relaxed on thigh, unused left lever at shoulder height. Visible high pivots, coherent arms and plates. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists, neutral spine. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Press de hombro: una palanca elevada sobre la cabeza, otra a altura de hombro; espalda apoyada.",
-      "visual_review_date": "2026-09-28"
+      "review": "Respaldo y pies apoyados; palanca unilateral elevada, otra retenida a altura de hombro; máquina con stack.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.youtube.com/watch?v=xSOws585wck",
+        "title": "Live Lean TV · Seated Single Arm Machine Shoulder Press",
+        "frame": "Fotograma ~0:46",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Respaldo y pies apoyados; palanca unilateral elevada, otra retenida a altura de hombro; máquina con stack.",
+      "sha256": "7538b8916cc5f069dc48cbf9dca8a1cb3d1173da40d1e367ec12d4f28420eaa0"
     },
     {
       "id": "c107",
@@ -69,9 +109,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c107 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Standing single arm cable lateral raise from a low pulley. Athlete upright next to tower, right arm elevated out sideways at just below shoulder height, elbow slightly bent and fixed, closed right hand grips D-handle, taut cable diagonally down across front of thighs to low pulley beside left ankle. Left arm relaxed by side. No lean-away, no overhead raise. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists, neutral spine. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Elevación lateral: un brazo al costado, polea baja, cable conectado, torso vertical.",
-      "visual_review_date": "2026-09-28"
+      "review": "Elevación lateral con codo suave; polea baja y cable cruzado por delante; mano libre en cadera.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.youtube.com/watch?v=K1eQqUAWRDI",
+        "title": "FITASTIC · Single Arm Cable Side Lateral Raise",
+        "frame": "Miniatura real sin texto",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Elevación lateral con codo suave; polea baja y cable cruzado por delante; mano libre en cadera.",
+      "sha256": "f0b91abfadac77ef55681439d00982bd83105467328c1eb6c169d981f65c231e"
     },
     {
       "id": "c147",
@@ -81,9 +129,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c147 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Seated single arm biceps curl on a realistic independent-arm preacher curl machine. Right upper arm supported on sloped preacher pad, right elbow stays on pad and flexed 90 degrees, right palm up gripping machine lever handle. Left arm relaxed on thigh not gripping. Visible supported lever pivot aligned with elbow and attached weight mechanism. No dumbbell and no barbell. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists, neutral spine. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Curl: un brazo flexionado sobre apoyo, mano supinada sobre agarre de palanca; máquina con stack visible.",
-      "visual_review_date": "2026-09-28"
+      "review": "Brazo y codo sobre apoyo preacher, agarre supinado de palanca; mano libre sobre el apoyo.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://archive.t-nation.com/training/tip-single-arm-machine-curl/",
+        "title": "T Nation / John Meadows · Single-Arm Machine Curl",
+        "frame": "Miniatura real del video 8lb1WSXqrUU",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Brazo y codo sobre apoyo preacher, agarre supinado de palanca; mano libre sobre el apoyo.",
+      "sha256": "8d161643921257470b7947622ccd884a813477f0eaf66719bebd122e82d042f4"
     },
     {
       "id": "c161",
@@ -93,9 +149,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c161 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Single-arm triceps pushdown with NEUTRAL grip using ONE SHORT ROPE attachment from a HIGH cable pulley. Side-three-quarter view, athlete upright facing tower. Right upper arm stationary vertical tight against ribs, right elbow slightly bent near end of pushdown, forearm points downward, right fist grips vertical rope immediately above its rubber stop, thumb pointing upward and palm facing inward toward torso. Left hand rests on hip. One taut cable from high pulley descends to rope clip above right hand; visible entire connection. NO palm-up supinated grip, NO V bar, NO bilateral use. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Pushdown: un brazo junto al costado, cuerda individual y puño vertical con agarre neutro; polea alta.",
-      "visual_review_date": "2026-09-28"
+      "review": "Una mano en extremo de cuerda, agarre neutro; otro extremo cuelga libre, mano opuesta en cadera. Se descartó una generación que juntaba ambas manos.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.catalystathletics.com/exercise/898/Single-Arm-Rope-Tricep-Pushdown/",
+        "title": "Catalyst Athletics · Single-Arm Rope Tricep Pushdown",
+        "frame": "Fotograma del video 9x-OnFp9RE0",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Una mano en extremo de cuerda, agarre neutro; otro extremo cuelga libre, mano opuesta en cadera. Se descartó una generación que juntaba ambas manos.",
+      "sha256": "a1954e25b52e352c7e359d2198938e8c0bc25bd7df781a8350b2a340866375d2"
     },
     {
       "id": "c194",
@@ -105,9 +169,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c194 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Unilateral leg press on realistic 45-degree sled leg press machine. Athlete reclined with back and hips supported on padded seat, RIGHT foot centered on sled platform, right knee bent about 70 degrees tracking toes. LEFT leg clearly resting bent OFF platform beside seat, left foot visible and completely off sled. Hands on side safety handles. Side view includes entire athlete, single active foot on platform, sled, two parallel diagonal guide rails and attached weight plates. Mechanically coherent machine. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Prensa: un único pie sobre plataforma, pierna libre fuera del sled, cadera y espalda apoyadas.",
-      "visual_review_date": "2026-09-28"
+      "review": "Solo una planta sobre plataforma; pierna libre fuera del trineo, espalda y cadera en respaldo, manos en soportes.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.strengthlog.com/leg-press/",
+        "title": "StrengthLog · Leg press with one leg",
+        "frame": "Fotograma 11/34 de leg-press-one-leg.gif",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Solo una planta sobre plataforma; pierna libre fuera del trineo, espalda y cadera en respaldo, manos en soportes.",
+      "sha256": "a0e2fc480bbd7d7be53b9d562ff9dbc61c801fef529f9f19862fa9158acd1037"
     },
     {
       "id": "c203",
@@ -117,9 +189,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c203 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Single-leg Romanian deadlift with ONE hex dumbbell, not kettlebell. Full-body side-three-quarter view. Athlete standing on right leg, right knee softly bent, left leg extended backward in line with torso, hips square, neutral spine, torso hinged forward nearly horizontal. Left arm hangs vertically holding a clearly identifiable hex dumbbell below shoulder near shin height; right arm relaxed by side. Right foot flat on floor. Natural grip, realistic dumbbell handle and two symmetrical hex weights. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Peso muerto: bisagra sobre una pierna, mancuerna hexagonal reconocible, pierna libre extendida atrás.",
-      "visual_review_date": "2026-09-28"
+      "review": "Bisagra sobre una pierna, mancuerna hexagonal en mano contralateral y mano libre en cadera; pie posterior elevado.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://vimeo.com/571004271",
+        "title": "Dumbbell Single Leg Romanian Deadlift",
+        "frame": "Miniatura real del video",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Bisagra sobre una pierna, mancuerna hexagonal en mano contralateral y mano libre en cadera; pie posterior elevado.",
+      "sha256": "ee69a692e1e611719dda88bd281536d3829ebcdda1afe9d0012d386cbc7cb875"
     },
     {
       "id": "c204",
@@ -129,9 +209,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c204 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Single-leg Romanian deadlift with a low cable pulley and one D-handle, not an ankle strap. Side-three-quarter view. Athlete stands on right leg with slight knee bend, hinges hips backward with straight spine, torso tilted forward near horizontal, left leg extended backward in line with torso. Left hand holds a D-handle below chest at knee height, arm straight, visible taut cable runs forward/down to low pulley in front of athlete. Right hand relaxed. Entire body, support foot and pulley visible. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Rumano en cable: bisagra de una pierna, pierna libre atrás y D-handle conectado a polea baja.",
-      "visual_review_date": "2026-09-28"
+      "review": "Bisagra unilateral en fase intermedia, rodilla de apoyo suave, pierna libre atrás y brazo extendido hacia polea baja.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://theelitetrainer.com/single-leg-cable-romanian-deadlift/",
+        "title": "The Elite Trainer · Single-Leg Cable Romanian Deadlift",
+        "frame": "Fotograma ~0:08 del video O4t-KpGB3ms",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Bisagra unilateral en fase intermedia, rodilla de apoyo suave, pierna libre atrás y brazo extendido hacia polea baja.",
+      "sha256": "7967bad127dc0e2a788058ebc599b60fa91156cdd84929636c171f657eae5f2f"
     },
     {
       "id": "c217",
@@ -141,9 +229,17 @@
       "rights": "Output asignado al usuario por OpenAI Terms of Use; uso comercial sujeto a esas condiciones; no es dominio público.",
       "license_url": "https://openai.com/policies/terms-of-use/",
       "generated_at": "2026-09-28",
-      "prompt": "Use case: photorealistic-natural. Asset: c217 exercise library. ONE landscape 3:2 realistic gym photograph, editorial instructional fitness photography, adult athlete in plain light tank top and dark shorts, warm neutral lighting, grey equipment beige gym walls. Full athlete and essential apparatus visible, sharply detailed hands. Single-leg bodyweight hip thrust with upper back resting horizontally across a sturdy gym bench, one foot flat on floor directly below bent working knee, working knee near 90 degrees. Hips raised to form straight line shoulder-hip-working knee, pelvis level, other leg lifted with bent knee, foot completely off floor. Hands rest on pelvis. Bench-supported hip thrust, not glute bridge on floor. Clear side view entire body and bench. Anatomically correct two arms, two legs, natural five-finger closed grips and straight wrists. No logos, text, watermark, collage, diagram. All equipment parts mechanically connected; no floating cables or malformed handles.",
-      "review": "Hip thrust: espalda alta en banco, un pie apoyado bajo rodilla y otro elevado; cadera extendida.",
-      "visual_review_date": "2026-09-28"
+      "review": "Espalda alta sobre borde del banco, un pie apoyado y otra rodilla elevada; pelvis sin giro visible, sin carga externa.",
+      "visual_review_date": "2026-09-28",
+      "revision": "2-referencias-reales",
+      "reference": {
+        "url": "https://www.youtube.com/watch?v=CGklM00rO9o",
+        "title": "Live Lean TV · Shoulders Elevated Single Leg Hip Thrust",
+        "frame": "Fotograma de ejecución con espalda en banco",
+        "usage": "Referencia visual de ejecución introducida en image_gen; el original no se distribuye ni se declara de dominio público."
+      },
+      "generation_brief": "Recreación fotográfica con referencia visual directa; conservar postura, apoyos, agarre y geometría del equipo. Atleta genérico con camiseta gris y pantalón azul, encuadre horizontal. Espalda alta sobre borde del banco, un pie apoyado y otra rodilla elevada; pelvis sin giro visible, sin carga externa.",
+      "sha256": "d0271f7a6131b03de0437a74f76c30d91ae93a9ed2c123a4bab8761075e12fda"
     },
     {
       "id": "c071",
@@ -169,5 +265,6 @@
       "retrieved_at": "2026-09-28",
       "visual_review_date": "2026-09-28"
     }
-  ]
+  ],
+  "revision_note": "La primera versión fue rechazada por el dueño por ejecución poco realista. Las 12 imágenes IA se recrearon con fotos/fotogramas reales suministrados como referencia visual y se compararon individualmente. Revisión visual, no certificación del coach."
 }

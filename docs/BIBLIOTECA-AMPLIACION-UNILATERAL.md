@@ -52,7 +52,7 @@ no especificaciones de postura ni modelos de aparato.
 C071 se incluye además de los diez solicitados porque ya tiene foto fiel y B25
 quedó resuelto. El A5 genérico de la ficha histórica no fusiona sus historiales.
 Las tres fotos provisionales se sustituyen: **C194** ahora usa una sola pierna,
-**C203** una mancuerna y **C161** agarre neutro con cuerda corta individual.
+**C203** una mancuerna y **C161** agarre neutro sujetando un extremo de cuerda.
 
 Archivos: `public/ejercicios/sfm-catalog-cNNN.jpg`, 850×567, menos de 100 KB.
 Los 12 archivos sintéticos están marcados `imagenGenerada=true` y la ficha
@@ -87,3 +87,11 @@ C062 «Remo con mancuerna a una mano» ya existía como `remo-mancuerna`.
 Bloque B enviado el 2026-09-27 en https://sfm-variantes.pages.dev. El cierre usa
 la confirmación del dueño del 2026-09-28: las 12 respuestas fueron «Mantener
 genérico». No se alteraron las respuestas del cuestionario ni los PDFs.
+
+## Revisión 2: referencias reales para las 12 imágenes IA (2026-09-28)
+
+La primera tanda fue rechazada por el dueño por ejecución poco realista. Se sustituyeron las 12 imágenes sintéticas usando fotografías o fotogramas reales como entradas visuales de `image_gen`, con revisión individual de postura, apoyo, agarre y conexiones del equipo. C071/C256 conservan sus fotos de dominio público.
+
+Cada fuente está enlazada en `public/ejercicios/PROCEDENCIA.md` y registrada en `procedencia.json`, junto con el encuadre de referencia y la dirección de recreación. Los originales externos no se redistribuyen ni se presentan como dominio público. Se mantiene el aviso IA. La revisión visual no se presenta como aprobación técnica del coach.
+
+C026 representa press convergente inclinado con stack; C102 también usa stack. Se ajustaron sus perfiles estimados de semilla y la explicación de C026. C059 representa jalón sentado de lado, con soporte fijo para la mano libre; su explicación ahora coincide. C077 muestra el inicio del remo, no la contracción final. Identidades, nombres genéricos, 57 fichas y 24 filas activas no cambian.

@@ -152,8 +152,8 @@ son estimados representativos, corregibles por el coach durante el piloto.
 
 | Ref | Músculo principal · secundarios | Perfil estimado | Representación de la foto |
 |---|---|---|---|
-| C026 | Pecho · deltoide anterior, tríceps | Discos por lado | IA: convergente horizontal con palancas independientes |
-| C059 | Espalda · bíceps | Discos por lado | IA: jalón convergente de palancas independientes |
+| C026 | Pecho · deltoide anterior, tríceps | Stack | IA: convergente inclinado con palancas independientes |
+| C059 | Espalda · bíceps | Discos por lado | IA: jalón convergente, variante sentada de lado |
 | C071 | Espalda · bíceps | Stack | Dominio público: remo sentado de un brazo |
 | C077 | Espalda · bíceps | Discos por lado | IA: remo de palanca con apoyo de pecho |
 | C107 | Deltoide lateral | Stack | IA: polea baja y torso vertical |
@@ -161,12 +161,16 @@ son estimados representativos, corregibles por el coach durante el piloto.
 | C217 | Glúteos · femoral, core | Peso corporal / lastre añadido | IA: hip thrust de una pierna con espalda en banco |
 | C256 | Pantorrillas | Peso corporal / lastre añadido | Dominio público: calf raise de pie de una pierna con apoyo |
 | C031 | Pecho · deltoide anterior, tríceps | Stack | IA: press unilateral desde polea a altura de pecho |
-| C102 | Deltoide anterior · tríceps, deltoide lateral | Discos por lado | IA: press de hombro de una palanca |
+| C102 | Deltoide anterior · tríceps, deltoide lateral | Stack | IA: press de hombro de una palanca |
 | C204 | Femoral · glúteos, core | Stack | IA: bisagra de una pierna con agarre de polea baja |
 
 Para C217 y C256, 0 lb significa sólo el peso corporal; registrar únicamente el
-lastre añadido. Las máquinas genéricas C077/C102 pueden usar discos o stack:
+lastre añadido. Las máquinas genéricas C026/C077/C102 pueden usar discos o stack:
 el perfil inicial representa la foto y debe calibrarse para el aparato real.
 La imagen de C147 no fija el modelo ni los saltos de la máquina del gimnasio.
 Las fotos sintéticas se revisaron por equipo, unilateralidad, postura y agarre;
 son representaciones y no fotos de las máquinas de Santiago.
+
+## Revisión visual 2 (2026-09-28)
+
+El dueño rechazó la primera tanda IA por ejecución poco realista. Las 12 imágenes se recrearon con referencias visuales reales introducidas en la generación. Fuentes y revisión individual en `public/ejercicios/PROCEDENCIA.md`. C026/C102 usan ahora el perfil estimado STACK (peso indicado en máquina, salto de 10 lb), coherente con la representación. Esto no confirma el equipo ni los incrementos reales del gimnasio y no migra calibraciones guardadas. C059 muestra una variante de lado; el nombre sigue genérico.

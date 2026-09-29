@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-09-28 — Revisión 2 de fotos con referencias reales — codex
+
+- El dueño rechazó la primera tanda por ejecución poco realista. Se recrearon las 12 imágenes IA usando fotografías/fotogramas reales como entradas visuales de image_gen, no solo descripciones de texto. Referencias enlazadas y revisión individual en public/ejercicios/PROCEDENCIA.md y procedencia.json; originales externos no distribuidos.
+- Se compararon postura, unilateralidad, apoyos, agarres y geometría del equipo. Se descartó un pushdown que juntaba ambas manos y se regeneró con la mano libre en cadera. Las imágenes siguen marcadas IA; esta revisión no equivale a aprobación técnica del coach.
+- C026 representa press inclinado con stack; C102 usa stack. Perfiles estimados de semilla ajustados, sin migrar calibraciones guardadas. C059 representa la variante sentada de lado y su explicación coincide. Nombres genéricos y 57 identidades intactos; C071/C256 no cambiaron.
+- Verificación: 799/799 tests, 87 archivos; lint y build PASS. JPG 850×567, 52.836–86.487 bytes. Las 14 imágenes publicadas en dist coinciden byte por byte con public. Comparación visual individual y mosaico de las 12 finales; no se repitió QA de navegación de biblioteca. Avisos conocidos de Node/JSDOM en pruebas.
+- Solo publicación Git; sin despliegue a producción. Siguiente: ninguno dentro del alcance solicitado.
+
 ## Cierre de fotos unilaterales — codex, 2026-09-28
 
 - Turno reclamado limpio en `main` (`00ab311`). Dueño confirma que las 12 respuestas B son «Mantener genérico»; no se editaron PDFs ni respuestas de Santiago.
@@ -66,11 +74,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-28T19:53:30.192Z
+- **Última sincronización:** 2026-09-29T02:05:43.296Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1213,6 +1221,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:05:43.296Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Recreadas 12 fotos IA a partir de referencias visuales reales; procedencia y fichas coherentes con los equipos
+- **Verificación:** npm test: 799/799; npm run lint PASS; npm run build PASS; 14 JPG 850x567 <100 KB; revision visual individual
+- **Siguiente:** ninguno
+
 
 ### 2026-09-28T19:53:30.192Z | codex | CLAIM
 - **Estado:** active

@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-28 — Revisión 2 de fotos con referencias reales — codex
+
+- El dueño rechazó la primera tanda por ejecución poco realista. Se recrearon las 12 imágenes IA usando fotografías/fotogramas reales como entradas visuales de image_gen, no solo descripciones de texto. Referencias enlazadas y revisión individual en public/ejercicios/PROCEDENCIA.md y procedencia.json; originales externos no distribuidos.
+- Se compararon postura, unilateralidad, apoyos, agarres y geometría del equipo. Se descartó un pushdown que juntaba ambas manos y se regeneró con la mano libre en cadera. Las imágenes siguen marcadas IA; esta revisión no equivale a aprobación técnica del coach.
+- C026 representa press inclinado con stack; C102 usa stack. Perfiles estimados de semilla ajustados, sin migrar calibraciones guardadas. C059 representa la variante sentada de lado y su explicación coincide. Nombres genéricos y 57 identidades intactos; C071/C256 no cambiaron.
+- Verificación: 799/799 tests, 87 archivos; lint y build PASS. JPG 850×567, 52.836–86.487 bytes. Las 14 imágenes publicadas en dist coinciden byte por byte con public. Comparación visual individual y mosaico de las 12 finales; no se repitió QA de navegación de biblioteca. Avisos conocidos de Node/JSDOM en pruebas.
+- Solo publicación Git; sin despliegue a producción. Siguiente: ninguno dentro del alcance solicitado.
+
 ## 2026-09-28 — Fotos fieles y cierre de unilaterales genéricos — codex
 
 - Fuente: dueño confirma 12 respuestas B «Mantener genérico». Se consultó Biblioteca Maestra PDF sin tocar `docs/cliente`. Nombres genéricos preservados; aparatos/fotos representativos, perfiles y músculos estimados.
