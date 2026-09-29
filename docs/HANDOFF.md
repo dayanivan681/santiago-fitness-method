@@ -82,11 +82,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:52:39.441Z
+- **Última sincronización:** 2026-09-29T02:53:12.801Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1229,6 +1229,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:53:12.802Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Preview de staging desplegado: https://codex-premium-v2.santiago-fitness-method.pages.dev (deployment 57f66b28, commit b7a0686), con la D1 santiago-staging que ya tiene 0012. Comprobado desde fuera: /api/v2/biblioteca, /api/v2/biblioteca/<id>/foto y /admin/api/v2/biblioteca redirigen (302) a Cloudflare Access; el alias sirve /ejercicios/sin-foto.svg (200). No se pudo probar la API autenticada: requiere la sesión de Access del dueño y no se usan JWT locales contra el remoto.
+- **Verificación:** npm run build; wrangler pages deploy (rama codex-premium-v2); curl sin sesión al alias y al deployment
+- **Siguiente:** El dueño entra al preview con su sesión de Access, abre /admin/biblioteca, crea un ejercicio con foto y verifica que GET /api/v2/biblioteca lo devuelve; luego el segundo correo a Santiago
+
 
 ### 2026-09-29T02:52:39.443Z | claude-code | CLAIM
 - **Estado:** active
