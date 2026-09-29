@@ -5,7 +5,8 @@ import { useMemoria } from "../aplicacion/memoria";
 import { normalizarBusqueda } from "../logica/busqueda";
 import type { Equipo, Musculo } from "../dominio/tipos";
 import { HojaEjercicio } from "./HojaEjercicio";
-import { Cabecera, ErrorVisible, Hoja, Icono } from "./ui";
+import { Cabecera, ErrorVisible, Hoja, Icono, Vacio } from "./ui";
+import { segunCantidad } from "../logica/plural";
 import type { EjercicioCoach } from "../../shared/v2/biblioteca";
 
 const TODOS = "todos" as const;
@@ -87,7 +88,32 @@ export function BibliotecaCoach() {
         </select>
       </label>
       {termino && <p className="aviso-busqueda">Buscando en toda la biblioteca</p>}
-      <p className="sfm-hint">{visibles.length} ejercicios</p>
+      <p className="sfm-hint">
+        {visibles.length} {segunCantidad(visibles.length, "ejercicio", "ejercicios")}
+      </p>
+      {visibles.length === 0 &&
+        (termino ? (
+          <Vacio
+            titulo={`No hay ejercicios con “${q.trim()}”.`}
+            detalle="Revisa cómo está escrito o crea uno con «Añadir ejercicio»."
+          />
+        ) : (
+          <Vacio
+            titulo="No hay ejercicios con estos filtros."
+            detalle="Prueba con otro músculo u otro equipo."
+            accion={
+              <button
+                className="sfm-secondary"
+                onClick={() => {
+                  setMusculo(TODOS);
+                  setEquipo(TODOS);
+                }}
+              >
+                Quitar filtros
+              </button>
+            }
+          />
+        ))}
       <div className="sfm-catalog-grid">
         {visibles.map((e) => {
           const propio = propios.get(e.id);

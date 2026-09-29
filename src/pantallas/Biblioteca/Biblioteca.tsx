@@ -20,6 +20,7 @@ import { useLiveQuery } from '../../nube/eventos'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
 import { normalizarBusqueda } from '../../logica/busqueda'
+import { segunCantidad } from '../../logica/plural'
 import { HojaEjercicio } from './HojaEjercicio'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Ejercicio, Equipo, Musculo } from '../../dominio/tipos'
@@ -73,7 +74,7 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
             nombre del participante no aportaba nada y además estaba fijo. */}
         <header className="pantalla">
           <h1 className="pantalla__titulo">Biblioteca</h1>
-          <p className="pantalla__sub">{ejercicios.length} ejercicios del método</p>
+          <p className="pantalla__sub">{ejercicios.length} {segunCantidad(ejercicios.length, 'ejercicio', 'ejercicios')} del método</p>
         </header>
 
         {/* Un solo campo, sin botón de lupa al lado: ese par es un formulario

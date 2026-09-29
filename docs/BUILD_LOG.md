@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-29 — Detalles de interfaz de Biblioteca y editor (QA iPhone) — claude-code
+
+- Hojas: el título es opaco y cubre también el relleno superior; el contenido ya no asoma detrás.
+- Foto: el `<input type="file">` queda oculto visualmente (`solo-lectores`) dentro del mismo `<label>`, con un botón de la app «Elegir foto» / «Cambiar foto»; desaparece «no file selected». Se añadió la prueba de regresión de cancelar la foto (no existía).
+- Contador «1 ejercicio» / «N ejercicios» (coach y cliente). Sin resultados: mensaje con qué hacer; con filtros, botón «Quitar filtros».
+- La carga sigue al equipo mientras el coach no la toque (pila → número de la pila, discos → discos que añade, barra/Smith → cada lado…); al editar no cambia.
+- «Organizar sesiones» es un botón secundario a ancho completo con flecha.
+- Verificado: 874 pruebas, tsc, lint, build, 91 HTTP; Safari del simulador iOS contra el runtime local (título, Elegir → Fototeca → Cambiar foto, pila, «zzz», Organizar sesiones). Sin cambios en datos de producción.
+
 ## 2026-09-29 — Split de 5 días: lista de clientes y pestañas de días — claude-code
 
 - La lista de clientes del coach cuenta las sesiones del programa («5 sesiones · Programa publicado»), no la frecuencia del perfil. La frecuencia sigue en Perfil, en el resumen del alta y en «Tu semana» de la app del cliente, que describen el perfil.

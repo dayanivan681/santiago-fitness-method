@@ -51,8 +51,9 @@ export function EditorPlan({
           </button>
         ))}
       </div>
-      <button className="sfm-text-button" onClick={() => setSesiones(true)}>
+      <button className="sfm-secondary sfm-organizar" onClick={() => setSesiones(true)}>
         Organizar sesiones
+        <Icono nombre="flecha" size={18} />
       </button>
       <div className="sfm-section-heading">
         <h2>{d.nombre}</h2>

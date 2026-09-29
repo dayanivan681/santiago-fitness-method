@@ -83,3 +83,10 @@ it('«Pasar a 5 días» sólo aparece con 2 Lower y 2 Upper, pide confirmación 
   hoja = screen.getByRole('dialog', { name: 'Orden de las sesiones' });
   expect(within(hoja).queryByRole('button', { name: /Pasar a 5 días/ })).toBeNull();
 });
+
+it('«Organizar sesiones» se ve como un botón', () => {
+  render(<EditorPlan plan={plan} perfil={perfil} onChange={vi.fn()} />);
+  const boton = screen.getByRole('button', { name: /Organizar sesiones/ });
+  expect(boton).toHaveClass('sfm-secondary', 'sfm-organizar');
+  expect(boton).not.toHaveClass('sfm-text-button');
+});

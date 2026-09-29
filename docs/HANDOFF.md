@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T19:54:11.290Z
+- **Última sincronización:** 2026-09-29T20:01:14.450Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T20:01:14.451Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Detalles de interfaz del QA iPhone: título de hojas opaco, selector de foto propio (Elegir/Cambiar foto, input oculto accesible), contador en singular, estado vacío con ayuda y Quitar filtros, carga por defecto según el equipo mientras no se toque, y Organizar sesiones como botón. Sin cambios en datos.
+- **Verificación:** npm test (874/874); npx tsc -b; npm run lint; npm run build; npm run test:http (91 PASS); simulador iOS Safari contra runtime local
+- **Siguiente:** Borrador del correo a Santiago
+
 
 ### 2026-09-29T19:54:11.292Z | claude-code | CLAIM
 - **Estado:** active

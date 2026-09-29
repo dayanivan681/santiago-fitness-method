@@ -49,6 +49,18 @@ const BORRADOR_VACIO: Borrador = {
   explicacion: "",
 };
 
+/** Cómo se anota el peso con cada equipo, mientras el coach no elija otra cosa. */
+const CARGA_POR_EQUIPO: Record<Equipo, TipoCarga> = {
+  maquinaTradicional: "pesoMaquina",
+  maquinaDiscos: "discosAnadidos",
+  smith: "porLado",
+  barraLibre: "porLado",
+  convergente: "porLado",
+  mancuernas: "porLado",
+  cable: "pesoMaquina",
+  pesoCorporal: "discosAnadidos",
+};
+
 /** En peso corporal no hay máquina: «discos añadidos» es el lastre. */
 const LASTRE = { titulo: "Lastre que añades", ejemplo: "Chaleco de 20 lb → 20. Sin lastre → 0." };
 const opcionCarga = (t: TipoCarga, equipo: Equipo | "") =>
@@ -171,6 +183,8 @@ function Formulario({
   const [creado, setCreado] = useState<EjercicioCoach | null>(null);
   const existente = editando ?? creado ?? undefined;
   const actualiza = (parcial: Partial<Borrador>) => setB((v) => ({ ...v, ...parcial }));
+  // Al editar, la carga ya está decidida: el equipo no la cambia.
+  const [cargaTocada, setCargaTocada] = useState(!!editando);
   const necesitaBase = b.tipoCarga === "porLado" || b.tipoCarga === "discosAnadidos";
 
   useEffect(() => {
@@ -261,7 +275,13 @@ function Formulario({
       </label>
       <label className="sfm-field">
         <span>Equipo</span>
-        <select value={b.equipo} onChange={(e) => actualiza({ equipo: e.target.value as Equipo })}>
+        <select
+          value={b.equipo}
+          onChange={(e) => {
+            const equipo = e.target.value as Equipo;
+            actualiza(cargaTocada || !equipo ? { equipo } : { equipo, tipoCarga: CARGA_POR_EQUIPO[equipo] });
+          }}
+        >
           <option value="">Elige el equipo</option>
           {EQUIPOS.map((v) => (
             <option key={v} value={v}>{ETIQUETA_EQUIPO[v]}</option>
@@ -308,7 +328,15 @@ function Formulario({
         <legend>¿Cómo se anota el peso?</legend>
         {TIPOS_DE_CARGA.map((t) => (
           <label className="sfm-check" key={t}>
-            <input type="radio" name="tipoCarga" checked={b.tipoCarga === t} onChange={() => actualiza({ tipoCarga: t })} />
+            <input
+              type="radio"
+              name="tipoCarga"
+              checked={b.tipoCarga === t}
+              onChange={() => {
+                setCargaTocada(true);
+                actualiza({ tipoCarga: t });
+              }}
+            />
             <span className="sfm-check-texto">
               <strong>{opcionCarga(t, b.equipo).titulo}</strong>
               <small className="sfm-hint">{opcionCarga(t, b.equipo).ejemplo}</small>
@@ -336,10 +364,12 @@ function Formulario({
           onChange={(e) => actualiza({ explicacion: e.target.value })}
         />
       </label>
-      <label className="sfm-field">
+      <label className="sfm-field sfm-campo-foto">
         <span>Foto de la máquina o del ejercicio</span>
         {fotoActual && <img className="sfm-exercise-thumb" src={fotoActual} alt="Foto elegida" />}
-        <input type="file" accept="image/*" onChange={(e) => void elegirFoto(e)} />
+        {/* El botón nativo dice «no file selected» (y en el idioma del teléfono) aunque haya vista previa. */}
+        <input className="solo-lectores" type="file" accept="image/*" onChange={(e) => void elegirFoto(e)} />
+        <span className="sfm-elegir-foto" aria-hidden="true">{fotoActual ? "Cambiar foto" : "Elegir foto"}</span>
       </label>
       <button className="sfm-primary" type="submit" disabled={guardando}>
         {guardando ? "Guardando…" : editando ? "Guardar cambios" : "Añadir a mi biblioteca"}

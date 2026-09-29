@@ -902,9 +902,12 @@ a.sfm-primary:active {
   align-items: center;
   gap: 16px;
   position: sticky;
+  /* Pegado al borde y opaco: cubre también el relleno superior del diálogo,
+     así el contenido nunca asoma por encima ni por detrás del título. */
   top: -12px;
-  background: #17181bf2;
-  padding: 10px 0;
+  margin-top: -12px;
+  padding: 22px 0 10px;
+  background: #17181b;
   z-index: 2;
 }
 .sfm-hoja h2 {
@@ -2126,4 +2129,35 @@ a.sfm-primary:active {
 .sfm-check-texto strong,
 .sfm-check-texto small {
   display: block;
+}
+
+/* «Organizar sesiones» es el paso de «Pasar a 5 días»: tiene que verse como botón. */
+.sfm-organizar {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+/* Selector de foto con texto de la app; el input nativo queda para lectores y teclado. */
+.sfm-field > .sfm-elegir-foto {
+  color: var(--sfm-white, #fff);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--sfm-line, #ffffff24);
+  border-radius: 12px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.sfm-campo-foto:focus-within .sfm-elegir-foto {
+  outline: 2px solid var(--sfm-white, #fff);
+  outline-offset: 2px;
 }

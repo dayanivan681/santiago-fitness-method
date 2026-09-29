@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { plan, perfil } from '../../pruebas-v2/fixtures'
 import { BibliotecaCoach } from './BibliotecaCoach'
 import { ContextoBiblioteca } from './contextoBiblioteca'
@@ -271,4 +271,72 @@ it('al buscar, los filtros quedan en pausa con un aviso y vuelven al borrar', ()
   expect(screen.getByRole('button', { name: 'Pecho' })).toHaveAttribute('aria-pressed', 'true')
   expect(titulos()).toContain('Press de banca plano con barra')
   expect(titulos().some((t) => /curl/i.test(t ?? ''))).toBe(false)
+})
+
+describe('detalles del QA en iPhone', () => {
+  const abrirNuevo = () => {
+    render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+    fireEvent.click(within(abrirHoja()).getByText('Nuevo'))
+    return screen.getByRole('dialog', { name: 'Añadir ejercicio' })
+  }
+  const cargaMarcada = (f: HTMLElement) =>
+    (within(f).getAllByRole('radio') as HTMLInputElement[]).find((r) => r.checked)!.closest('label')!.textContent
+
+  it('el selector de foto es un botón de la app: «Elegir foto» y, con vista previa, «Cambiar foto»', async () => {
+    const f = abrirNuevo()
+    expect(within(f).getByText('Elegir foto')).toBeInTheDocument()
+    const input = within(f).getByLabelText(/Foto de la máquina/) as HTMLInputElement
+    expect(input).toHaveClass('solo-lectores')
+    expect(input).toHaveAttribute('accept', 'image/*')
+    fireEvent.change(input, { target: { files: [new File(['x'], 'm.jpg', { type: 'image/jpeg' })] } })
+    expect(await within(f).findByText('Cambiar foto')).toBeInTheDocument()
+    expect(within(f).queryByText('Elegir foto')).toBeNull()
+    expect(f).not.toHaveTextContent(/no file selected/i)
+  })
+
+  it('cancelar la foto conserva «Añadir ejercicio» abierto y sin error', async () => {
+    const f = abrirNuevo()
+    fireEvent.change(within(f).getByLabelText(/Nombre/), { target: { value: 'Mi prensa' } })
+    fireEvent.change(within(f).getByLabelText(/Foto de la máquina/), { target: { files: [] } })
+    expect(screen.getByRole('dialog', { name: 'Añadir ejercicio' })).toBeInTheDocument()
+    expect(within(f).getByLabelText(/Nombre/)).toHaveValue('Mi prensa')
+    expect(within(f).queryByRole('alert')).toBeNull()
+    expect(within(f).getByText('Elegir foto')).toBeInTheDocument()
+  })
+
+  it('la carga sigue al equipo mientras el coach no la toque', () => {
+    const f = abrirNuevo()
+    fireEvent.change(within(f).getByLabelText('Equipo'), { target: { value: 'maquinaTradicional' } })
+    expect(cargaMarcada(f)).toMatch('El número de la pila')
+    fireEvent.change(within(f).getByLabelText('Equipo'), { target: { value: 'maquinaDiscos' } })
+    expect(cargaMarcada(f)).toMatch('Solo los discos que añade')
+    fireEvent.change(within(f).getByLabelText('Equipo'), { target: { value: 'barraLibre' } })
+    expect(cargaMarcada(f)).toMatch('Lo de cada lado')
+    fireEvent.click(within(f).getByText('Todo el peso junto'))
+    fireEvent.change(within(f).getByLabelText('Equipo'), { target: { value: 'maquinaTradicional' } })
+    expect(cargaMarcada(f)).toMatch('Todo el peso junto')
+  })
+
+  it('cuenta en singular y en plural', () => {
+    render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+    fireEvent.change(screen.getByRole('textbox', { name: 'Buscar en biblioteca' }), { target: { value: 'Dominadas' } })
+    expect(screen.getByText('1 ejercicio')).toBeInTheDocument()
+    fireEvent.change(screen.getByRole('textbox', { name: 'Buscar en biblioteca' }), { target: { value: 'press' } })
+    expect(screen.getByText(/^\d+ ejercicios$/)).toBeInTheDocument()
+  })
+
+  it('sin resultados explica qué hacer, con búsqueda y con filtros', () => {
+    render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+    const buscar = screen.getByRole('textbox', { name: 'Buscar en biblioteca' })
+    fireEvent.change(buscar, { target: { value: 'zzz' } })
+    expect(screen.getByText(/No hay ejercicios con “zzz”/)).toBeInTheDocument()
+    expect(screen.getByText(/crea uno con «Añadir ejercicio»/)).toBeInTheDocument()
+    fireEvent.change(buscar, { target: { value: '' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Pantorrillas' }))
+    fireEvent.change(screen.getByRole('combobox', { name: 'Equipo' }), { target: { value: 'smith' } })
+    expect(screen.getByText('No hay ejercicios con estos filtros.')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Quitar filtros' }))
+    expect(screen.getByRole('button', { name: 'Todos' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('combobox', { name: 'Equipo' })).toHaveValue('todos')
+  })
 })
