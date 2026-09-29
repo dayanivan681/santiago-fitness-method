@@ -74,11 +74,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:07:18.048Z
+- **Última sincronización:** 2026-09-29T02:12:38.629Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1221,6 +1221,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:12:38.629Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca del coach, fase 1 (servidor y datos): migración 0012_biblioteca_coach (tabla ejercicios_coach) registrada en pruebas-v2/d1.ts, preparar-qa-v2 y migrar-v2; esquema zod EjercicioCoach en shared/v2/biblioteca.ts; API GET/POST /biblioteca, PATCH /biblioteca/<id> (editar/archivar), PUT y GET /biblioteca/<id>/foto (R2, reutiliza leerFotoValidada extraída de medios.ts); EjercicioId acepta coach-ej-<uuid>; aplicar() rechaza con 400 ids coach-ej inexistentes o archivados; evaluarEstadoProgramacion acepta ids del coach. PATCH parcial no rellena defaults (bug atrapado por test). La migración NO está aplicada en staging ni producción.
+- **Verificación:** npm test (815/815); npm run lint; npm run build; npm run test:http (82 PASS, local)
+- **Siguiente:** Fase 2: panel del coach (servicioBiblioteca, contexto BibliotecaCoach, hoja Añadir ejercicio, EditorPlan). Antes de desplegar: aplicar 0012 con respaldo en staging y producción con npm run d1:v2
+
 
 ### 2026-09-29T02:07:18.049Z | claude-code | CLAIM
 - **Estado:** active

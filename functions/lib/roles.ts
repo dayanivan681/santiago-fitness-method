@@ -84,7 +84,11 @@ export type CampoPerfilPendiente = 'edad' | 'estatura' | 'peso' | 'objetivo' | '
  * Gate de release genérico: exactamente cuatro días, cada uno con 5–8 slots
  * válidos y consecutivos. No conoce IDs de clientes.
  */
-export function evaluarEstadoProgramacion(rutinas: readonly RutinaCloud[]): EstadoProgramacion {
+export function evaluarEstadoProgramacion(
+  rutinas: readonly RutinaCloud[],
+  idsDelCoach: ReadonlySet<string> = new Set(),
+): EstadoProgramacion {
+  const existe = (id: string) => IDS_DE_EJERCICIOS.has(id) || idsDelCoach.has(id)
   const problemasGenerales: string[] = []
   if (rutinas.length !== DIAS_CLOUD_POR_DEFECTO.length) {
     problemasGenerales.push(
@@ -109,7 +113,7 @@ export function evaluarEstadoProgramacion(rutinas: readonly RutinaCloud[]): Esta
     const ejerciciosValidos = rutina.slots.filter(
       (slot, indice) =>
         slot.orden === indice + 1 &&
-        IDS_DE_EJERCICIOS.has(slot.ejercicioId) &&
+        existe(slot.ejercicioId) &&
         Number.isInteger(slot.seriesObjetivo) &&
         slot.seriesObjetivo > 0 &&
         Number.isInteger(slot.repMin) &&
@@ -135,7 +139,7 @@ export function evaluarEstadoProgramacion(rutinas: readonly RutinaCloud[]): Esta
        * salida en algo accionable.
        */
       const desconocidos = rutina.slots
-        .filter((slot) => !IDS_DE_EJERCICIOS.has(slot.ejercicioId))
+        .filter((slot) => !existe(slot.ejercicioId))
         .map((slot) => slot.ejercicioId)
       detalle = desconocidos.length
         ? `${dia.nombre}: ejercicio fuera del catálogo (${desconocidos.join(', ')})`

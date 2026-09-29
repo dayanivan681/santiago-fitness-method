@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IDS_DE_EJERCICIOS } from "../ejercicios-base";
+import { esIdDeEjercicioCoach } from "./biblioteca";
 
 export const Id = z
   .string()
@@ -9,7 +10,7 @@ export const Id = z
 export const Fecha = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const Texto = z.string().max(4000);
 const EjercicioId = Id.refine(
-  (id) => IDS_DE_EJERCICIOS.has(id),
+  (id) => IDS_DE_EJERCICIOS.has(id) || esIdDeEjercicioCoach(id),
   "Variante desconocida",
 );
 export const Carga = z.object({
@@ -50,7 +51,7 @@ export const Perfil = z.object({
   frecuenciaEntrenamiento: z.number().int().min(1).max(7),
   limitaciones: Texto,
   notas: Texto.default(""),
-  ejerciciosEvitados: z.array(EjercicioId).max(33).default([]),
+  ejerciciosEvitados: z.array(EjercicioId).max(200).default([]),
 });
 export const PlanHistorico = z.object({
   id: Id,

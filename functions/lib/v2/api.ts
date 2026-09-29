@@ -23,6 +23,7 @@ import { crearInvitacion } from "../invitacion";
 import { archivarCliente } from "../roles";
 import { resumen } from "../cripto";
 import { prepararRestablecimiento } from "../cuentas";
+import { rutaDeBiblioteca } from "./bibliotecaApi";
 import { bloqueoPorSuscripcion, rutaDeSuscripcion } from "./suscripcionApi";
 export async function api(
   request: Request,
@@ -64,6 +65,8 @@ export async function api(
     }
     const suscripcion = await rutaDeSuscripcion(request, env, ctx, cliente, ruta);
     if (suscripcion) return suscripcion;
+    const biblioteca = await rutaDeBiblioteca(request, env, ctx, ruta);
+    if (biblioteca) return biblioteca;
     if (ruta === "/inicio" && request.method === "GET") {
       const [perfil, plan] = await Promise.all([
         perfilActual(env.ACCESO, cliente),

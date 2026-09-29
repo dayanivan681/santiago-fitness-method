@@ -2,6 +2,57 @@ import { z } from "zod";
 import type { Contexto } from "../../../shared/v2/contratos";
 import { ErrorApi } from "./datos";
 import { json, type EntornoV2 } from "./seguridad";
+export const FOTO_MAX_BYTES = 5242880;
+export function rechazarSiDeclaraDemasiado(request: Request) {
+  if (Number(request.headers.get("Content-Length") ?? 0) > FOTO_MAX_BYTES)
+    throw new ErrorApi("Máximo 5 MB por foto.", 413);
+}
+/** Lee el cuerpo con tope de 5 MB y acepta sólo JPEG, PNG o WebP por su firma. */
+export async function leerFotoValidada(
+  request: Request,
+): Promise<{ bytes: ArrayBuffer; mime: string }> {
+  const reader = request.body?.getReader();
+  if (!reader) throw new ErrorApi("Fotografía vacía.");
+  const partes: Uint8Array[] = [];
+  let longitud = 0;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    longitud += value.byteLength;
+    if (longitud > 5242880) {
+      await reader.cancel();
+      throw new ErrorApi("Máximo 5 MB por foto.", 413);
+    }
+    partes.push(value);
+  }
+  const contenido = new Uint8Array(longitud);
+  let offset = 0;
+  for (const p of partes) {
+    contenido.set(p, offset);
+    offset += p.byteLength;
+  }
+  const bytes = contenido.buffer as ArrayBuffer;
+  if (!bytes.byteLength || bytes.byteLength > 5242880)
+    throw new ErrorApi("Máximo 5 MB por foto.", 413);
+  const b = new Uint8Array(bytes);
+  const mime =
+    b[0] === 255 && b[1] === 216 && b[2] === 255
+      ? "image/jpeg"
+      : b[0] === 137 && b[1] === 80 && b[2] === 78 && b[3] === 71
+        ? "image/png"
+        : b[0] === 82 &&
+            b[1] === 73 &&
+            b[2] === 70 &&
+            b[3] === 70 &&
+            b[8] === 87 &&
+            b[9] === 69 &&
+            b[10] === 66 &&
+            b[11] === 80
+          ? "image/webp"
+          : null;
+  if (!mime) throw new ErrorApi("Usa una fotografía JPEG, PNG o WebP.");
+  return { bytes, mime };
+}
 export async function medios(
   request: Request,
   env: EntornoV2,
@@ -65,8 +116,7 @@ export async function medios(
   }
   if (request.method !== "PUT" || !id || !/^[\w-]{1,100}$/.test(id))
     throw new ErrorApi("Solicitud inválida.");
-  if (Number(request.headers.get("Content-Length") ?? 0) > 5242880)
-    throw new ErrorApi("Máximo 5 MB por foto.", 413);
+  rechazarSiDeclaraDemasiado(request);
   if (request.headers.get("X-SFM-Consentimiento") !== "subir")
     throw new ErrorApi("Confirma el almacenamiento privado de la fotografía.");
   const url = new URL(request.url);
@@ -78,46 +128,7 @@ export async function medios(
     .min(1)
     .max(240)
     .parse(url.searchParams.get("registro"));
-  const reader = request.body?.getReader();
-  if (!reader) throw new ErrorApi("Fotografía vacía.");
-  const partes: Uint8Array[] = [];
-  let longitud = 0;
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    longitud += value.byteLength;
-    if (longitud > 5242880) {
-      await reader.cancel();
-      throw new ErrorApi("Máximo 5 MB por foto.", 413);
-    }
-    partes.push(value);
-  }
-  const contenido = new Uint8Array(longitud);
-  let offset = 0;
-  for (const p of partes) {
-    contenido.set(p, offset);
-    offset += p.byteLength;
-  }
-  const bytes = contenido.buffer;
-  if (!bytes.byteLength || bytes.byteLength > 5242880)
-    throw new ErrorApi("Máximo 5 MB por foto.", 413);
-  const b = new Uint8Array(bytes);
-  const mime =
-    b[0] === 255 && b[1] === 216 && b[2] === 255
-      ? "image/jpeg"
-      : b[0] === 137 && b[1] === 80 && b[2] === 78 && b[3] === 71
-        ? "image/png"
-        : b[0] === 82 &&
-            b[1] === 73 &&
-            b[2] === 70 &&
-            b[3] === 70 &&
-            b[8] === 87 &&
-            b[9] === 69 &&
-            b[10] === 66 &&
-            b[11] === 80
-          ? "image/webp"
-          : null;
-  if (!mime) throw new ErrorApi("Usa una fotografía JPEG, PNG o WebP.");
+  const { bytes, mime } = await leerFotoValidada(request);
   const hash = Array.from(
     new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)),
     (n) => n.toString(16).padStart(2, "0"),

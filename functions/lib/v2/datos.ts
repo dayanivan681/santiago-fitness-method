@@ -11,6 +11,7 @@ import {
   type Tipo,
 } from "../../../shared/v2/contratos";
 import { listarPerfiles, listarRutinas, obtenerPerfil } from "../roles";
+import { idsDeCoachNoDisponibles } from "./bibliotecaDatos";
 import { resumen } from "../cripto";
 import { canonico } from "../../../shared/v2/importacion";
 export type FilaCambio = {
@@ -226,6 +227,12 @@ export async function aplicar(
         throw new ErrorApi("Programa de otra cuenta.", 403);
       if (op.id === "programa" && plan.estado !== "publicado")
         throw new ErrorApi("El programa activo debe estar publicado.");
+      const inexistentes = await idsDeCoachNoDisponibles(
+        db,
+        plan.dias.flatMap((d) => d.slots.map((s) => s.ejercicioId)),
+      );
+      if (inexistentes.length)
+        throw new ErrorApi("Hay ejercicios que ya no están disponibles en tu biblioteca. Quítalos o restáuralos.");
     }
     if (op.tipo === "entrenamiento") {
       const e = Entrenamiento.parse(op.datos);

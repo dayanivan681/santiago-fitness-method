@@ -183,6 +183,44 @@ checks++;
 const todas = await (await codigo(await pedir(cbase + "/suscripciones", coach), 200, "Coach ve suscripciones")).json();
 assert.ok(todas.suscripciones.some((s) => s.clienteId === id && s.exento));
 checks++;
+// Biblioteca del coach: crea, sube foto, el cliente lee y un plan la usa.
+const bytesFoto = (firma) => new Uint8Array([...firma, ...new Uint8Array(64)]);
+const pedirBytes = (ruta, headers, bytes) =>
+  fetch(new URL(ruta, base), { method: "PUT", redirect: "manual", headers: { Origin: base.origin, ...headers }, body: bytes });
+const ejercicioNuevo = {
+  referenciaCatalogo: "C012", nombre: "Jalón neutro QA", equipo: "cable", movimiento: "jalon-vertical",
+  musculoPrimario: "espalda", musculosSecundarios: ["biceps"], tipoCarga: "pesoMaquina",
+  incrementoMinimoLb: 5, explicacionCorta: "Tira hacia el pecho.",
+};
+await codigo(await pedir("/api/v2/biblioteca"), 401, "Biblioteca privada sin sesión");
+await codigo(await pedir("/api/v2/biblioteca", cliente, ejercicioNuevo), 403, "Cliente no crea ejercicios");
+const creado = await (await codigo(await pedir(cbase + "/biblioteca", coach, ejercicioNuevo), 201, "Coach crea ejercicio")).json();
+const ejId = creado.ejercicio.id;
+assert.match(ejId, /^coach-ej-[0-9a-f-]{36}$/);
+checks++;
+await codigo(await pedirBytes(`/api/v2/biblioteca/${ejId}/foto`, cliente, bytesFoto([255, 216, 255])), 403, "Cliente no sube fotos");
+await codigo(await pedirBytes(`${cbase}/biblioteca/${ejId}/foto`, coach, bytesFoto([71, 73, 70])), 400, "Foto con firma inválida");
+await codigo(await pedirBytes(`${cbase}/biblioteca/${ejId}/foto`, coach, bytesFoto([255, 216, 255])), 200, "Coach sube la foto");
+const listaCliente = await (await codigo(await pedir("/api/v2/biblioteca", cliente), 200, "Cliente lee la biblioteca")).json();
+assert.ok(listaCliente.ejercicios.some((x) => x.id === ejId && x.tieneFoto));
+checks++;
+const fotoCliente = await codigo(await pedir(`/api/v2/biblioteca/${ejId}/foto`, cliente), 200, "Foto llega al cliente");
+assert.equal(fotoCliente.headers.get("content-type"), "image/jpeg");
+checks++;
+const planConCoach = {
+  ...plan,
+  dias: plan.dias.map((d, i) => (i === 0 ? { ...d, slots: d.slots.map((sl, j) => (j === 0 ? { ...sl, ejercicioId: ejId } : sl)) } : d)),
+};
+const inventado = "coach-ej-00000000-0000-0000-0000-000000000000";
+const planInventado = { ...planConCoach, dias: planConCoach.dias.map((d, i) => (i === 0 ? { ...d, slots: d.slots.map((sl, j) => (j === 0 ? { ...sl, ejercicioId: inventado } : sl)) } : d)) };
+const revisionPlan = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
+await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planInventado, revisionPlan)] }), 400, "Plan con id inventado da 400");
+await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planConCoach, revisionPlan)] }), 200, "Plan con ejercicio del coach se publica");
+await codigo(await pedir(`${cbase}/biblioteca/${ejId}`, coach, { activo: false }, "PATCH"), 200, "Coach archiva el ejercicio");
+const tras = await (await pedir("/api/v2/biblioteca", cliente)).json();
+assert.ok(!tras.ejercicios.some((x) => x.id === ejId), "Archivado no se distribuye");
+checks++;
+await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planConCoach, revisionPlan + 1)] }), 400, "Plan con ejercicio archivado da 400");
 await codigo(
   await pedir("/api/v2/sincronizar", cliente, {
     operaciones: [op("perfil", id, perfil, 1)],
