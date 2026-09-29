@@ -38,3 +38,6 @@ entrega-diseno/
 # Respaldos privados; nunca publicar datos ni credenciales
 .recovery/
 .qa-local/
+
+# Mapa local de graphify (se regenera; nunca al repo)
+graphify-out/

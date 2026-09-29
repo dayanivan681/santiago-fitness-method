@@ -74,11 +74,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:22:56.820Z
+- **Última sincronización:** 2026-09-29T02:24:59.576Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1221,6 +1221,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:24:59.576Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** graphify-out/ añadido a .gitignore (mapa local de la herramienta graphify, nunca al repo). AVISO: hay un test intermitente — 1 fallo en 828 en una ejecución completa, luego 3 ejecuciones seguidas en verde; ya ocurrió antes (27-sep). No se pudo identificar cuál; conviene correr la suite con --reporter=verbose varias veces para encontrarlo.
+- **Verificación:** npm test (1 fallo intermitente, luego 828/828 x3); npm run lint; npm run build; git check-ignore graphify-out/
+- **Siguiente:** Localizar el test intermitente. Continuar fase 3 de la biblioteca del coach.
+
 
 ### 2026-09-29T02:22:56.821Z | claude-code | CLAIM
 - **Estado:** active
