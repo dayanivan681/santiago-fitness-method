@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T04:15:54.580Z
+- **Última sincronización:** 2026-09-29T04:20:20.638Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T04:20:20.639Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** src/producto/producto.css: (1) header cortado con la app instalada en inicio: index.html usa black-translucent + viewport-fit=cover y la UI sfm no reservaba safe-area-inset-top. Se añade padding-top env(safe-area-inset-top) a .sfm-shell, una franja fija opaca (.sfm-shell::before) que tapa el contenido bajo la barra de estado al hacer scroll, padding superior a .sfm-demo-banner (incluida su regla móvil) y la barra sticky del entrenamiento del cliente se fija en top: env(safe-area-inset-top). (2) Añadir ejercicio centrado: .sfm-primary > svg:first-child sin margin-left:auto. Verificado en Chromium 402x874 sustituyendo env() por 59px: coach/biblioteca, cliente, scroll y entrenamiento sin solapes. Sin probar en iPhone real.
+- **Verificación:** npm test 840/840; npm run lint PASS; npm run build PASS
+- **Siguiente:** Validar en iPhone con la app instalada en inicio tras el despliegue (Coach, Cliente y entrenamiento)
+
 
 ### 2026-09-29T04:15:54.581Z | claude-code | CLAIM
 - **Estado:** active
