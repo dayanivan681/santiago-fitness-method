@@ -9,7 +9,7 @@ de archivos en Downloads ni del historial del chat.
 | 01 | 2026-09-28 | Listado de ejercicios por grupo muscular | [Informe de actualización y mejoras de la aplicación](2026-09-28-mensaje-01/TRANSCRIPCION.md): cinco imágenes, biblioteca, selección rápida, split de cinco días, series, historial y progresión. |
 | 02 | 2026-09-28 | Segundo mensaje de Santiago | [Biblioteca Maestra de Ejercicios](2026-09-28-mensaje-02/TRANSCRIPCION.md): cinco imágenes, objetivo, organización y listado en 12 grupos; [lista estructurada](2026-09-28-mensaje-02/ejercicios.csv). |
 
-- Mensaje 02 importado en staging el 2026-09-29 (279 ejercicios como suyos; 2 ya existían y 2 estaban repetidos). Producción pendiente del visto bueno del dueño.
+- Mensaje 02 importado el 2026-09-29 en staging y producción: 279 ejercicios como suyos (2 ya existían como fichas fijas y 2 estaban repetidos en su lista).
 
 ## Uso del registro
 

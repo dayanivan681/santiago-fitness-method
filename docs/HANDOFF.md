@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T16:15:32.820Z
+- **Última sincronización:** 2026-09-29T16:17:51.889Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T16:17:51.890Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca Maestra de Santiago en PRODUCCIÓN: código con los arreglos del QA desplegado (cc00c9f), ensayo (279 a insertar, repetición 0, originales conservados) y --aplicar: 279 insertadas, 1 ejercicio previo intacto, clientes 8 / rutinas 24 / sesiones 40 sin cambios; M02-045/059/260 verificados en remoto con los datos corregidos. /api/v2/biblioteca y su foto dan 401 sin sesión. Staging corregido con --corregir (4 filas) y preview redesplegado (72af115d). Evidencia en .recovery/ fuera de Git.
+- **Verificación:** biblioteca:santiago --staging --corregir; --produccion (ensayo); --produccion --aplicar; consulta remota; curl 401
+- **Siguiente:** QA con la sesión del dueño en producción y borrador del correo a Santiago (incluye la pregunta sobre ejercicios por tiempo y asistidos)
+
 
 ### 2026-09-29T16:15:32.821Z | claude-code | CLAIM
 - **Estado:** active

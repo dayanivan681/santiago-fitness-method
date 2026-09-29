@@ -6,6 +6,7 @@
 - `etiquetaCarga()`: «Lastre añadido» en peso corporal (y en dominadas/fondos, que la semilla guarda como barra). En el formulario del coach, con «Peso corporal» la opción se titula «Lastre que añades».
 - M02-045 → cable; M02-059 → carga total con explicación del disco; M02-260/261 → explicación con banda elástica. `--corregir` actualiza sólo filas M02 sin tocar por Santiago (`actualizado_en = creado_en`, sin foto), con respaldo y ensayo idempotente. Aplicado en local.
 - Mientras se busca, chips y equipo se atenúan (`filtro--en-pausa`, `aria-disabled`) y aparece «Buscando en toda la biblioteca»; al borrar vuelven los filtros.
+- Staging: `--corregir` actualizó 4 filas (las previstas); preview redesplegado (`72af115d`). Producción (autorizada por el dueño): ensayo limpio y `--aplicar`, 279 insertadas, 1 ejercicio previo de Santiago intacto, clientes 8 / rutinas 24 / sesiones 40 sin cambios; `/api/v2/biblioteca` da 401 sin sesión.
 - Verificado: 858 pruebas, tsc, lint, build, 88 HTTP; navegador 375×812 (coach y `/qa/cliente` con etiquetas idénticas, Push-Up «Lastre añadido», Cable Machine Shoulder Press «Polea / cable», búsqueda con Pecho); toque real del chip «Aductores» en Safari del simulador iOS.
 
 ## 2026-09-29 — Biblioteca Maestra de Santiago (mensaje 02) — claude-code
