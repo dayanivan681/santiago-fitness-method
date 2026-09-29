@@ -2794,3 +2794,33 @@ a.fila:active {
   font-size: 13px;
   color: var(--texto-60);
 }
+
+/* Días de entrenamiento en Hoy. Con 5 o menos, todos a la vista en una rejilla:
+   una persona puede no descubrir que la fila se desliza. Con 6 o 7 se desliza
+   y un degradado en el borde avisa de que hay más. Los chips de la biblioteca
+   no llevan este modificador y no cambian. */
+.filtros--dias:is([data-dias="1"], [data-dias="2"], [data-dias="3"], [data-dias="4"], [data-dias="5"]) {
+  display: grid;
+  gap: 6px;
+  overflow: visible;
+}
+.filtros--dias[data-dias="1"] { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.filtros--dias[data-dias="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.filtros--dias[data-dias="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.filtros--dias[data-dias="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.filtros--dias[data-dias="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.filtros--dias:is([data-dias="1"], [data-dias="2"], [data-dias="3"], [data-dias="4"], [data-dias="5"]) .filtro {
+  min-width: 0;
+  min-height: 44px;
+  padding: 4px 4px;
+  justify-content: center;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+.filtros--dias:is([data-dias="6"], [data-dias="7"]) {
+  -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+  mask-image: linear-gradient(to right, #000 85%, transparent);
+}

@@ -1522,3 +1522,13 @@ describe('cierre de sesión (Phase 1B)', () => {
     expect(series.filter((s) => s.esCalentamiento)).toHaveLength(1)
   })
 })
+
+describe('pestañas de días', () => {
+  test('el selector de días lleva su propio modificador y el número de días', async () => {
+    render(<EntrenamientoHoy repositorio={repositorio} />)
+    const nav = await screen.findByRole('navigation', { name: 'Día de entrenamiento' })
+    const dias = within(nav).getAllByRole('button').length
+    expect(nav).toHaveClass('filtros', 'filtros--dias')
+    expect(nav).toHaveAttribute('data-dias', String(dias))
+  })
+})

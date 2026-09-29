@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T19:13:22.690Z
+- **Última sincronización:** 2026-09-29T19:18:11.567Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T19:18:11.568Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Split 5 días: la lista de clientes muestra las sesiones del programa (N sesiones · Programa publicado) en vez de la frecuencia del perfil; el selector de días de Hoy usa rejilla con 5 días o menos (todas visibles, 44 px) y desplazamiento con degradado con 6-7; biblioteca sin cambios. Con 4 días también pasa a rejilla (antes a 320 px se cortaba la cuarta).
+- **Verificación:** npm test (868/868); npx tsc -b; npm run lint; npm run build; npm run test:http (91 PASS); navegador 320/375/390 px; simulador iOS Safari
+- **Siguiente:** Borrador del correo a Santiago (5 días en el alta, Pasar a 5 días para Angel, archivar duplicados, pregunta sobre ejercicios por tiempo y asistidos)
+
 
 ### 2026-09-29T19:13:22.691Z | claude-code | CLAIM
 - **Estado:** active

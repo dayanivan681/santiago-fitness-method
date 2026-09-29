@@ -1,5 +1,11 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-29 — Split de 5 días: lista de clientes y pestañas de días — claude-code
+
+- La lista de clientes del coach cuenta las sesiones del programa («5 sesiones · Programa publicado»), no la frecuencia del perfil. La frecuencia sigue en Perfil, en el resumen del alta y en «Tu semana» de la app del cliente, que describen el perfil.
+- Hoy: el selector de días lleva `filtros--dias` y `data-dias`. Con 5 días o menos, rejilla de columnas iguales (todas a la vista, 44 px de alto); con 6 o 7, se desplaza con un degradado en el borde. Los chips de la biblioteca no cambian. Con 4 días también pasa a rejilla: antes, a 320 px, la cuarta pestaña ya quedaba medio cortada.
+- Verificado: 868 pruebas, tsc, lint, build, 91 HTTP; navegador a 320/375/390 px (5 pestañas completas, sin desplazamiento de página ni de fila; tocar Lower C la abre); María «5 sesiones»; biblioteca sigue desplazable; Safari del simulador iOS con las 5 pestañas visibles. Programa y perfil de Angel sin tocar.
+
 ## 2026-09-29 — Split de 5 días Lower/Upper (mensaje 01 §3) — claude-code
 
 - `PLANTILLAS_5_DIAS` en `shared/plantillas-base.ts` (tipo aparte `PlantillaBase5`; `PLANTILLAS_BASE` intacta para v1, semilla y presentación): Lower A cuádriceps, Upper A, Lower B glúteos y femorales, Upper B, Lower C combinado; sólo fichas fijas con foto.

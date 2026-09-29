@@ -360,7 +360,7 @@ function FilaCliente({ c, base }: { c: Cliente; base: string }) {
         <small>
           {incompleto
             ? "Programa por revisar"
-            : `${c.perfil.frecuenciaEntrenamiento} días · Programa publicado`}
+            : `${c.plan.dias.length} ${segunCantidad(c.plan.dias.length, "sesión", "sesiones")} · Programa publicado`}
         </small>
       </span>
       <span

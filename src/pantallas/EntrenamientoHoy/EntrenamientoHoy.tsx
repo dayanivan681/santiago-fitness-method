@@ -65,7 +65,8 @@ export function EntrenamientoHoy({
         </header>
 
         {ejerciciosDelDia.length>0&&<div className="sfm-session-visual" aria-hidden="true">{ejerciciosDelDia.slice(0,3).map(e=><img key={e.ejercicio.id} src={e.ejercicio.imagen} alt=""/>)}</div>}
-        <nav className="filtros" aria-label="Día de entrenamiento">
+        {/* Hasta 5 días caben todos a la vista (no hay que descubrir que la fila se desliza); con 6 o 7 se desplaza. */}
+        <nav className="filtros filtros--dias" data-dias={plantillas.length} aria-label="Día de entrenamiento">
           {plantillas.map((opcion) => (
             <button
               key={opcion.id}
