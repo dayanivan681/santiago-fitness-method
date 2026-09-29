@@ -87,3 +87,80 @@ export const PLANTILLAS_BASE: readonly PlantillaBase[] = [
     ],
   },
 ]
+
+/**
+ * Split de cinco días Lower – Upper – Lower – Upper – Lower (informe de
+ * Santiago, mensaje 01 §3), pensado sobre todo para quien entrena piernas y
+ * glúteos tres veces por semana. Los enfoques (Lower A cuádriceps, Lower B
+ * glúteos y femorales, Lower C combinado) son sólo el punto de partida: el
+ * coach cambia libremente ejercicios, series y repeticiones.
+ *
+ * Tipo aparte: `PlantillaBase` sigue describiendo las cuatro de v1.
+ */
+export type PlantillaBase5 = {
+  readonly slug: 'lower-a' | 'upper-a' | 'lower-b' | 'upper-b' | 'lower-c'
+  readonly nombre: 'Lower A' | 'Upper A' | 'Lower B' | 'Upper B' | 'Lower C'
+  readonly orden: 1 | 2 | 3 | 4 | 5
+  readonly slots: readonly SlotBase[]
+}
+
+/** Slots de Lower C: también los usa la conversión de un programa de 4 días. */
+export const SLOTS_LOWER_C: readonly SlotBase[] = [
+  slot(1, 'sfm-catalog-c191', 'hipertrofia'),
+  slot(2, 'zancadas-mancuernas', 'hipertrofia'),
+  slot(3, 'sfm-catalog-c217', 'hipertrofia'),
+  slot(4, 'curl-femoral-tumbado', 'hipertrofia'),
+  slot(5, 'elevacion-talones-sentado', 'resistencia'),
+]
+
+export const PLANTILLAS_5_DIAS: readonly PlantillaBase5[] = [
+  {
+    slug: 'lower-a',
+    nombre: 'Lower A',
+    orden: 1,
+    slots: [
+      slot(1, 'sentadilla-barra', 'fuerza'),
+      slot(2, 'hack-squat', 'hipertrofia'),
+      slot(3, 'prensa', 'hipertrofia'),
+      slot(4, 'extension-cuadriceps', 'hipertrofia'),
+      slot(5, 'elevacion-talones-pie', 'resistencia'),
+    ],
+  },
+  {
+    slug: 'upper-a',
+    nombre: 'Upper A',
+    orden: 2,
+    slots: [
+      slot(1, 'press-banca-15-smith', 'fuerza'),
+      slot(2, 'press-inclinado-convergente', 'hipertrofia'),
+      slot(3, 'lat-pulldown-maquina', 'hipertrofia'),
+      slot(4, 'curl-barra', 'hipertrofia'),
+      slot(5, 'elevacion-lateral-mancuernas', 'resistencia'),
+    ],
+  },
+  {
+    slug: 'lower-b',
+    nombre: 'Lower B',
+    orden: 3,
+    slots: [
+      slot(1, 'peso-muerto-rumano', 'fuerza'),
+      slot(2, 'hip-thrust-barra', 'hipertrofia'),
+      slot(3, 'curl-femoral-sentado', 'hipertrofia'),
+      slot(4, 'abduccion-maquina', 'hipertrofia'),
+      slot(5, 'patada-gluteo-polea', 'hipertrofia'),
+    ],
+  },
+  {
+    slug: 'upper-b',
+    nombre: 'Upper B',
+    orden: 4,
+    slots: [
+      slot(1, 'remo-barra', 'fuerza'),
+      slot(2, 'press-pecho-convergente', 'hipertrofia'),
+      slot(3, 'jalon-agarre-cerrado', 'hipertrofia'),
+      slot(4, 'curl-mancuernas', 'hipertrofia'),
+      slot(5, 'extension-triceps-polea', 'resistencia'),
+    ],
+  },
+  { slug: 'lower-c', nombre: 'Lower C', orden: 5, slots: SLOTS_LOWER_C },
+]

@@ -9,7 +9,7 @@ import type {
   Tipo,
 } from "../../shared/v2/contratos";
 import { ClienteApi } from "../nube/cloud";
-import { PLANTILLAS_BASE } from "../../shared/plantillas-base";
+import { PLANTILLAS_5_DIAS, PLANTILLAS_BASE } from "../../shared/plantillas-base";
 import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
 import { RepositorioMemoria } from "../nube/memoria";
 import type { Participante, Sesion } from "../dominio/tipos";
@@ -310,12 +310,14 @@ export class ServicioCoach {
     return repo;
   }
 }
-export function planBase(cliente: string): Plan {
+/** Programa inicial según la frecuencia del alta: con 5 días, Lower–Upper–Lower–Upper–Lower; si no, los 4 de siempre. */
+export function planBase(cliente: string, frecuencia = 4): Plan {
+  const plantillas = frecuencia === 5 ? PLANTILLAS_5_DIAS : PLANTILLAS_BASE;
   return {
     id: "programa",
     estado: "borrador",
     revisado: false,
-    dias: PLANTILLAS_BASE.map((d) => ({
+    dias: plantillas.map((d) => ({
       id: `${cliente}-${d.slug}`,
       participanteId: cliente,
       nombre: d.nombre,

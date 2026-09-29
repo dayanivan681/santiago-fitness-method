@@ -232,6 +232,18 @@ if (m02.length) {
   await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planM02, rev)] }), 200, "Plan con un ejercicio M02 importado se publica");
   checks++;
 } else console.log("Biblioteca de Santiago sin importar en local: se omiten sus comprobaciones.");
+// Split de 5 días: Lower–Upper–Lower–Upper–Lower (los 4 días del cliente más Lower C).
+{
+  const [ua, la, ub, lb] = plan.dias;
+  const lowerC = { ...la, id: id + "-dia-lower-c", nombre: "Lower C" };
+  const cinco = { ...plan, dias: [la, ua, lb, ub, lowerC].map((d, i) => ({ ...d, orden: i + 1 })) };
+  const rev = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
+  await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", cinco, rev)] }), 200, "Plan de 5 días se publica");
+  const leido = await (await codigo(await pedir("/api/v2/inicio", cliente), 200, "Cliente lee el plan de 5 días")).json();
+  assert.equal(leido.plan.dias.length, 5);
+  assert.equal(leido.plan.dias[4].nombre, "Lower C");
+  checks++;
+}
 await codigo(await pedir(`${cbase}/biblioteca/${ejId}`, coach, { activo: false }, "PATCH"), 200, "Coach archiva el ejercicio");
 const tras = await (await pedir("/api/v2/biblioteca", cliente)).json();
 assert.ok(!tras.ejercicios.some((x) => x.id === ejId), "Archivado no se distribuye");

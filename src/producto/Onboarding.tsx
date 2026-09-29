@@ -215,12 +215,17 @@ export function Onboarding({
               <button
                 key={n}
                 aria-pressed={p.frecuenciaEntrenamiento === n}
-                onClick={() =>
+                onClick={() => {
+                  // El programa inicial sigue a la frecuencia mientras el coach no lo haya tocado.
+                  const intacto =
+                    JSON.stringify({ ...a.plan, revisado: false }) ===
+                    JSON.stringify(planBase(p.id, p.frecuenciaEntrenamiento));
                   setAlta({
                     ...a,
                     perfil: { ...p, frecuenciaEntrenamiento: n },
-                  })
-                }
+                    plan: intacto ? planBase(p.id, n) : a.plan,
+                  });
+                }}
               >
                 {n}
               </button>

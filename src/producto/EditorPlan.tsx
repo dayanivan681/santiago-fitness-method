@@ -3,6 +3,7 @@ import type { Plan, Perfil } from "../../shared/v2/contratos";
 import { Plan as ValidarPlan } from "../../shared/v2/contratos";
 import { useBiblioteca } from "./contextoBiblioteca";
 import { ETIQUETA_EQUIPO } from "./etiquetasBiblioteca";
+import { pasarACincoDias, puedePasarACincoDias } from "./cincoDias";
 import type { SlotPlantilla } from "../dominio/tipos";
 import { Hoja, Icono } from "./ui";
 export function EditorPlan({
@@ -20,6 +21,7 @@ export function EditorPlan({
   const [buscar, setBuscar] = useState("");
   const [anadir, setAnadir] = useState(false);
   const [sesiones, setSesiones] = useState(false);
+  const [confirmarCinco, setConfirmarCinco] = useState(false);
   const d = plan.dias[Math.min(dia, plan.dias.length - 1)];
   function cambiar(slots: SlotPlantilla[]) {
     onChange({
@@ -215,6 +217,33 @@ export function EditorPlan({
               </button>
             </div>
           ))}
+          {puedePasarACincoDias(plan) &&
+            (confirmarCinco ? (
+              <div className="sfm-callout">
+                <p>
+                  Se añadirá Lower C y las sesiones quedarán en orden Lower – Upper – Lower – Upper – Lower. Tus
+                  ejercicios no cambian. Después revisa y publica.
+                </p>
+                <button
+                  className="sfm-primary"
+                  onClick={() => {
+                    onChange(pasarACincoDias(plan, perfil.id));
+                    setConfirmarCinco(false);
+                    setDia(0);
+                    setSesiones(false);
+                  }}
+                >
+                  Confirmar
+                </button>
+                <button className="sfm-secondary" onClick={() => setConfirmarCinco(false)}>
+                  Volver
+                </button>
+              </div>
+            ) : (
+              <button className="sfm-secondary" onClick={() => setConfirmarCinco(true)}>
+                Pasar a 5 días (Lower – Upper – Lower – Upper – Lower)
+              </button>
+            ))}
           <button
             className="sfm-secondary"
             disabled={plan.dias.length >= 7}

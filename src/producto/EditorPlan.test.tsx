@@ -64,3 +64,22 @@ it('la lista de «Añadir ejercicio» muestra el equipo en lenguaje sencillo, no
   expect(within(hoja).getByText('Prensa de piernas 45°')).toBeInTheDocument();
   expect(within(hoja).queryByText('Extensión de cuádriceps')).toBeNull();
 });
+
+it('«Pasar a 5 días» sólo aparece con 2 Lower y 2 Upper, pide confirmación y deja 5 sesiones por revisar', () => {
+  const cambiar = vi.fn();
+  const { rerender } = render(<EditorPlan plan={plan} perfil={perfil} onChange={cambiar} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Organizar sesiones' }));
+  let hoja = screen.getByRole('dialog', { name: 'Orden de las sesiones' });
+  fireEvent.click(within(hoja).getByRole('button', { name: /Pasar a 5 días/ }));
+  expect(within(hoja).getByText(/Se añadirá Lower C.*Tus ejercicios no cambian/)).toBeInTheDocument();
+  expect(cambiar).not.toHaveBeenCalled();
+  fireEvent.click(within(hoja).getByRole('button', { name: 'Confirmar' }));
+  const nuevo = cambiar.mock.calls.at(-1)![0];
+  expect(nuevo.dias.map((d: { nombre: string }) => d.nombre)).toEqual(['Lower A', 'Upper A', 'Lower B', 'Upper B', 'Lower C']);
+  expect(nuevo.revisado).toBe(false);
+  rerender(<EditorPlan plan={nuevo} perfil={perfil} onChange={cambiar} />);
+  expect(within(screen.getByLabelText('Sesión del programa')).getAllByRole('button')).toHaveLength(5);
+  fireEvent.click(screen.getByRole('button', { name: 'Organizar sesiones' }));
+  hoja = screen.getByRole('dialog', { name: 'Orden de las sesiones' });
+  expect(within(hoja).queryByRole('button', { name: /Pasar a 5 días/ })).toBeNull();
+});

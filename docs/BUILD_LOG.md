@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-29 — Split de 5 días Lower/Upper (mensaje 01 §3) — claude-code
+
+- `PLANTILLAS_5_DIAS` en `shared/plantillas-base.ts` (tipo aparte `PlantillaBase5`; `PLANTILLAS_BASE` intacta para v1, semilla y presentación): Lower A cuádriceps, Upper A, Lower B glúteos y femorales, Upper B, Lower C combinado; sólo fichas fijas con foto.
+- `planBase(cliente, frecuencia)`: con 5 usa el split de 5; con cualquier otra, los 4 de siempre. En el alta, cambiar la frecuencia regenera el programa sólo si el coach no lo tocó (marcar «revisado» no cuenta como tocarlo).
+- Editor → «Organizar sesiones» → «Pasar a 5 días» (sólo con 4 días, 2 Lower y 2 Upper): confirma en lenguaje sencillo, reordena L-U-L-U conservando ids, nombres y ejercicios, añade Lower C y deja el programa por revisar. `src/producto/cincoDias.ts`.
+- Verificado: 866 pruebas, tsc, lint, build, 91 HTTP (plan de 5 días se publica y el cliente lo lee); runtime local a 375×812 (alta con 5 días → 5 sesiones en revisión y Vista previa; Lucía de 4 → Pasar a 5 días → publicar, su sesión previa sigue en Actividad); `/qa/cliente` a 320 px con 5 pestañas que se desplazan en horizontal, sin desborde de página.
+- No se tocó el programa de Angel en producción.
+
 ## 2026-09-29 — Arreglos QA de la Biblioteca Maestra — claude-code
 
 - Una sola fuente de etiquetas (`src/dominio/etiquetas.ts`, textos del panel): coach y cliente dicen igual «Hombro (frontal)», «Polea / cable», «Máquina Smith», «Abdomen y core», «Femorales». `etiquetasBiblioteca.ts` los reexporta.

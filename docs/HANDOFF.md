@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T18:55:21.494Z
+- **Última sincronización:** 2026-09-29T19:01:32.327Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T19:01:32.327Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Split de 5 días Lower-Upper-Lower-Upper-Lower: plantilla PLANTILLAS_5_DIAS (sin tocar PLANTILLAS_BASE), planBase respeta la frecuencia del alta (regenera sólo si el coach no tocó el plan) y botón «Pasar a 5 días» en Organizar sesiones que conserva ids/ejercicios, añade Lower C y deja el programa por revisar. Cliente: 5 pestañas en una fila desplazable a 320 px. No se tocó el programa de Angel en producción.
+- **Verificación:** npm test (866/866); npx tsc -b; npm run lint; npm run build; npm run test:http (91 PASS); navegador 375x812 y 320 px en runtime local
+- **Siguiente:** Santiago (o el dueño si lo autoriza) convierte a Angel con Programa → Preparar cambios → Organizar sesiones → Pasar a 5 días; borrador del correo a Santiago
+
 
 ### 2026-09-29T18:55:21.495Z | claude-code | CLAIM
 - **Estado:** active
