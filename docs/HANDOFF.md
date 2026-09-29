@@ -82,11 +82,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T03:00:18.394Z
+- **Última sincronización:** 2026-09-29T03:04:46.827Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1229,6 +1229,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T03:04:46.828Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA del último build (biblioteca del coach). Producción sirve main (deploy aaeeb52b, dcbc7d2; antes b5e933ba/1629cf4) y ya incluye «Añadir ejercicio». Local: 832/832 pruebas en 92 archivos, tsc, lint, build y 82/82 comprobaciones HTTP (runtime local con datos sintéticos). Remoto sin sesión: /entrar 200, /api/v2/biblioteca y /api/v2/contexto 401, /admin 302 a Access; preview 57f66b28 todo tras Access. Demo pública de producción a 375x812: Biblioteca → Añadir ejercicio → De mi catálogo (buscar «hack») → formulario → guardar; aparece con «Tuyo», editar/archivar; entra en el editor del plan, se publica y se ve en Vista previa con su ficha; sin errores de consola. Hallazgos: (1) el editor del plan muestra el equipo con su clave interna (barraLibre, maquinaTradicional) en src/producto/EditorPlan.tsx:285, existente desde v2; (2) se puede crear un ejercicio con el mismo nombre que uno de la biblioteca (Hack squat) sin aviso. No probado: panel real autenticado en staging/producción, foto real y sincronización al teléfono de un cliente real.
+- **Verificación:** npm test; npm run lint; npx tsc -b; npm run build; npm run test:http; navegador demo producción 375x812
+- **Siguiente:** Arreglar la etiqueta de equipo en EditorPlan; decidir si avisar de nombres duplicados; QA autenticado con la sesión de Access del dueño (staging: crear ejercicio con foto; producción: solo lectura)
+
 
 ### 2026-09-29T03:00:18.395Z | claude-code | CLAIM
 - **Estado:** active
