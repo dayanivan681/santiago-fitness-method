@@ -82,11 +82,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:50:43.045Z
+- **Última sincronización:** 2026-09-29T02:51:50.745Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1229,6 +1229,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:51:50.746Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Migración 0012_biblioteca_coach aplicada en PRODUCCIÓN (santiago-acceso, 7cb38489…) con npm run d1:v2 -- --produccion --aplicar, tras respaldo y ensayo de restauración con repetición idempotente OK. Verificado en remoto: existen ejercicios_coach y su índice, 0 filas, entorno_sfm=production; clientes 8, rutinas 24, sesiones 40, invitaciones 17 (idénticos al manifiesto previo). Desde fuera: /api/v2/biblioteca y /api/v2/biblioteca/<id>/foto responden 401 sin sesión; /admin/api/v2/biblioteca redirige (302) a Cloudflare Access. Con esto GET /biblioteca ya no falla en producción. Evidencia en .recovery/migracion-production-1790650244589 (fuera de Git). Pendiente: preview de staging (wrangler pages deploy denegado antes) y el segundo correo a Santiago.
+- **Verificación:** d1:v2 --produccion --aplicar; consulta remota de verificación; curl 401/302 sin sesión
+- **Siguiente:** Probar en producción con la sesión del coach que Biblioteca carga sin error (lo puede hacer Santiago o el dueño); desplegar preview de staging si se quiere probar allí; redactar el segundo correo a Santiago
+
 
 ### 2026-09-29T02:50:43.046Z | claude-code | CLAIM
 - **Estado:** active
