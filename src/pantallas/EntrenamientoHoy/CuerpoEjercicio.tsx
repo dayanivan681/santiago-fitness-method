@@ -13,7 +13,7 @@
 
 import { useEffect,useRef } from 'react'
 import { describirSerie, resumirUltimaVez } from '../../logica/ultimaVez'
-import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
+import { etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
 import { FilaSerie } from './FilaSerie'
 import { ETIQUETA_SUGERENCIA, type Sugerencia } from '../../logica/sugerencia'
 import type { ClaveDeBorrador } from '../../logica/borrador'
@@ -112,7 +112,7 @@ export function CuerpoEjercicio({
         <h2 className="entreno__nombre">{ejercicio.nombre}</h2>
         <p className="entreno__plan">
           {slot.seriesObjetivo} series · {slot.repMin}–{slot.repMax} reps ·{' '}
-          {ETIQUETA_CARGA[ejercicio.tipoCarga]} · {etiquetaEquipo(ejercicio.equipo)}
+          {etiquetaCarga(ejercicio.tipoCarga, ejercicio.equipo)} · {etiquetaEquipo(ejercicio.equipo)}
         </p>
       </header>
 

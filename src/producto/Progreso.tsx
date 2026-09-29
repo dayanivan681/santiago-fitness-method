@@ -14,7 +14,7 @@ import { useBiblioteca } from "./contextoBiblioteca";
 import { Historial } from "../pantallas/Historial/Historial";
 import { Cabecera, ErrorVisible, FechaBonita, Hoja, Icono, Vacio } from "./ui";
 import { ultimos } from "./servicio";
-import { ETIQUETA_CARGA } from "../dominio/etiquetas";
+import { ETIQUETA_CARGA, etiquetaCarga } from "../dominio/etiquetas";
 import { Importaciones } from "./Importaciones";
 export function ProgresoCliente({
   repo,
@@ -299,6 +299,7 @@ function ListaSesiones({
   obtenerSeries: (id: string) => Promise<SerieRegistrada[]>;
 }) {
   const { ejercicios } = useBiblioteca();
+  const equipoDe = (id: string) => ejercicios.find((e) => e.id === id)?.equipo;
   const [detalle, setDetalle] = useState<{
     sesion: Sesion;
     series: SerieRegistrada[];
@@ -376,7 +377,7 @@ function ListaSesiones({
                     <small>
                       RIR {s.rir}
                       {s.esCalentamiento ? " · Calent." : ""}
-                      {s.carga ? ` · ${ETIQUETA_CARGA[s.carga.tipoCarga]}` : ""}
+                      {s.carga ? ` · ${equipoDe(id) ? etiquetaCarga(s.carga.tipoCarga, equipoDe(id)!) : ETIQUETA_CARGA[s.carga.tipoCarga]}` : ""}
                     </small>
                     {s.correcciones?.length ? (
                       <details>

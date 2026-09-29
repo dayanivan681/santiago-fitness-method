@@ -2784,3 +2784,13 @@ a.fila:active {
   letter-spacing: 0;
   text-transform: none;
 }
+
+/* Mientras hay texto en el buscador, los filtros no aplican: se ven en pausa. */
+.filtro--en-pausa {
+  opacity: 0.4;
+}
+.aviso-busqueda {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--texto-60);
+}

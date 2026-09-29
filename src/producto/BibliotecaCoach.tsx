@@ -58,7 +58,11 @@ export function BibliotecaCoach() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
-      <nav className="filtros" aria-label="Filtrar por músculo">
+      <nav
+        className={termino ? "filtros filtro--en-pausa" : "filtros"}
+        aria-label="Filtrar por músculo"
+        aria-disabled={termino ? true : undefined}
+      >
         {([TODOS, ...musculos] as const).map((m) => (
           <button
             key={m}
@@ -71,7 +75,7 @@ export function BibliotecaCoach() {
           </button>
         ))}
       </nav>
-      <label className="filtro-equipo">
+      <label className={termino ? "filtro-equipo filtro--en-pausa" : "filtro-equipo"} aria-disabled={termino ? true : undefined}>
         <span>Equipo</span>
         <select value={equipo} onChange={(e) => setEquipo(e.target.value as Equipo | typeof TODOS)}>
           <option value={TODOS}>Todos</option>
@@ -82,6 +86,7 @@ export function BibliotecaCoach() {
           ))}
         </select>
       </label>
+      {termino && <p className="aviso-busqueda">Buscando en toda la biblioteca</p>}
       <p className="sfm-hint">{visibles.length} ejercicios</p>
       <div className="sfm-catalog-grid">
         {visibles.map((e) => {

@@ -51,7 +51,7 @@ describe('ficha completa del ejercicio (punto H)', () => {
     ]) {
       expect(within(hoja).getByText(etiqueta), `falta ${etiqueta}`).toBeInTheDocument()
     }
-    expect(within(hoja).getByText('Smith')).toBeInTheDocument()
+    expect(within(hoja).getByText('Máquina Smith')).toBeInTheDocument()
     expect(within(hoja).getByText('Carga por lado')).toBeInTheDocument()
     expect(within(hoja).getByText('Pecho')).toBeInTheDocument()
   })
@@ -148,5 +148,29 @@ describe('filtro por equipo', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Pantorrillas' }))
     expect(screen.queryByText('Prensa de piernas 45°')).not.toBeInTheDocument()
     expect(screen.getByText('Seated calf raise')).toBeInTheDocument()
+  })
+})
+
+describe('carga de peso corporal', () => {
+  test('la ficha de un ejercicio de peso corporal dice «Lastre añadido»; la del hip thrust no cambia', async () => {
+    const dominadas = await abrirFicha('Dominadas')
+    expect(within(dominadas).getByText('Lastre añadido')).toBeInTheDocument()
+    expect(within(dominadas).queryByText('Discos añadidos')).not.toBeInTheDocument()
+  })
+})
+
+describe('buscar con filtros', () => {
+  test('con Pecho marcado, buscar «curl» avisa y pausa los filtros; al borrar vuelve Pecho', async () => {
+    await abrir()
+    await userEvent.click(screen.getByRole('button', { name: 'Pecho' }))
+    const buscar = screen.getByRole('searchbox', { name: 'Buscar ejercicio' })
+    await userEvent.type(buscar, 'curl')
+    expect(screen.getByText('Buscando en toda la biblioteca')).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Filtrar por músculo' })).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getAllByText(/curl/i).length).toBeGreaterThan(1)
+    await userEvent.clear(buscar)
+    expect(screen.queryByText('Buscando en toda la biblioteca')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Pecho' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByText(/curl/i)).not.toBeInTheDocument()
   })
 })

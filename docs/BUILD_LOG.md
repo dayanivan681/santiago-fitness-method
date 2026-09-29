@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-29 — Arreglos QA de la Biblioteca Maestra — claude-code
+
+- Una sola fuente de etiquetas (`src/dominio/etiquetas.ts`, textos del panel): coach y cliente dicen igual «Hombro (frontal)», «Polea / cable», «Máquina Smith», «Abdomen y core», «Femorales». `etiquetasBiblioteca.ts` los reexporta.
+- `etiquetaCarga()`: «Lastre añadido» en peso corporal (y en dominadas/fondos, que la semilla guarda como barra). En el formulario del coach, con «Peso corporal» la opción se titula «Lastre que añades».
+- M02-045 → cable; M02-059 → carga total con explicación del disco; M02-260/261 → explicación con banda elástica. `--corregir` actualiza sólo filas M02 sin tocar por Santiago (`actualizado_en = creado_en`, sin foto), con respaldo y ensayo idempotente. Aplicado en local.
+- Mientras se busca, chips y equipo se atenúan (`filtro--en-pausa`, `aria-disabled`) y aparece «Buscando en toda la biblioteca»; al borrar vuelven los filtros.
+- Verificado: 858 pruebas, tsc, lint, build, 88 HTTP; navegador 375×812 (coach y `/qa/cliente` con etiquetas idénticas, Push-Up «Lastre añadido», Cable Machine Shoulder Press «Polea / cable», búsqueda con Pecho); toque real del chip «Aductores» en Safari del simulador iOS.
+
 ## 2026-09-29 — Biblioteca Maestra de Santiago (mensaje 02) — claude-code
 
 - Vocabulario: `maquinaDiscos` («Máquina de discos (plate-loaded)») separada de `maquinaTradicional` («Máquina de pila (selectorizada)», misma clave, sin migrar datos). Músculo `aductores`, sin objetivo semanal. Seis fichas fijas cargadas con discos pasan a `maquinaDiscos` con el mismo id (prensa, hack squat, seated calf raise, C191, C194, C077). El catálogo del PDF también distingue «plate-loaded».

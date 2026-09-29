@@ -6,7 +6,7 @@
  */
 
 import { useRef, useState } from 'react'
-import { ETIQUETA_CARGA, etiquetaEquipo } from '../../dominio/etiquetas'
+import { etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
 import { useReferenciasDeVariantes } from '../../aplicacion/useReferenciasDeVariantes'
 import { useCapa } from '../../aplicacion/useCapa'
 import { debeEvitarse } from '../../logica/limitaciones'
@@ -110,7 +110,7 @@ export function HojaVariantes({
             <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
               <span className="variante__nombre">{variante.nombre}</span>
               <span className="variante__meta">
-                {etiquetaEquipo(variante.equipo)} · {ETIQUETA_CARGA[variante.tipoCarga]}
+                {etiquetaEquipo(variante.equipo)} · {etiquetaCarga(variante.tipoCarga, variante.equipo)}
                 {variante.id === asignadaId && ' · En la plantilla'}
                 {debeEvitarse(variante.id, participante) && ' · El perfil dice evitarlo'}
               </span>

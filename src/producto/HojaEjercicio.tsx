@@ -49,6 +49,11 @@ const BORRADOR_VACIO: Borrador = {
   explicacion: "",
 };
 
+/** En peso corporal no hay máquina: «discos añadidos» es el lastre. */
+const LASTRE = { titulo: "Lastre que añades", ejemplo: "Chaleco de 20 lb → 20. Sin lastre → 0." };
+const opcionCarga = (t: TipoCarga, equipo: Equipo | "") =>
+  t === "discosAnadidos" && equipo === "pesoCorporal" ? LASTRE : OPCION_CARGA[t];
+
 const sinAcentos = (t: string) => t.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 const ATAJO = (t: string) => sinAcentos(t).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -305,8 +310,8 @@ function Formulario({
           <label className="sfm-check" key={t}>
             <input type="radio" name="tipoCarga" checked={b.tipoCarga === t} onChange={() => actualiza({ tipoCarga: t })} />
             <span className="sfm-check-texto">
-              <strong>{OPCION_CARGA[t].titulo}</strong>
-              <small className="sfm-hint">{OPCION_CARGA[t].ejemplo}</small>
+              <strong>{opcionCarga(t, b.equipo).titulo}</strong>
+              <small className="sfm-hint">{opcionCarga(t, b.equipo).ejemplo}</small>
             </span>
           </label>
         ))}

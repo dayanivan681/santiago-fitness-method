@@ -14,7 +14,7 @@
 import { useRef } from 'react'
 import { useLiveQuery } from '../../nube/eventos'
 import { useCapa } from '../../aplicacion/useCapa'
-import { ETIQUETA_CARGA, NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
+import { NOMBRE_MUSCULO, etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
 import type { Repositorio } from '../../datos/repositorio'
 import type { SerieConFecha } from '../../datos/referencias'
 import type { Ejercicio } from '../../dominio/tipos'
@@ -81,7 +81,7 @@ export function HojaEjercicio({
 
         <div className="rejilla-datos">
           <Dato etiqueta="Equipo" valor={etiquetaEquipo(ejercicio.equipo)} />
-          <Dato etiqueta="Tipo de carga" valor={ETIQUETA_CARGA[ejercicio.tipoCarga]} />
+          <Dato etiqueta="Tipo de carga" valor={etiquetaCarga(ejercicio.tipoCarga, ejercicio.equipo)} />
           <Dato
             etiqueta="Músculo principal"
             valor={NOMBRE_MUSCULO[ejercicio.musculoPrimario]}

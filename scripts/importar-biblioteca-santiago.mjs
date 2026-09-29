@@ -7,7 +7,10 @@
  * EXISTS` por id o por nombre activo, así que nunca pisa lo que Santiago haya
  * creado a mano ni duplica al repetirse.
  *
- * Uso: node scripts/importar-biblioteca-santiago.mjs --local|--staging|--produccion [--aplicar]
+ * `--corregir` actualiza, con los datos regenerados, las filas M02 que Santiago
+ * no ha editado ni archivado; lo que él tocó no se reescribe nunca.
+ *
+ * Uso: node scripts/importar-biblioteca-santiago.mjs --local|--staging|--produccion [--aplicar|--corregir]
  */
 import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile, chmod } from "node:fs/promises";
@@ -16,8 +19,11 @@ import { fichasDeSantiago } from "./biblioteca-santiago.mjs";
 
 const modo = process.argv[2];
 assert.ok(["--local", "--staging", "--produccion"].includes(modo), "Usa --local, --staging o --produccion [--aplicar].");
-assert.ok(process.argv.slice(3).every((a) => a === "--aplicar"), "Argumento desconocido.");
+assert.ok(process.argv.slice(3).every((a) => a === "--aplicar" || a === "--corregir"), "Argumento desconocido.");
 const aplicar = process.argv.includes("--aplicar");
+/** Reescribe con los datos actuales las filas M02 que Santiago aún no ha tocado (`actualizado_en = creado_en`). */
+const corregir = process.argv.includes("--corregir");
+assert.ok(!(aplicar && corregir), "Usa --aplicar o --corregir, no ambos.");
 const local = modo === "--local";
 const produccion = modo === "--produccion";
 const DESTINOS = {
@@ -70,9 +76,21 @@ WHERE NOT EXISTS (SELECT 1 FROM ejercicios_coach WHERE id = ${texto2sql(f.id)})
   })
   .join("\n");
 
+const sqlCorregir = importables
+  .map((f) => {
+    const v = texto2sql;
+    return `UPDATE ejercicios_coach SET nombre = ${v(f.nombre)}, equipo = ${v(f.equipo)}, movimiento = ${v(f.movimiento)}, musculo_primario = ${v(f.musculoPrimario)}, musculos_secundarios_json = ${v(JSON.stringify(f.musculosSecundarios))}, tipo_carga = ${v(f.tipoCarga)}, incremento_lb = ${v(f.incrementoMinimoLb)}, peso_base_lb = ${v(f.pesoBaseMaquinaLb)}, explicacion = ${v(f.explicacionCorta)}
+WHERE id = ${v(f.id)} AND referencia_catalogo LIKE 'M02-%' AND actualizado_en = creado_en AND activo = 1 AND foto_clave IS NULL
+  AND (equipo IS NOT ${v(f.equipo)} OR tipo_carga IS NOT ${v(f.tipoCarga)} OR incremento_lb IS NOT ${v(f.incrementoMinimoLb)} OR peso_base_lb IS NOT ${v(f.pesoBaseMaquinaLb)} OR explicacion IS NOT ${v(f.explicacionCorta)} OR movimiento IS NOT ${v(f.movimiento)} OR musculo_primario IS NOT ${v(f.musculoPrimario)} OR musculos_secundarios_json IS NOT ${v(JSON.stringify(f.musculosSecundarios))});`;
+  })
+  .join("\n");
+const cambiosPendientes = () =>
+  consulta(`SELECT COUNT(*) AS n FROM ejercicios_coach WHERE referencia_catalogo LIKE 'M02-%' AND actualizado_en = creado_en`)[0].n;
+
 const carpeta = `.recovery/biblioteca-santiago-${ambiente}-${ahora}`;
 await mkdir(carpeta, { recursive: true, mode: 0o700 });
 await writeFile(`${carpeta}/importar.sql`, sql + "\n", { mode: 0o600 });
+await writeFile(`${carpeta}/corregir.sql`, sqlCorregir + "\n", { mode: 0o600 });
 const antes = conteos();
 console.log(`Fichas: ${importables.length} importables · ${yaExisten.length} ya existen · ${duplicados.length} duplicadas.`);
 console.log("Antes:", JSON.stringify(antes));
@@ -96,10 +114,13 @@ fijas=lambda: [db.execute('SELECT COUNT(*) FROM '+t).fetchone()[0] for t in ('cl
 antes=fijas(); n0=db.execute('SELECT COUNT(*) FROM ejercicios_coach').fetchone()[0]
 db.executescript((p/'importar.sql').read_text()); n1=db.execute('SELECT COUNT(*) FROM ejercicios_coach').fetchone()[0]
 db.executescript((p/'importar.sql').read_text()); n2=db.execute('SELECT COUNT(*) FROM ejercicios_coach').fetchone()[0]
+c0=db.total_changes; db.executescript((p/'corregir.sql').read_text()); corregidas=db.total_changes-c0
+c1=db.total_changes; db.executescript((p/'corregir.sql').read_text()); recorregidas=db.total_changes-c1
 assert fijas()==antes, 'Se alteró una tabla original'
 assert n2==n1, 'La segunda importación insertó filas'
+assert recorregidas==0, 'La corrección no es idempotente'
 assert db.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
-print(json.dumps({'insertaria':n1-n0,'repeticion':n2-n1,'originalesConservados':True}))
+print(json.dumps({'insertaria':n1-n0,'repeticion':n2-n1,'corregiriaTrasImportar':corregidas,'originalesConservados':True}))
 `,
         carpeta,
       ],
@@ -111,7 +132,17 @@ print(json.dumps({'insertaria':n1-n0,'repeticion':n2-n1,'originalesConservados':
 }
 
 const manifiesto = { entorno: ambiente, base: id, fecha: new Date(ahora).toISOString(), antes, ensayo, aplicado: false };
-if (aplicar) {
+if (corregir) {
+  const fila = (id) => consulta(`SELECT equipo, tipo_carga, explicacion FROM ejercicios_coach WHERE id = '${id}'`)[0];
+  const muestra = () => Object.fromEntries(["M02-045", "M02-059", "M02-260", "M02-261"].map((r) => [r, fila(importables.find((f) => f.referenciaCatalogo === r).id)]));
+  const previo = muestra();
+  ejecutar(["execute", nombre, "--file", `${carpeta}/corregir.sql`]);
+  const despues = conteos();
+  for (const t of ["ejercicios", "clientes", "rutinas", "sesiones"]) assert.equal(despues[t], antes[t], `Cambió ${t}: revisar, no restaurar automáticamente.`);
+  Object.assign(manifiesto, { corregido: true, despues, muestraAntes: previo, muestraDespues: muestra(), sinTocarPorSantiago: cambiosPendientes() });
+  console.log("Muestra antes:", JSON.stringify(previo));
+  console.log("Muestra después:", JSON.stringify(manifiesto.muestraDespues));
+} else if (aplicar) {
   ejecutar(["execute", nombre, "--file", `${carpeta}/importar.sql`]);
   const despues = conteos();
   for (const t of ["clientes", "rutinas", "sesiones"]) assert.equal(despues[t], antes[t], `Cambió ${t}: revisar, no restaurar automáticamente.`);

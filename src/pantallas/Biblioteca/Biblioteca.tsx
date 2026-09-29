@@ -95,7 +95,11 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
           />
         </div>
 
-        <nav className="filtros" aria-label="Filtrar por músculo">
+        <nav
+          className={termino ? 'filtros filtro--en-pausa' : 'filtros'}
+          aria-label="Filtrar por músculo"
+          aria-disabled={termino ? true : undefined}
+        >
           <button
             type="button"
             className={filtro === TODOS ? 'filtro filtro--activo' : 'filtro'}
@@ -117,7 +121,10 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
           ))}
         </nav>
 
-        <label className="filtro-equipo">
+        <label
+          className={termino ? 'filtro-equipo filtro--en-pausa' : 'filtro-equipo'}
+          aria-disabled={termino ? true : undefined}
+        >
           <span>Equipo</span>
           <select value={equipo} onChange={(evento) => setEquipo(evento.target.value as Equipo | typeof TODOS)}>
             <option value={TODOS}>Todos</option>
@@ -128,6 +135,9 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
             ))}
           </select>
         </label>
+
+        {/* Buscar manda sobre los filtros: se dice, y los filtros quedan en pausa. */}
+        {termino && <p className="aviso-busqueda">Buscando en toda la biblioteca</p>}
 
         {visibles.length === 0 ? (
           // Antes filtrar sin resultados dejaba una rejilla en blanco, sin decir

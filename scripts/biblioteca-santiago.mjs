@@ -165,6 +165,18 @@ const EQUIPO_POR_FILA = {
   "Suitcase Carry": "mancuernas",
 };
 
+/** Correcciones del QA por referencia; se aplican al final y mandan sobre todo lo demás. */
+const CORRECCIONES = {
+  "M02-045": { equipo: "cable", tipoCarga: "pesoMaquina", incrementoMinimoLb: 10, pesoBaseMaquinaLb: null },
+  "M02-059": {
+    tipoCarga: "total",
+    pesoBaseMaquinaLb: null,
+    explicacionCorta: "Sujetando un disco con las dos manos, subir al frente hasta la altura de los hombros.",
+  },
+  "M02-260": { explicacionCorta: "Con una banda elástica alrededor de las piernas, pasos laterales sin juntar los pies." },
+  "M02-261": { explicacionCorta: "Con una banda elástica alrededor de las piernas, pasos en diagonal hacia delante sin juntar los pies." },
+};
+
 /** Mismos perfiles de carga que la semilla (`src/datos/semilla/biblioteca/cargas.ts`). */
 const CARGA_POR_EQUIPO = {
   mancuernas: { tipoCarga: "porLado", incrementoMinimoLb: 10, pesoBaseMaquinaLb: null },
@@ -233,6 +245,7 @@ export function fichasDeSantiago() {
       ...carga,
       explicacionCorta: "",
       ...ajuste,
+      ...CORRECCIONES[ref],
     };
     ficha.musculosSecundarios = ficha.musculosSecundarios.filter((m) => m !== ficha.musculoPrimario);
     const n = normalizar(ficha.nombre);

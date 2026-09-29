@@ -1,31 +1,7 @@
-import type { EQUIPOS, MUSCULOS, TIPOS_DE_CARGA } from "../../shared/v2/biblioteca";
+import type { TIPOS_DE_CARGA } from "../../shared/v2/biblioteca";
 
-export const ETIQUETA_EQUIPO: Record<(typeof EQUIPOS)[number], string> = {
-  smith: "Máquina Smith",
-  convergente: "Máquina convergente",
-  cable: "Polea / cable",
-  mancuernas: "Mancuernas",
-  barraLibre: "Barra libre",
-  maquinaTradicional: "Máquina de pila (selectorizada)",
-  maquinaDiscos: "Máquina de discos (plate-loaded)",
-  pesoCorporal: "Peso corporal",
-};
-
-export const ETIQUETA_MUSCULO: Record<(typeof MUSCULOS)[number], string> = {
-  pecho: "Pecho",
-  espalda: "Espalda",
-  cuadriceps: "Cuádriceps",
-  gluteos: "Glúteos",
-  femoral: "Femorales",
-  biceps: "Bíceps",
-  triceps: "Tríceps",
-  deltoideLateral: "Hombro (lateral)",
-  deltoideAnterior: "Hombro (frontal)",
-  deltoidePosterior: "Hombro (trasero)",
-  pantorrillas: "Pantorrillas",
-  core: "Abdomen y core",
-  aductores: "Aductores",
-};
+/** Los mismos textos que la app del cliente: una sola fuente, en el dominio. */
+export { ETIQUETA_EQUIPO, NOMBRE_MUSCULO as ETIQUETA_MUSCULO } from "../dominio/etiquetas";
 
 /** Cada forma de cargar el peso, con una frase de ejemplo en lenguaje sencillo. */
 export const OPCION_CARGA: Record<(typeof TIPOS_DE_CARGA)[number], { titulo: string; ejemplo: string }> = {
