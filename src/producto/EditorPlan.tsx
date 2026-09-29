@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Plan, Perfil } from "../../shared/v2/contratos";
 import { Plan as ValidarPlan } from "../../shared/v2/contratos";
 import { useBiblioteca } from "./contextoBiblioteca";
+import { ETIQUETA_EQUIPO } from "./etiquetasBiblioteca";
 import type { SlotPlantilla } from "../dominio/tipos";
 import { Hoja, Icono } from "./ui";
 export function EditorPlan({
@@ -254,7 +255,7 @@ export function EditorPlan({
           />
           <div className="sfm-list">
             {ejercicios.filter((e) =>
-              (e.nombre + " " + e.equipo)
+              (e.nombre + " " + ETIQUETA_EQUIPO[e.equipo])
                 .toLowerCase()
                 .includes(buscar.toLowerCase()),
             ).map((e) => (
@@ -282,7 +283,7 @@ export function EditorPlan({
                   <strong>{e.nombre}</strong>
                   <small>
                     {propios.has(e.id) && <span className="sfm-insignia-tuyo">Tuyo</span>}
-                    {e.equipo}
+                    {ETIQUETA_EQUIPO[e.equipo]}
                     {perfil.ejerciciosEvitados.includes(e.id)
                       ? " · Evitar según limitaciones"
                       : ""}

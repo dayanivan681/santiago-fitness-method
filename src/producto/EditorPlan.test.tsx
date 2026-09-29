@@ -45,3 +45,17 @@ it('el coach encuentra lo que pidió buscando «45» y «unilateral», y el serv
   const validado = Plan.safeParse({ ...nuevo, revisado: true });
   expect(validado.success ? '' : JSON.stringify(validado.error.issues)).toBe('');
 });
+
+it('la lista de «Añadir ejercicio» muestra el equipo en lenguaje sencillo, no su clave interna', () => {
+  render(<EditorPlan plan={plan} perfil={perfil} onChange={vi.fn()} />);
+  fireEvent.click(screen.getByRole('button', { name: /Añadir ejercicio/ }));
+  const hoja = screen.getByRole('dialog', { name: 'Añadir ejercicio' });
+  fireEvent.change(within(hoja).getByRole('textbox', { name: 'Buscar ejercicio' }), { target: { value: 'banca plano con barra' } });
+  const opcion = within(hoja).getByText('Press de banca plano con barra').closest('button')!;
+  expect(within(opcion).getByText(/Barra libre/)).toBeInTheDocument();
+  expect(hoja).not.toHaveTextContent(/barraLibre|maquinaTradicional|pesoCorporal/);
+  // También se busca por el nombre que ve el coach.
+  fireEvent.change(within(hoja).getByRole('textbox', { name: 'Buscar ejercicio' }), { target: { value: 'máquina de pesas' } });
+  expect(within(hoja).getAllByRole('button').length).toBeGreaterThan(2);
+  expect(hoja).not.toHaveTextContent(/maquinaTradicional/);
+});

@@ -82,11 +82,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T03:09:21.725Z
+- **Última sincronización:** 2026-09-29T03:11:52.658Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1229,6 +1229,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T03:11:52.659Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Arreglos del QA de la biblioteca: (1) EditorPlan muestra la etiqueta del equipo (Barra libre, Máquina de pesas) en vez de la clave interna, y el buscador también encuentra por esa etiqueta; (2) HojaEjercicio bloquea crear o editar un ejercicio con el nombre de otro de la biblioteca (comparación sin acentos, mayúsculas ni espacios sobrantes, excluyendo el propio al editar; los archivados no cuentan) con el aviso «Ya hay un ejercicio llamado «X». Cambia el nombre; por ejemplo, añade la máquina o el agarre.». Sólo interfaz; no se tocó servidor, API, D1 ni docs/cliente. Una prueba previa creaba desde el catálogo «Press de banca plano con barra», que ya existe entre las fichas fijas, y se cambió a «Goblet squat» porque la nueva regla la bloquea correctamente. La regla no protege contra duplicados creados a la vez desde dos dispositivos ni contra la API directa.
+- **Verificación:** npm test (837/837); npm run lint; npx tsc -b; npm run build; navegador 375x812 en /demo/coach
+- **Siguiente:** QA autenticado con la sesión del dueño
+
 
 ### 2026-09-29T03:09:21.727Z | claude-code | CLAIM
 - **Estado:** active

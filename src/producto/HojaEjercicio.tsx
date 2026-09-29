@@ -195,6 +195,12 @@ function Formulario({
     setError("");
     if (!b.equipo) return setError("Elige el equipo.");
     if (!b.musculoPrimario) return setError("Elige el músculo principal.");
+    const nombre = b.nombre.trim();
+    const repetido = ejercicios.some(
+      (x) => x.id !== existente?.id && sinAcentos(x.nombre).trim() === sinAcentos(nombre).replace(/\s+/g, " "),
+    );
+    if (repetido)
+      return setError(`Ya hay un ejercicio llamado «${nombre}». Cambia el nombre; por ejemplo, añade la máquina o el agarre.`);
     const heredado = ejercicios.find((x) => x.id === b.parecidoA)?.movimiento;
     const datos = EjercicioCoachNuevo.safeParse({
       referenciaCatalogo: b.referenciaCatalogo,
