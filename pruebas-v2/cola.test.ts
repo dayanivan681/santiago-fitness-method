@@ -259,3 +259,71 @@ describe("caché y cola durable", () => {
     expect(red).not.toHaveBeenCalled();
   });
 });
+
+describe("biblioteca del coach en el cliente", () => {
+  const ID = "coach-ej-3f2b8c1e-9d4a-4b7e-8a51-0c6d2e9f1a77";
+  const insertar = (extra = "") =>
+    local.ejecutar(
+      `INSERT INTO ejercicios_coach (id, referencia_catalogo, nombre, equipo, movimiento, musculo_primario, tipo_carga, incremento_lb, explicacion, foto_clave, creado_en, actualizado_en)
+       VALUES ('${ID}','C012','Jalón neutro','cable','jalon-vertical','espalda','pesoMaquina',5,'Tira hacia el pecho.','biblioteca/${ID}',1,7)${extra}`,
+    );
+  const refrescar = async (c: ConexionCloud) => {
+    c.ultimaBiblioteca = 0;
+    await quieta(c);
+  };
+
+  it("guarda los ejercicios del coach en Dexie con la foto apuntando a la API", async () => {
+    insertar();
+    const c = await conexion("biblioteca");
+    await quieta(c);
+    expect(await c.db.ejercicios.get(ID)).toMatchObject({
+      nombre: "Jalón neutro",
+      equipo: "cable",
+      movimiento: "jalon-vertical",
+      musculoPrimario: "espalda",
+      tipoCarga: "pesoMaquina",
+      imagen: `/api/v2/biblioteca/${ID}/foto?v=7`,
+    });
+    // Convive con las fichas fijas de la semilla.
+    expect(await c.db.ejercicios.get("press-banca-barra")).toBeTruthy();
+  });
+
+  it("sin red conserva lo último recibido y al volver toma los cambios del coach", async () => {
+    insertar();
+    const c = await conexion("biblioteca-offline");
+    await quieta(c);
+    red = false;
+    await refrescar(c);
+    expect((await c.db.ejercicios.get(ID))?.nombre).toBe("Jalón neutro");
+    red = true;
+    local.ejecutar(`UPDATE ejercicios_coach SET nombre='Jalón agarre neutro', actualizado_en=9 WHERE id='${ID}'`);
+    await refrescar(c);
+    expect(await c.db.ejercicios.get(ID)).toMatchObject({ nombre: "Jalón agarre neutro", imagen: `/api/v2/biblioteca/${ID}/foto?v=9` });
+  });
+
+  it("no vuelve a pedir la biblioteca en cada sincronización, y respeta la calibración del cliente", async () => {
+    insertar();
+    const c = await conexion("biblioteca-calibrada");
+    await quieta(c);
+    const llamadas = () => (fetch as unknown as ReturnType<typeof vi.fn>).mock.calls.filter(([u]) => String(u).includes("/biblioteca")).length;
+    const antes = llamadas();
+    await quieta(c);
+    expect(llamadas()).toBe(antes);
+
+    const propio = (await c.db.ejercicios.get(ID))!;
+    await c.repositorio.guardarEjercicio({ ...propio, incrementoMinimoLb: 2.5 });
+    await quieta(c);
+    local.ejecutar(`UPDATE ejercicios_coach SET incremento_lb=10, nombre='Nuevo nombre', actualizado_en=11 WHERE id='${ID}'`);
+    await refrescar(c);
+    expect(await c.db.ejercicios.get(ID)).toMatchObject({ nombre: "Nuevo nombre", incrementoMinimoLb: 2.5 });
+  });
+
+  it("un ejercicio archivado deja de llegar pero se conserva por su historial", async () => {
+    insertar();
+    const c = await conexion("biblioteca-archivada");
+    await quieta(c);
+    local.ejecutar(`UPDATE ejercicios_coach SET activo=0 WHERE id='${ID}'`);
+    await refrescar(c);
+    expect(await c.db.ejercicios.get(ID)).toBeTruthy();
+  });
+});

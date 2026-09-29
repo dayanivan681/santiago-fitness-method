@@ -12,7 +12,14 @@ import {
   type Tipo,
 } from "../../shared/v2/contratos";
 import type { Participante, PlantillaDia, Sesion } from "../dominio/tipos";
+import { z } from "zod";
+import { EjercicioCoach } from "../../shared/v2/biblioteca";
+import { guardarEjerciciosDelCoach } from "./biblioteca";
 import { notificar } from "./eventos";
+
+/** Cada cuánto se vuelve a pedir la biblioteca del coach; `sincronizar` corre cada 4 s. */
+const INTERVALO_BIBLIOTECA_MS = 60_000;
+const RespuestaBiblioteca = z.object({ ejercicios: z.array(EjercicioCoach) });
 export type Pendiente = Operacion & {
   secuencia?: number;
   clave: string;
@@ -146,6 +153,7 @@ export class ConexionCloud {
   ocupado = false;
   timer?: ReturnType<typeof setInterval>;
   cerrada = false;
+  ultimaBiblioteca = 0;
   constructor(ctx: Contexto, cliente = ctx.identidad) {
     this.ctx = ctx;
     this.api = new ClienteApi(
@@ -377,6 +385,17 @@ export class ConexionCloud {
     if (c.tipo === "calibracion" && !c.eliminado)
       await this.db.ejercicios.update(c.id, c.datos as object);
   }
+  /**
+   * Trae los ejercicios que el coach añadió y los guarda en Dexie. Sin red se
+   * conserva lo último recibido; un acceso caducado sigue subiendo como siempre.
+   */
+  async actualizarBiblioteca() {
+    if (Date.now() - this.ultimaBiblioteca < INTERVALO_BIBLIOTECA_MS) return;
+    const { ejercicios } = RespuestaBiblioteca.parse(await this.api.pedir("/biblioteca"));
+    await guardarEjerciciosDelCoach(this.db, ejercicios, this.api.base);
+    this.ultimaBiblioteca = Date.now();
+    notificar();
+  }
   async sincronizar() {
     if (this.ocupado || this.cerrada || estadoNube.bloqueado) return;
     this.ocupado = true;
@@ -486,6 +505,7 @@ export class ConexionCloud {
           );
         await this.db.meta.delete(fila.id);
       }
+      await this.actualizarBiblioteca();
       estadoCambiar({ conectado: true, mensaje: "", suscripcionInactiva });
     } catch (e) {
       if (e instanceof ErrorAcceso) {

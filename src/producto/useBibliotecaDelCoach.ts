@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { EjercicioCoach } from "../../shared/v2/biblioteca";
-import { aEjercicioDominio, combinar, type BibliotecaDelCoach } from "./contextoBiblioteca";
+import { aEjercicioDominio } from "../nube/biblioteca";
+import { combinar, type BibliotecaDelCoach } from "./contextoBiblioteca";
 import type { ServicioCoach } from "./servicio";
 
 /**

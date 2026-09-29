@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-09-28 — Respuesta enviada a Santiago sobre ampliar la biblioteca — claude-code (tarea de solo texto, sin turno)
+
+- Santiago respondió al correo de bienvenida (27-sep, 20:24): «¿cómo puedo ampliar esa biblioteca de ejercicios?». El dueño aprobó el borrador en el chat y se envió como respuesta en el mismo hilo «Tu app Santiago Fitness Method ya está lista».
+- Contenido: agradece; avisa de que se prepara un botón «Añadir ejercicio» en su panel (crear ejercicios, elegirlos de su catálogo y subir la foto de la máquina desde el teléfono) sin dar fecha; y le pide (1) la lista de ejercicios que quiere en la app y (2) una foto de cada máquina, de frente y con buena luz, respondiendo al mismo correo.
+- Estado de la función al enviar: fases 1 (servidor y datos) y 2 (panel del coach) commiteadas; fase 3 (sincronización del cliente) en curso con cambios sin commit del turno activo de claude-code. Migración 0012 sin aplicar en staging ni producción; subida de foto sin probar en simulador iOS. Nada publicado, así que Santiago aún no puede usarla.
+- No se reclamó turno, no se hizo commit ni push, y `docs/cliente` no se tocó. Solo se editó esta nota.
+- **Pendiente:** cuando la función esté publicada, redactar un segundo correo con los pasos «Biblioteca → Añadir ejercicio» (borrador al dueño, se envía solo con su visto bueno). Cuando Santiago mande su lista y fotos, cargarlas con la nueva función o, si no está lista, tratarlas como respaldo de la tarea de fotos para Codex.
+
 ## 2026-09-28 — Revisión 2 de fotos con referencias reales — codex
 
 - El dueño rechazó la primera tanda por ejecución poco realista. Se recrearon las 12 imágenes IA usando fotografías/fotogramas reales como entradas visuales de image_gen, no solo descripciones de texto. Referencias enlazadas y revisión individual en public/ejercicios/PROCEDENCIA.md y procedencia.json; originales externos no distribuidos.
@@ -74,11 +82,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:26:24.516Z
+- **Última sincronización:** 2026-09-29T02:32:28.235Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1221,6 +1229,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:32:28.236Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca del coach, fase 3 (app del cliente): ConexionCloud.actualizarBiblioteca pide GET /biblioteca (máx. 1 vez/min dentro de sincronizar, validado con zod) y guarda en Dexie vía src/nube/biblioteca.ts, conservando la calibración del cliente y los archivados; sin red conserva lo último. Foto en /api/v1|v2/biblioteca/<id>/foto?v=; el service worker la cachea por URL para uso offline. Vista previa del coach, Cliente.tsx (ContextoBiblioteca desde Dexie) y docs (BIBLIOTECA-AMPLIACION-UNILATERAL: bloque B genérico, fotos a respaldo). Verificado en runtime local real a 375x812: coach crea desde catálogo con foto, lo usa en una rutina publicada (plan aceptado), Vista previa y app real del cliente muestran el ejercicio con su foto. Falta simulador iOS y aplicar 0012 en staging/producción.
+- **Verificación:** npm test (832/832); npm run lint; npm run build; tsc -b; navegador local real 375x812
+- **Siguiente:** Simulador iOS (foto desde cámara/galería de Safari), migración 0012 con respaldo en staging y producción con npm run d1:v2, despliegue y comprobar 401 en /api/v2/biblioteca; borrador de respuesta a Santiago
+
 
 ### 2026-09-29T02:26:24.517Z | claude-code | CLAIM
 - **Estado:** active

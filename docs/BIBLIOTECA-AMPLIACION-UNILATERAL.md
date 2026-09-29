@@ -88,6 +88,23 @@ Bloque B enviado el 2026-09-27 en https://sfm-variantes.pages.dev. El cierre usa
 la confirmación del dueño del 2026-09-28: las 12 respuestas fueron «Mantener
 genérico». No se alteraron las respuestas del cuestionario ni los PDFs.
 
+Bloque B, decisión registrada: las 12 preguntas quedan como «Mantener genérico»
+(2026-09-28, confirmado por el dueño). Las fichas conservan el nombre genérico y la
+foto representa el aparato; si Santiago quiere una variante específica, la crea
+él mismo desde su panel (ver siguiente sección).
+
+## Santiago amplía su biblioteca (2026-09-28)
+
+Santiago preguntó cómo ampliar la biblioteca. Desde Biblioteca → «Añadir ejercicio»
+puede crear ejercicios propios («De mi catálogo», con las 293 fichas de su PDF, o
+«Nuevo») y subir la foto desde el teléfono; se guardan en D1 (`ejercicios_coach`) y
+llegan a los clientes por `GET /biblioteca`. Nunca se borran: se archivan.
+
+**La tarea de fotos para Codex pasa a respaldo.** Cualquier ficha que aún quede sin foto fiel la
+puede resolver Santiago con la foto real de su máquina; sólo se retoma si él no la sube.
+Las fichas fijas (código) no se editan desde el panel: para cambiar una, se crea un
+ejercicio propio con «Se parece a…» que la tenga como alternativa.
+
 ## Revisión 2: referencias reales para las 12 imágenes IA (2026-09-28)
 
 La primera tanda fue rechazada por el dueño por ejecución poco realista. Se sustituyeron las 12 imágenes sintéticas usando fotografías o fotogramas reales como entradas visuales de `image_gen`, con revisión individual de postura, apoyo, agarre y conexiones del equipo. C071/C256 conservan sus fotos de dominio público.

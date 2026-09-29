@@ -4,7 +4,7 @@
 
 - Santiago crea ejercicios desde su panel: `ejercicios_coach` en D1 (migración 0012, **aún sin aplicar en staging ni producción**), API `/biblioteca` (coach escribe; ambos leen) y foto en R2 `biblioteca/<id>`. Un ejercicio nunca se borra: se archiva. `EjercicioId` acepta `coach-ej-<uuid>` y guardar un plan rechaza con 400 ids inexistentes o archivados.
 - Panel: Biblioteca → «Añadir ejercicio» con «De mi catálogo» (293 fichas de `shared/catalogo-pdf.ts`, generado por `scripts/generar-catalogo-pdf.mjs`; 65 fichas del PDF sólo traen nombre en inglés y se usa esa etiqueta) o «Nuevo». Insignia «Tuyo», editar y archivar; el editor de planes los ofrece con foto. Rama demo en memoria sin subir nada.
-- Pendiente (fase 3): que la app del cliente los guarde en Dexie con `guardarEjercicio` al sincronizar.
+- Fase 3: `ConexionCloud.actualizarBiblioteca` (una vez por minuto, dentro de `sincronizar`) pide `GET /biblioteca` y guarda cada ejercicio en Dexie (`src/nube/biblioteca.ts`), conservando la calibración de carga del cliente y los archivados por su historial; sin red se queda lo último. La foto apunta a `/api/v2/biblioteca/<id>/foto?v=<actualizadoEn>` y el service worker la cachea por URL (`sfm-biblioteca-fotos`) para el gimnasio sin conexión. Vista previa, Hoy y ficha leen de Dexie; `Cliente.tsx` publica esa lista en `ContextoBiblioteca`.
 
 ## 2026-09-28 — Revisión 2 de fotos con referencias reales — codex
 

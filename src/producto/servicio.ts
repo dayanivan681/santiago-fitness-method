@@ -1,6 +1,6 @@
 import { ServicioSuscripciones } from "./servicioSuscripciones";
 import { ServicioBiblioteca } from "./servicioBiblioteca";
-import { aEjercicioDominio } from "./contextoBiblioteca";
+import { aEjercicioDominio } from "../nube/biblioteca";
 import type {
   Alta,
   Cambio,

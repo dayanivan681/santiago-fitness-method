@@ -4,28 +4,6 @@ import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
 import type { Ejercicio } from "../dominio/tipos";
 import type { ServicioBiblioteca } from "./servicioBiblioteca";
 
-export const FOTO_PENDIENTE = "/ejercicios/sin-foto.svg";
-
-/**
- * Los ejercicios del coach como fichas de dominio, las mismas que lee el resto
- * de la app. `urlDeFoto` decide desde dónde se sirve la foto (coach o cliente).
- */
-export function aEjercicioDominio(e: EjercicioCoach, urlDeFoto: (e: EjercicioCoach) => string | null): Ejercicio {
-  return {
-    id: e.id,
-    nombre: e.nombre,
-    equipo: e.equipo,
-    movimiento: e.movimiento,
-    imagen: (e.tieneFoto ? urlDeFoto(e) : null) ?? FOTO_PENDIENTE,
-    explicacionCorta: e.explicacionCorta,
-    musculoPrimario: e.musculoPrimario,
-    musculosSecundarios: e.musculosSecundarios,
-    tipoCarga: e.tipoCarga,
-    incrementoMinimoLb: e.incrementoMinimoLb,
-    ...(e.pesoBaseMaquinaLb === null ? {} : { pesoBaseMaquinaLb: e.pesoBaseMaquinaLb }),
-  };
-}
-
 export type BibliotecaDelCoach = {
   /** Las fichas fijas del código más las del coach, en ese orden. */
   ejercicios: readonly Ejercicio[];

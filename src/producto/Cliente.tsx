@@ -1,7 +1,7 @@
 import { GuiaAyuda } from "./GuiaAyuda";
 import { ProveedorAyudaReal } from "./Ayuda";
 import { ConsejoCliente } from "./Ayuda";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Link,
   Navigate,
@@ -13,6 +13,8 @@ import {
 } from "react-router";
 import type { Repositorio } from "../datos/repositorio";
 import { useLiveQuery } from "../nube/eventos";
+import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
+import { ContextoBiblioteca, type BibliotecaDelCoach } from "./contextoBiblioteca";
 import { useMemoria } from "../aplicacion/memoria";
 import { EntrenamientoHoy } from "../pantallas/EntrenamientoHoy/EntrenamientoHoy";
 import { Entrenamiento } from "../pantallas/EntrenamientoHoy/Entrenamiento";
@@ -73,9 +75,15 @@ function ContenidoCliente({
   const filtro = useMemoria<Musculo | "todos">("todos");
   const [conflictos, setConflictos] = useState(false);
   const participante = useLiveQuery(() => repo.participanteActual(), [repo]);
+  const ejerciciosLocales = useLiveQuery(() => repo.listarEjercicios(), [repo]);
+  const biblioteca = useMemo<BibliotecaDelCoach>(
+    () => ({ ejercicios: ejerciciosLocales?.length ? ejerciciosLocales : BIBLIOTECA_INICIAL, propios: new Map(), error: "", recargar: async () => {} }),
+    [ejerciciosLocales],
+  );
   if (!participante)
     return <p className="sfm-loading">Preparando tu entrenamiento…</p>;
   return (
+    <ContextoBiblioteca.Provider value={biblioteca}>
     <ProveedorDescanso
       clavePersistencia={
         modo === "real" || modo === "acompanar"
@@ -308,5 +316,6 @@ function ContenidoCliente({
         )}
       </div>
     </ProveedorDescanso>
+    </ContextoBiblioteca.Provider>
   );
 }

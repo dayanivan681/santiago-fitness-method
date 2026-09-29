@@ -29,6 +29,7 @@ import {
   type Inicio,
 } from "./nube/cloud";
 import { RepositorioMemoria } from "./nube/memoria";
+import { aEjercicioDominio } from "./nube/biblioteca";
 import { instalarRepositorio } from "./aplicacion/repositorio";
 import { BIBLIOTECA_INICIAL } from "./datos/semilla/biblioteca";
 import { detectarLegado } from "./nube/legado";
@@ -382,6 +383,8 @@ function ClienteDesdeCoach({
         notas: "",
       } as unknown as Participante);
       for (const e of BIBLIOTECA_INICIAL) await r.guardarEjercicio(e);
+      for (const e of await servicio.biblioteca.listar())
+        await r.guardarEjercicio(aEjercicioDominio(e, servicio.biblioteca.urlDeFoto));
       for (const d of cliente.plan.dias) await r.guardarPlantilla(d);
       const cambios = await servicio.cambios(clienteId);
       for (const s of ultimos(cambios, "entrenamiento"))
