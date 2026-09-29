@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T03:55:50.553Z
+- **Última sincronización:** 2026-09-29T04:01:34.037Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T04:01:34.038Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca del coach: el anillo de foco del buscador pisaba el botón Añadir ejercicio porque ambos estaban pegados (0px) y el outline tiene 4px de offset. Se añade margin-top de 14px a .sfm-primary + .sfm-search en src/producto/producto.css. Verificado con Playwright/Chromium 390x844 en /demo/coach/biblioteca: separación 14px, anillo sin solape. No probado en Safari/iOS.
+- **Verificación:** npm test 840/840 (requirió instalar sqlite3 en el contenedor); npm run lint PASS; npm run build PASS
+- **Siguiente:** Comprobar en el iPhone tras el despliegue de Cloudflare. Posible ajuste aparte: el contenido del botón Añadir ejercicio queda alineado a la derecha por .sfm-primary svg { margin-left: auto }
+
 
 ### 2026-09-29T03:55:50.554Z | claude-code | CLAIM
 - **Estado:** active

@@ -429,6 +429,10 @@ a.sfm-primary:active {
   margin: 0 0 22px;
   font-size: 16px;
 }
+/* Separación suficiente para que el anillo de foco (2px + 4px de offset) no pise el botón. */
+.sfm-primary + .sfm-search {
+  margin-top: 14px;
+}
 .sfm-search::placeholder {
   color: #73747a;
 }
