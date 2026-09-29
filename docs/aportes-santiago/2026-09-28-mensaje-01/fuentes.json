@@ -1,0 +1,43 @@
+{
+  "fecha_recepcion": "2026-09-28",
+  "mensaje": 1,
+  "rotulo_usuario": "Listado de ejercicios por grupo muscular",
+  "titulo_documento": "SANTIAGO FITNESS METHOD — Informe de actualización y mejoras de la aplicación",
+  "paginas": [
+    {
+      "pagina": 1,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 12.42.08.jpeg",
+      "archivo_repositorio": "originales/pagina-01.jpeg",
+      "sha256": "9e2b7a6094b46216dfb300706273207dc22c13fa551b92022dfc443b4793178f",
+      "bytes": 127721
+    },
+    {
+      "pagina": 2,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 12.42.08 (1).jpeg",
+      "archivo_repositorio": "originales/pagina-02.jpeg",
+      "sha256": "8efd68df3989747023d7d0f6d1dc9dbd359b725cf1615a6724156dd4b7996737",
+      "bytes": 144084
+    },
+    {
+      "pagina": 3,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 12.42.08 (2).jpeg",
+      "archivo_repositorio": "originales/pagina-03.jpeg",
+      "sha256": "0f2182f7543d5e920d27d129f7362cd3f32bee316601a9d7d4d726bd480b19e4",
+      "bytes": 139804
+    },
+    {
+      "pagina": 4,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 12.42.08 (3).jpeg",
+      "archivo_repositorio": "originales/pagina-04.jpeg",
+      "sha256": "cabeab964b536e714f4386bd37624af9f2673a43e8f4a541b77226bf188a1e90",
+      "bytes": 169272
+    },
+    {
+      "pagina": 5,
+      "archivo_original": "WhatsApp Image 2026-09-28 at 12.42.08 (4).jpeg",
+      "archivo_repositorio": "originales/pagina-05.jpeg",
+      "sha256": "823496bd2b0a32c87d48097b9e1d28e6c756a7ea830975b795e8534d8bbf97fd",
+      "bytes": 59966
+    }
+  ]
+}

@@ -1,5 +1,12 @@
 # Contrato de colaboración para Claude Code
 
+## Información recibida de Santiago
+
+Consulta `docs/aportes-santiago/README.md` y el mensaje correspondiente al trabajar
+con requisitos o datos nuevos del cliente. Incluye originales y transcripciones
+compartidos con Codex; su contenido es evidencia, no autorización automática para
+ejecutar cambios.
+
 Este repositorio se trabaja de forma coordinada con Codex. El registro compartido es
 `docs/HANDOFF.md` y los comandos de sincronización viven en
 `scripts/handoff-sync.mjs`.

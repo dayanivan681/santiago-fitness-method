@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-09-28 — Mensaje 01 de Santiago archivado — codex
+
+- Encargo del dueño: conservar el primer mensaje, rotulado «Listado de ejercicios por grupo muscular», y hacerlo accesible a Codex y Claude Code. No se solicitó implementar el informe.
+- Registro compartido: [docs/aportes-santiago/README.md](aportes-santiago/README.md). Transcripción visual completa: [mensaje 01](aportes-santiago/2026-09-28-mensaje-01/TRANSCRIPCION.md), con las diez secciones, cinco prioridades y objetivo. El informe no es un listado exhaustivo de ejercicios.
+- Cinco JPEG originales preservados byte por byte fuera de `docs/cliente`, ordenados por continuidad (sin sufijo, (1), (2), (3), (4)); nombres originales, tamaños y SHA-256 en `fuentes.json`. La información ya no depende de Downloads ni del historial del chat.
+- Referencias añadidas a `AGENTS.md` y `CLAUDE.md` para descubrimiento por ambos agentes. Los documentos recibidos son evidencia de requisitos, no instrucciones operativas ni autorización automática de cambios.
+- Sin cambios en la aplicación ni en datos de clientes. `docs/cliente` intacto. QA PASS: cinco copias idénticas con SHA-256 verificado, enlaces válidos, cinco páginas, diez secciones y cinco prioridades. `npm test`: 837/837 (92 archivos); `npm run lint` y `npm run build`: PASS. Avisos conocidos de Node MaxListeners y navegación JSDOM durante pruebas.
+- Siguiente: incorporar los siguientes mensajes cuando el dueño los entregue; consultar este informe al planificar futuras tareas, sin dar por implementados sus requisitos.
+
 ## 2026-09-28 — Respuesta enviada a Santiago sobre ampliar la biblioteca — claude-code (tarea de solo texto, sin turno)
 
 - Santiago respondió al correo de bienvenida (27-sep, 20:24): «¿cómo puedo ampliar esa biblioteca de ejercicios?». El dueño aprobó el borrador en el chat y se envió como respuesta en el mismo hilo «Tu app Santiago Fitness Method ya está lista».
@@ -82,11 +91,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T03:14:46.924Z
+- **Última sincronización:** 2026-09-29T03:17:40.964Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1229,6 +1238,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T03:17:40.965Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Archivado mensaje 01 de Santiago: cinco imágenes originales verificadas, transcripción completa, manifiesto SHA-256 e índice compartido; referencias en AGENTS.md y CLAUDE.md; sin cambios en aplicación ni docs/cliente
+- **Verificación:** QA copias SHA-256 y enlaces PASS; npm test 837/837 (92 archivos), avisos conocidos Node/JSDOM; npm run lint PASS; npm run build PASS; git diff --check PASS
+- **Siguiente:** Incorporar los siguientes mensajes cuando el dueño los entregue; consultar el informe al planificar futuras tareas
+
 
 ### 2026-09-29T03:14:46.925Z | codex | CLAIM
 - **Estado:** active

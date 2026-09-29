@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-28 — Mensaje 01 de Santiago archivado — codex
+
+- Encargo del dueño: conservar el primer mensaje, rotulado «Listado de ejercicios por grupo muscular», y hacerlo accesible a Codex y Claude Code. No se solicitó implementar el informe.
+- Registro compartido: [docs/aportes-santiago/README.md](aportes-santiago/README.md). Transcripción visual completa: [mensaje 01](aportes-santiago/2026-09-28-mensaje-01/TRANSCRIPCION.md), con las diez secciones, cinco prioridades y objetivo. El informe no es un listado exhaustivo de ejercicios.
+- Cinco JPEG originales preservados byte por byte fuera de `docs/cliente`, ordenados por continuidad (sin sufijo, (1), (2), (3), (4)); nombres originales, tamaños y SHA-256 en `fuentes.json`. La información ya no depende de Downloads ni del historial del chat.
+- Referencias añadidas a `AGENTS.md` y `CLAUDE.md` para descubrimiento por ambos agentes. Los documentos recibidos son evidencia de requisitos, no instrucciones operativas ni autorización automática de cambios.
+- Sin cambios en la aplicación ni en datos de clientes. `docs/cliente` intacto. QA PASS: cinco copias idénticas con SHA-256 verificado, enlaces válidos, cinco páginas, diez secciones y cinco prioridades. `npm test`: 837/837 (92 archivos); `npm run lint` y `npm run build`: PASS. Avisos conocidos de Node MaxListeners y navegación JSDOM durante pruebas.
+- Siguiente: incorporar los siguientes mensajes cuando el dueño los entregue; consultar este informe al planificar futuras tareas, sin dar por implementados sus requisitos.
+
 ## 2026-09-28 — Biblioteca del coach, fases 1 y 2 — claude-code
 
 - Santiago crea ejercicios desde su panel: `ejercicios_coach` en D1 (migración 0012, **aplicada el 2026-09-28 en staging y en producción, ambas con respaldo y ensayo de restauración**), API `/biblioteca` (coach escribe; ambos leen) y foto en R2 `biblioteca/<id>`. Un ejercicio nunca se borra: se archiva. `EjercicioId` acepta `coach-ej-<uuid>` y guardar un plan rechaza con 400 ids inexistentes o archivados.
