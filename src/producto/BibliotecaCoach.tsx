@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useBiblioteca } from "./contextoBiblioteca";
-import { ETIQUETA_EQUIPO } from "./etiquetasBiblioteca";
+import { ETIQUETA_EQUIPO, ETIQUETA_MUSCULO } from "./etiquetasBiblioteca";
+import { useMemoria } from "../aplicacion/memoria";
+import { normalizarBusqueda } from "../logica/busqueda";
+import type { Equipo, Musculo } from "../dominio/tipos";
 import { HojaEjercicio } from "./HojaEjercicio";
 import { Cabecera, ErrorVisible, Hoja, Icono } from "./ui";
 import type { EjercicioCoach } from "../../shared/v2/biblioteca";
+
+const TODOS = "todos" as const;
 
 type HojaAbierta = { tipo: "anadir" } | { tipo: "editar"; ejercicio: EjercicioCoach } | { tipo: "archivar"; ejercicio: EjercicioCoach };
 
@@ -13,7 +18,21 @@ export function BibliotecaCoach() {
   const [q, setQ] = useState("");
   const [hoja, setHoja] = useState<HojaAbierta | null>(null);
   const [error, setError] = useState("");
-  const visibles = ejercicios.filter((e) => e.nombre.toLowerCase().includes(q.toLowerCase()));
+  const { valor: musculo, recordar: setMusculo } = useMemoria<Musculo | typeof TODOS>(TODOS);
+  const { valor: equipo, recordar: setEquipo } = useMemoria<Equipo | typeof TODOS>(TODOS);
+  const musculos = [...new Set(ejercicios.map((e) => e.musculoPrimario))].sort((a, b) =>
+    ETIQUETA_MUSCULO[a].localeCompare(ETIQUETA_MUSCULO[b], "es"),
+  );
+  const equipos = [...new Set(ejercicios.map((e) => e.equipo))].sort((a, b) =>
+    ETIQUETA_EQUIPO[a].localeCompare(ETIQUETA_EQUIPO[b], "es"),
+  );
+  const termino = normalizarBusqueda(q);
+  // Como en la biblioteca del cliente: quien escribe busca en todo; los filtros son para explorar.
+  const visibles = termino
+    ? ejercicios.filter((e) => normalizarBusqueda(e.nombre).includes(termino))
+    : ejercicios.filter(
+        (e) => (musculo === TODOS || e.musculoPrimario === musculo) && (equipo === TODOS || e.equipo === equipo),
+      );
 
   async function archivar(e: EjercicioCoach) {
     try {
@@ -39,6 +58,31 @@ export function BibliotecaCoach() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
+      <nav className="filtros" aria-label="Filtrar por músculo">
+        {([TODOS, ...musculos] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            className={musculo === m ? "filtro filtro--activo" : "filtro"}
+            aria-pressed={musculo === m}
+            onClick={() => setMusculo(m)}
+          >
+            {m === TODOS ? "Todos" : ETIQUETA_MUSCULO[m]}
+          </button>
+        ))}
+      </nav>
+      <label className="filtro-equipo">
+        <span>Equipo</span>
+        <select value={equipo} onChange={(e) => setEquipo(e.target.value as Equipo | typeof TODOS)}>
+          <option value={TODOS}>Todos</option>
+          {equipos.map((e) => (
+            <option key={e} value={e}>
+              {ETIQUETA_EQUIPO[e]}
+            </option>
+          ))}
+        </select>
+      </label>
+      <p className="sfm-hint">{visibles.length} ejercicios</p>
       <div className="sfm-catalog-grid">
         {visibles.map((e) => {
           const propio = propios.get(e.id);

@@ -54,6 +54,19 @@ export async function ejerciciosActivos(db: D1Database): Promise<EjercicioCoach[
   return results.map(aEjercicio);
 }
 
+/**
+ * Huella de la lista activa. Cambia al crear, editar, subir foto o archivar:
+ * todo eso toca `actualizado_en` o el número de filas.
+ */
+export async function etiquetaDeBiblioteca(db: D1Database): Promise<string> {
+  const f = await db
+    .prepare(
+      "SELECT COUNT(*) AS total, SUM(activo) AS activos, COALESCE(MAX(actualizado_en), 0) AS ultimo FROM ejercicios_coach",
+    )
+    .first<{ total: number; activos: number | null; ultimo: number }>();
+  return `"b-${f?.total ?? 0}-${f?.activos ?? 0}-${f?.ultimo ?? 0}"`;
+}
+
 export async function leerEjercicio(db: D1Database, id: string): Promise<EjercicioCoach | null> {
   const fila = await db.prepare("SELECT * FROM ejercicios_coach WHERE id=?").bind(id).first<Fila>();
   return fila ? aEjercicio(fila) : null;

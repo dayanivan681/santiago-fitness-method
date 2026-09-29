@@ -137,3 +137,16 @@ describe('la ficha se comporta como un diálogo móvil (Fase 2)', () => {
     expect(document.activeElement).toBe(tarjeta)
   })
 })
+
+describe('filtro por equipo', () => {
+  test('el selector «Equipo» deja sólo las máquinas de discos y se suma al músculo', async () => {
+    await abrir()
+    const equipo = screen.getByRole('combobox', { name: 'Equipo' })
+    await userEvent.selectOptions(equipo, 'maquinaDiscos')
+    expect(await screen.findByText('Prensa de piernas 45°')).toBeInTheDocument()
+    expect(screen.queryByText('Extensión de cuádriceps')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Pantorrillas' }))
+    expect(screen.queryByText('Prensa de piernas 45°')).not.toBeInTheDocument()
+    expect(screen.getByText('Seated calf raise')).toBeInTheDocument()
+  })
+})

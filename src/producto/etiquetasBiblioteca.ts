@@ -6,7 +6,8 @@ export const ETIQUETA_EQUIPO: Record<(typeof EQUIPOS)[number], string> = {
   cable: "Polea / cable",
   mancuernas: "Mancuernas",
   barraLibre: "Barra libre",
-  maquinaTradicional: "Máquina de pesas",
+  maquinaTradicional: "Máquina de pila (selectorizada)",
+  maquinaDiscos: "Máquina de discos (plate-loaded)",
   pesoCorporal: "Peso corporal",
 };
 
@@ -23,6 +24,7 @@ export const ETIQUETA_MUSCULO: Record<(typeof MUSCULOS)[number], string> = {
   deltoidePosterior: "Hombro (trasero)",
   pantorrillas: "Pantorrillas",
   core: "Abdomen y core",
+  aductores: "Aductores",
 };
 
 /** Cada forma de cargar el peso, con una frase de ejemplo en lenguaje sencillo. */

@@ -11,6 +11,7 @@ import {
   claveDeFotoGuardada,
   crearEjercicio,
   ejerciciosActivos,
+  etiquetaDeBiblioteca,
   guardarClaveDeFoto,
   leerEjercicio,
 } from "./bibliotecaDatos";
@@ -48,7 +49,7 @@ async function atender(request: Request, env: EntornoV2, ctx: Contexto, ruta: st
   if (resto.length || (subruta !== undefined && subruta !== "foto")) return json({ error: "Ruta no disponible." }, 404);
   if (id !== undefined && !esIdDeEjercicioCoach(id)) return json({ error: "Ejercicio no disponible." }, 404);
 
-  if (!id && metodo === "GET") return json({ ejercicios: await ejerciciosActivos(env.ACCESO) });
+  if (!id && metodo === "GET") return listar(request, env);
   if (id && subruta === "foto" && metodo === "GET") return servirFoto(env, id);
 
   const permitido = (!id && metodo === "POST") || (id && !subruta && metodo === "PATCH") || (id && subruta === "foto" && metodo === "PUT");
@@ -65,6 +66,16 @@ async function atender(request: Request, env: EntornoV2, ctx: Contexto, ruta: st
   if (subruta === "foto") return subirFoto(request, env, id);
   await actualizarEjercicio(env.ACCESO, id, EjercicioCoachCambio.parse(await request.json()), Date.now());
   return json({ ejercicio: await leerEjercicio(env.ACCESO, id) });
+}
+
+/** Con ~300 ejercicios y un cliente que pregunta cada minuto, responder 304 ahorra bajar la lista entera. */
+async function listar(request: Request, env: EntornoV2): Promise<Response> {
+  const etiqueta = await etiquetaDeBiblioteca(env.ACCESO);
+  if (request.headers.get("If-None-Match") === etiqueta)
+    return new Response(null, { status: 304, headers: { ETag: etiqueta, "Cache-Control": "no-store" } });
+  const respuesta = json({ ejercicios: await ejerciciosActivos(env.ACCESO) });
+  respuesta.headers.set("ETag", etiqueta);
+  return respuesta;
 }
 
 async function servirFoto(env: EntornoV2, id: string): Promise<Response> {

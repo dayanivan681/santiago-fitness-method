@@ -22,7 +22,7 @@ import { NOMBRE_MUSCULO, etiquetaEquipo } from '../../dominio/etiquetas'
 import { normalizarBusqueda } from '../../logica/busqueda'
 import { HojaEjercicio } from './HojaEjercicio'
 import type { Repositorio } from '../../datos/repositorio'
-import type { Ejercicio, Musculo } from '../../dominio/tipos'
+import type { Ejercicio, Equipo, Musculo } from '../../dominio/tipos'
 import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 
 interface Props {
@@ -38,6 +38,7 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
   const { valor: filtro, recordar: setFiltro } = memoriaFiltro ?? filtroPropio
   const [abierto, setAbierto] = useState<Ejercicio | null>(null)
   const [busqueda, setBusqueda] = useState('')
+  const [equipo, setEquipo] = useState<Equipo | typeof TODOS>(TODOS)
 
   const ejercicios = useLiveQuery(async () => {
     const todos = await repositorio.listarEjercicios()
@@ -50,10 +51,14 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
     NOMBRE_MUSCULO[a].localeCompare(NOMBRE_MUSCULO[b], 'es'),
   )
   const termino = normalizarBusqueda(busqueda)
-  const porMusculo =
-    filtro === TODOS
-      ? ejercicios
-      : ejercicios.filter((ejercicio) => ejercicio.musculoPrimario === filtro)
+  const equipos = [...new Set(ejercicios.map((e) => e.equipo))].sort((a, b) =>
+    etiquetaEquipo(a).localeCompare(etiquetaEquipo(b), 'es'),
+  )
+  const porMusculo = ejercicios.filter(
+    (ejercicio) =>
+      (filtro === TODOS || ejercicio.musculoPrimario === filtro) &&
+      (equipo === TODOS || ejercicio.equipo === equipo),
+  )
   // Buscar manda sobre el filtro: quien escribe «smith» quiere el Smith, no el
   // Smith dentro de Pecho. Con 293 ejercicios en camino, teclear es el camino
   // rápido y los filtros el de explorar.
@@ -112,10 +117,24 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
           ))}
         </nav>
 
+        <label className="filtro-equipo">
+          <span>Equipo</span>
+          <select value={equipo} onChange={(evento) => setEquipo(evento.target.value as Equipo | typeof TODOS)}>
+            <option value={TODOS}>Todos</option>
+            {equipos.map((e) => (
+              <option key={e} value={e}>
+                {etiquetaEquipo(e)}
+              </option>
+            ))}
+          </select>
+        </label>
+
         {visibles.length === 0 ? (
           // Antes filtrar sin resultados dejaba una rejilla en blanco, sin decir
           // nada. Ahora se dice, y con qué se buscó.
-          <p className="aviso">No hay ningún ejercicio que se llame así.</p>
+          <p className="aviso">
+            {termino ? 'No hay ningún ejercicio que se llame así.' : 'No hay ningún ejercicio con esos filtros.'}
+          </p>
         ) : (
           <div className="grupo grupo--pleno">
             {visibles.map((ejercicio) => (

@@ -104,6 +104,27 @@ export async function subirArchivo<T>(ruta: string, archivo: Blob, coach = false
   if (!r.ok) throw new ErrorRespuesta(d.error ?? "No se pudo subir la foto.", r.status);
   return d;
 }
+/**
+ * GET condicional: con la etiqueta de la última respuesta, el servidor contesta
+ * 304 si nada cambió y no hace falta bajar ni guardar nada.
+ */
+export async function pedirSiCambio<T>(
+  base: string,
+  ruta: string,
+  etiqueta: string | null,
+): Promise<{ cambio: false } | { cambio: true; datos: T; etiqueta: string | null }> {
+  const r = await fetch(new URL(base + ruta, location.origin), {
+    credentials: "same-origin",
+    redirect: "manual",
+    headers: etiqueta ? { "If-None-Match": etiqueta } : {},
+    cache: "no-store",
+  }).catch(() => { throw new ErrorConexion(); });
+  if (r.status === 401 || r.type === "opaqueredirect") throw new ErrorAcceso();
+  if (r.status === 304) return { cambio: false };
+  const d = (await r.json()) as T & { error?: string };
+  if (!r.ok) throw new ErrorRespuesta(d.error ?? "No se pudo conectar. Inténtalo de nuevo.", r.status);
+  return { cambio: true, datos: d, etiqueta: r.headers.get("ETag") };
+}
 export class ErrorConexion extends Error {
   constructor() { super("Sin conexión con tu cuenta. Lo pendiente se conserva en este dispositivo."); }
 }
@@ -154,6 +175,8 @@ export class ConexionCloud {
   timer?: ReturnType<typeof setInterval>;
   cerrada = false;
   ultimaBiblioteca = 0;
+  /** ETag de la última lista guardada; vive en memoria, así que cada apertura baja la lista una vez. */
+  etiquetaBiblioteca: string | null = null;
   constructor(ctx: Contexto, cliente = ctx.identidad) {
     this.ctx = ctx;
     this.api = new ClienteApi(
@@ -391,9 +414,12 @@ export class ConexionCloud {
    */
   async actualizarBiblioteca() {
     if (Date.now() - this.ultimaBiblioteca < INTERVALO_BIBLIOTECA_MS) return;
-    const { ejercicios } = RespuestaBiblioteca.parse(await this.api.pedir("/biblioteca"));
-    await guardarEjerciciosDelCoach(this.db, ejercicios, this.api.base);
+    const respuesta = await pedirSiCambio(this.api.base, "/biblioteca", this.etiquetaBiblioteca);
     this.ultimaBiblioteca = Date.now();
+    if (!respuesta.cambio) return;
+    const { ejercicios } = RespuestaBiblioteca.parse(respuesta.datos);
+    await guardarEjerciciosDelCoach(this.db, ejercicios, this.api.base);
+    this.etiquetaBiblioteca = respuesta.etiqueta;
     notificar();
   }
   async sincronizar() {

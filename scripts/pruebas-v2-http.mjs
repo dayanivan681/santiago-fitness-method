@@ -216,11 +216,27 @@ const planInventado = { ...planConCoach, dias: planConCoach.dias.map((d, i) => (
 const revisionPlan = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
 await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planInventado, revisionPlan)] }), 400, "Plan con id inventado da 400");
 await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planConCoach, revisionPlan)] }), 200, "Plan con ejercicio del coach se publica");
+// Lista condicional: con el ETag de la respuesta, sin cambios da 304 y sin cuerpo.
+const listaConEtag = await codigo(await pedir("/api/v2/biblioteca", cliente), 200, "Lista con ETag");
+const etag = listaConEtag.headers.get("etag");
+assert.ok(etag, "La lista trae ETag");
+const sinCambios = await codigo(await pedir("/api/v2/biblioteca", { ...cliente, "If-None-Match": etag }), 304, "Biblioteca sin cambios da 304");
+assert.equal(await sinCambios.text(), "");
+checks += 2;
+// Biblioteca Maestra de Santiago: sólo si se importó antes (npm run biblioteca:santiago -- --local --aplicar).
+const m02 = (await listaConEtag.json()).ejercicios.filter((x) => x.referenciaCatalogo?.startsWith("M02-"));
+if (m02.length) {
+  assert.equal(m02.length, 279, "El import local deja las 279 fichas de Santiago");
+  const planM02 = { ...planConCoach, dias: planConCoach.dias.map((d, i) => (i === 1 ? { ...d, slots: d.slots.map((sl, j) => (j === 0 ? { ...sl, ejercicioId: m02[0].id } : sl)) } : d)) };
+  const rev = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
+  await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planM02, rev)] }), 200, "Plan con un ejercicio M02 importado se publica");
+  checks++;
+} else console.log("Biblioteca de Santiago sin importar en local: se omiten sus comprobaciones.");
 await codigo(await pedir(`${cbase}/biblioteca/${ejId}`, coach, { activo: false }, "PATCH"), 200, "Coach archiva el ejercicio");
 const tras = await (await pedir("/api/v2/biblioteca", cliente)).json();
 assert.ok(!tras.ejercicios.some((x) => x.id === ejId), "Archivado no se distribuye");
 checks++;
-await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planConCoach, revisionPlan + 1)] }), 400, "Plan con ejercicio archivado da 400");
+await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", planConCoach, (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision)] }), 400, "Plan con ejercicio archivado da 400");
 await codigo(
   await pedir("/api/v2/sincronizar", cliente, {
     operaciones: [op("perfil", id, perfil, 1)],

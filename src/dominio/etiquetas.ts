@@ -31,6 +31,7 @@ export const NOMBRE_MUSCULO: Readonly<Record<Musculo, string>> = {
   deltoidePosterior: 'Deltoide posterior',
   pantorrillas: 'Pantorrillas',
   core: 'Core',
+  aductores: 'Aductores',
 }
 
 /** §16: el equipo forma parte de la identidad del ejercicio, no es un adorno. */
@@ -40,7 +41,8 @@ const ETIQUETA_EQUIPO: Readonly<Record<Equipo, string>> = {
   cable: 'Cable',
   mancuernas: 'Mancuernas',
   barraLibre: 'Barra libre',
-  maquinaTradicional: 'Máquina',
+  maquinaTradicional: 'Máquina de pila (selectorizada)',
+  maquinaDiscos: 'Máquina de discos (plate-loaded)',
   pesoCorporal: 'Peso corporal',
 }
 

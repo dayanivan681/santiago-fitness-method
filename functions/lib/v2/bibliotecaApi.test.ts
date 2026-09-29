@@ -122,6 +122,29 @@ describe('rutas de biblioteca', () => {
   })
 })
 
+describe('caché de la lista con ETag', () => {
+  const pedirCon = (etiqueta?: string) =>
+    rutaDeBiblioteca(new Request(ORIGEN + '/biblioteca', { headers: etiqueta ? { 'If-None-Match': etiqueta } : {} }), env, ctx('cliente'), '/biblioteca')
+
+  it('responde 304 sin cuerpo si nada cambió, y 200 con otra etiqueta tras crear o archivar', async () => {
+    const primera = (await pedirCon())!
+    const etiqueta = primera.headers.get('ETag')!
+    expect(etiqueta).toMatch(/^"[^"]+"$/)
+    const igual = (await pedirCon(etiqueta))!
+    expect(igual.status).toBe(304)
+    expect(await igual.text()).toBe('')
+
+    const id = await crear()
+    const trasCrear = (await pedirCon(etiqueta))!
+    expect(trasCrear.status).toBe(200)
+    const etiqueta2 = trasCrear.headers.get('ETag')!
+    expect(etiqueta2).not.toBe(etiqueta)
+
+    await pedir('coach', 'PATCH', `/biblioteca/${id}`, { activo: false })
+    expect((await pedirCon(etiqueta2))!.status).toBe(200)
+  })
+})
+
 describe('foto del ejercicio', () => {
   it('el coach sube, ambos roles la reciben con caché', async () => {
     const id = await crear()

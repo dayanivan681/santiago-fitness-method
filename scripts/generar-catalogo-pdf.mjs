@@ -56,7 +56,10 @@ const fichas = filas.map((f) => {
     ref: f[col("canonical_ref")],
     // Algunas fichas del PDF sólo tienen nombre en inglés: se usa la etiqueta original.
     nombre: (f[col("canonical_name_es")] || f[col("canonical_label_source")]).trim(),
-    equipo: EQUIPO[equipos[0]] ?? null,
+    // El PDF llama «máquina» tanto a la de pila como a la de discos; el nombre lo aclara.
+    equipo: EQUIPO[equipos[0]] === "maquinaTradicional" && /plate/i.test(f[col("canonical_name_es")] || f[col("canonical_label_source")])
+      ? "maquinaDiscos"
+      : (EQUIPO[equipos[0]] ?? null),
   };
 });
 

@@ -318,6 +318,25 @@ describe("biblioteca del coach en el cliente", () => {
     expect(await c.db.ejercicios.get(ID)).toMatchObject({ nombre: "Nuevo nombre", incrementoMinimoLb: 2.5 });
   });
 
+  it("si la biblioteca no cambió, el servidor responde 304 y el cliente no toca Dexie", async () => {
+    insertar();
+    const c = await conexion("biblioteca-304");
+    await quieta(c);
+    const guardar = vi.spyOn(c.db.ejercicios, "put");
+    const respuestas: number[] = [];
+    const original = fetch as unknown as ReturnType<typeof vi.fn>;
+    const envolver = original.getMockImplementation() as (url: string | URL, init?: RequestInit) => Promise<Response>;
+    original.mockImplementation(async (url: string | URL, init?: RequestInit) => {
+      const r = await envolver(url, init);
+      if (String(url).includes("/biblioteca")) respuestas.push(r.status);
+      return r;
+    });
+    await refrescar(c);
+    expect(respuestas).toEqual([304]);
+    expect(guardar).not.toHaveBeenCalled();
+    expect((await c.db.ejercicios.get(ID))?.nombre).toBe("Jalón neutro");
+  });
+
   it("un ejercicio archivado deja de llegar pero se conserva por su historial", async () => {
     insertar();
     const c = await conexion("biblioteca-archivada");

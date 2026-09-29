@@ -79,3 +79,25 @@ describe('id de ejercicio del coach', () => {
     expect(Plan).toBeDefined()
   })
 })
+
+describe('vocabulario de la Biblioteca Maestra', () => {
+  it('distingue la máquina de discos de la de pila y tiene aductores', async () => {
+    const { ETIQUETA_EQUIPO, ETIQUETA_MUSCULO } = await import('../../src/producto/etiquetasBiblioteca')
+    const { etiquetaEquipo, NOMBRE_MUSCULO } = await import('../../src/dominio/etiquetas')
+    expect(EQUIPOS).toContain('maquinaDiscos')
+    expect(MUSCULOS).toContain('aductores')
+    expect(ETIQUETA_EQUIPO.maquinaDiscos).toBe('Máquina de discos (plate-loaded)')
+    expect(ETIQUETA_EQUIPO.maquinaTradicional).toBe('Máquina de pila (selectorizada)')
+    expect(etiquetaEquipo('maquinaDiscos')).toBe('Máquina de discos (plate-loaded)')
+    expect(etiquetaEquipo('maquinaTradicional')).toBe('Máquina de pila (selectorizada)')
+    expect(ETIQUETA_MUSCULO.aductores).toBe('Aductores')
+    expect(NOMBRE_MUSCULO.aductores).toBe('Aductores')
+  })
+
+  it('las fichas fijas cargadas con discos usan la máquina de discos', async () => {
+    const { BIBLIOTECA_INICIAL } = await import('../../src/datos/semilla/biblioteca')
+    const equipo = (id: string) => BIBLIOTECA_INICIAL.find((e) => e.id === id)?.equipo
+    for (const id of ['prensa', 'hack-squat', 'sfm-catalog-c191']) expect(equipo(id)).toBe('maquinaDiscos')
+    for (const id of ['extension-cuadriceps', 'pec-deck', 'lat-pulldown-maquina']) expect(equipo(id)).toBe('maquinaTradicional')
+  })
+})

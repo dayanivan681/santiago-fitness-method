@@ -55,7 +55,12 @@ it('la lista de «Añadir ejercicio» muestra el equipo en lenguaje sencillo, no
   expect(within(opcion).getByText(/Barra libre/)).toBeInTheDocument();
   expect(hoja).not.toHaveTextContent(/barraLibre|maquinaTradicional|pesoCorporal/);
   // También se busca por el nombre que ve el coach.
-  fireEvent.change(within(hoja).getByRole('textbox', { name: 'Buscar ejercicio' }), { target: { value: 'máquina de pesas' } });
-  expect(within(hoja).getAllByRole('button').length).toBeGreaterThan(2);
+  const buscar = within(hoja).getByRole('textbox', { name: 'Buscar ejercicio' });
+  fireEvent.change(buscar, { target: { value: 'pila' } });
+  expect(within(hoja).getByText('Extensión de cuádriceps')).toBeInTheDocument();
   expect(hoja).not.toHaveTextContent(/maquinaTradicional/);
+  // «plate» encuentra las máquinas de discos por su etiqueta.
+  fireEvent.change(buscar, { target: { value: 'plate' } });
+  expect(within(hoja).getByText('Prensa de piernas 45°')).toBeInTheDocument();
+  expect(within(hoja).queryByText('Extensión de cuádriceps')).toBeNull();
 });

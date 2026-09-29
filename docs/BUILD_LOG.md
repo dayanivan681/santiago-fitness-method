@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-29 — Biblioteca Maestra de Santiago (mensaje 02) — claude-code
+
+- Vocabulario: `maquinaDiscos` («Máquina de discos (plate-loaded)») separada de `maquinaTradicional` («Máquina de pila (selectorizada)», misma clave, sin migrar datos). Músculo `aductores`, sin objetivo semanal. Seis fichas fijas cargadas con discos pasan a `maquinaDiscos` con el mismo id (prensa, hack squat, seated calf raise, C191, C194, C077). El catálogo del PDF también distingue «plate-loaded».
+- `scripts/biblioteca-santiago.mjs` convierte las 283 filas del CSV: 279 importables, 2 ya existen como fichas fijas (Hack Squat, Seated Calf Raise) y 2 repetidas en su propia lista (Stiff-Leg Deadlift, Hip Abduction Machine). Nombres tal cual; explicación vacía; referencia `M02-nnn`; id determinista. Músculo y patrón por (grupo, subgrupo), reutilizando los patrones de la semilla; equipo por palabras del nombre más ~90 correcciones por fila. Cargas con los perfiles de la semilla (`cargas.ts`), no con la tabla del plan: el plan pedía «las convenciones de la semilla» y su lista las contradecía.
+- `npm run biblioteca:santiago -- --local|--staging|--produccion [--aplicar]`: respaldo, ensayo en copia local (una segunda pasada inserta 0) e `INSERT … WHERE NOT EXISTS` por id o nombre activo. Local: 279 insertadas y 0 al repetir.
+- `GET /biblioteca` con ETag; el cliente envía `If-None-Match` y con 304 no toca Dexie. Filtros de músculo y equipo en la Biblioteca del coach; selector de equipo en la del cliente.
+
 ## 2026-09-28 — Cancelar foto conserva Añadir ejercicio — codex
 
 - Bug reportado: Biblioteca → Añadir ejercicio → Nuevo → foto → volver/cancelar cerraba toda la hoja y perdía el borrador. Reproducción nativa en Safari, simulador QA iPhone 16 Pro iOS 27 (402×874), `http://127.0.0.1:5173/demo/coach/biblioteca`: Photo Library → Cancel devolvió la biblioteca sin formulario. La prueba de regresión también falló antes de la corrección (diálogo ausente).

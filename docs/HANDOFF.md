@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T13:40:04.497Z
+- **Última sincronización:** 2026-09-29T13:54:41.101Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T13:54:41.102Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca Maestra de Santiago, código: maquinaDiscos/aductores, 6 fichas fijas a maquinaDiscos, generador (279 importables, 2 ya existen, 2 duplicados), importador idempotente con respaldo y ensayo, ETag/304 en GET /biblioteca, filtros de músculo y equipo. Datos: importado sólo en local (279, repetición 0). Staging y producción pendientes en este mismo encargo.
+- **Verificación:** npm test (850/850); npx tsc -b; npm run lint; npm run build; npm run test:http (88 PASS con import local); navegador 375x812 en runtime local
+- **Siguiente:** Importar en staging y redesplegar el preview; producción sólo con el sí del dueño
+
 
 ### 2026-09-29T13:40:04.498Z | claude-code | CLAIM
 - **Estado:** active

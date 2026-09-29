@@ -52,6 +52,8 @@ export type Equipo =
   | 'mancuernas'
   | 'barraLibre'
   | 'maquinaTradicional'
+  /** Plate-loaded: se carga con discos. `maquinaTradicional` es la de pila (selectorizada). */
+  | 'maquinaDiscos'
   | 'pesoCorporal'
 
 /** Músculos con objetivo semanal (§20) más los que reciben trabajo indirecto (§21). */
@@ -68,6 +70,8 @@ export type Musculo =
   | 'deltoidePosterior'
   | 'pantorrillas'
   | 'core'
+  /** Sin objetivo semanal: se entrena, pero no cuenta en el volumen (§20). */
+  | 'aductores'
 
 /**
  * §15–17: una fila **por variante**. Press inclinado Smith y press inclinado

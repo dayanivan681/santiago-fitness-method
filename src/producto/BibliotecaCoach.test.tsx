@@ -232,3 +232,16 @@ it('editar un ejercicio propio sin cambiar su nombre guarda sin el aviso, pero n
   await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   expect((await servicio.biblioteca.listar())[0]).toMatchObject({ nombre: 'Mi remo', explicacionCorta: 'Con la espalda recta.' })
 })
+
+it('filtra por músculo y por equipo; el buscador manda sobre los filtros', async () => {
+  render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+  const titulos = () => screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
+  fireEvent.click(screen.getByRole('button', { name: 'Pecho' }))
+  expect(titulos()).toContain('Press de banca plano con barra')
+  expect(titulos()).not.toContain('Prensa de piernas 45°')
+  fireEvent.change(screen.getByRole('combobox', { name: 'Equipo' }), { target: { value: 'maquinaTradicional' } })
+  expect(titulos()).toContain('Pec deck / fly de pecho')
+  expect(titulos()).not.toContain('Press de banca plano con barra')
+  fireEvent.change(screen.getByRole('textbox', { name: 'Buscar en biblioteca' }), { target: { value: 'prensa' } })
+  expect(titulos()).toContain('Prensa de piernas 45°')
+})

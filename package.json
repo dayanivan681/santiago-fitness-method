@@ -25,7 +25,8 @@
     "qa:servir": "node scripts/servir-qa-v2.mjs",
     "qa:acceso": "node scripts/qa-proxy.mjs",
     "test:http": "node scripts/pruebas-v2-http.mjs",
-    "d1:v2": "node scripts/migrar-v2.mjs"
+    "d1:v2": "node scripts/migrar-v2.mjs",
+    "biblioteca:santiago": "node scripts/importar-biblioteca-santiago.mjs"
   },
   "dependencies": {
     "dexie": "^4.4.5",

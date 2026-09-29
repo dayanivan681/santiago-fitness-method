@@ -12,6 +12,7 @@ export const EQUIPOS = [
   "mancuernas",
   "barraLibre",
   "maquinaTradicional",
+  "maquinaDiscos",
   "pesoCorporal",
 ] as const;
 export const MUSCULOS = [
@@ -27,6 +28,7 @@ export const MUSCULOS = [
   "deltoidePosterior",
   "pantorrillas",
   "core",
+  "aductores",
 ] as const;
 export const TIPOS_DE_CARGA = ["total", "porLado", "discosAnadidos", "pesoMaquina"] as const;
 
@@ -57,7 +59,7 @@ const Campos = z.object({
 export const EjercicioCoachNuevo = Campos.extend({
   referenciaCatalogo: z
     .string()
-    .regex(/^C\d{3}$/, "Ficha de catálogo no válida.")
+    .regex(/^(C\d{3}|M02-\d{3})$/, "Ficha de catálogo no válida.")
     .nullable()
     .default(null),
   musculosSecundarios: Campos.shape.musculosSecundarios.default([]),
