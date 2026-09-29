@@ -82,11 +82,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:34:28.426Z
+- **Última sincronización:** 2026-09-29T02:40:00.707Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1229,6 +1229,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:40:00.708Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Prueba en simulador iOS de la biblioteca del coach: en Safari (QA iPhone 16 Pro, runtime local real) se crea un ejercicio con equipo y músculo y se sube una foto desde Photo Library; llega comprimida (JPEG 850x567, 75 KB) a R2 y se sirve como image/jpeg. Take Photo aparece en el selector pero la cámara no existe en el simulador. Ajuste menor: las tarjetas de la Biblioteca del coach muestran la etiqueta del equipo (Barra libre) en vez de la clave (barraLibre). La respuesta a Santiago ya la envió el dueño el 2026-09-29.
+- **Verificación:** npm test (832/832); npm run lint; npm run build; tsc -b; simulador iOS
+- **Siguiente:** Migración 0012 con respaldo en staging y producción (npm run d1:v2), despliegue, comprobar 401 en /api/v2/biblioteca, y luego el segundo correo a Santiago con los pasos Biblioteca → Añadir ejercicio
+
 
 ### 2026-09-29T02:34:28.427Z | claude-code | CLAIM
 - **Estado:** active

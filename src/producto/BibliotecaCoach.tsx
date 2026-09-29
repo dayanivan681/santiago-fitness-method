@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useBiblioteca } from "./contextoBiblioteca";
+import { ETIQUETA_EQUIPO } from "./etiquetasBiblioteca";
 import { HojaEjercicio } from "./HojaEjercicio";
 import { Cabecera, ErrorVisible, Hoja, Icono } from "./ui";
 import type { EjercicioCoach } from "../../shared/v2/biblioteca";
@@ -47,7 +48,7 @@ export function BibliotecaCoach() {
               <div>
                 <small>
                   {propio && <span className="sfm-insignia-tuyo">Tuyo</span>}
-                  {e.equipo}
+                  {ETIQUETA_EQUIPO[e.equipo]}
                 </small>
                 <h2>{e.nombre}</h2>
                 <p>{e.explicacionCorta}</p>
