@@ -10,7 +10,7 @@ import type {
 } from "../dominio/tipos";
 import { useLiveQuery } from "../nube/eventos";
 import { ClienteApi, type ConexionCloud } from "../nube/cloud";
-import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
+import { useBiblioteca } from "./contextoBiblioteca";
 import { Historial } from "../pantallas/Historial/Historial";
 import { Cabecera, ErrorVisible, FechaBonita, Hoja, Icono, Vacio } from "./ui";
 import { ultimos } from "./servicio";
@@ -298,6 +298,7 @@ function ListaSesiones({
   sesiones: Sesion[];
   obtenerSeries: (id: string) => Promise<SerieRegistrada[]>;
 }) {
+  const { ejercicios } = useBiblioteca();
   const [detalle, setDetalle] = useState<{
     sesion: Sesion;
     series: SerieRegistrada[];
@@ -356,7 +357,7 @@ function ListaSesiones({
           {[...new Set(detalle.series.map((s) => s.ejercicioId))].map((id) => (
             <section className="sfm-session-exercise" key={id}>
               <h3>
-                {BIBLIOTECA_INICIAL.find((e) => e.id === id)?.nombre ??
+                {ejercicios.find((e) => e.id === id)?.nombre ??
                   "Variante histórica"}
               </h3>
               {detalle.series

@@ -22,7 +22,9 @@ import {
   type Perfil,
   type Plan,
 } from "../../shared/v2/contratos";
-import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
+import { ContextoBiblioteca, useBiblioteca } from "./contextoBiblioteca";
+import { useBibliotecaDelCoach } from "./useBibliotecaDelCoach";
+import { BibliotecaCoach } from "./BibliotecaCoach";
 import { ServicioCoach, ultimos, type Cliente } from "./servicio";
 import {
   Avatar,
@@ -51,6 +53,7 @@ export function Coach({
   const [borradores, setBorradores] = useState<Cambio[]>([]);
   const [error, setError] = useState("");
   const [listo, setListo] = useState(false);
+  const biblioteca = useBibliotecaDelCoach(servicio);
   const [pagos, setPagos] = useState<Pagos>({ disponibles: false, porCliente: new Map() });
   const cargar = useCallback(async () => {
     try {
@@ -82,6 +85,7 @@ export function Coach({
   }, [cargar]);
   return (
     <ContextoPagos.Provider value={pagos}>
+    <ContextoBiblioteca.Provider value={biblioteca}>
     <div className="sfm-shell sfm-shell--coach">
       <div className="sfm-brandbar">
         <Marca />
@@ -159,6 +163,7 @@ export function Coach({
         ))}
       </nav>
     </div>
+    </ContextoBiblioteca.Provider>
     </ContextoPagos.Provider>
   );
 }
@@ -482,6 +487,7 @@ function FichaCliente({
   entrenar: (c: Cliente) => void;
 }) {
   const { clienteId } = useParams();
+  const { ejercicios } = useBiblioteca();
   const c = clientes.find((c) => c.perfil.id === clienteId);
   const [seccion, setSeccion] = useState(() => {
     const pedida = new URLSearchParams(location.search).get("seccion");
@@ -860,7 +866,7 @@ function FichaCliente({
                   <p className="sfm-hint">
                     Estas indicaciones aparecen al preparar su programa.
                   </p>
-                  {BIBLIOTECA_INICIAL.map((e) => (
+                  {ejercicios.map((e) => (
                     <label className="sfm-check" key={e.id}>
                       <input
                         type="checkbox"
@@ -1001,36 +1007,6 @@ function FichaCliente({
     </div>
   );
 }
-function BibliotecaCoach() {
-  const [q, setQ] = useState("");
-  return (
-    <>
-      <Cabecera titulo="Conoce cada variante." kicker="Biblioteca del método" />
-      <input
-        className="sfm-search"
-        aria-label="Buscar en biblioteca"
-        placeholder="Buscar ejercicio"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
-      <div className="sfm-catalog-grid">
-        {BIBLIOTECA_INICIAL.filter((e) =>
-          e.nombre.toLowerCase().includes(q.toLowerCase()),
-        ).map((e) => (
-          <article className="sfm-exercise-card" key={e.id}>
-            <img src={e.imagen} alt="" loading="lazy" />
-            <div>
-              <small>{e.equipo}</small>
-              <h2>{e.nombre}</h2>
-              <p>{e.explicacionCorta}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </>
-  );
-}
-
 function ClienteCreado({ id }: { id: string }) {
   const ayuda = useAyuda();
   return ayuda?.completados.has(`creado:${id}`) ? <Consejo id={`creado:${id}`}><strong>Cliente creado. Su plan está listo.</strong></Consejo> : null;

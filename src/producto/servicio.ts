@@ -1,4 +1,6 @@
 import { ServicioSuscripciones } from "./servicioSuscripciones";
+import { ServicioBiblioteca } from "./servicioBiblioteca";
+import { aEjercicioDominio } from "./contextoBiblioteca";
 import type {
   Alta,
   Cambio,
@@ -25,9 +27,11 @@ export class ServicioCoach {
   registros = new Map<string, Cambio[]>();
   repos = new Map<string, RepositorioMemoria>();
   readonly suscripciones: ServicioSuscripciones;
+  readonly biblioteca: ServicioBiblioteca;
   constructor(demo = false) {
     this.demo = demo;
     this.suscripciones = new ServicioSuscripciones(demo);
+    this.biblioteca = new ServicioBiblioteca(demo);
     if (demo) {
       for (const [i, nombre] of [
         "Alicia Rivera",
@@ -260,14 +264,21 @@ export class ServicioCoach {
   }
   // Coach y Cliente de demo comparten esta instancia por persona. Cambiar de
   // rol muestra el mismo proceso, y recargar elimina toda la simulación.
+  /** Los ejercicios que el coach creó en la demo también los ve el cliente de la demo. */
+  private async sumarEjerciciosDelCoach(repo: RepositorioMemoria) {
+    for (const e of await this.biblioteca.listar())
+      await repo.guardarEjercicio(aEjercicioDominio(e, this.biblioteca.urlDeFoto));
+    return repo;
+  }
   async repoDemo(id: string) {
     const existente = this.repos.get(id);
-    if (existente) return existente;
+    if (existente) return this.sumarEjerciciosDelCoach(existente);
     const cliente = this.clientes.find((c) => c.perfil.id === id);
     if (!cliente) throw Error("Cliente no disponible");
     const repo = new RepositorioMemoria(id);
     await repo.guardarParticipante(cliente.perfil as unknown as Participante);
     for (const e of BIBLIOTECA_INICIAL) await repo.guardarEjercicio(e);
+    await this.sumarEjerciciosDelCoach(repo);
     for (const d of cliente.plan.dias) await repo.guardarPlantilla(d);
     if (id === "demo-persona-1") {
       const fecha = new Date(Date.now() - 3 * 86400000)

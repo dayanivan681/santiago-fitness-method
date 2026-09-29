@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ClienteApi } from "../nube/cloud";
-import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
+import { useBiblioteca } from "./contextoBiblioteca";
 import { describirRegistro } from "./descripcionRegistro";
 import { ErrorVisible, FechaBonita, Hoja } from "./ui";
 type Recibo = {
@@ -22,6 +22,7 @@ type Registro = {
 };
 
 export function Importaciones({ api }: { api: ClienteApi }) {
+  const { ejercicios } = useBiblioteca();
   const [recibos, setRecibos] = useState<Recibo[]>([]);
   const [abierto, setAbierto] = useState<Recibo | null>(null);
   const [registros, setRegistros] = useState<Registro[]>([]);
@@ -131,7 +132,7 @@ export function Importaciones({ api }: { api: ClienteApi }) {
           )}
           {registros.map((r) => {
             const d = r.original as { ejercicioId?: string; fecha?: string };
-            const ejercicio = BIBLIOTECA_INICIAL.find(
+            const ejercicio = ejercicios.find(
               (e) =>
                 e.id ===
                 (d.ejercicioId ?? (r.tipo === "calibracion" ? r.id : "")),

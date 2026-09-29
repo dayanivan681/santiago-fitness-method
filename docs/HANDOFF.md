@@ -74,11 +74,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:13:39.087Z
+- **Última sincronización:** 2026-09-29T02:22:46.915Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1221,6 +1221,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:22:46.916Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca del coach, fase 2 (panel del coach): servicioBiblioteca (rama real con ClienteApi/subirArchivo y rama demo en memoria), contexto ContextoBiblioteca cargado junto a los clientes, Biblioteca → Añadir ejercicio (De mi catálogo con 293 fichas de shared/catalogo-pdf.ts generado desde el CSV, o Nuevo), insignia Tuyo, editar y archivar, y EditorPlan/Onboarding/Progreso/Importaciones leen la biblioteca combinada. El cliente de la demo también ve los ejercicios del coach. Demo verificada en navegador a 375x812 (crear desde catálogo, aparece en el editor con Tuyo). La foto real aún no se probó en simulador iOS.
+- **Verificación:** npm test (828/828); npm run lint; npm run build; tsc -b; navegador 375x812 en demo
+- **Siguiente:** Fase 3: ConexionCloud.preparar/sincronizar piden GET /biblioteca y guardan con guardarEjercicio; luego simulador iOS (subir foto), prueba con runtime local real y migración 0012 con respaldo en staging/producción
+
 
 ### 2026-09-29T02:13:39.087Z | claude-code | CLAIM
 - **Estado:** active

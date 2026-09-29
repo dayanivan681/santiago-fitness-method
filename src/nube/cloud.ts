@@ -82,6 +82,21 @@ export class ClienteApi {
     return d as T;
   }
 }
+/** Sube un archivo como cuerpo binario (PUT) con la misma gestión de sesión que `pedir`. */
+export async function subirArchivo<T>(ruta: string, archivo: Blob, coach = false): Promise<T> {
+  const base = coach ? "/admin/api/v2" : "/api/v2";
+  const r = await fetch(new URL(base + ruta, location.origin), {
+    method: "PUT",
+    credentials: "same-origin",
+    redirect: "manual",
+    headers: { "Content-Type": archivo.type },
+    body: archivo,
+  }).catch(() => { throw new ErrorConexion(); });
+  if (r.status === 401 || r.type === "opaqueredirect") throw new ErrorAcceso();
+  const d = (await r.json()) as T & { error?: string };
+  if (!r.ok) throw new ErrorRespuesta(d.error ?? "No se pudo subir la foto.", r.status);
+  return d;
+}
 export class ErrorConexion extends Error {
   constructor() { super("Sin conexión con tu cuenta. Lo pendiente se conserva en este dispositivo."); }
 }

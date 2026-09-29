@@ -1,5 +1,11 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-28 — Biblioteca del coach, fases 1 y 2 — claude-code
+
+- Santiago crea ejercicios desde su panel: `ejercicios_coach` en D1 (migración 0012, **aún sin aplicar en staging ni producción**), API `/biblioteca` (coach escribe; ambos leen) y foto en R2 `biblioteca/<id>`. Un ejercicio nunca se borra: se archiva. `EjercicioId` acepta `coach-ej-<uuid>` y guardar un plan rechaza con 400 ids inexistentes o archivados.
+- Panel: Biblioteca → «Añadir ejercicio» con «De mi catálogo» (293 fichas de `shared/catalogo-pdf.ts`, generado por `scripts/generar-catalogo-pdf.mjs`; 65 fichas del PDF sólo traen nombre en inglés y se usa esa etiqueta) o «Nuevo». Insignia «Tuyo», editar y archivar; el editor de planes los ofrece con foto. Rama demo en memoria sin subir nada.
+- Pendiente (fase 3): que la app del cliente los guarde en Dexie con `guardarEjercicio` al sincronizar.
+
 ## 2026-09-28 — Revisión 2 de fotos con referencias reales — codex
 
 - El dueño rechazó la primera tanda por ejecución poco realista. Se recrearon las 12 imágenes IA usando fotografías/fotogramas reales como entradas visuales de image_gen, no solo descripciones de texto. Referencias enlazadas y revisión individual en public/ejercicios/PROCEDENCIA.md y procedencia.json; originales externos no distribuidos.

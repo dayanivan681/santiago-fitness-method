@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Plan, Perfil } from "../../shared/v2/contratos";
 import { Plan as ValidarPlan } from "../../shared/v2/contratos";
-import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
+import { useBiblioteca } from "./contextoBiblioteca";
 import type { SlotPlantilla } from "../dominio/tipos";
 import { Hoja, Icono } from "./ui";
 export function EditorPlan({
@@ -13,6 +13,7 @@ export function EditorPlan({
   perfil: Perfil;
   onChange: (p: Plan) => void;
 }) {
+  const { ejercicios, propios } = useBiblioteca();
   const [dia, setDia] = useState(0);
   const [editar, setEditar] = useState<number | null>(null);
   const [buscar, setBuscar] = useState("");
@@ -31,7 +32,7 @@ export function EditorPlan({
     });
   }
   const item = editar === null ? null : d.slots[editar];
-  const ejercicioEditado = BIBLIOTECA_INICIAL.find(e => e.id === item?.ejercicioId);
+  const ejercicioEditado = ejercicios.find(e => e.id === item?.ejercicioId);
   const unidadPeso = ejercicioEditado?.tipoCarga === "porLado" ? "lb por lado" : "lb";
   const validacion = ValidarPlan.safeParse({
     ...plan,
@@ -72,7 +73,7 @@ export function EditorPlan({
       </label>
       <div className="sfm-list">
         {d.slots.map((s, i) => {
-          const e = BIBLIOTECA_INICIAL.find((e) => e.id === s.ejercicioId);
+          const e = ejercicios.find((e) => e.id === s.ejercicioId);
           return (
             <div className="sfm-plan-row" key={`${s.ejercicioId}-${i}`}>
               <button
@@ -252,7 +253,7 @@ export function EditorPlan({
             onChange={(e) => setBuscar(e.target.value)}
           />
           <div className="sfm-list">
-            {BIBLIOTECA_INICIAL.filter((e) =>
+            {ejercicios.filter((e) =>
               (e.nombre + " " + e.equipo)
                 .toLowerCase()
                 .includes(buscar.toLowerCase()),
@@ -280,6 +281,7 @@ export function EditorPlan({
                 <span className="sfm-row-body">
                   <strong>{e.nombre}</strong>
                   <small>
+                    {propios.has(e.id) && <span className="sfm-insignia-tuyo">Tuyo</span>}
                     {e.equipo}
                     {perfil.ejerciciosEvitados.includes(e.id)
                       ? " · Evitar según limitaciones"
@@ -295,7 +297,7 @@ export function EditorPlan({
       {item && (
         <Hoja titulo="Prescripción" cerrar={() => setEditar(null)}>
           <h3>
-            {BIBLIOTECA_INICIAL.find((e) => e.id === item.ejercicioId)?.nombre}
+            {ejercicios.find((e) => e.id === item.ejercicioId)?.nombre}
           </h3>
           <div className="sfm-fields-grid" data-tour="prescripcion">
             {(

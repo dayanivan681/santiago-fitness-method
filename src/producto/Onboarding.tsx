@@ -3,7 +3,7 @@ import { Consejo } from "./Ayuda";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Alta as ValidarAlta, type Alta } from "../../shared/v2/contratos";
-import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
+import { useBiblioteca } from "./contextoBiblioteca";
 import { Cabecera, ErrorVisible, Icono } from "./ui";
 import { EditorPlan } from "./EditorPlan";
 import { planBase, ServicioCoach, ultimos } from "./servicio";
@@ -15,6 +15,7 @@ export function Onboarding({
   base: string;
 }) {
   const ayuda = useAyuda();
+  const { ejercicios } = useBiblioteca();
   const { borradorId } = useParams();
   const navegar = useNavigate();
   const [alta, setAlta] = useState<Alta | null>(null);
@@ -241,7 +242,7 @@ export function Onboarding({
           </label>
           <details className="sfm-details">
             <summary>Marcar ejercicios a evitar</summary>
-            {BIBLIOTECA_INICIAL.map((e) => (
+            {ejercicios.map((e) => (
               <label className="sfm-check" key={e.id}>
                 <input
                   type="checkbox"

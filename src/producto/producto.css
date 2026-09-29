@@ -2062,3 +2062,46 @@ a.sfm-primary:active {
   font-size: 13px;
   padding: 4px 12px;
 }
+
+/* Ejercicios que el coach añadió a su biblioteca. */
+.sfm-insignia-tuyo {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--sfm-accent, #1f5d50);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.sfm-card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.sfm-form textarea,
+.sfm-form select {
+  width: 100%;
+  font: inherit;
+}
+.sfm-form fieldset.sfm-field {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.sfm-check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 8px;
+}
+.sfm-check-grid .sfm-check {
+  min-height: 40px;
+  padding: 4px 0;
+  gap: 8px;
+  font-size: 13px;
+}
+.sfm-check-texto strong,
+.sfm-check-texto small {
+  display: block;
+}
