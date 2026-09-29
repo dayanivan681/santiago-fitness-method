@@ -1,5 +1,15 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-09-28 — Cancelar foto conserva Añadir ejercicio — codex
+
+- Bug reportado: Biblioteca → Añadir ejercicio → Nuevo → foto → volver/cancelar cerraba toda la hoja y perdía el borrador. Reproducción nativa en Safari, simulador QA iPhone 16 Pro iOS 27 (402×874), `http://127.0.0.1:5173/demo/coach/biblioteca`: Photo Library → Cancel devolvió la biblioteca sin formulario. La prueba de regresión también falló antes de la corrección (diálogo ausente).
+- Causa: el evento `cancel` del input de archivos se propaga al `dialog`; `Hoja` interpretaba toda cancelación como `cerrar`. `src/producto/ui.tsx` ahora sólo cierra si `event.target === event.currentTarget`. Se conserva el borrador en el mismo componente sin cambiar su almacenamiento ni crear ejercicios al cancelar.
+- Regresión en `src/producto/BibliotecaCoach.test.tsx`: todos los campos conservados y guardado sin foto; foto previa intacta tras cancelar otra elección; edición conserva el nombre; cancel del propio diálogo y botón Cerrar siguen cerrando. 12/12 pruebas del archivo PASS.
+- QA nativa después: mismo Photo Library → Cancel mantiene la hoja abierta y `Remo QA despues` en Nombre. Captura fuera de Git: `/tmp/sfm-foto-ios-after.png`. Prueba en simulador, no en teléfono físico.
+- Playwright con Chrome local, 390×844, misma ruta: formulario mantiene nombre, equipo, músculo y explicación después del cancel propagado; guardar sin foto añade la ficha demo y cierra la hoja. Página/título correctos, contenido presente, sin overlay ni errores de runtime. Captura `/tmp/sfm-foto-browser-after.png`. Browser plugin not available; usado Playwright del runtime. Safari usa selector nativo real; Playwright inyecta el evento DOM para la regresión y guardado en demo.
+- Gates: `npm test` 840/840 (92 archivos), `npm run lint` PASS, `npm run build` PASS, `git diff --check` PASS. Avisos conocidos Node MaxListeners y navegación JSDOM en tests. Sin cambios en datos reales ni `docs/cliente`.
+- Publicación: `handoff:publish` publica a main y dispara Cloudflare Pages según docs/DESPLIEGUE.md. Pendiente comprobar el commit servido y repetir el flujo publicado.
+
 ## 2026-09-28 — Mensaje 02 de Santiago archivado — codex
 
 - Segundo mensaje del dueño: «Biblioteca Maestra de Ejercicios — Santiago Fitness Method - Especificación inicial para la biblioteca del app». Se archiva como información recibida, sin implementar ni importar ejercicios a cuentas reales.
@@ -100,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T03:27:15.130Z
+- **Última sincronización:** 2026-09-29T03:37:07.198Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1247,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T03:37:07.199Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Corregido cierre de Añadir ejercicio al cancelar fotos: Hoja sólo atiende cancel del propio diálogo; conserva borrador, foto anterior y edición. Reproducido antes y validado después en Safari del simulador y Chrome local
+- **Verificación:** npm test 840/840 (92 archivos); npm run lint PASS; npm run build PASS; regresión del archivo 12/12; Safari iOS Photo Library Cancel PASS; Playwright Chrome 390x844 y guardado sin foto PASS; git diff --check PASS; avisos conocidos Node/JSDOM
+- **Siguiente:** Comprobar Cloudflare Pages sirve este commit y repetir la cancelación en la demo publicada
+
 
 ### 2026-09-29T03:27:15.131Z | codex | CLAIM
 - **Estado:** active

@@ -164,7 +164,11 @@ export function Hoja({
       ref={dialog}
       className={`sfm-hoja ${clase}`}
       aria-labelledby={tituloId}
-      onCancel={cerrar}
+      onCancel={(e) => {
+        // Cancelar el selector de archivos también emite «cancel» y se propaga.
+        // Sólo la cancelación del propio diálogo debe cerrar esta hoja.
+        if (e.target === e.currentTarget) cerrar();
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           const r = e.currentTarget.getBoundingClientRect();

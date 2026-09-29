@@ -23,6 +23,53 @@ const abrirHoja = () => {
   return screen.getByRole('dialog', { name: 'Añadir ejercicio' })
 }
 
+it('cancelar el selector de foto conserva la hoja y todos los datos; permite guardar sin foto', async () => {
+  const servicio = new ServicioCoach(true)
+  const crear = vi.spyOn(servicio.biblioteca, 'crear')
+  const subirFoto = vi.spyOn(servicio.biblioteca, 'subirFoto')
+  render(<Panel servicio={servicio} hijo={<BibliotecaCoach />} />)
+  fireEvent.click(within(abrirHoja()).getByText('Nuevo'))
+  const f = screen.getByRole('dialog', { name: 'Añadir ejercicio' })
+  fireEvent.change(within(f).getByLabelText('Nombre'), { target: { value: 'Mi remo al cancelar foto' } })
+  fireEvent.change(within(f).getByLabelText('Equipo'), { target: { value: 'cable' } })
+  fireEvent.change(within(f).getByLabelText('Músculo principal'), { target: { value: 'espalda' } })
+  fireEvent.click(within(f).getByLabelText('Bíceps'))
+  fireEvent.click(within(f).getByLabelText(/Lo de cada lado/))
+  fireEvent.change(within(f).getByLabelText('Salto mínimo entre pesos (lb)'), { target: { value: '2.5' } })
+  fireEvent.change(within(f).getByLabelText('Peso de la barra o del carro (lb)'), { target: { value: '45' } })
+  fireEvent.change(within(f).getByLabelText('Cómo se hace'), { target: { value: 'Mantén la espalda recta.' } })
+
+  // El cancel del input de archivos se propaga hasta el dialog: no es su cierre.
+  fireEvent(within(f).getByLabelText(/Foto de la máquina/), new Event('cancel', { bubbles: true }))
+
+  expect(screen.getByRole('dialog', { name: 'Añadir ejercicio' })).toBe(f)
+  expect(f).toHaveAttribute('open')
+  expect(within(f).getByLabelText('Nombre')).toHaveValue('Mi remo al cancelar foto')
+  expect(within(f).getByLabelText('Equipo')).toHaveValue('cable')
+  expect(within(f).getByLabelText('Músculo principal')).toHaveValue('espalda')
+  expect(within(f).getByLabelText('Bíceps')).toBeChecked()
+  expect(within(f).getByLabelText(/Lo de cada lado/)).toBeChecked()
+  expect(within(f).getByLabelText('Salto mínimo entre pesos (lb)')).toHaveValue('2.5')
+  expect(within(f).getByLabelText('Peso de la barra o del carro (lb)')).toHaveValue('45')
+  expect(within(f).getByLabelText('Cómo se hace')).toHaveValue('Mantén la espalda recta.')
+  expect(crear).not.toHaveBeenCalled()
+  fireEvent.click(within(f).getByRole('button', { name: 'Añadir a mi biblioteca' }))
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  expect((await servicio.biblioteca.listar())[0]).toMatchObject({
+    nombre: 'Mi remo al cancelar foto', musculosSecundarios: ['biceps'],
+    incrementoMinimoLb: 2.5, pesoBaseMaquinaLb: 45, tieneFoto: false,
+  })
+  expect(subirFoto).not.toHaveBeenCalled()
+})
+
+it.each(['cancel', 'Cerrar'])('la hoja sigue cerrando con %s cuando se pide explícitamente', (accion) => {
+  render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+  const hoja = abrirHoja()
+  if (accion === 'cancel') fireEvent(hoja, new Event('cancel', { cancelable: true }))
+  else fireEvent.click(within(hoja).getByRole('button', { name: 'Cerrar' }))
+  expect(screen.queryByRole('dialog')).toBeNull()
+})
+
 it('por «De mi catálogo»: busca una ficha, rellena nombre y equipo y queda como «Tuyo»', async () => {
   const servicio = new ServicioCoach(true)
   render(<Panel servicio={servicio} hijo={<BibliotecaCoach />} />)
@@ -63,6 +110,9 @@ it('por «Nuevo»: formulario en blanco, hereda el movimiento de «Se parece a�
   const foto = new File(['x'], 'maquina.jpg', { type: 'image/jpeg' })
   fireEvent.change(within(f).getByLabelText(/Foto de la máquina/), { target: { files: [foto] } })
   await waitFor(() => expect(within(f).getByAltText('Foto elegida')).toBeInTheDocument())
+  fireEvent(within(f).getByLabelText(/Foto de la máquina/), new Event('cancel', { bubbles: true }))
+  expect(screen.getByRole('dialog', { name: 'Añadir ejercicio' })).toBe(f)
+  expect(within(f).getByAltText('Foto elegida')).toBeInTheDocument()
   fireEvent.click(within(f).getByRole('button', { name: 'Añadir a mi biblioteca' }))
   await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
 
@@ -95,6 +145,9 @@ it('edita y archiva un ejercicio propio; las fichas fijas no tienen esas accione
   fireEvent.click(screen.getByRole('button', { name: 'Editar' }))
   const editar = screen.getByRole('dialog', { name: 'Editar ejercicio' })
   fireEvent.change(within(editar).getByLabelText('Nombre'), { target: { value: 'Mi remo sentado' } })
+  fireEvent(within(editar).getByLabelText(/Foto de la máquina/), new Event('cancel', { bubbles: true }))
+  expect(screen.getByRole('dialog', { name: 'Editar ejercicio' })).toBe(editar)
+  expect(within(editar).getByLabelText('Nombre')).toHaveValue('Mi remo sentado')
   fireEvent.click(within(editar).getByRole('button', { name: 'Guardar cambios' }))
   expect(await screen.findByRole('heading', { name: 'Mi remo sentado' })).toBeInTheDocument()
 
