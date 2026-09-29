@@ -110,11 +110,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T13:54:48.186Z
+- **Última sincronización:** 2026-09-29T13:55:55.417Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1257,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T13:55:55.419Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Biblioteca Maestra de Santiago importada en STAGING: ensayo en copia local (279 a insertar, repetición 0, originales conservados) y --aplicar: 279 insertadas, clientes 2 / rutinas 0 / sesiones 6 sin cambios. Preview codex-premium-v2 redesplegado con el código nuevo (deployment 6638a4ce, commit 4a4de52); sin sesión la API redirige a Access. Producción NO importada: espera el sí del dueño.
+- **Verificación:** biblioteca:santiago --staging (ensayo); --staging --aplicar; wrangler pages deploy; curl 302 sin sesión
+- **Siguiente:** El dueño revisa en codex-premium-v2 con su sesión; si da el sí, npm run biblioteca:santiago -- --produccion --aplicar, contar filas y comprobar 401 sin sesión; después el correo a Santiago
+
 
 ### 2026-09-29T13:54:48.187Z | claude-code | CLAIM
 - **Estado:** active
