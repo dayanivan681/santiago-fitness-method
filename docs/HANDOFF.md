@@ -82,11 +82,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-29T02:44:10.880Z
+- **Última sincronización:** 2026-09-29T02:45:55.311Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1229,6 +1229,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-29T02:45:55.312Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Migración 0012_biblioteca_coach aplicada en STAGING (santiago-staging, 747a9348…) con npm run d1:v2 -- --staging --aplicar: respaldo local, ensayo de restauración y repetición idempotente OK, tablas originales conservadas (clientes 2, rutinas 0, sesiones 6, invitaciones 4, sin cambios). Verificado en remoto: existen ejercicios_coach y su índice, 0 filas, entorno_sfm=staging. Evidencia en .recovery/migracion-staging-1790649890984 (fuera de Git). No se tocó producción ni se desplegó código a staging.
+- **Verificación:** d1:v2 --staging (ensayo); d1:v2 --staging --aplicar; consulta remota de verificación
+- **Siguiente:** Desplegar el código a staging (preview) y probar /api/v2/biblioteca; luego migración 0012 con respaldo en producción y despliegue
+
 
 ### 2026-09-29T02:44:10.882Z | claude-code | CLAIM
 - **Estado:** active
