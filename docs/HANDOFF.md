@@ -1,5 +1,12 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-09-30 — Limpieza de evidencia temporal de gráficas — codex
+
+- Los snapshots YAML generados por Playwright se incluyeron por error al moverlos a `output/playwright` (sólo las imágenes estaban ignoradas). Se retiran del árbol versionado y se conservan en `/tmp/sfm-cli-graficas-local`; contienen QA sintético local. Sin cambios de código ni datos.
+- Revisión final: 885/885 pruebas; TypeScript/lint/build PASS y 91 comprobaciones HTTP locales PASS. Demo pública responde 200, API cliente anónima 401 y API admin redirige a Access (302). El primer smoke de la demo canónica aún sirvió la versión anterior mientras Pages desplegaba; no se considera prueba de la gráfica publicada.
+- El despliegue y smoke de la gráfica pública se verifican después de esta publicación; el reporte final del chat indicará el resultado servido.
+
+
 ## 2026-09-30 — Gráficas de progreso por ejercicio — codex
 
 - Implementada prioridad 5 del mensaje 01 de Santiago (§7–9): SVG propio de peso y repeticiones, una mejor serie efectiva por sesión (carga comparable y desempate por reps), orden cronológico, valores corregidos vigentes y peso tal como se registra, incluido lb/lado. Resumen de extremos, último punto seleccionado, detalle con RIR (incluido 5+), aviso antes de la segunda sesión. Sin dependencias nuevas ni escrituras en datos reales.
@@ -122,11 +129,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-30T21:51:08.605Z
+- **Última sincronización:** 2026-09-30T21:52:00.353Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1269,6 +1276,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-30T21:52:00.354Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Retirados snapshots temporales de QA del árbol versionado; evidencia conservada fuera del repositorio
+- **Verificación:** git diff --check; sin cambios de código; gates previos 885 tests y 91 HTTP PASS
+- **Siguiente:** Verificar gráfica en demo pública tras concluir Pages; sin cambios pendientes de implementación
+
 
 ### 2026-09-30T21:51:08.606Z | codex | CLAIM
 - **Estado:** active
