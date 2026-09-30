@@ -5,6 +5,8 @@
  */
 
 import { useState } from 'react'
+import { GraficaProgreso } from '../../componentes/GraficaProgreso'
+import { puntosDeProgreso } from '../../logica/progresoGrafica'
 import { describirSerie, resumirUltimaVez } from '../../logica/ultimaVez'
 import { useHistorial } from '../../aplicacion/useHistorial'
 import { FilaSerie } from '../EntrenamientoHoy/FilaSerie'
@@ -69,6 +71,8 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
             </button>
           ))}
         </nav>
+
+        <GraficaProgreso key={ejercicio.id} puntos={puntosDeProgreso(sesiones, ejercicio)} />
 
         {/* §9: la mejor referencia sobrevive a los días malos; se muestra aparte.
             Dos líneas, no dos tarjetas: son dos datos, no dos fichas. */}

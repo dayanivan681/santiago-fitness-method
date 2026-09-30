@@ -2824,3 +2824,24 @@ a.fila:active {
   -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
   mask-image: linear-gradient(to right, #000 85%, transparent);
 }
+
+/* Historial: escalas desde cero y puntos de sesión accesibles fuera del SVG. */
+.grafica-progreso { margin: 24px 0; min-width: 0; }
+.grafica-progreso__titular { font-size: 20px; line-height: 1.35; }
+.grafica-progreso h3 { font-size: 16px; margin: 18px 0 4px; }
+.grafica-progreso__scroll { overflow-x: auto; padding-bottom: 4px; }
+.grafica-progreso__panel { position: relative; }
+.grafica-progreso svg { display: block; overflow: visible; }
+.grafica-progreso svg text { fill: var(--texto); font-size: 13px; }
+.grafica-progreso__eje { stroke: var(--borde-fuerte); }
+.grafica-progreso__linea { fill: none; stroke: var(--rojo); stroke-width: 3; vector-effect: non-scaling-stroke; }
+.grafica-progreso__punto { fill: var(--superficie); stroke: var(--rojo); stroke-width: 2; }
+.grafica-progreso__punto--elegido { fill: var(--rojo); stroke: var(--texto); }
+.grafica-progreso__boton { position: absolute; transform: translate(-50%, -50%); width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.grafica-progreso__boton:focus-visible { outline: 2px solid var(--foco-color); outline-offset: 0; }
+.grafica-progreso__detalle { color: var(--texto); font-variant-numeric: tabular-nums; }
+/* La regla global de pulsación no debe desplazar el blanco respecto al punto. */
+.grafica-progreso .grafica-progreso__boton { z-index: 1; transition: none; }
+.grafica-progreso .grafica-progreso__boton:active:not(:disabled) { transform: translate(-50%, -50%); }
+.grafica-progreso svg { pointer-events: none; }
+.grafica-progreso .nota { color: var(--texto); }

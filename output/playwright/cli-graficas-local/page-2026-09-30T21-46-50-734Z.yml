@@ -1,0 +1,74 @@
+- generic [ref=f2e7]:
+  - generic [ref=f2e8]:
+    - generic [ref=f2e9]:
+      - text: SANTIAGO
+      - generic [ref=f2e10]: FITNESS METHOD
+    - generic [ref=f2e11]:
+      - button "Abrir ayuda" [ref=f2e12] [cursor=pointer]:
+        - text: Ayuda
+        - generic [aria-hidden] [ref=f2e13]: "?"
+      - link "Mi perfil" [ref=f2e14] [cursor=pointer]:
+        - /url: /perfil
+        - generic [aria-hidden] [ref=f2e15]: L·
+  - button "Guardado en tu cuenta" [ref=f2e16] [cursor=pointer]
+  - main [ref=f2e20]:
+    - generic [ref=f2e83]:
+      - paragraph [ref=f2e84]: Tu progreso
+      - heading "Lo que estás construyendo." [level=1] [ref=f2e85]
+    - generic [ref=f2e86]:
+      - generic [ref=f2e87]:
+        - strong [ref=f2e88]: "5"
+        - generic [ref=f2e89]: Entrenamientos completados
+      - generic [ref=f2e90]:
+        - strong [ref=f2e91]: "0"
+        - generic [ref=f2e92]: Registros de medidas
+    - generic [ref=f2e93]:
+      - button "Historial" [pressed] [ref=f2e94] [cursor=pointer]
+      - button "Medidas" [ref=f2e95] [cursor=pointer]
+      - button "Fotos" [ref=f2e96] [cursor=pointer]
+    - generic [ref=f2e97]:
+      - heading "Tu recorrido" [level=2] [ref=f2e98]
+      - button "Por ejercicio" [ref=f2e99] [cursor=pointer]
+    - generic [ref=f2e100]:
+      - button "24 ago Upper A Completado · 2026" [ref=f2e101] [cursor=pointer]:
+        - generic [ref=f2e102]:
+          - strong [ref=f2e103]: "24"
+          - generic [ref=f2e104]: ago
+        - generic [ref=f2e105]:
+          - strong [ref=f2e106]: Upper A
+          - generic [ref=f2e107]: Completado · 2026
+      - button "21 ago Upper A Completado · 2026" [ref=f2e110] [cursor=pointer]:
+        - generic [ref=f2e111]:
+          - strong [ref=f2e112]: "21"
+          - generic [ref=f2e113]: ago
+        - generic [ref=f2e114]:
+          - strong [ref=f2e115]: Upper A
+          - generic [ref=f2e116]: Completado · 2026
+      - button "18 ago Upper A Completado · 2026" [ref=f2e119] [cursor=pointer]:
+        - generic [ref=f2e120]:
+          - strong [ref=f2e121]: "18"
+          - generic [ref=f2e122]: ago
+        - generic [ref=f2e123]:
+          - strong [ref=f2e124]: Upper A
+          - generic [ref=f2e125]: Completado · 2026
+      - button "15 ago Upper A Completado · 2026" [ref=f2e128] [cursor=pointer]:
+        - generic [ref=f2e129]:
+          - strong [ref=f2e130]: "15"
+          - generic [ref=f2e131]: ago
+        - generic [ref=f2e132]:
+          - strong [ref=f2e133]: Upper A
+          - generic [ref=f2e134]: Completado · 2026
+      - button "12 ago Upper A Completado · 2026" [ref=f2e137] [cursor=pointer]:
+        - generic [ref=f2e138]:
+          - strong [ref=f2e139]: "12"
+          - generic [ref=f2e140]: ago
+        - generic [ref=f2e141]:
+          - strong [ref=f2e142]: Upper A
+          - generic [ref=f2e143]: Completado · 2026
+  - navigation "Navegación del cliente" [ref=f2e69]:
+    - link "Hoy" [ref=f2e70] [cursor=pointer]:
+      - /url: /
+    - link "Biblioteca" [ref=f2e74] [cursor=pointer]:
+      - /url: /biblioteca
+    - link "Progreso" [active] [ref=f2e78] [cursor=pointer]:
+      - /url: /progreso

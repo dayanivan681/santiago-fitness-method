@@ -1,0 +1,117 @@
+- generic [ref=f4e7]:
+  - generic [ref=f4e8]:
+    - generic [ref=f4e9]:
+      - text: SANTIAGO
+      - generic [ref=f4e10]: FITNESS METHOD
+    - generic [ref=f4e11]:
+      - button "Abrir ayuda" [ref=f4e12] [cursor=pointer]:
+        - text: Ayuda
+        - generic [aria-hidden] [ref=f4e13]: "?"
+      - generic [ref=f4e14]: Coach
+  - main [ref=f4e15]:
+    - generic [ref=f4e16]:
+      - complementary [ref=f4e17]:
+        - link "Todos los clientes" [ref=f4e18] [cursor=pointer]:
+          - /url: /admin/clientes
+        - link "Ana Cinco Días QA 5 sesiones · Programa publicado Publicado" [ref=f4e19] [cursor=pointer]:
+          - /url: /admin/clientes/cliente-7f3dc4b8228a48cb864e7718f86e5b43
+          - generic [aria-hidden] [ref=f4e20]: AC
+          - generic [ref=f4e21]:
+            - strong [ref=f4e22]: Ana Cinco Días QA
+            - generic [ref=f4e23]: 5 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e24]
+        - link "Lucía · QA aislado 4 sesiones · Programa publicado Publicado" [ref=f4e27] [cursor=pointer]:
+          - /url: /admin/clientes/sfm-qa-05f806610748460b8a04351e84e9b1bd
+          - generic [aria-hidden] [ref=f4e28]: L·
+          - generic [ref=f4e29]:
+            - strong [ref=f4e30]: Lucía · QA aislado
+            - generic [ref=f4e31]: 4 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e32]
+        - link "María Pérez 5 sesiones · Programa publicado Publicado" [ref=f4e35] [cursor=pointer]:
+          - /url: /admin/clientes/cliente-b1462d51834841c2bd65eb9dfc38ecc2
+          - generic [aria-hidden] [ref=f4e36]: MP
+          - generic [ref=f4e37]:
+            - strong [ref=f4e38]: María Pérez
+            - generic [ref=f4e39]: 5 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e40]
+        - link "Persona de integración · QA 4 sesiones · Programa publicado Publicado" [ref=f4e43] [cursor=pointer]:
+          - /url: /admin/clientes/sfm-qa-62cbd6f64c4f41d792483c43c4bde746
+          - generic [aria-hidden] [ref=f4e44]: PD
+          - generic [ref=f4e45]:
+            - strong [ref=f4e46]: Persona de integración · QA
+            - generic [ref=f4e47]: 4 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e48]
+        - link "QA Cinco Días 5 sesiones · Programa publicado Publicado" [ref=f4e51] [cursor=pointer]:
+          - /url: /admin/clientes/cliente-b29e720983a6418fab0f9610ebd57ccb
+          - generic [aria-hidden] [ref=f4e52]: QC
+          - generic [ref=f4e53]:
+            - strong [ref=f4e54]: QA Cinco Días
+            - generic [ref=f4e55]: 5 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e56]
+      - generic [ref=f4e59]:
+        - generic [ref=f4e60]:
+          - link "Volver" [ref=f4e61] [cursor=pointer]:
+            - /url: /admin/clientes
+          - generic [ref=f4e64]:
+            - paragraph [ref=f4e65]: Su proceso
+            - heading "Lucía · QA aislado" [level=1] [ref=f4e66]
+          - generic [aria-hidden] [ref=f4e68]: L·
+        - paragraph [ref=f4e69]: Entrenar con constancia
+        - generic [ref=f4e70]:
+          - button "Vista previa" [ref=f4e71] [cursor=pointer]
+          - button "Entrenar juntos" [ref=f4e72] [cursor=pointer]
+        - generic "Ficha del cliente" [ref=f4e73]:
+          - button "Programa" [ref=f4e74] [cursor=pointer]
+          - button "Actividad" [active] [pressed] [ref=f4e75] [cursor=pointer]
+          - button "Pago" [ref=f4e76] [cursor=pointer]
+          - button "Perfil" [ref=f4e77] [cursor=pointer]
+        - generic [ref=f4e122]:
+          - heading "Su historia de progreso" [level=2] [ref=f4e124]
+          - generic [ref=f4e125]:
+            - button "Sesiones" [pressed] [ref=f4e126] [cursor=pointer]
+            - button "Por ejercicio" [ref=f4e127] [cursor=pointer]
+            - button "Medidas" [ref=f4e128] [cursor=pointer]
+            - button "Fotos compartidas" [ref=f4e129] [cursor=pointer]
+          - generic [ref=f4e130]:
+            - button "24 ago Upper A Completado · 2026" [ref=f4e131] [cursor=pointer]:
+              - generic [ref=f4e132]:
+                - strong [ref=f4e133]: "24"
+                - generic [ref=f4e134]: ago
+              - generic [ref=f4e135]:
+                - strong [ref=f4e136]: Upper A
+                - generic [ref=f4e137]: Completado · 2026
+            - button "21 ago Upper A Completado · 2026" [ref=f4e140] [cursor=pointer]:
+              - generic [ref=f4e141]:
+                - strong [ref=f4e142]: "21"
+                - generic [ref=f4e143]: ago
+              - generic [ref=f4e144]:
+                - strong [ref=f4e145]: Upper A
+                - generic [ref=f4e146]: Completado · 2026
+            - button "18 ago Upper A Completado · 2026" [ref=f4e149] [cursor=pointer]:
+              - generic [ref=f4e150]:
+                - strong [ref=f4e151]: "18"
+                - generic [ref=f4e152]: ago
+              - generic [ref=f4e153]:
+                - strong [ref=f4e154]: Upper A
+                - generic [ref=f4e155]: Completado · 2026
+            - button "15 ago Upper A Completado · 2026" [ref=f4e158] [cursor=pointer]:
+              - generic [ref=f4e159]:
+                - strong [ref=f4e160]: "15"
+                - generic [ref=f4e161]: ago
+              - generic [ref=f4e162]:
+                - strong [ref=f4e163]: Upper A
+                - generic [ref=f4e164]: Completado · 2026
+            - button "12 ago Upper A Completado · 2026" [ref=f4e167] [cursor=pointer]:
+              - generic [ref=f4e168]:
+                - strong [ref=f4e169]: "12"
+                - generic [ref=f4e170]: ago
+              - generic [ref=f4e171]:
+                - strong [ref=f4e172]: Upper A
+                - generic [ref=f4e173]: Completado · 2026
+  - navigation "Navegación del Coach" [ref=f4e108]:
+    - link "Hoy" [ref=f4e109] [cursor=pointer]:
+      - /url: /admin
+    - link "Clientes" [ref=f4e113] [cursor=pointer]:
+      - /url: /admin/clientes
+    - link "Biblioteca" [ref=f4e118] [cursor=pointer]:
+      - /url: /admin/biblioteca

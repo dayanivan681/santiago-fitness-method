@@ -1,0 +1,90 @@
+- generic [ref=f3e7]:
+  - generic [ref=f3e8]:
+    - generic [ref=f3e9]:
+      - text: SANTIAGO
+      - generic [ref=f3e10]: FITNESS METHOD
+    - generic [ref=f3e11]:
+      - button "Abrir ayuda" [ref=f3e12] [cursor=pointer]:
+        - text: Ayuda
+        - generic [aria-hidden] [ref=f3e13]: "?"
+      - generic [ref=f3e24]: Coach
+  - main [ref=f3e25]:
+    - generic [ref=f3e26]:
+      - generic [ref=f3e27]:
+        - paragraph [ref=f3e28]: miércoles, 30 de septiembre
+        - heading "Tu coaching, hoy." [level=1] [ref=f3e29]
+      - link "Nuevo cliente" [ref=f3e31] [cursor=pointer]:
+        - /url: /admin/nuevo
+    - generic [ref=f3e34]:
+      - generic [ref=f3e35]:
+        - strong [ref=f3e36]: "5"
+        - generic [ref=f3e37]: Clientes activos
+      - generic [ref=f3e38]:
+        - strong [ref=f3e39]: "0"
+        - generic [ref=f3e40]: Sesiones esta semana
+      - generic [ref=f3e41]:
+        - strong [ref=f3e42]: "0"
+        - generic [ref=f3e43]: En onboarding
+    - heading "Actividad reciente" [level=2] [ref=f3e45]
+    - generic [ref=f3e46]:
+      - link "Persona de integración · QA Upper A · En curso 29 sept" [ref=f3e47] [cursor=pointer]:
+        - /url: /admin/clientes/sfm-qa-62cbd6f64c4f41d792483c43c4bde746?seccion=actividad
+        - generic [aria-hidden] [ref=f3e48]: PD
+        - generic [ref=f3e49]:
+          - strong [ref=f3e50]: Persona de integración · QA
+          - generic [ref=f3e51]: Upper A · En curso
+        - time [ref=f3e52]: 29 sept
+      - link "María Pérez Upper A · Completado 27 sept" [ref=f3e53] [cursor=pointer]:
+        - /url: /admin/clientes/cliente-b1462d51834841c2bd65eb9dfc38ecc2?seccion=actividad
+        - generic [aria-hidden] [ref=f3e54]: MP
+        - generic [ref=f3e55]:
+          - strong [ref=f3e56]: María Pérez
+          - generic [ref=f3e57]: Upper A · Completado
+        - time [ref=f3e58]: 27 sept
+      - link "Lucía · QA aislado Upper A · Completado 24 ago" [ref=f3e59] [cursor=pointer]:
+        - /url: /admin/clientes/sfm-qa-05f806610748460b8a04351e84e9b1bd?seccion=actividad
+        - generic [aria-hidden] [ref=f3e60]: L·
+        - generic [ref=f3e61]:
+          - strong [ref=f3e62]: Lucía · QA aislado
+          - generic [ref=f3e63]: Upper A · Completado
+        - time [ref=f3e64]: 24 ago
+    - generic [ref=f3e65]:
+      - heading "Tus clientes" [level=2] [ref=f3e66]
+      - link "Ver todos" [ref=f3e67] [cursor=pointer]:
+        - /url: /admin/clientes
+    - generic [ref=f3e68]:
+      - link "Ana Cinco Días QA 5 sesiones · Programa publicado Publicado" [ref=f3e69] [cursor=pointer]:
+        - /url: /admin/clientes/cliente-7f3dc4b8228a48cb864e7718f86e5b43
+        - generic [aria-hidden] [ref=f3e70]: AC
+        - generic [ref=f3e71]:
+          - strong [ref=f3e72]: Ana Cinco Días QA
+          - generic [ref=f3e73]: 5 sesiones · Programa publicado
+        - generic "Publicado" [ref=f3e74]
+      - link "Lucía · QA aislado 4 sesiones · Programa publicado Publicado" [ref=f3e77] [cursor=pointer]:
+        - /url: /admin/clientes/sfm-qa-05f806610748460b8a04351e84e9b1bd
+        - generic [aria-hidden] [ref=f3e78]: L·
+        - generic [ref=f3e79]:
+          - strong [ref=f3e80]: Lucía · QA aislado
+          - generic [ref=f3e81]: 4 sesiones · Programa publicado
+        - generic "Publicado" [ref=f3e82]
+      - link "María Pérez 5 sesiones · Programa publicado Publicado" [ref=f3e85] [cursor=pointer]:
+        - /url: /admin/clientes/cliente-b1462d51834841c2bd65eb9dfc38ecc2
+        - generic [aria-hidden] [ref=f3e86]: MP
+        - generic [ref=f3e87]:
+          - strong [ref=f3e88]: María Pérez
+          - generic [ref=f3e89]: 5 sesiones · Programa publicado
+        - generic "Publicado" [ref=f3e90]
+      - link "Persona de integración · QA 4 sesiones · Programa publicado Publicado" [ref=f3e93] [cursor=pointer]:
+        - /url: /admin/clientes/sfm-qa-62cbd6f64c4f41d792483c43c4bde746
+        - generic [aria-hidden] [ref=f3e94]: PD
+        - generic [ref=f3e95]:
+          - strong [ref=f3e96]: Persona de integración · QA
+          - generic [ref=f3e97]: 4 sesiones · Programa publicado
+        - generic "Publicado" [ref=f3e98]
+  - navigation "Navegación del Coach" [ref=f3e101]:
+    - link "Hoy" [ref=f3e102] [cursor=pointer]:
+      - /url: /admin
+    - link "Clientes" [ref=f3e106] [cursor=pointer]:
+      - /url: /admin/clientes
+    - link "Biblioteca" [ref=f3e111] [cursor=pointer]:
+      - /url: /admin/biblioteca

@@ -1,5 +1,17 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-09-30 — Gráficas de progreso por ejercicio — codex
+
+- Implementada prioridad 5 del mensaje 01 de Santiago (§7–9): SVG propio de peso y repeticiones, una mejor serie efectiva por sesión (carga comparable y desempate por reps), orden cronológico, valores corregidos vigentes y peso tal como se registra, incluido lb/lado. Resumen de extremos, último punto seleccionado, detalle con RIR (incluido 5+), aviso antes de la segunda sesión. Sin dependencias nuevas ni escrituras en datos reales.
+- Archivos: `src/logica/progresoGrafica.ts` y pruebas; `src/componentes/GraficaProgreso.tsx` y pruebas; integración en `Historial.tsx`; estilos en `src/index.css`; tres sesiones ficticias sólo en la demo en memoria (`src/producto/servicio.ts`).
+- El contexto del encargo asumía que el coach montaba Historial, pero su ficha usa `ResumenSesiones`. Se añadió Actividad → Por ejercicio en `src/producto/Progreso.tsx`, reutilizando lógica y gráfica, con lista de sesiones filtrada y prueba de integración sobre versiones corregidas. Las correcciones existentes no se modificaron.
+- Accesibilidad: SVG con descripción, botones HTML fuera de role=img, selección también por teclado, blancos medidos de 48×48 px, estado anunciado y foco visible. Tokens del tema; sin animación. ResizeObserver mantiene texto y altura legibles a distintos anchos; historiales largos desplazan sólo el panel. El proyecto usa tema oscuro, no tiene un selector de tema claro.
+- QA: TDD de lógica (fallo por módulo ausente → cinco pruebas PASS). Suite final `npm test`: 885/885, 101 archivos. `npx tsc -b`, `npm run lint`, `npm run build`, `git diff --check`: PASS. `npm run test:http`: 91 PASS en runtime local aislado. Warnings conocidos de MaxListeners y navegación JSDOM.
+- Navegador Chrome local: demo cliente con tres sesiones; cliente QA local con cinco sesiones en dos ejercicios y coach sobre ese mismo fixture. 320/375/1024 px sin desborde de página, resumen +30, selección inicial última, clic muestra RIR 5+, cambio de ejercicio restablece último punto. Verificadas capturas en `output/playwright/local-grafica-*.png` y `coach-grafica-*.png` (fuera de Git). La prueba real detectó la transformación global :active que desplazaba el botón; override focalizado y repetición PASS.
+- Safari nativo: simulador QA iPhone 16 Pro iOS 27, demo → Progreso → Por ejercicio, tocar el primer punto cambia el detalle a 13 sept · 25 lb/lado × 20 · RIR 2; Maestro PASS, captura `/tmp/sfm-grafica-ios.png`. No es prueba de teléfono físico.
+- `docs/cliente` intacto. Publicación mediante handoff dispara Pages; verificación de despliegue se realiza después del push.
+
+
 ## 2026-09-28 — Cancelar foto conserva Añadir ejercicio — codex
 
 - Bug reportado: Biblioteca → Añadir ejercicio → Nuevo → foto → volver/cancelar cerraba toda la hoja y perdía el borrador. Reproducción nativa en Safari, simulador QA iPhone 16 Pro iOS 27 (402×874), `http://127.0.0.1:5173/demo/coach/biblioteca`: Photo Library → Cancel devolvió la biblioteca sin formulario. La prueba de regresión también falló antes de la corrección (diálogo ausente).
@@ -110,11 +122,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-09-30T21:37:28.320Z
+- **Última sincronización:** 2026-09-30T21:50:52.247Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1257,6 +1269,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-09-30T21:50:52.248Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Gráficas SVG de peso y repeticiones con RIR en Historial y Actividad del coach; demo de tres sesiones; QA local y Safari iOS verificados
+- **Verificación:** npm test: 885/885; npx tsc -b; npm run lint; npm run build; npm run test:http: 91 PASS; Chrome 320/375/1024; Safari simulador iOS PASS; git diff --check
+- **Siguiente:** Verificar deployment canónico del commit publicado, demo pública y fronteras anónimas
+
 
 ### 2026-09-30T21:37:28.321Z | codex | CLAIM
 - **Estado:** active

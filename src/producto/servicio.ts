@@ -281,30 +281,32 @@ export class ServicioCoach {
     await this.sumarEjerciciosDelCoach(repo);
     for (const d of cliente.plan.dias) await repo.guardarPlantilla(d);
     if (id === "demo-persona-1") {
-      const fecha = new Date(Date.now() - 3 * 86400000)
-        .toISOString()
-        .slice(0, 10);
-      const sesion = {
-        id: "demo-entreno-anterior",
-        participanteId: id,
-        plantillaDiaId: cliente.plan.dias[0].id,
-        fecha,
-        prescripcion: cliente.plan.dias[0],
-        completadaEn: fecha + "T18:45:00.000Z",
-      };
-      await repo.crearSesion(sesion);
-      for (const d of cliente.plan.dias[0].slots)
-        for (let n = 1; n <= d.seriesObjetivo; n++)
-          await repo.registrarSerie({
-            id: `demo-serie-${d.orden}-${n}`,
-            sesionId: sesion.id,
-            ejercicioId: d.ejercicioId,
-            numeroSerie: n,
-            pesoRegistradoLb: d.orden === 1 ? 25 : 30,
-            repsRealizadas: d.repMax,
-            rir: 2,
-            tecnica: "buena",
-          });
+      for (const anterior of [2, 1, 0]) {
+        const fecha = new Date(Date.now() - (3 + anterior * 7) * 86400000)
+          .toISOString()
+          .slice(0, 10);
+        const sesion = {
+          id: anterior === 0 ? "demo-entreno-anterior" : `demo-entreno-anterior-${anterior}`,
+          participanteId: id,
+          plantillaDiaId: cliente.plan.dias[0].id,
+          fecha,
+          prescripcion: cliente.plan.dias[0],
+          completadaEn: fecha + "T18:45:00.000Z",
+        };
+        await repo.crearSesion(sesion);
+        for (const d of cliente.plan.dias[0].slots)
+          for (let n = 1; n <= d.seriesObjetivo; n++)
+            await repo.registrarSerie({
+              id: `demo-serie-${anterior}-${d.orden}-${n}`,
+              sesionId: sesion.id,
+              ejercicioId: d.ejercicioId,
+              numeroSerie: n,
+              pesoRegistradoLb: (d.orden === 1 ? 25 : 30) - anterior * 2.5,
+              repsRealizadas: d.repMax,
+              rir: 2,
+              tecnica: "buena",
+            });
+      }
     }
     this.repos.set(id, repo);
     return repo;

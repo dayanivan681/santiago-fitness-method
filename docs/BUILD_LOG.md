@@ -1,5 +1,17 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-30 — Gráficas de progreso por ejercicio — codex
+
+- Implementada prioridad 5 del mensaje 01 de Santiago (§7–9): SVG propio de peso y repeticiones, una mejor serie efectiva por sesión (carga comparable y desempate por reps), orden cronológico, valores corregidos vigentes y peso tal como se registra, incluido lb/lado. Resumen de extremos, último punto seleccionado, detalle con RIR (incluido 5+), aviso antes de la segunda sesión. Sin dependencias nuevas ni escrituras en datos reales.
+- Archivos: `src/logica/progresoGrafica.ts` y pruebas; `src/componentes/GraficaProgreso.tsx` y pruebas; integración en `Historial.tsx`; estilos en `src/index.css`; tres sesiones ficticias sólo en la demo en memoria (`src/producto/servicio.ts`).
+- El contexto del encargo asumía que el coach montaba Historial, pero su ficha usa `ResumenSesiones`. Se añadió Actividad → Por ejercicio en `src/producto/Progreso.tsx`, reutilizando lógica y gráfica, con lista de sesiones filtrada y prueba de integración sobre versiones corregidas. Las correcciones existentes no se modificaron.
+- Accesibilidad: SVG con descripción, botones HTML fuera de role=img, selección también por teclado, blancos medidos de 48×48 px, estado anunciado y foco visible. Tokens del tema; sin animación. ResizeObserver mantiene texto y altura legibles a distintos anchos; historiales largos desplazan sólo el panel. El proyecto usa tema oscuro, no tiene un selector de tema claro.
+- QA: TDD de lógica (fallo por módulo ausente → cinco pruebas PASS). Suite final `npm test`: 885/885, 101 archivos. `npx tsc -b`, `npm run lint`, `npm run build`, `git diff --check`: PASS. `npm run test:http`: 91 PASS en runtime local aislado. Warnings conocidos de MaxListeners y navegación JSDOM.
+- Navegador Chrome local: demo cliente con tres sesiones; cliente QA local con cinco sesiones en dos ejercicios y coach sobre ese mismo fixture. 320/375/1024 px sin desborde de página, resumen +30, selección inicial última, clic muestra RIR 5+, cambio de ejercicio restablece último punto. Verificadas capturas en `output/playwright/local-grafica-*.png` y `coach-grafica-*.png` (fuera de Git). La prueba real detectó la transformación global :active que desplazaba el botón; override focalizado y repetición PASS.
+- Safari nativo: simulador QA iPhone 16 Pro iOS 27, demo → Progreso → Por ejercicio, tocar el primer punto cambia el detalle a 13 sept · 25 lb/lado × 20 · RIR 2; Maestro PASS, captura `/tmp/sfm-grafica-ios.png`. No es prueba de teléfono físico.
+- `docs/cliente` intacto. Publicación mediante handoff dispara Pages; verificación de despliegue se realiza después del push.
+
+
 ## 2026-09-29 — Detalles de interfaz de Biblioteca y editor (QA iPhone) — claude-code
 
 - Hojas: el título es opaco y cubre también el relleno superior; el contenido ya no asoma detrás.

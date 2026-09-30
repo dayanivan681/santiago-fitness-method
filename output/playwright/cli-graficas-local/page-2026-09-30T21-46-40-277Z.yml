@@ -1,0 +1,71 @@
+- generic [ref=f1e7]:
+  - generic [ref=f1e8]:
+    - generic [ref=f1e9]:
+      - text: SANTIAGO
+      - generic [ref=f1e10]: FITNESS METHOD
+    - generic [ref=f1e11]:
+      - button "Abrir ayuda" [ref=f1e12] [cursor=pointer]:
+        - text: Ayuda
+        - generic [aria-hidden] [ref=f1e13]: "?"
+      - link "Mi perfil" [ref=f1e22] [cursor=pointer]:
+        - /url: /perfil
+        - generic [aria-hidden] [ref=f1e23]: L·
+  - button "Guardado en tu cuenta" [ref=f1e24] [cursor=pointer]
+  - main [ref=f1e28]:
+    - generic [ref=f1e30]:
+      - paragraph [ref=f1e31]: miércoles, 30 de septiembre
+      - heading "Vamos, Lucía." [level=1] [ref=f1e32]
+    - complementary "Consejo" [ref=f1e33]:
+      - status [ref=f1e34]:
+        - paragraph [ref=f1e35]: Aquí tienes el entrenamiento de hoy.
+      - button "Cerrar consejo" [ref=f1e36] [cursor=pointer]: ×
+    - generic [ref=f1e37]:
+      - generic [ref=f1e38]:
+        - paragraph [ref=f1e39]: Tu próxima sesión
+        - heading "Lower A" [level=2] [ref=f1e94]
+        - paragraph [ref=f1e41]: 5 ejercicios · 16 series
+      - navigation "Día de entrenamiento" [ref=f1e43]:
+        - button "Upper A" [ref=f1e44] [cursor=pointer]
+        - button "Lower A" [pressed] [ref=f1e45] [cursor=pointer]
+        - button "Upper B" [ref=f1e46] [cursor=pointer]
+        - button "Lower B" [ref=f1e47] [cursor=pointer]
+      - button "Comenzar entrenamiento" [ref=f1e48] [cursor=pointer]
+      - heading "Tu sesión, paso a paso" [level=2] [ref=f1e49]
+      - generic [ref=f1e50]:
+        - generic [ref=f1e95]:
+          - button "Ver Sentadilla con barra" [ref=f1e96] [cursor=pointer]:
+            - generic [aria-hidden] [ref=f1e97]: ↗︎
+          - generic [ref=f1e98]:
+            - generic [ref=f1e99]: Sentadilla con barra
+            - generic [ref=f1e100]: 4 series · 1–5 reps
+        - generic [ref=f1e101]:
+          - button "Ver Prensa de piernas" [ref=f1e102] [cursor=pointer]:
+            - generic [aria-hidden] [ref=f1e103]: ↗︎
+          - generic [ref=f1e104]:
+            - generic [ref=f1e105]: Prensa de piernas
+            - generic [ref=f1e106]: 3 series · 6–15 reps
+        - generic [ref=f1e107]:
+          - button "Ver Curl femoral acostado" [ref=f1e108] [cursor=pointer]:
+            - generic [aria-hidden] [ref=f1e109]: ↗︎
+          - generic [ref=f1e110]:
+            - generic [ref=f1e111]: Curl femoral acostado
+            - generic [ref=f1e112]: 3 series · 6–15 reps
+        - generic [ref=f1e113]:
+          - button "Ver Patada de glúteo en cable" [ref=f1e114] [cursor=pointer]:
+            - generic [aria-hidden] [ref=f1e115]: ↗︎
+          - generic [ref=f1e116]:
+            - generic [ref=f1e117]: Patada de glúteo en cable
+            - generic [ref=f1e118]: 3 series · 6–15 reps
+        - generic [ref=f1e119]:
+          - button "Ver Standing calf raise en máquina" [ref=f1e120] [cursor=pointer]:
+            - generic [aria-hidden] [ref=f1e121]: ↗︎
+          - generic [ref=f1e122]:
+            - generic [ref=f1e123]: Standing calf raise en máquina
+            - generic [ref=f1e124]: 3 series · 15–20 reps
+  - navigation "Navegación del cliente" [ref=f1e81]:
+    - link "Hoy" [ref=f1e82] [cursor=pointer]:
+      - /url: /
+    - link "Biblioteca" [ref=f1e86] [cursor=pointer]:
+      - /url: /biblioteca
+    - link "Progreso" [ref=f1e90] [cursor=pointer]:
+      - /url: /progreso

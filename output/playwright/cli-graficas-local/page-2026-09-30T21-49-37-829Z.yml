@@ -1,0 +1,152 @@
+- generic [ref=f4e7]:
+  - generic [ref=f4e8]:
+    - generic [ref=f4e9]:
+      - text: SANTIAGO
+      - generic [ref=f4e10]: FITNESS METHOD
+    - generic [ref=f4e11]:
+      - button "Abrir ayuda" [ref=f4e12] [cursor=pointer]:
+        - text: Ayuda
+        - generic [aria-hidden] [ref=f4e13]: "?"
+      - generic [ref=f4e14]: Coach
+  - main [ref=f4e15]:
+    - generic [ref=f4e16]:
+      - complementary [ref=f4e17]:
+        - link "Todos los clientes" [ref=f4e18] [cursor=pointer]:
+          - /url: /admin/clientes
+        - link "Ana Cinco Días QA 5 sesiones · Programa publicado Publicado" [ref=f4e19] [cursor=pointer]:
+          - /url: /admin/clientes/cliente-7f3dc4b8228a48cb864e7718f86e5b43
+          - generic [aria-hidden] [ref=f4e20]: AC
+          - generic [ref=f4e21]:
+            - strong [ref=f4e22]: Ana Cinco Días QA
+            - generic [ref=f4e23]: 5 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e24]
+        - link "Lucía · QA aislado 4 sesiones · Programa publicado Publicado" [ref=f4e27] [cursor=pointer]:
+          - /url: /admin/clientes/sfm-qa-05f806610748460b8a04351e84e9b1bd
+          - generic [aria-hidden] [ref=f4e28]: L·
+          - generic [ref=f4e29]:
+            - strong [ref=f4e30]: Lucía · QA aislado
+            - generic [ref=f4e31]: 4 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e32]
+        - link "María Pérez 5 sesiones · Programa publicado Publicado" [ref=f4e35] [cursor=pointer]:
+          - /url: /admin/clientes/cliente-b1462d51834841c2bd65eb9dfc38ecc2
+          - generic [aria-hidden] [ref=f4e36]: MP
+          - generic [ref=f4e37]:
+            - strong [ref=f4e38]: María Pérez
+            - generic [ref=f4e39]: 5 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e40]
+        - link "Persona de integración · QA 4 sesiones · Programa publicado Publicado" [ref=f4e43] [cursor=pointer]:
+          - /url: /admin/clientes/sfm-qa-62cbd6f64c4f41d792483c43c4bde746
+          - generic [aria-hidden] [ref=f4e44]: PD
+          - generic [ref=f4e45]:
+            - strong [ref=f4e46]: Persona de integración · QA
+            - generic [ref=f4e47]: 4 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e48]
+        - link "QA Cinco Días 5 sesiones · Programa publicado Publicado" [ref=f4e51] [cursor=pointer]:
+          - /url: /admin/clientes/cliente-b29e720983a6418fab0f9610ebd57ccb
+          - generic [aria-hidden] [ref=f4e52]: QC
+          - generic [ref=f4e53]:
+            - strong [ref=f4e54]: QA Cinco Días
+            - generic [ref=f4e55]: 5 sesiones · Programa publicado
+          - generic "Publicado" [ref=f4e56]
+      - generic [ref=f4e59]:
+        - generic [ref=f4e60]:
+          - link "Volver" [ref=f4e61] [cursor=pointer]:
+            - /url: /admin/clientes
+          - generic [ref=f4e64]:
+            - paragraph [ref=f4e65]: Su proceso
+            - heading "Lucía · QA aislado" [level=1] [ref=f4e66]
+          - generic [aria-hidden] [ref=f4e68]: L·
+        - paragraph [ref=f4e69]: Entrenar con constancia
+        - generic [ref=f4e70]:
+          - button "Vista previa" [ref=f4e71] [cursor=pointer]
+          - button "Entrenar juntos" [ref=f4e72] [cursor=pointer]
+        - generic "Ficha del cliente" [ref=f4e73]:
+          - button "Programa" [ref=f4e74] [cursor=pointer]
+          - button "Actividad" [pressed] [ref=f4e75] [cursor=pointer]
+          - button "Pago" [ref=f4e76] [cursor=pointer]
+          - button "Perfil" [ref=f4e77] [cursor=pointer]
+        - generic [ref=f4e122]:
+          - heading "Su historia de progreso" [level=2] [ref=f4e124]
+          - generic [ref=f4e125]:
+            - button "Sesiones" [ref=f4e126] [cursor=pointer]
+            - button "Por ejercicio" [pressed] [ref=f4e127] [cursor=pointer]
+            - button "Medidas" [ref=f4e128] [cursor=pointer]
+            - button "Fotos compartidas" [ref=f4e129] [cursor=pointer]
+          - navigation "Ejercicio del historial" [ref=f4e176]:
+            - button "Press convergente inclinado" [pressed] [ref=f4e177] [cursor=pointer]
+            - button "Press inclinado bajo (15°) en Smith" [ref=f4e178] [cursor=pointer]
+          - region "Progreso por ejercicio" [ref=f4e179]:
+            - 'heading "Desde el 12 de agosto de 2026: de 80 a 110 lb/lado (+30)" [level=2] [ref=f4e180]'
+            - paragraph [ref=f4e181]: Mejor serie efectiva de cada sesión. Compara el RIR para valorar el esfuerzo.
+            - generic [ref=f4e182]:
+              - heading "Peso (lb/lado)" [level=3] [ref=f4e183]
+              - 'generic "Peso: sesiones en orden, desliza para ver todas" [ref=f4e184]':
+                - generic [ref=f4e185]:
+                  - 'img "Peso: de 80 a 110 lb/lado. 5 sesiones, separadas por igual."':
+                    - generic: "0"
+                    - generic: 110 lb/lado
+                    - generic: 12 ago
+                    - generic: 24 ago
+                  - button "80 lb/lado por 12 repeticiones, 12 de agosto de 2026 · Peso" [ref=f4e186] [cursor=pointer]
+                  - button "90 lb/lado por 12 repeticiones, 15 de agosto de 2026 · Peso" [ref=f4e187] [cursor=pointer]
+                  - button "100 lb/lado por 10 repeticiones, 18 de agosto de 2026 · Peso" [active] [pressed] [ref=f4e188] [cursor=pointer]
+                  - button "100 lb/lado por 12 repeticiones, 21 de agosto de 2026 · Peso" [ref=f4e189] [cursor=pointer]
+                  - button "110 lb/lado por 10 repeticiones, 24 de agosto de 2026 · Peso" [ref=f4e190] [cursor=pointer]
+            - generic [ref=f4e191]:
+              - heading "Repeticiones" [level=3] [ref=f4e192]
+              - 'generic "Repeticiones: sesiones en orden, desliza para ver todas" [ref=f4e193]':
+                - generic [ref=f4e194]:
+                  - 'img "Repeticiones: de 12 a 10 repeticiones. 5 sesiones, separadas por igual."':
+                    - generic: "0"
+                    - generic: "10"
+                    - generic: 12 ago
+                    - generic: 24 ago
+                  - button "80 lb/lado por 12 repeticiones, 12 de agosto de 2026 · Repeticiones" [ref=f4e195] [cursor=pointer]
+                  - button "90 lb/lado por 12 repeticiones, 15 de agosto de 2026 · Repeticiones" [ref=f4e196] [cursor=pointer]
+                  - button "100 lb/lado por 10 repeticiones, 18 de agosto de 2026 · Repeticiones" [pressed] [ref=f4e197] [cursor=pointer]
+                  - button "100 lb/lado por 12 repeticiones, 21 de agosto de 2026 · Repeticiones" [ref=f4e198] [cursor=pointer]
+                  - button "110 lb/lado por 10 repeticiones, 24 de agosto de 2026 · Repeticiones" [ref=f4e199] [cursor=pointer]
+            - status [ref=f4e200]: 18 ago · 100 lb/lado × 10 · RIR 5+
+          - generic [ref=f4e201]:
+            - button "24 ago Upper A Completado · 2026" [ref=f4e202] [cursor=pointer]:
+              - generic [ref=f4e203]:
+                - strong [ref=f4e204]: "24"
+                - generic [ref=f4e205]: ago
+              - generic [ref=f4e206]:
+                - strong [ref=f4e207]: Upper A
+                - generic [ref=f4e208]: Completado · 2026
+            - button "21 ago Upper A Completado · 2026" [ref=f4e211] [cursor=pointer]:
+              - generic [ref=f4e212]:
+                - strong [ref=f4e213]: "21"
+                - generic [ref=f4e214]: ago
+              - generic [ref=f4e215]:
+                - strong [ref=f4e216]: Upper A
+                - generic [ref=f4e217]: Completado · 2026
+            - button "18 ago Upper A Completado · 2026" [ref=f4e220] [cursor=pointer]:
+              - generic [ref=f4e221]:
+                - strong [ref=f4e222]: "18"
+                - generic [ref=f4e223]: ago
+              - generic [ref=f4e224]:
+                - strong [ref=f4e225]: Upper A
+                - generic [ref=f4e226]: Completado · 2026
+            - button "15 ago Upper A Completado · 2026" [ref=f4e229] [cursor=pointer]:
+              - generic [ref=f4e230]:
+                - strong [ref=f4e231]: "15"
+                - generic [ref=f4e232]: ago
+              - generic [ref=f4e233]:
+                - strong [ref=f4e234]: Upper A
+                - generic [ref=f4e235]: Completado · 2026
+            - button "12 ago Upper A Completado · 2026" [ref=f4e238] [cursor=pointer]:
+              - generic [ref=f4e239]:
+                - strong [ref=f4e240]: "12"
+                - generic [ref=f4e241]: ago
+              - generic [ref=f4e242]:
+                - strong [ref=f4e243]: Upper A
+                - generic [ref=f4e244]: Completado · 2026
+  - navigation "Navegación del Coach" [ref=f4e108]:
+    - link "Hoy" [ref=f4e109] [cursor=pointer]:
+      - /url: /admin
+    - link "Clientes" [ref=f4e113] [cursor=pointer]:
+      - /url: /admin/clientes
+    - link "Biblioteca" [ref=f4e118] [cursor=pointer]:
+      - /url: /admin/biblioteca

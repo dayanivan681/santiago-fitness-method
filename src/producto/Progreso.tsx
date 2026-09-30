@@ -11,6 +11,8 @@ import type {
 import { useLiveQuery } from "../nube/eventos";
 import { ClienteApi, type ConexionCloud } from "../nube/cloud";
 import { useBiblioteca } from "./contextoBiblioteca";
+import { GraficaProgreso } from "../componentes/GraficaProgreso";
+import { puntosDeProgreso } from "../logica/progresoGrafica";
 import { Historial } from "../pantallas/Historial/Historial";
 import { Cabecera, ErrorVisible, FechaBonita, Hoja, Icono, Vacio } from "./ui";
 import { ultimos } from "./servicio";
@@ -257,7 +259,7 @@ export function ResumenSesiones({
         <h2>Su historia de progreso</h2>
       </div>
       <div className="sfm-segmentos sfm-segmentos--ajustar">
-        {["sesiones", "medidas", "fotos"].map((id) => (
+        {["sesiones", "ejercicios", "medidas", "fotos"].map((id) => (
           <button
             key={id}
             aria-pressed={seccion === id}
@@ -265,12 +267,15 @@ export function ResumenSesiones({
           >
             {id === "sesiones"
               ? "Sesiones"
+              : id === "ejercicios"
+                ? "Por ejercicio"
               : id === "medidas"
                 ? "Medidas"
                 : "Fotos compartidas"}
           </button>
         ))}
       </div>
+      {seccion === "ejercicios" && <ProgresoPorEjercicioCoach key={cliente} sesiones={sesiones} series={series} />}
       {seccion === "sesiones" && (
         <ListaSesiones
           sesiones={sesiones}
@@ -291,6 +296,26 @@ export function ResumenSesiones({
     </>
   );
 }
+/** El coach recibe el historial sincronizado; no necesita abrir una sesión de cliente. */
+function ProgresoPorEjercicioCoach({ sesiones, series }: { sesiones: Sesion[]; series: SerieRegistrada[] }) {
+  const { ejercicios } = useBiblioteca();
+  const [elegido, elegir] = useState<string | null>(null);
+  const entrenados = ejercicios.filter(e => series.some(s => s.ejercicioId === e.id)).sort((a,b) => a.nombre.localeCompare(b.nombre, 'es'));
+  const ejercicio = entrenados.find(e => e.id === elegido) ?? entrenados[0];
+  if (!ejercicio) return <p className="aviso">Todavía no hay entrenamientos registrados.</p>;
+  const sesionesDelEjercicio = sesiones.map(s => ({
+    fecha: s.fecha, dia: s.prescripcion?.nombre, sinTerminar: !s.completadaEn,
+    series: series.filter(serie => serie.sesionId === s.id && serie.ejercicioId === ejercicio.id).map(serie => ({...serie, fecha:s.fecha})),
+  })).filter(s => s.series.length > 0);
+  return <>
+    <nav className="filtros" aria-label="Ejercicio del historial">
+      {entrenados.map(e => <button key={e.id} type="button" className={e.id === ejercicio.id ? 'filtro filtro--activo' : 'filtro'} aria-pressed={e.id === ejercicio.id} onClick={() => elegir(e.id)}>{e.nombre}</button>)}
+    </nav>
+    <GraficaProgreso key={ejercicio.id} puntos={puntosDeProgreso(sesionesDelEjercicio, ejercicio)} />
+    <ListaSesiones sesiones={sesiones.filter(s => sesionesDelEjercicio.some(h => h.series.some(serie => serie.sesionId === s.id)))} obtenerSeries={async id => series.filter(s => s.sesionId === id && s.ejercicioId === ejercicio.id)} />
+  </>;
+}
+
 function ListaSesiones({
   sesiones,
   obtenerSeries,
