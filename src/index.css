@@ -2845,3 +2845,21 @@ a.fila:active {
 .grafica-progreso .grafica-progreso__boton:active:not(:disabled) { transform: translate(-50%, -50%); }
 .grafica-progreso svg { pointer-events: none; }
 .grafica-progreso .nota { color: var(--texto); }
+
+/* Escala de las gráficas de progreso: mínimo y máximo, fijos a la izquierda. */
+.grafica-progreso__marco { position: relative; }
+.grafica-progreso__escala {
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--texto-60);
+  background: var(--superficie);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+.grafica-progreso__escala--max { top: calc(48 / 180 * 100%); }
+.grafica-progreso__escala--min { top: calc(138 / 180 * 100%); }
+.grafica-progreso__eje--techo { opacity: 0.5; stroke-dasharray: 3 4; }

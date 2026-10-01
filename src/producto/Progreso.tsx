@@ -12,7 +12,7 @@ import { useLiveQuery } from "../nube/eventos";
 import { ClienteApi, type ConexionCloud } from "../nube/cloud";
 import { useBiblioteca } from "./contextoBiblioteca";
 import { GraficaProgreso } from "../componentes/GraficaProgreso";
-import { puntosDeProgreso } from "../logica/progresoGrafica";
+import { ejercicioMasReciente, puntosDeProgreso } from "../logica/progresoGrafica";
 import { Historial } from "../pantallas/Historial/Historial";
 import { Cabecera, ErrorVisible, FechaBonita, Hoja, Icono, Vacio } from "./ui";
 import { ultimos } from "./servicio";
@@ -301,7 +301,10 @@ function ProgresoPorEjercicioCoach({ sesiones, series }: { sesiones: Sesion[]; s
   const { ejercicios } = useBiblioteca();
   const [elegido, elegir] = useState<string | null>(null);
   const entrenados = ejercicios.filter(e => series.some(s => s.ejercicioId === e.id)).sort((a,b) => a.nombre.localeCompare(b.nombre, 'es'));
-  const ejercicio = entrenados.find(e => e.id === elegido) ?? entrenados[0];
+  // Sin elección, el último entrenado: la fecha de su sesión y, en empate, la serie más tardía.
+  const fechaDe = new Map(sesiones.map(s => [s.id, s.fecha]));
+  const reciente = ejercicioMasReciente(series.map(s => ({ ...s, fecha: fechaDe.get(s.sesionId) ?? '' })));
+  const ejercicio = entrenados.find(e => e.id === (elegido ?? reciente)) ?? entrenados[0];
   if (!ejercicio) return <p className="aviso">Todavía no hay entrenamientos registrados.</p>;
   const sesionesDelEjercicio = sesiones.map(s => ({
     fecha: s.fecha, dia: s.prescripcion?.nombre, sinTerminar: !s.completadaEn,

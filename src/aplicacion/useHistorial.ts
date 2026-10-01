@@ -4,6 +4,7 @@
  * reps, RIR, descanso, mejor referencia y última sesión) y §19 (nada se pierde).
  */
 
+import { ejercicioMasReciente } from '../logica/progresoGrafica'
 import { useMemoria, type Memoria } from './memoria'
 import { useLiveQuery } from '../nube/eventos'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
@@ -54,8 +55,14 @@ export function useHistorial(repositorio: Repositorio, memoriaEjercicio?: Memori
       .filter((ejercicio) => ids.includes(ejercicio.id))
       .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
 
+    // Sin elección, se abre en el último ejercicio entrenado; los chips siguen en orden alfabético.
+    const recienteId = ejercicioIdElegido
+      ? undefined
+      : ejercicioMasReciente(
+          [...(await repositorio.historialDeEjercicios(participante.id, ids)).values()].flat(),
+        )
     const ejercicio =
-      entrenados.find((e) => e.id === ejercicioIdElegido) ?? entrenados[0]
+      entrenados.find((e) => e.id === (ejercicioIdElegido ?? recienteId)) ?? entrenados[0]
     if (!ejercicio) return { entrenados, sesiones: [] }
 
     const historial = await repositorio.historialDeEjercicio(participante.id, ejercicio.id)

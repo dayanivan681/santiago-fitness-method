@@ -230,3 +230,38 @@ describe('la sesión terminada se consulta después (Phase 1B)', () => {
     expect(filasDeSesion().filter((f) => f.textContent?.includes('1 jul'))).toHaveLength(1)
   })
 })
+
+describe('ejercicio inicial', () => {
+  test('se abre en el último entrenado, con los chips en orden alfabético, y respeta la elección', async () => {
+    await repositorio.crearSesion({
+      id: 's2',
+      participanteId,
+      plantillaDiaId: idDeDia(participanteId, 'lower-a'),
+      fecha: '2026-09-29',
+      completadaEn: '2026-09-29T11:00:00.000Z',
+    })
+    await repositorio.registrarSerie({
+      id: 'serie-z',
+      sesionId: 's2',
+      ejercicioId: 'zancadas-mancuernas',
+      numeroSerie: 1,
+      pesoRegistradoLb: 30,
+      repsRealizadas: 10,
+      rir: 2,
+      instante: '2026-09-29T10:00:00.000Z',
+    })
+    let memoria = { valor: null as string | null, recordar: (nuevo: unknown) => void nuevo }
+    memoria.recordar = (nuevo) => { memoria = { ...memoria, valor: nuevo as string } }
+    const { unmount } = render(<Historial repositorio={repositorio} memoriaEjercicio={memoria} />)
+    const nav = await screen.findByRole('navigation', { name: 'Ejercicio del historial' })
+    const chips = () => [...nav.querySelectorAll('button')]
+    await waitFor(() => expect(chips().find((b) => b.getAttribute('aria-pressed') === 'true')?.textContent).toMatch(/Zancadas/))
+    expect(chips().map((b) => b.textContent)).toEqual([...chips().map((b) => b.textContent!)].sort((a, b) => a.localeCompare(b, 'es')))
+    await userEvent.click(chips().find((b) => b.textContent === PRESS)!)
+    expect(memoria.valor).toBe(PRESS_BANCA_15_SMITH.id)
+    unmount()
+    render(<Historial repositorio={repositorio} memoriaEjercicio={memoria} />)
+    const nav2 = await screen.findByRole('navigation', { name: 'Ejercicio del historial' })
+    await waitFor(() => expect(nav2.querySelector('[aria-pressed="true"]')?.textContent).toBe(PRESS))
+  })
+})

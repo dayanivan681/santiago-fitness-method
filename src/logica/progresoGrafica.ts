@@ -29,3 +29,26 @@ export function resumenDeProgreso(puntos: readonly PuntoProgreso[]) {
   if (!primero || !ultimo) return null
   return { primero, ultimo, diferenciaPeso: ultimo.pesoLb - primero.pesoLb, diferenciaReps: ultimo.reps - primero.reps }
 }
+
+/**
+ * Escala del eje vertical ajustada a los valores, no desde 0: pasar de 25 a
+ * 30 lb tiene que verse como una subida. Un paso de margen arriba y abajo,
+ * redondeada a `paso`, con al menos `rangoMinimo` de alto y nunca negativa.
+ */
+export function escalaDe(valores: readonly number[], paso: number, rangoMinimo: number): { min: number; max: number } {
+  const bajo = Math.min(...valores) - paso
+  const alto = Math.max(...valores) + paso
+  const centro = (bajo + alto) / 2
+  const [lo, hi] = alto - bajo < rangoMinimo ? [centro - rangoMinimo / 2, centro + rangoMinimo / 2] : [bajo, alto]
+  const min = Math.max(0, Math.floor(lo / paso) * paso)
+  return { min, max: Math.max(min + rangoMinimo, Math.ceil(hi / paso) * paso) }
+}
+
+/** El ejercicio de la serie más reciente: es el que la persona quiere ver al abrir su progreso. */
+export function ejercicioMasReciente(
+  series: readonly { readonly ejercicioId: string; readonly fecha: string; readonly numeroSerie: number; readonly instante?: string }[],
+): string | undefined {
+  const clave = (x: (typeof series)[number]) => `${x.fecha}|${x.instante ?? ''}|${String(x.numeroSerie).padStart(4, '0')}`
+  return series.reduce<(typeof series)[number] | undefined>((mejor, x) => (!mejor || clave(x) > clave(mejor) ? x : mejor), undefined)
+    ?.ejercicioId
+}

@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-09-30 — Pulido de las gráficas de progreso — claude-code
+
+- Escala ajustada a los valores (`escalaDe`, paso 5 en peso y 1 en reps, un paso de margen, rango mínimo, nunca negativa): 25→30 lb se dibuja en 20–35 y la subida se ve. El eje muestra mínimo y máximo, fijos a la izquierda aunque el panel se desplace; el techo es una línea discontinua tenue y la etiqueta del último valor baja bajo el punto cuando lo cruzaría.
+- Con muchas sesiones, los paneles se abren en lo más reciente y Peso y Repeticiones se desplazan juntos.
+- Se abre en el último ejercicio entrenado (cliente y coach), con los chips en orden alfabético y respetando la elección guardada.
+- Verificado: 893 pruebas (5 pasadas completas sin fallos; la intermitencia de `RecorridosDemo` no se reprodujo), tsc, lint, build, 91 HTTP; runtime local a 375 px y Safari del simulador iOS con 9 sesiones (abre al final, paneles alineados) y coach → Actividad → Por ejercicio.
+
 ## 2026-09-30 — Limpieza de evidencia temporal de gráficas — codex
 
 - Los snapshots YAML generados por Playwright se incluyeron por error al moverlos a `output/playwright` (sólo las imágenes estaban ignoradas). Se retiran del árbol versionado y se conservan en `/tmp/sfm-cli-graficas-local`; contienen QA sintético local. Sin cambios de código ni datos.

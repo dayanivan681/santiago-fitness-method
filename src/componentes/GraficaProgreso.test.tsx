@@ -40,3 +40,30 @@ describe('gráfica de progreso', () => {
     expect(within(screen.getByRole('status')).getByText(/210 lb/)).toBeInTheDocument()
   })
 })
+
+describe('escala y desplazamiento', () => {
+  it('la escala muestra el mínimo y el máximo de los valores, no 0', () => {
+    const dos: PuntoProgreso[] = [25, 30].map((pesoLb, i) => ({ fecha: `2026-09-${10 + i}`, pesoLb, porLado: false, reps: 10, rir: 2 }))
+    const { container } = render(<GraficaProgreso puntos={dos} />)
+    const escalas = [...container.querySelectorAll('.grafica-progreso__escala')].map(e => e.textContent)
+    expect(escalas.slice(0, 2)).toEqual(['35', '20'])
+    expect(container.querySelector('svg text')?.textContent).not.toBe('0')
+  })
+
+  it('con muchas sesiones se abre al final y los dos paneles se desplazan juntos', () => {
+    const muchos: PuntoProgreso[] = Array.from({ length: 10 }, (_, i) => ({ fecha: `2026-08-${10 + i}`, pesoLb: 100 + i * 5, porLado: false, reps: 10, rir: 2 }))
+    const ancho = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollWidth')
+    Object.defineProperty(Element.prototype, 'scrollWidth', { configurable: true, get: () => 600 })
+    try {
+      const { container } = render(<GraficaProgreso puntos={muchos} />)
+      const [peso, reps] = [...container.querySelectorAll<HTMLDivElement>('.grafica-progreso__scroll')]
+      expect(peso.scrollLeft).toBe(600)
+      expect(reps.scrollLeft).toBe(600)
+      peso.scrollLeft = 120
+      peso.dispatchEvent(new Event('scroll'))
+      expect(reps.scrollLeft).toBe(120)
+    } finally {
+      if (ancho) Object.defineProperty(Element.prototype, 'scrollWidth', ancho)
+    }
+  })
+})

@@ -129,11 +129,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-01T03:34:56.053Z
+- **Última sincronización:** 2026-10-01T03:49:32.042Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1276,6 +1276,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-01T03:49:32.043Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Pulido de gráficas de progreso: escala ajustada a los valores con mínimo y máximo visibles (25→30 en 20–35), apertura en la sesión más reciente con Peso y Repeticiones desplazándose juntos, y ejercicio inicial = el último entrenado en cliente y coach (chips alfabéticos, elección respetada). Ajuste extra: la etiqueta del último valor ya no cruza la línea del máximo.
+- **Verificación:** npm test (893/893, 5 pasadas); npx tsc -b; npm run lint; npm run build; npm run test:http (91 PASS); navegador 375 px; simulador iOS Safari
+- **Siguiente:** Borrador del correo a Santiago
+
 
 ### 2026-10-01T03:34:56.054Z | claude-code | CLAIM
 - **Estado:** active

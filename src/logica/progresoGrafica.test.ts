@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { puntosDeProgreso, resumenDeProgreso } from './progresoGrafica'
+import { puntosDeProgreso, resumenDeProgreso, escalaDe, ejercicioMasReciente } from './progresoGrafica'
 import { PRESS_BANCA_15_SMITH } from '../datos/semilla/biblioteca'
 import { aplicarCorreccion } from './correccion'
 import type { SerieConFecha } from '../datos/referencias'
@@ -37,5 +37,30 @@ describe('puntos de progreso', () => {
     const puntos = puntosDeProgreso([sesion([serie(45)])], {...ejercicio,tipoCarga:'porLado'})
     expect(puntos[0]).toMatchObject({pesoLb:45,porLado:true})
     expect(resumenDeProgreso(puntos)).toMatchObject({diferenciaPeso:0,diferenciaReps:0})
+  })
+})
+
+describe('escalaDe', () => {
+  it('ajusta el peso a los valores con paso 5 y un paso de margen', () => {
+    expect(escalaDe([25, 30], 5, 10)).toEqual({ min: 20, max: 35 })
+    expect(escalaDe([180, 195, 210], 5, 10)).toEqual({ min: 175, max: 215 })
+  })
+  it('amplía un rango pequeño y centra una línea plana', () => {
+    expect(escalaDe([20, 20, 20], 1, 4)).toEqual({ min: 18, max: 22 })
+    expect(escalaDe([100], 5, 10)).toEqual({ min: 95, max: 105 })
+  })
+  it('nunca baja de 0', () => {
+    expect(escalaDe([0, 5], 5, 10).min).toBe(0)
+    expect(escalaDe([1, 1], 1, 4).min).toBe(0)
+  })
+})
+
+describe('ejercicioMasReciente', () => {
+  const s = (ejercicioId: string, fecha: string, numeroSerie = 1, instante?: string) => ({ ejercicioId, fecha, numeroSerie, instante })
+  it('elige el de la sesión más reciente; en empate, la serie más tardía', () => {
+    expect(ejercicioMasReciente([s('a', '2026-09-10'), s('z', '2026-09-29'), s('m', '2026-09-20')])).toBe('z')
+    expect(ejercicioMasReciente([s('a', '2026-09-29', 1, '2026-09-29T10:00:00Z'), s('b', '2026-09-29', 1, '2026-09-29T10:20:00Z')])).toBe('b')
+    expect(ejercicioMasReciente([s('a', '2026-09-29', 4), s('b', '2026-09-29', 2)])).toBe('a')
+    expect(ejercicioMasReciente([])).toBeUndefined()
   })
 })
