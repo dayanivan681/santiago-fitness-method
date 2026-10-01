@@ -129,11 +129,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-01T03:58:10.449Z
+- **Última sincronización:** 2026-10-01T03:58:12.805Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1276,6 +1276,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-01T03:58:12.807Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Corrección del registro: al publicar c7a280b, la pasada previa de npm test tuvo 1 fallo intermitente en RecorridosDemo («crea con revisión explícita…», 5,7 s) y el commit se publicó porque la cadena de comandos no se detenía ante el fallo. No se reprodujo en 11 pasadas posteriores (2 aisladas, 9 con carga); el error exacto no quedó capturado. Sin cambios de código.
+- **Verificación:** npm test x11 (893/893)
+- **Siguiente:** Si vuelve a fallar, capturar el mensaje completo de RecorridosDemo antes de tocarlo; borrador del correo a Santiago
+
 
 ### 2026-10-01T03:58:10.450Z | claude-code | CLAIM
 - **Estado:** active

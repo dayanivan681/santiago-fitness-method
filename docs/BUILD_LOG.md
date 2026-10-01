@@ -5,7 +5,7 @@
 - Escala ajustada a los valores (`escalaDe`, paso 5 en peso y 1 en reps, un paso de margen, rango mínimo, nunca negativa): 25→30 lb se dibuja en 20–35 y la subida se ve. El eje muestra mínimo y máximo, fijos a la izquierda aunque el panel se desplace; el techo es una línea discontinua tenue y la etiqueta del último valor baja bajo el punto cuando lo cruzaría.
 - Con muchas sesiones, los paneles se abren en lo más reciente y Peso y Repeticiones se desplazan juntos.
 - Se abre en el último ejercicio entrenado (cliente y coach), con los chips en orden alfabético y respetando la elección guardada.
-- Verificado: 893 pruebas (5 pasadas completas sin fallos; la intermitencia de `RecorridosDemo` no se reprodujo), tsc, lint, build, 91 HTTP; runtime local a 375 px y Safari del simulador iOS con 9 sesiones (abre al final, paneles alineados) y coach → Actividad → Por ejercicio.
+- Verificado: 893 pruebas (5 pasadas completas sin fallos antes de publicar; en la pasada previa a `handoff:publish`, con el simulador apagándose a la vez, falló una vez «crea con revisión explícita…» de `RecorridosDemo` a los 5,7 s, y el commit se publicó igualmente porque el comando no se detenía ante el fallo. Después: 2 pasadas aisladas y 9 con tres suites en paralelo, todas 893/893; el mensaje del fallo no se capturó y no se aplicó ningún arreglo a ciegas. El código publicado no cambia con esto), tsc, lint, build, 91 HTTP; runtime local a 375 px y Safari del simulador iOS con 9 sesiones (abre al final, paneles alineados) y coach → Actividad → Por ejercicio.
 
 ## 2026-09-30 — Limpieza de evidencia temporal de gráficas — codex
 
