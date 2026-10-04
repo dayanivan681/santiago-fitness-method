@@ -123,6 +123,7 @@ export function BibliotecaCoach() {
               <div>
                 <small>
                   {propio && <span className="sfm-insignia-tuyo">Tuyo</span>}
+                  {propio?.tieneAnimacion && <span className="sfm-insignia-gif">GIF</span>}
                   {ETIQUETA_EQUIPO[e.equipo]}
                 </small>
                 <h2>{e.nombre}</h2>

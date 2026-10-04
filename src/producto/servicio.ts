@@ -267,7 +267,7 @@ export class ServicioCoach {
   /** Los ejercicios que el coach creó en la demo también los ve el cliente de la demo. */
   private async sumarEjerciciosDelCoach(repo: RepositorioMemoria) {
     for (const e of await this.biblioteca.listar())
-      await repo.guardarEjercicio(aEjercicioDominio(e, this.biblioteca.urlDeFoto));
+      await repo.guardarEjercicio(aEjercicioDominio(e, this.biblioteca.urlDeFoto, this.biblioteca.urlDeAnimacion));
     return repo;
   }
   async repoDemo(id: string) {

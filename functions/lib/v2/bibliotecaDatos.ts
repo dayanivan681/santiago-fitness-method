@@ -18,10 +18,19 @@ type Fila = {
   peso_base_lb: number | null;
   explicacion: string;
   foto_clave: string | null;
+  animacion_clave: string | null;
   activo: number;
   creado_en: number;
   actualizado_en: number;
 };
+
+/** La animación vive en una tabla aparte (migración 0013); se une al leer. */
+const SELECCION = `SELECT e.*, a.clave AS animacion_clave FROM ejercicios_coach e
+  LEFT JOIN ejercicios_coach_animacion a ON a.ejercicio_id = e.id`;
+
+export function claveDeAnimacion(id: string) {
+  return `biblioteca/${id}/animacion`;
+}
 
 export function claveDeFoto(id: string) {
   return `biblioteca/${id}`;
@@ -41,6 +50,7 @@ function aEjercicio(f: Fila): EjercicioCoach {
     pesoBaseMaquinaLb: f.peso_base_lb,
     explicacionCorta: f.explicacion,
     tieneFoto: f.foto_clave !== null,
+    tieneAnimacion: f.animacion_clave !== null,
     activo: f.activo === 1,
     creadoEn: f.creado_en,
     actualizadoEn: f.actualizado_en,
@@ -49,7 +59,7 @@ function aEjercicio(f: Fila): EjercicioCoach {
 
 export async function ejerciciosActivos(db: D1Database): Promise<EjercicioCoach[]> {
   const { results } = await db
-    .prepare("SELECT * FROM ejercicios_coach WHERE activo=1 ORDER BY nombre COLLATE NOCASE, id")
+    .prepare(`${SELECCION} WHERE e.activo=1 ORDER BY e.nombre COLLATE NOCASE, e.id`)
     .all<Fila>();
   return results.map(aEjercicio);
 }
@@ -68,7 +78,7 @@ export async function etiquetaDeBiblioteca(db: D1Database): Promise<string> {
 }
 
 export async function leerEjercicio(db: D1Database, id: string): Promise<EjercicioCoach | null> {
-  const fila = await db.prepare("SELECT * FROM ejercicios_coach WHERE id=?").bind(id).first<Fila>();
+  const fila = await db.prepare(`${SELECCION} WHERE e.id=?`).bind(id).first<Fila>();
   return fila ? aEjercicio(fila) : null;
 }
 
@@ -165,4 +175,31 @@ export async function idsDeCoachNoDisponibles(db: D1Database, ids: Iterable<stri
     .all<{ id: string }>();
   const activos = new Set(results.map((r) => r.id));
   return pedidos.filter((id) => !activos.has(id));
+}
+
+export async function claveDeAnimacionGuardada(db: D1Database, id: string): Promise<string | null> {
+  const fila = await db
+    .prepare("SELECT clave FROM ejercicios_coach_animacion WHERE ejercicio_id=?")
+    .bind(id)
+    .first<{ clave: string }>();
+  return fila?.clave ?? null;
+}
+
+/** Guarda o quita la animación y toca `actualizado_en`: cambia el ETag y la `?v=` de las URLs. */
+export async function guardarClaveDeAnimacion(db: D1Database, id: string, ahora: number): Promise<void> {
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO ejercicios_coach_animacion (ejercicio_id, clave, actualizado_en) VALUES (?1, ?2, ?3) ON CONFLICT(ejercicio_id) DO UPDATE SET clave=?2, actualizado_en=?3",
+      )
+      .bind(id, claveDeAnimacion(id), ahora),
+    db.prepare("UPDATE ejercicios_coach SET actualizado_en=?2 WHERE id=?1").bind(id, ahora),
+  ]);
+}
+
+export async function quitarClaveDeAnimacion(db: D1Database, id: string, ahora: number): Promise<void> {
+  await db.batch([
+    db.prepare("DELETE FROM ejercicios_coach_animacion WHERE ejercicio_id=?1").bind(id),
+    db.prepare("UPDATE ejercicios_coach SET actualizado_en=?2 WHERE id=?1").bind(id, ahora),
+  ]);
 }

@@ -11,6 +11,7 @@
  * variantes equivalentes (§16, §23). No hay una lista aparte que mantener.
  */
 
+import { ImagenConMovimiento } from '../../componentes/ImagenConMovimiento'
 import { useRef } from 'react'
 import { useLiveQuery } from '../../nube/eventos'
 import { useCapa } from '../../aplicacion/useCapa'
@@ -71,9 +72,7 @@ export function HojaEjercicio({
         </div>
 
         {/* §15: la imagen es lo que identifica el ejercicio sin saber su nombre. */}
-        {ejercicio.imagen && (
-          <img className="hoja__imagen" src={ejercicio.imagen} alt="" />
-        )}
+        <ImagenConMovimiento ejercicio={ejercicio} className="hoja__imagen" />
 
         {ejercicio.imagenGenerada && (
           <p className="hoja__texto">Imagen generada con IA · equipo representativo.</p>

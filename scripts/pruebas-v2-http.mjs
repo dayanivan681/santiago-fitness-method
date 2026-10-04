@@ -207,6 +207,20 @@ checks++;
 const fotoCliente = await codigo(await pedir(`/api/v2/biblioteca/${ejId}/foto`, cliente), 200, "Foto llega al cliente");
 assert.equal(fotoCliente.headers.get("content-type"), "image/jpeg");
 checks++;
+// Animación (GIF): sólo el coach la sube o la quita; ambos roles la leen.
+const gifQA = new Uint8Array([71, 73, 70, 56, 57, 97, ...new Uint8Array(64)]);
+await codigo(await pedir(`/api/v2/biblioteca/${ejId}/animacion`), 401, "Animación privada sin sesión");
+await codigo(await pedirBytes(`/api/v2/biblioteca/${ejId}/animacion`, cliente, gifQA), 403, "Cliente no sube animaciones");
+await codigo(await pedirBytes(`${cbase}/biblioteca/${ejId}/animacion`, coach, bytesFoto([255, 216, 255])), 400, "JPEG disfrazado de GIF da 400");
+await codigo(await pedirBytes(`${cbase}/biblioteca/${ejId}/animacion`, coach, gifQA), 200, "Coach sube el GIF");
+const conGif = await (await pedir("/api/v2/biblioteca", cliente)).json();
+assert.ok(conGif.ejercicios.some((x) => x.id === ejId && x.tieneAnimacion && x.tieneFoto));
+const gifCliente = await codigo(await pedir(`/api/v2/biblioteca/${ejId}/animacion`, cliente), 200, "GIF llega al cliente");
+assert.equal(gifCliente.headers.get("content-type"), "image/gif");
+checks += 2;
+await codigo(await pedir(`/api/v2/biblioteca/${ejId}/animacion`, cliente, undefined, "DELETE"), 403, "Cliente no borra animaciones");
+await codigo(await pedir(`${cbase}/biblioteca/${ejId}/animacion`, coach, undefined, "DELETE"), 200, "Coach quita el GIF");
+await codigo(await pedir(`/api/v2/biblioteca/${ejId}/animacion`, cliente), 404, "Sin GIF tras quitarlo");
 const planConCoach = {
   ...plan,
   dias: plan.dias.map((d, i) => (i === 0 ? { ...d, slots: d.slots.map((sl, j) => (j === 0 ? { ...sl, ejercicioId: ejId } : sl)) } : d)),

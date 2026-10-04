@@ -25,7 +25,7 @@ export function useBibliotecaDelCoach(servicio: ServicioCoach): BibliotecaDelCoa
   }, [recargar]);
   return useMemo(
     () => ({
-      ejercicios: combinar(lista.map((e) => aEjercicioDominio(e, servicio.biblioteca.urlDeFoto))),
+      ejercicios: combinar(lista.map((e) => aEjercicioDominio(e, servicio.biblioteca.urlDeFoto, servicio.biblioteca.urlDeAnimacion))),
       propios: new Map(lista.map((e) => [e.id, e])),
       error,
       recargar,

@@ -11,6 +11,7 @@ const ORIGEN = 'https://santiago-fitness-method.pages.dev/x'
 const JPEG = new Uint8Array([255, 216, 255, 224, 0, 16, 74, 70, 73, 70])
 const PNG = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])
 const GIF = new Uint8Array([71, 73, 70, 56, 57, 97, 1, 0])
+const GIF87 = new Uint8Array([71, 73, 70, 56, 55, 97, 1, 0])
 
 const ctx = (rol: 'coach' | 'cliente'): Contexto => ({
   rol,
@@ -28,6 +29,9 @@ function fakeR2() {
     objetos,
     async put(clave: string, bytes: ArrayBuffer, o?: { httpMetadata?: { contentType?: string } }) {
       objetos.set(clave, { bytes, contentType: o?.httpMetadata?.contentType })
+    },
+    async delete(clave: string) {
+      objetos.delete(clave)
     },
     async get(clave: string) {
       const o = objetos.get(clave)
@@ -199,5 +203,55 @@ describe('planes con ejercicios del coach', () => {
     await pedir('coach', 'PATCH', `/biblioteca/${id}`, { activo: false })
     await expect(aplicar(local.db, 'test-a', contexto, op(conEjercicio(id)))).rejects.toMatchObject({ status: 400 })
     expect((await aplicar(local.db, 'test-a', contexto, op(plan))).confirmacion).toBeTruthy()
+  })
+})
+
+describe('animación (GIF) del ejercicio', () => {
+  const lista = async () =>
+    ((await (await pedir('cliente', 'GET', '/biblioteca'))!.json()) as { ejercicios: { id: string; tieneAnimacion: boolean; tieneFoto: boolean }[] }).ejercicios
+
+  it('el coach sube un GIF, ambos roles lo reciben como image/gif y la lista lo marca', async () => {
+    const id = await crear()
+    const subida = (await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, GIF))!
+    expect(subida.status).toBe(200)
+    expect(r2.objetos.get(`biblioteca/${id}/animacion`)?.contentType).toBe('image/gif')
+    expect((await lista())[0]).toMatchObject({ id, tieneAnimacion: true, tieneFoto: false })
+    const gif = (await pedir('cliente', 'GET', `/biblioteca/${id}/animacion`))!
+    expect(gif.status).toBe(200)
+    expect(gif.headers.get('Content-Type')).toBe('image/gif')
+    expect(gif.headers.get('Cache-Control')).toContain('max-age')
+    expect(gif.headers.get('X-Content-Type-Options')).toBe('nosniff')
+    expect((await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, GIF87))!.status).toBe(200)
+  })
+
+  it('rechaza un JPEG como animación y un GIF de más de 5 MB', async () => {
+    const id = await crear()
+    expect((await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, JPEG))!.status).toBe(400)
+    const grande = new Uint8Array(5 * 1024 * 1024 + 1)
+    grande.set(GIF)
+    expect((await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, grande))!.status).toBe(413)
+    expect(r2.objetos.size).toBe(0)
+    expect((await lista())[0].tieneAnimacion).toBe(false)
+  })
+
+  it('el cliente no sube ni borra; el coach borra y la lista deja de marcarla', async () => {
+    const id = await crear()
+    expect((await pedir('cliente', 'PUT', `/biblioteca/${id}/animacion`, GIF))!.status).toBe(403)
+    await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, GIF)
+    expect((await pedir('cliente', 'DELETE', `/biblioteca/${id}/animacion`))!.status).toBe(403)
+    expect((await lista())[0].tieneAnimacion).toBe(true)
+    const borrado = (await pedir('coach', 'DELETE', `/biblioteca/${id}/animacion`))!
+    expect(borrado.status).toBe(200)
+    expect(r2.objetos.has(`biblioteca/${id}/animacion`)).toBe(false)
+    expect((await lista())[0].tieneAnimacion).toBe(false)
+    expect((await pedir('cliente', 'GET', `/biblioteca/${id}/animacion`))!.status).toBe(404)
+  })
+
+  it('cambiar la animación cambia la etiqueta de la lista (ETag)', async () => {
+    const id = await crear()
+    const antes = (await pedir('cliente', 'GET', '/biblioteca'))!.headers.get('ETag')
+    await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, GIF)
+    const despues = (await pedir('cliente', 'GET', '/biblioteca'))!.headers.get('ETag')
+    expect(despues).not.toBe(antes)
   })
 })

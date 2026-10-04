@@ -10,6 +10,7 @@ export class ServicioBiblioteca {
   readonly demo: boolean;
   private demoLista: EjercicioCoach[] = [];
   private demoFotos = new Map<string, string>();
+  private demoAnimaciones = new Map<string, string>();
 
   constructor(demo = false) {
     this.demo = demo;
@@ -23,7 +24,7 @@ export class ServicioBiblioteca {
   async crear(datos: EjercicioCoachNuevo): Promise<EjercicioCoach> {
     if (this.demo) {
       const ahora = Date.now();
-      const nuevo: EjercicioCoach = { ...datos, id: `coach-ej-${crypto.randomUUID()}`, tieneFoto: false, activo: true, creadoEn: ahora, actualizadoEn: ahora };
+      const nuevo: EjercicioCoach = { ...datos, id: `coach-ej-${crypto.randomUUID()}`, tieneFoto: false, tieneAnimacion: false, activo: true, creadoEn: ahora, actualizadoEn: ahora };
       this.demoLista = [...this.demoLista, nuevo];
       return nuevo;
     }
@@ -48,6 +49,23 @@ export class ServicioBiblioteca {
     return (await subirArchivo<{ ejercicio: EjercicioCoach }>(`/biblioteca/${id}/foto`, foto, true)).ejercicio;
   }
 
+  /** El GIF va aparte de la foto fija: la foto sirve para listas y miniaturas, el GIF sólo para la ficha. */
+  async subirAnimacion(id: string, gif: Blob): Promise<EjercicioCoach> {
+    if (this.demo) {
+      this.demoAnimaciones.set(id, URL.createObjectURL(gif));
+      return this.cambiarDemo(id, (e) => ({ ...e, tieneAnimacion: true }));
+    }
+    return (await subirArchivo<{ ejercicio: EjercicioCoach }>(`/biblioteca/${id}/animacion`, gif, true)).ejercicio;
+  }
+
+  async quitarAnimacion(id: string): Promise<EjercicioCoach> {
+    if (this.demo) {
+      this.demoAnimaciones.delete(id);
+      return this.cambiarDemo(id, (e) => ({ ...e, tieneAnimacion: false }));
+    }
+    return (await new ClienteApi(true).pedir<{ ejercicio: EjercicioCoach }>(`/biblioteca/${id}/animacion`, undefined, "DELETE")).ejercicio;
+  }
+
   private cambiarDemo(id: string, cambiar: (e: EjercicioCoach) => EjercicioCoach): EjercicioCoach {
     const actual = this.demoLista.find((e) => e.id === id);
     if (!actual) throw Error("Ejercicio no disponible.");
@@ -59,4 +77,11 @@ export class ServicioBiblioteca {
   /** Dónde ver la foto desde el panel del coach; `v` evita que la caché sirva una foto reemplazada. */
   urlDeFoto = (e: EjercicioCoach): string | null =>
     this.demo ? (this.demoFotos.get(e.id) ?? null) : `/admin/api/v2/biblioteca/${e.id}/foto?v=${e.actualizadoEn}`;
+
+  urlDeAnimacion = (e: EjercicioCoach): string | null =>
+    !e.tieneAnimacion
+      ? null
+      : this.demo
+        ? (this.demoAnimaciones.get(e.id) ?? null)
+        : `/admin/api/v2/biblioteca/${e.id}/animacion?v=${e.actualizadoEn}`;
 }

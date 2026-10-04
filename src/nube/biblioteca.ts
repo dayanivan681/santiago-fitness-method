@@ -8,13 +8,19 @@ export const FOTO_PENDIENTE = "/ejercicios/sin-foto.svg";
  * Los ejercicios del coach como fichas de dominio, las mismas que lee el resto
  * de la app. `urlDeFoto` decide desde dónde se sirve la foto (coach o cliente).
  */
-export function aEjercicioDominio(e: EjercicioCoach, urlDeFoto: (e: EjercicioCoach) => string | null): Ejercicio {
+export function aEjercicioDominio(
+  e: EjercicioCoach,
+  urlDeFoto: (e: EjercicioCoach) => string | null,
+  urlDeAnimacion: (e: EjercicioCoach) => string | null = () => null,
+): Ejercicio {
+  const animacion = e.tieneAnimacion ? urlDeAnimacion(e) : null;
   return {
     id: e.id,
     nombre: e.nombre,
     equipo: e.equipo,
     movimiento: e.movimiento,
     imagen: (e.tieneFoto ? urlDeFoto(e) : null) ?? FOTO_PENDIENTE,
+    ...(animacion ? { animacion } : {}),
     explicacionCorta: e.explicacionCorta,
     musculoPrimario: e.musculoPrimario,
     musculosSecundarios: e.musculosSecundarios,
@@ -38,9 +44,10 @@ export async function guardarEjerciciosDelCoach(
   base: string,
 ): Promise<void> {
   const urlDeFoto = (e: EjercicioCoach) => `${base}/biblioteca/${e.id}/foto?v=${e.actualizadoEn}`;
+  const urlDeAnimacion = (e: EjercicioCoach) => `${base}/biblioteca/${e.id}/animacion?v=${e.actualizadoEn}`;
   await db.transaction("rw", db.ejercicios, db.documentos, db.cola, async () => {
     for (const e of ejercicios) {
-      const nuevo = aEjercicioDominio(e, urlDeFoto);
+      const nuevo = aEjercicioDominio(e, urlDeFoto, urlDeAnimacion);
       const previo = await db.ejercicios.get(e.id);
       const clave = `calibracion:${e.id}`;
       const calibrado =

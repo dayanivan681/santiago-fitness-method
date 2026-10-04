@@ -72,6 +72,7 @@ export function sqliteD1() {
     "0010_cuentas.sql",
     "0011_suscripciones.sql",
     "0012_biblioteca_coach.sql",
+    "0013_biblioteca_animacion.sql",
   ])
     ejecutar(
       readFileSync(new URL("../migrations/" + m, import.meta.url), "utf8"),

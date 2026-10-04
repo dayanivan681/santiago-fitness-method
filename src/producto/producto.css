@@ -2161,3 +2161,20 @@ a.sfm-primary:active {
   outline: 2px solid var(--sfm-white, #fff);
   outline-offset: 2px;
 }
+
+/* Ejercicios con animación: la tarjeta sigue con la imagen fija y lo indica. */
+.sfm-insignia-gif {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.sfm-vista-animacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}

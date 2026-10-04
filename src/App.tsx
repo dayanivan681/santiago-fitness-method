@@ -384,7 +384,7 @@ function ClienteDesdeCoach({
       } as unknown as Participante);
       for (const e of BIBLIOTECA_INICIAL) await r.guardarEjercicio(e);
       for (const e of await servicio.biblioteca.listar())
-        await r.guardarEjercicio(aEjercicioDominio(e, servicio.biblioteca.urlDeFoto));
+        await r.guardarEjercicio(aEjercicioDominio(e, servicio.biblioteca.urlDeFoto, servicio.biblioteca.urlDeAnimacion));
       for (const d of cliente.plan.dias) await r.guardarPlantilla(d);
       const cambios = await servicio.cambios(clienteId);
       for (const s of ultimos(cambios, "entrenamiento"))

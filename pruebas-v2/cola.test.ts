@@ -284,6 +284,7 @@ describe("biblioteca del coach en el cliente", () => {
       tipoCarga: "pesoMaquina",
       imagen: `/api/v2/biblioteca/${ID}/foto?v=7`,
     });
+    expect((await c.db.ejercicios.get(ID))?.animacion).toBeUndefined();
     // Convive con las fichas fijas de la semilla.
     expect(await c.db.ejercicios.get("press-banca-barra")).toBeTruthy();
   });

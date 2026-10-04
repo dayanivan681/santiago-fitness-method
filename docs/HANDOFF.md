@@ -129,11 +129,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-04T03:08:46.468Z
+- **Última sincronización:** 2026-10-04T03:47:16.850Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1276,6 +1276,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-04T03:47:16.852Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** GIF animado en ejercicios del coach: migración 0013 (tabla ejercicios_coach_animacion, repetible) aplicada en staging y producción con respaldo; API PUT/DELETE/GET /biblioteca/<id>/animacion (GIF por firma, 5 MB, sólo coach escribe); panel acepta GIF (primer cuadro como foto fija + GIF aparte, insignia GIF, foto normal quita la animación); ficha anima con respaldo a la foto fija sin conexión y con reducir movimiento. Verificado con GIF real de Push Press (free-exercise-db) y subida desde Fototeca en Safari iOS.
+- **Verificación:** npm test (905/905); npm run lint; npx tsc -b; npm run build; npm run test:http (101 PASS); navegador 375 px; simulador iOS
+- **Siguiente:** Comprobar 401 en producción; probar fuera de producción la conversión vídeo → GIF en el teléfono; correo a Santiago con el flujo de Ezgif
+
 
 ### 2026-10-04T03:08:46.469Z | claude-code | CLAIM
 - **Estado:** active

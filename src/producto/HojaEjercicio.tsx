@@ -177,6 +177,9 @@ function Formulario({
   const [b, setB] = useState(inicial);
   const [foto, setFoto] = useState<Blob | null>(null);
   const [vista, setVista] = useState("");
+  // GIF elegido: se sube aparte; `foto` guarda su primer cuadro como imagen fija.
+  const [gif, setGif] = useState<Blob | null>(null);
+  const [vistaGif, setVistaGif] = useState("");
   const [error, setError] = useState("");
   const [guardando, setGuardando] = useState(false);
   // Si el ejercicio ya se creó y sólo falló la foto, un reintento no lo duplica.
@@ -195,12 +198,21 @@ function Formulario({
     return () => URL.revokeObjectURL(url);
   }, [foto]);
 
+  useEffect(() => {
+    if (!gif) return;
+    const url = URL.createObjectURL(gif);
+    // oxlint-disable-next-line react/set-state-in-effect
+    setVistaGif(url);
+    return () => URL.revokeObjectURL(url);
+  }, [gif]);
+
   async function elegirFoto(e: ChangeEvent<HTMLInputElement>) {
     const archivo = e.target.files?.[0];
     e.target.value = "";
     if (!archivo) return;
+    if (archivo.type === "image/gif") return elegirGif(archivo);
     if (!TIPOS_DE_FOTO.has(archivo.type) && !archivo.type.startsWith("image/heic")) {
-      setError("Usa una foto JPEG, PNG o WebP.");
+      setError("Usa una foto JPEG, PNG o WebP, o un GIF con el movimiento.");
       return;
     }
     const lista = await reducirImagen(archivo);
@@ -208,6 +220,20 @@ function Formulario({
     if (lista.size > FOTO_MAX_BYTES) return setError("La foto pesa más de 5 MB. Elige otra.");
     setError("");
     setFoto(lista);
+    setGif(null);
+    setVistaGif("");
+  }
+
+  /** Un GIF animado: el primer cuadro es la imagen fija de listas y miniaturas; el GIF, sólo para la ficha. */
+  async function elegirGif(archivo: Blob) {
+    if (archivo.size > FOTO_MAX_BYTES)
+      return setError("El GIF pesa más de 5 MB. Recórtalo o redúcelo (por ejemplo en ezgif.com) y vuelve a intentarlo.");
+    const fija = await reducirImagen(archivo);
+    if (!TIPOS_DE_FOTO.has(fija.type))
+      return setError("No pudimos sacar una imagen fija de ese GIF. Prueba con otro.");
+    setError("");
+    setFoto(fija);
+    setGif(archivo);
   }
 
   async function guardar() {
@@ -247,11 +273,14 @@ function Formulario({
       }
       yaGuardado = true;
       if (!editando) setCreado(actual);
-      if (foto) await servicio.subirFoto(actual.id, foto);
+      if (foto) actual = await servicio.subirFoto(actual.id, foto);
+      // El GIF va después de su imagen fija; una foto nueva sin GIF reemplaza a la animación anterior.
+      if (gif) await servicio.subirAnimacion(actual.id, gif);
+      else if (foto && actual.tieneAnimacion) await servicio.quitarAnimacion(actual.id);
       await recargar();
       terminar();
     } catch (e) {
-      const aviso = yaGuardado && !editando ? " El ejercicio ya está guardado; vuelve a intentar para subir la foto." : "";
+      const aviso = yaGuardado && !editando ? " El ejercicio ya está guardado; vuelve a intentar para subir la foto o la animación." : "";
       setError((e as Error).message + aviso);
       if (yaGuardado) await recargar();
     } finally {
@@ -260,6 +289,8 @@ function Formulario({
   }
 
   const fotoActual = vista || (existente?.tieneFoto && servicio ? servicio.urlDeFoto(existente) : null);
+  // Una foto nueva sin GIF deja la animación anterior fuera de la vista previa: se quitará al guardar.
+  const animacionActual = vistaGif || (!foto && existente && servicio ? servicio.urlDeAnimacion(existente) : null);
   return (
     <form
       className="sfm-form"
@@ -366,7 +397,15 @@ function Formulario({
       </label>
       <label className="sfm-field sfm-campo-foto">
         <span>Foto de la máquina o del ejercicio</span>
-        {fotoActual && <img className="sfm-exercise-thumb" src={fotoActual} alt="Foto elegida" />}
+        <small className="sfm-hint">También puede ser un GIF con el movimiento (hasta 5 MB).</small>
+        {animacionActual ? (
+          <span className="sfm-vista-animacion">
+            <img className="sfm-exercise-thumb" src={animacionActual} alt="Animación elegida" />
+            <span className="sfm-insignia-gif">Animación</span>
+          </span>
+        ) : (
+          fotoActual && <img className="sfm-exercise-thumb" src={fotoActual} alt="Foto elegida" />
+        )}
         {/* El botón nativo dice «no file selected» (y en el idioma del teléfono) aunque haya vista previa. */}
         <input className="solo-lectores" type="file" accept="image/*" onChange={(e) => void elegirFoto(e)} />
         <span className="sfm-elegir-foto" aria-hidden="true">{fotoActual ? "Cambiar foto" : "Elegir foto"}</span>

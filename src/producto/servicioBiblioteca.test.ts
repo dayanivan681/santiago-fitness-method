@@ -61,7 +61,7 @@ describe('ServicioBiblioteca en demo', () => {
 
 describe('ServicioBiblioteca real', () => {
   const respuesta = (cuerpo: unknown, status = 200) => new Response(JSON.stringify(cuerpo), { status })
-  const ejercicio = { ...nuevo, id: 'coach-ej-a', tieneFoto: false, activo: true, creadoEn: 1, actualizadoEn: 2 }
+  const ejercicio = { ...nuevo, id: 'coach-ej-a', tieneFoto: false, tieneAnimacion: false, activo: true, creadoEn: 1, actualizadoEn: 2 }
 
   it('habla con /admin/api/v2/biblioteca y sube la foto como cuerpo binario', async () => {
     const llamadas: { url: string; metodo: string; tipo?: string }[] = []

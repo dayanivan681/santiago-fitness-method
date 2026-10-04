@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-03 — GIF animado en los ejercicios del coach — claude-code
+
+- Migración `0013_biblioteca_animacion.sql`: tabla `ejercicios_coach_animacion` (`CREATE TABLE IF NOT EXISTS`) en lugar del `ALTER TABLE … ADD COLUMN` del plan, porque las migraciones v2 se ensayan y reaplican enteras y un ADD COLUMN repetido falla en SQLite. Registrada en `pruebas-v2/d1.ts`, `preparar-qa-v2` y `migrar-v2` (que ahora comprueba también esta tabla).
+- API: `PUT`/`DELETE /biblioteca/<id>/animacion` (sólo coach) y `GET` (ambos roles), firma GIF87a/GIF89a, 5 MB, R2 `biblioteca/<id>/animacion`; `tieneAnimacion` en la lista; subir o quitar toca `actualizado_en` (ETag y `?v=`).
+- Panel: el selector acepta GIF; su primer cuadro se guarda como foto fija (JPEG) y el GIF aparte; vista previa «Animación»; insignia «GIF» en la tarjeta; una foto normal quita la animación; un fallo tras crear no duplica el ejercicio.
+- Ficha (cliente y Vista previa): reproduce el GIF; si no carga (sin conexión) vuelve a la foto fija; con «reducir movimiento» muestra la foto y «Ver movimiento». Listas, miniaturas, Hoy y editor siguen con la foto fija. El service worker no cachea `/animacion` (prueba en `pruebas-v2/sw.test.ts`).
+- Verificado: 905 pruebas, tsc, lint, build, 101 HTTP; navegador 375 px (lista fija con «GIF», ficha animada, cambio a foto quita la animación, `onError` vuelve a la foto); Safari del simulador iOS eligiendo el GIF desde Fototeca: llega como GIF, idéntico byte a byte al original, y la ficha se anima. Staging: 0013 aplicada con respaldo; preview `codex-premium-v2` redesplegado (`6422762d`). Producción (2026-10-03, con el sí del dueño): 0013 aplicada con respaldo; ejercicios 281, clientes 8, rutinas 24, sesiones 40 intactos. Prueba real: GIF de Push Press con los dos fotogramas de free-exercise-db (Unlicense); el corte directo funciona mejor que el fundido, pero la fuente no muestra la barra arriba: para movimientos de varias fases conviene grabar vídeo.
+
 ## 2026-09-30 — Pulido de las gráficas de progreso — claude-code
 
 - Escala ajustada a los valores (`escalaDe`, paso 5 en peso y 1 en reps, un paso de margen, rango mínimo, nunca negativa): 25→30 lb se dibuja en 20–35 y la subida se ve. El eje muestra mínimo y máximo, fijos a la izquierda aunque el panel se desplace; el techo es una línea discontinua tenue y la etiqueta del último valor baja bajo el punto cuando lo cruzaría.

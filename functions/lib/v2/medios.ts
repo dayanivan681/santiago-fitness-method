@@ -7,19 +7,17 @@ export function rechazarSiDeclaraDemasiado(request: Request) {
   if (Number(request.headers.get("Content-Length") ?? 0) > FOTO_MAX_BYTES)
     throw new ErrorApi("Máximo 5 MB por foto.", 413);
 }
-/** Lee el cuerpo con tope de 5 MB y acepta sólo JPEG, PNG o WebP por su firma. */
-export async function leerFotoValidada(
-  request: Request,
-): Promise<{ bytes: ArrayBuffer; mime: string }> {
+/** Lee el cuerpo entero sin pasar de 5 MB aunque no declare Content-Length. */
+async function leerCuerpoAcotado(request: Request, vacio: string): Promise<ArrayBuffer> {
   const reader = request.body?.getReader();
-  if (!reader) throw new ErrorApi("Fotografía vacía.");
+  if (!reader) throw new ErrorApi(vacio);
   const partes: Uint8Array[] = [];
   let longitud = 0;
   while (true) {
     const { value, done } = await reader.read();
     if (done) break;
     longitud += value.byteLength;
-    if (longitud > 5242880) {
+    if (longitud > FOTO_MAX_BYTES) {
       await reader.cancel();
       throw new ErrorApi("Máximo 5 MB por foto.", 413);
     }
@@ -31,9 +29,14 @@ export async function leerFotoValidada(
     contenido.set(p, offset);
     offset += p.byteLength;
   }
-  const bytes = contenido.buffer as ArrayBuffer;
-  if (!bytes.byteLength || bytes.byteLength > 5242880)
-    throw new ErrorApi("Máximo 5 MB por foto.", 413);
+  if (!longitud) throw new ErrorApi(vacio);
+  return contenido.buffer as ArrayBuffer;
+}
+/** Lee el cuerpo con tope de 5 MB y acepta sólo JPEG, PNG o WebP por su firma. */
+export async function leerFotoValidada(
+  request: Request,
+): Promise<{ bytes: ArrayBuffer; mime: string }> {
+  const bytes = await leerCuerpoAcotado(request, "Fotografía vacía.");
   const b = new Uint8Array(bytes);
   const mime =
     b[0] === 255 && b[1] === 216 && b[2] === 255
@@ -52,6 +55,13 @@ export async function leerFotoValidada(
           : null;
   if (!mime) throw new ErrorApi("Usa una fotografía JPEG, PNG o WebP.");
   return { bytes, mime };
+}
+/** Animación de un ejercicio: sólo GIF (firma GIF87a o GIF89a), con el mismo tope de 5 MB. */
+export async function leerAnimacionValidada(request: Request): Promise<{ bytes: ArrayBuffer; mime: "image/gif" }> {
+  const bytes = await leerCuerpoAcotado(request, "Animación vacía.");
+  const cabecera = new TextDecoder("latin1").decode(new Uint8Array(bytes, 0, Math.min(6, bytes.byteLength)));
+  if (cabecera !== "GIF87a" && cabecera !== "GIF89a") throw new ErrorApi("La animación tiene que ser un GIF.");
+  return { bytes, mime: "image/gif" };
 }
 export async function medios(
   request: Request,
