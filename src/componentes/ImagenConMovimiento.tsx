@@ -16,12 +16,14 @@ export function ImagenConMovimiento({ ejercicio, className }: { readonly ejercic
   const [verMovimiento, setVerMovimiento] = useState(() => !prefiereSinMovimiento())
   const animar = !!ejercicio.animacion && !fallo
   if (!ejercicio.imagen && !animar) return null
+  // El GIF y su foto fija salen en vertical 3:4: se ven completos, sin recorte.
+  const clase = ejercicio.animacion ? `${className} ${className}--movimiento` : className
   return (
     <>
       {animar && verMovimiento ? (
-        <img className={className} src={ejercicio.animacion} alt="" onError={() => setFallo(true)} />
+        <img className={clase} src={ejercicio.animacion} alt="" onError={() => setFallo(true)} />
       ) : (
-        <img className={className} src={ejercicio.imagen} alt="" />
+        <img className={clase} src={ejercicio.imagen} alt="" />
       )}
       {animar && !verMovimiento && (
         <button type="button" className="boton-guardar boton-guardar--secundario" onClick={() => setVerMovimiento(true)}>

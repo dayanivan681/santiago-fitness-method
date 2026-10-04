@@ -2178,3 +2178,25 @@ a.sfm-primary:active {
   align-items: center;
   gap: 10px;
 }
+/* Recorte de vídeo para crear el GIF dentro del formulario. */
+.sfm-recortar-video {
+  display: grid;
+  gap: 12px;
+  margin: 4px 0 16px;
+  padding: 14px;
+  border: 1px solid var(--sfm-line, #ffffff24);
+  border-radius: 14px;
+}
+.sfm-recortar-video__vista {
+  width: 100%;
+  max-height: 260px;
+  border-radius: 10px;
+  background: #000;
+}
+.sfm-recortar-video input[type="range"] {
+  width: 100%;
+  min-height: 44px;
+}
+.sfm-recortar-video .sfm-segmentos {
+  margin: 6px 0 0;
+}

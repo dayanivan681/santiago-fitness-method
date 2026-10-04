@@ -1159,6 +1159,18 @@ button,
   display: block;
 }
 
+/* GIF del coach (cuadro vertical 3:4): completo y centrado, a buen tamaño en el teléfono. */
+.hoja__imagen--movimiento {
+  width: auto;
+  max-width: 100%;
+  height: min(60vh, 440px);
+  max-height: none;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  margin-inline: auto;
+  background: #0b0c0d;
+}
+
 /* Historial de la variante dentro de su ficha: compacto, se lee de un vistazo. */
 .historial-variante {
   display: flex;

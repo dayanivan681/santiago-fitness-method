@@ -34,3 +34,11 @@ it('sin animación es la foto de siempre, sin botón', () => {
   expect(src(container)).toBe(PRESS_BANCA_15_SMITH.imagen)
   expect(screen.queryByRole('button')).toBeNull()
 })
+
+it('un ejercicio con GIF se muestra en cuadro vertical; la foto normal no cambia', () => {
+  movimientoReducido(false)
+  const { container, rerender } = render(<ImagenConMovimiento ejercicio={conGif} className="hoja__imagen" />)
+  expect(container.querySelector('img')!.className).toBe('hoja__imagen hoja__imagen--movimiento')
+  rerender(<ImagenConMovimiento ejercicio={PRESS_BANCA_15_SMITH} className="hoja__imagen" />)
+  expect(container.querySelector('img')!.className).toBe('hoja__imagen')
+})

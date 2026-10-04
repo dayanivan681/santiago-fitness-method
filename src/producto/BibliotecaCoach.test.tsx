@@ -284,13 +284,13 @@ describe('detalles del QA en iPhone', () => {
 
   it('el selector de foto es un botón de la app: «Elegir foto» y, con vista previa, «Cambiar foto»', async () => {
     const f = abrirNuevo()
-    expect(within(f).getByText('Elegir foto')).toBeInTheDocument()
+    expect(within(f).getByText('Elegir foto o vídeo')).toBeInTheDocument()
     const input = within(f).getByLabelText(/Foto de la máquina/) as HTMLInputElement
     expect(input).toHaveClass('solo-lectores')
-    expect(input).toHaveAttribute('accept', 'image/*')
+    expect(input).toHaveAttribute('accept', 'image/*,video/*')
     fireEvent.change(input, { target: { files: [new File(['x'], 'm.jpg', { type: 'image/jpeg' })] } })
-    expect(await within(f).findByText('Cambiar foto')).toBeInTheDocument()
-    expect(within(f).queryByText('Elegir foto')).toBeNull()
+    expect(await within(f).findByText('Cambiar foto o vídeo')).toBeInTheDocument()
+    expect(within(f).queryByText('Elegir foto o vídeo')).toBeNull()
     expect(f).not.toHaveTextContent(/no file selected/i)
   })
 
@@ -301,7 +301,7 @@ describe('detalles del QA en iPhone', () => {
     expect(screen.getByRole('dialog', { name: 'Añadir ejercicio' })).toBeInTheDocument()
     expect(within(f).getByLabelText(/Nombre/)).toHaveValue('Mi prensa')
     expect(within(f).queryByRole('alert')).toBeNull()
-    expect(within(f).getByText('Elegir foto')).toBeInTheDocument()
+    expect(within(f).getByText('Elegir foto o vídeo')).toBeInTheDocument()
   })
 
   it('la carga sigue al equipo mientras el coach no la toque', () => {

@@ -17,6 +17,8 @@ export const CSP_SHELL = [
   "style-src 'self' 'unsafe-inline'",
   // Fotos desde /api/v2/medios; las vistas previas locales usan createObjectURL.
   "img-src 'self' blob:",
+  // Vista previa del vídeo que el coach convierte en GIF (createObjectURL).
+  "media-src 'self' blob:",
   "font-src 'self'",
   "connect-src 'self'",
   "worker-src 'self'",

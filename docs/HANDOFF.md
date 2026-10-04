@@ -129,11 +129,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-04T04:09:40.673Z
+- **Última sincronización:** 2026-10-04T17:44:59.554Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1276,6 +1276,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-04T17:44:59.556Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Vídeo → GIF en el teléfono del coach: elegir vídeo en el formulario, recortar tramo (2-4 s), velocidad normal/lenta, conversión local con gifenc a cuadro vertical 3:4 (360x480) sin recorte; ficha muestra el GIF vertical completo; CSP media-src blob: para la vista previa; arreglo de primer cuadro negro en Safari iOS. Probado en navegador (vídeo horizontal y vertical) y en Safari del simulador iPhone con HEVC.
+- **Verificación:** npm test (917); npm run lint; npm run build; QA local navegador + simulador iOS
+- **Siguiente:** Que Santiago grabe en vertical y pruebe subir un vídeo corto desde su iPhone
+
 
 ### 2026-10-04T04:09:40.675Z | claude-code | CLAIM
 - **Estado:** active

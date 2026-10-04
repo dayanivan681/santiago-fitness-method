@@ -11,6 +11,8 @@ import {
 } from "../../shared/v2/biblioteca";
 import { CATALOGO_PDF, type FichaCatalogoPdf } from "../../shared/catalogo-pdf";
 import { reducirImagen } from "../datos/imagen";
+import { VIDEO_MAX_BYTES } from "../datos/videoAGif";
+import { RecortarVideo } from "./RecortarVideo";
 import { useBiblioteca } from "./contextoBiblioteca";
 import { ETIQUETA_EQUIPO, ETIQUETA_MUSCULO, OPCION_CARGA } from "./etiquetasBiblioteca";
 import { ErrorVisible, Hoja } from "./ui";
@@ -179,6 +181,8 @@ function Formulario({
   const [vista, setVista] = useState("");
   // GIF elegido: se sube aparte; `foto` guarda su primer cuadro como imagen fija.
   const [gif, setGif] = useState<Blob | null>(null);
+  // Vídeo elegido y aún sin convertir: se muestra el recorte en lugar del botón.
+  const [video, setVideo] = useState<Blob | null>(null);
   const [vistaGif, setVistaGif] = useState("");
   const [error, setError] = useState("");
   const [guardando, setGuardando] = useState(false);
@@ -211,6 +215,11 @@ function Formulario({
     e.target.value = "";
     if (!archivo) return;
     if (archivo.type === "image/gif") return elegirGif(archivo);
+    if (archivo.type.startsWith("video/")) {
+      if (archivo.size > VIDEO_MAX_BYTES) return setError("El vídeo es demasiado grande. Graba solo unos segundos del ejercicio.");
+      setError("");
+      return setVideo(archivo);
+    }
     if (!TIPOS_DE_FOTO.has(archivo.type) && !archivo.type.startsWith("image/heic")) {
       setError("Usa una foto JPEG, PNG o WebP, o un GIF con el movimiento.");
       return;
@@ -397,7 +406,7 @@ function Formulario({
       </label>
       <label className="sfm-field sfm-campo-foto">
         <span>Foto de la máquina o del ejercicio</span>
-        <small className="sfm-hint">También puede ser un GIF con el movimiento (hasta 5 MB).</small>
+        <small className="sfm-hint">Puede ser una foto, un GIF o un vídeo corto: la app lo convierte en movimiento.</small>
         {animacionActual ? (
           <span className="sfm-vista-animacion">
             <img className="sfm-exercise-thumb" src={animacionActual} alt="Animación elegida" />
@@ -407,9 +416,23 @@ function Formulario({
           fotoActual && <img className="sfm-exercise-thumb" src={fotoActual} alt="Foto elegida" />
         )}
         {/* El botón nativo dice «no file selected» (y en el idioma del teléfono) aunque haya vista previa. */}
-        <input className="solo-lectores" type="file" accept="image/*" onChange={(e) => void elegirFoto(e)} />
-        <span className="sfm-elegir-foto" aria-hidden="true">{fotoActual ? "Cambiar foto" : "Elegir foto"}</span>
+        <input className="solo-lectores" type="file" accept="image/*,video/*" onChange={(e) => void elegirFoto(e)} />
+        {!video && (
+          <span className="sfm-elegir-foto" aria-hidden="true">{fotoActual ? "Cambiar foto o vídeo" : "Elegir foto o vídeo"}</span>
+        )}
       </label>
+      {/* Fuera del <label>: un toque en el recorte no debe reabrir el selector de archivos. */}
+      {video && (
+        <RecortarVideo
+          archivo={video}
+          cancelar={() => setVideo(null)}
+          listo={({ gif: nuevoGif, fija }) => {
+            setFoto(fija);
+            setGif(nuevoGif);
+            setVideo(null);
+          }}
+        />
+      )}
       <button className="sfm-primary" type="submit" disabled={guardando}>
         {guardando ? "Guardando…" : editando ? "Guardar cambios" : "Añadir a mi biblioteca"}
       </button>
