@@ -13,6 +13,8 @@
 
 import { ImagenConMovimiento } from '../../componentes/ImagenConMovimiento'
 import { useRef } from 'react'
+import { ListaAlternativas } from './ListaAlternativas'
+import { useEjerciciosEntrenados } from '../../aplicacion/useEjerciciosEntrenados'
 import { useLiveQuery } from '../../nube/eventos'
 import { useCapa } from '../../aplicacion/useCapa'
 import { NOMBRE_MUSCULO, etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
@@ -51,6 +53,8 @@ export function HojaEjercicio({
   const alternativas = biblioteca.filter(
     (otro) => otro.movimiento === ejercicio.movimiento && otro.id !== ejercicio.id,
   )
+  // Sólo desde el entrenamiento: en la biblioteca no hay nadie entrenando detrás.
+  const entrenadas = useEjerciciosEntrenados(historial?.repositorio, historial?.participanteId)
 
   return (
     <div className="hoja" role="dialog" aria-modal="true" aria-label={ejercicio.nombre}>
@@ -98,25 +102,14 @@ export function HojaEjercicio({
         {/* "Instrucciones muy breves. Evitar explicaciones largas." */}
         <p className="hoja__texto">{ejercicio.explicacionCorta}</p>
 
-        <div>
-          <span className="etiqueta-campo">Alternativas equivalentes</span>
-          {alternativas.length === 0 ? (
-            <p className="hoja__texto">No hay otra variante de este movimiento.</p>
-          ) : (
-            <div className="filtros" style={{ marginTop: 6, flexWrap: 'wrap' }}>
-              {alternativas.map((alternativa) => (
-                <button
-                  key={alternativa.id}
-                  type="button"
-                  className="filtro"
-                  onClick={() => onElegir(alternativa)}
-                >
-                  {alternativa.nombre}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* `key`: al saltar a otra variante la lista vuelve a empezar recogida. */}
+        <ListaAlternativas
+          key={ejercicio.id}
+          ejercicio={ejercicio}
+          alternativas={alternativas}
+          entrenadas={entrenadas}
+          onElegir={onElegir}
+        />
 
         {historial && (
           <HistorialDeLaVariante

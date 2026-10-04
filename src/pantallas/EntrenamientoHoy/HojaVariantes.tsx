@@ -5,11 +5,13 @@
  * conserva su propio historial).
  */
 
-import { useRef, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
 import { useReferenciasDeVariantes } from '../../aplicacion/useReferenciasDeVariantes'
 import { useCapa } from '../../aplicacion/useCapa'
 import { debeEvitarse } from '../../logica/limitaciones'
+import { agruparPorEquipo, ordenarAlternativas } from '../../logica/alternativas'
+import { useEjerciciosEntrenados } from '../../aplicacion/useEjerciciosEntrenados'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import type { AlcanceDelCambio } from '../../aplicacion/useEntrenamiento'
 import type { Repositorio } from '../../datos/repositorio'
@@ -58,6 +60,44 @@ export function HojaVariantes({
   // el valor por defecto. Fijar la variante en la plantilla se pide a mano.
   const [alcance, setAlcance] = useState<AlcanceDelCambio>('soloHoy')
 
+  // Con 16 variantes la lista era larga y sin orden: arriba la de hoy y la de
+  // la plantilla, luego las ya entrenadas y el resto agrupado por equipo.
+  const entrenadas = useEjerciciosEntrenados(repositorio, participante.id)
+  const fijadas = [actualId, asignadaId]
+    .filter((id, i, ids) => ids.indexOf(id) === i)
+    .flatMap((id) => variantes.filter((v) => v.id === id))
+  const actual = fijadas[0] ?? variantes[0]
+  const resto = ordenarAlternativas(
+    actual,
+    variantes.filter((v) => !fijadas.includes(v)),
+    entrenadas,
+  )
+  const conHistorial = resto.filter((v) => entrenadas?.has(v.id))
+  const sinHistorial = resto.filter((v) => !entrenadas?.has(v.id))
+
+  const fila = (variante: Ejercicio) => (
+    <button
+      key={variante.id}
+      type="button"
+      className={variante.id === actualId ? 'variante variante--activa' : 'variante'}
+      aria-pressed={variante.id === actualId}
+      onClick={() => onElegir(variante.id, alcance)}
+    >
+      <span className="variante__texto">
+        <span className="variante__nombre">{variante.nombre}</span>
+        <span className="variante__meta">
+          {etiquetaEquipo(variante.equipo)} · {etiquetaCarga(variante.tipoCarga, variante.equipo)}
+          {variante.id === asignadaId && ' · En la plantilla'}
+          {debeEvitarse(variante.id, participante) && ' · El perfil dice evitarlo'}
+        </span>
+      </span>
+      <span className="variante__ref">
+        <span>{referencias.get(variante.id) ?? '—'}</span>
+        <span className="etiqueta-campo">Historial propio</span>
+      </span>
+    </button>
+  )
+
   return (
     <div className="hoja" role="dialog" aria-modal="true" aria-label="Variante asignada">
       {/* El fondo también cierra, pero con su propio nombre: dos botones
@@ -97,29 +137,18 @@ export function HojaVariantes({
             : 'Queda asignada en la plantilla a partir de hoy. No rompe la estructura del día.'}
         </p>
 
-        {variantes.map((variante) => (
-          <button
-            key={variante.id}
-            type="button"
-            className={
-              variante.id === actualId ? 'variante variante--activa' : 'variante'
-            }
-            aria-pressed={variante.id === actualId}
-            onClick={() => onElegir(variante.id, alcance)}
-          >
-            <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <span className="variante__nombre">{variante.nombre}</span>
-              <span className="variante__meta">
-                {etiquetaEquipo(variante.equipo)} · {etiquetaCarga(variante.tipoCarga, variante.equipo)}
-                {variante.id === asignadaId && ' · En la plantilla'}
-                {debeEvitarse(variante.id, participante) && ' · El perfil dice evitarlo'}
-              </span>
-            </span>
-            <span className="variante__ref">
-              <span>{referencias.get(variante.id) ?? '—'}</span>
-              <span className="etiqueta-campo">Historial propio</span>
-            </span>
-          </button>
+        {fijadas.map(fila)}
+        {conHistorial.length > 0 && (
+          <p className="alternativas__grupo">Ya entrenadas · {conHistorial.length}</p>
+        )}
+        {conHistorial.map(fila)}
+        {agruparPorEquipo(sinHistorial).map(([equipo, suyas]) => (
+          <Fragment key={equipo}>
+            <p className="alternativas__grupo">
+              {etiquetaEquipo(equipo)} · {suyas.length}
+            </p>
+            {suyas.map(fila)}
+          </Fragment>
         ))}
       </div>
     </div>

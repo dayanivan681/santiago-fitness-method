@@ -1101,7 +1101,7 @@ describe('ficha del ejercicio desde el entrenamiento (fases 4 y 5)', () => {
 
     const ficha = await screen.findByRole('dialog', { name: PRESS })
     expect(within(ficha).getByText('Músculo principal')).toBeInTheDocument()
-    expect(within(ficha).getByText('Alternativas equivalentes')).toBeInTheDocument()
+    expect(within(ficha).getByText(/^Alternativas \(\d+\)$/)).toBeInTheDocument()
   })
 
   test('abrirla y cerrarla NO pierde lo que llevas tecleado', async () => {

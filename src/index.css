@@ -1242,6 +1242,57 @@ button,
   color: var(--positivo);
 }
 
+/* La vista previa del coach fija los botones a 48 px («.sfm-shell button»);
+   las filas de variante necesitan sus 56 px también ahí. */
+.hoja .variante {
+  min-height: 56px;
+}
+
+/* Nombre y equipo apilados; `min-width: 0` deja que los nombres largos
+   («Smith Machine Behind-the-Neck Press») partan en dos líneas. */
+.variante__texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.variante__nombre {
+  overflow-wrap: anywhere;
+}
+
+.variante__chevron {
+  flex: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--texto-50);
+}
+
+/* Alternativas de la ficha: lista de teléfono, no nube de chips. */
+.alternativas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alternativas__grupo {
+  margin: 14px 0 0;
+  font: 600 12px/1.2 'Barlow', sans-serif;
+  color: var(--texto-60);
+}
+
+.alternativas__mas {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--borde-tenue);
+  border-radius: var(--radio-chico);
+  background: transparent;
+  color: inherit;
+  font: 600 14px/1 'Barlow', sans-serif;
+  cursor: pointer;
+}
+
 /* ---------- Biblioteca (§15) ---------- */
 
 .filtros {

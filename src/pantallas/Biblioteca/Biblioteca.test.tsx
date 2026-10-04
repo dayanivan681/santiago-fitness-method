@@ -47,7 +47,7 @@ describe('ficha completa del ejercicio (punto H)', () => {
       'Tipo de carga',
       'Músculo principal',
       'Secundarios',
-      'Alternativas equivalentes',
+      /^Alternativas \(\d+\)$/,
     ]) {
       expect(within(hoja).getByText(etiqueta), `falta ${etiqueta}`).toBeInTheDocument()
     }

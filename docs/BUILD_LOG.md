@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-04 — Alternativas equivalentes como lista de teléfono — claude-code
+
+- `src/logica/alternativas.ts`: `ordenarAlternativas` (ya entrenadas si hay historial → mismo equipo → resto por nombre, `localeCompare('es')`) y `agruparPorEquipo` (orden de aparición, sin duplicados). `useEjerciciosEntrenados` lee `idsDeEjerciciosConHistorial` sólo cuando la ficha tiene participante.
+- Ficha (`ListaAlternativas`): «Alternativas (N)», las 3 primeras como filas `.variante` (nombre en texto normal, equipo debajo, chevron, 56 px, toda la fila tocable; nombre accesible = nombre del ejercicio, equipo como descripción). Con más de 3, «Ver las N alternativas» despliega en el mismo sitio la lista agrupada por equipo («Mancuernas · 2») y pasa a «Ver menos»; al saltar a otra variante vuelve a empezar recogida. Con 0, el texto de siempre. `.filtro` no se toca.
+- «Cambiar variante»: arriba la de hoy y la de la plantilla, luego «Ya entrenadas · N» y el resto agrupado por equipo; alcances y referencias de historial sin cambios.
+- Estilos junto a `.variante`: `__texto`, `__chevron`, `.alternativas`, `__grupo`, `__mas`. `.hoja .variante` mantiene los 56 px dentro de la Vista previa del coach, donde `.sfm-shell button` los bajaba a 48.
+- El título pasa de «Alternativas equivalentes» a «Alternativas (N)»: se ajustaron las dos pruebas que lo buscaban. En los datos locales «Selectorized Shoulder Press» tiene 15 alternativas (el plan hablaba de 16).
+- Verificado: 928 pruebas (nuevas de `alternativas.ts`, `ListaAlternativas` y `HojaVariantes`), tsc, lint, build. Runtime local a 320 y 375 px: 3 filas, «Ver las 15 alternativas» → 7 grupos, filas de 56 px, sin desborde; «Copenhagen Adduction» (2) sin botón; tocar una fila abre esa ficha; Entrenamiento → «Cambiar variante» en el press inclinado: actual arriba, «Ya entrenadas · 1», resto agrupado empezando por su equipo. Safari del simulador iOS: misma ficha, «Ver las 15 alternativas» y toque en una fila. Sin cambios de datos.
+
 ## 2026-10-03 — GIF animado en los ejercicios del coach — claude-code
 
 - Migración `0013_biblioteca_animacion.sql`: tabla `ejercicios_coach_animacion` (`CREATE TABLE IF NOT EXISTS`) en lugar del `ALTER TABLE … ADD COLUMN` del plan, porque las migraciones v2 se ensayan y reaplican enteras y un ADD COLUMN repetido falla en SQLite. Registrada en `pruebas-v2/d1.ts`, `preparar-qa-v2` y `migrar-v2` (que ahora comprueba también esta tabla).
