@@ -129,11 +129,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-04T17:52:52.801Z
+- **Última sincronización:** 2026-10-04T17:57:08.725Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1276,6 +1276,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-04T17:57:08.727Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Hoja Añadir ejercicio ya no se desplaza de lado en el teléfono: el input de archivo oculto (.solo-lectores) heredaba width 100% de .sfm-field input y desbordaba 25 px; se restaura su tamaño y .sfm-hoja usa overflow-x hidden. Verificado en navegador 375 px y simulador iPhone.
+- **Verificación:** npm test (917); npm run lint; npm run build; QA navegador + simulador iOS
+- **Siguiente:** Enviar a Santiago el WhatsApp con los pasos para subir vídeos
+
 
 ### 2026-10-04T17:52:52.802Z | claude-code | CLAIM
 - **Estado:** active
