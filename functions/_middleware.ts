@@ -27,7 +27,7 @@ import {
   paginaSesionCerrada,
 } from './lib/paginas'
 import { esRutaPresentacion, servirPresentacion } from './lib/presentacion'
-import { esCorreoDeCoach, origenSeguro } from './lib/v2/seguridad'
+import { esCorreoDeCoach, origenSeguro, verificarCoachPorCookie } from './lib/v2/seguridad'
 import { conCabecerasDeShell } from './lib/cabecerasShell'
 import { resumen } from './lib/cripto'
 import { borrarEstadoGoogle, googleConfigurado, iniciarGoogle, terminarGoogle } from './lib/google'
@@ -41,6 +41,9 @@ type Entorno = {
   readonly GOOGLE_HABILITADO?: string
   readonly SFM_ENV?: string
   readonly COACH_EMAILS?: string
+  readonly ACCESS_ISSUER?: string
+  readonly ACCESS_AUD?: string
+  readonly LOCAL_ACCESS_JWKS?: string
   readonly STRIPE_SECRET_KEY?: string
   readonly STRIPE_WEBHOOK_SECRET?: string
   readonly STRIPE_HABILITADO?: string
@@ -193,8 +196,18 @@ function respuestaDeEntrada(cookie: string): Response {
   } })
 }
 
+/**
+ * El coach con Access vigente que abre la app instalada (`/`) o llega a
+ * `/entrar` va a su panel: el login de clientes no es para él. Sólo redirige.
+ */
+const AL_PANEL_DEL_COACH = (): Response =>
+  new Response(null, { status: 302, headers: { Location: `${PREFIJO_ADMIN}/`, 'Cache-Control': 'no-store' } })
+
 async function atenderLogin(request: Request, env: Entorno): Promise<Response> {
-  if (request.method === 'GET') return paginaLogin(false, googleConfigurado(env))
+  if (request.method === 'GET') {
+    if (await verificarCoachPorCookie(request, env)) return AL_PANEL_DEL_COACH()
+    return paginaLogin(false, googleConfigurado(env))
+  }
   if (request.method !== 'POST') return new Response('Método no permitido', { status: 405 })
   const formulario = await request.formData()
   const email = String(formulario.get('email') ?? '')
@@ -293,8 +306,12 @@ async function atenderApp(
   // esto permite una demo pública en memoria y recuperar el shell offline.
   // Lo que sí lleva es CSP y anti-framing: ver lib/cabecerasShell.ts.
   const cookie = leerCookie(request)
-  if (new URL(request.url).pathname === '/' && (!cookie || !await validarSesion(env.ACCESO, cookie)))
+  if (new URL(request.url).pathname === '/' && (!cookie || !await validarSesion(env.ACCESO, cookie))) {
+    // Sin sesión de cliente: si quien abre es el coach (app instalada, que
+    // arranca en `/`), a su panel; si no, al login como siempre.
+    if (await verificarCoachPorCookie(request, env)) return AL_PANEL_DEL_COACH()
     return new Response(null, { status: 302, headers: { Location: '/entrar', 'Cache-Control': 'no-store' } })
+  }
   // La API que sirve /inicio ya recibe la fecha nueva en su contexto.
   const renovada = cookie ? await renovarSesion(env.ACCESO, cookie) : false
   const respuesta = conCabecerasDeShell(await next())

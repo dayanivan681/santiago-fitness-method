@@ -14,8 +14,14 @@ import { ahoraEnSegundos } from './invitacion'
 
 export const NOMBRE_DE_COOKIE = 'sfm_sesion'
 
-/** Vigencia de una sesión, en segundos. */
-export const VIDA_DE_SESION = 30 * 24 * 60 * 60
+/**
+ * Vigencia de una sesión, en segundos: 90 días.
+ *
+ * Es una app de gimnasio de uso diario o semanal; pedir la contraseña cada mes
+ * no protege más y molesta. Se renueva al usarla cuando queda menos de la mitad
+ * (`renovarSesion`), y archivar al cliente la revoca al instante.
+ */
+export const VIDA_DE_SESION = 90 * 24 * 60 * 60
 
 export type Sesion = {
   readonly clienteId: string
@@ -43,6 +49,11 @@ export function cabeceraDeCookieBorrada(): string {
 
 /** Lee la cookie de sesión de la petición. `null` si no viene. */
 export function leerCookie(peticion: Request): string | null {
+  return leerCookieNombrada(peticion, NOMBRE_DE_COOKIE)
+}
+
+/** Lee cualquier cookie por su nombre (también `CF_Authorization`, la de Access). */
+export function leerCookieNombrada(peticion: Request, nombre: string): string | null {
   const cabecera = peticion.headers.get('Cookie')
   if (!cabecera) return null
 
@@ -50,7 +61,7 @@ export function leerCookie(peticion: Request): string | null {
     const separador = trozo.indexOf('=')
     if (separador === -1) continue
 
-    if (trozo.slice(0, separador).trim() === NOMBRE_DE_COOKIE) {
+    if (trozo.slice(0, separador).trim() === nombre) {
       return trozo.slice(separador + 1).trim() || null
     }
   }

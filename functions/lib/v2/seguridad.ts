@@ -4,7 +4,7 @@ import {
   jwtVerify,
   type JWTVerifyGetKey,
 } from "jose";
-import { leerCookie, validarSesion } from "../sesion";
+import { leerCookie, leerCookieNombrada, validarSesion } from "../sesion";
 import type { Contexto } from "../../../shared/v2/contratos";
 import { googleConfigurado } from "../google";
 export type EntornoV2 = {
@@ -25,12 +25,20 @@ export type EntornoV2 = {
   STRIPE_MODO_REAL?: string;
 };
 const claves = new Map<string, JWTVerifyGetKey>();
-export async function verificarCoach(
+type EntornoDeAccess = Pick<
+  EntornoV2,
+  "ACCESS_ISSUER" | "ACCESS_AUD" | "LOCAL_ACCESS_JWKS" | "SFM_ENV"
+>;
+
+/**
+ * Verifica un JWT de Cloudflare Access: emisor, audiencia, RS256, caducidad y
+ * claves del JWKS del equipo. Es la parte común de las dos vías por las que
+ * llega el token (cabecera en `/admin`, cookie en el resto del dominio).
+ */
+async function verificarTokenDeAccess(
+  token: string | null,
   request: Request,
-  env: Pick<
-    EntornoV2,
-    "ACCESS_ISSUER" | "ACCESS_AUD" | "LOCAL_ACCESS_JWKS" | "SFM_ENV"
-  >,
+  env: EntornoDeAccess,
   obtenerClave?: JWTVerifyGetKey,
 ) {
   if (
@@ -39,7 +47,6 @@ export async function verificarCoach(
     !/^https:\/\/[\w-]+\.cloudflareaccess\.com$/.test(env.ACCESS_ISSUER)
   )
     return null;
-  const token = request.headers.get("Cf-Access-Jwt-Assertion");
   if (!token) return null;
   try {
     const local =
@@ -70,6 +77,40 @@ export async function verificarCoach(
   } catch {
     return null;
   }
+}
+
+/** El coach en `/admin`: Access le añade el JWT en `Cf-Access-Jwt-Assertion`. */
+export async function verificarCoach(
+  request: Request,
+  env: EntornoDeAccess,
+  obtenerClave?: JWTVerifyGetKey,
+) {
+  return verificarTokenDeAccess(
+    request.headers.get("Cf-Access-Jwt-Assertion"),
+    request,
+    env,
+    obtenerClave,
+  );
+}
+
+/**
+ * El coach fuera de `/admin` (en `/` o `/entrar`), donde Access no añade la
+ * cabecera pero su cookie `CF_Authorization` sí llega. Sólo sirve para
+ * redirigirle a `/admin/` en vez de enseñarle el login de clientes: no abre
+ * nada, `/admin` sigue protegido por Access y por `verificarCoach`.
+ */
+export async function verificarCoachPorCookie(
+  request: Request,
+  env: EntornoDeAccess & Pick<EntornoV2, "COACH_EMAILS">,
+  obtenerClave?: JWTVerifyGetKey,
+) {
+  const coach = await verificarTokenDeAccess(
+    leerCookieNombrada(request, "CF_Authorization"),
+    request,
+    env,
+    obtenerClave,
+  );
+  return coach && esCorreoDeCoach(env.COACH_EMAILS, coach.identidad) ? coach : null;
 }
 /** El correo está en COACH_EMAILS (lista separada por comas, sin distinguir mayúsculas). */
 export function esCorreoDeCoach(lista: string | undefined, email: string): boolean {

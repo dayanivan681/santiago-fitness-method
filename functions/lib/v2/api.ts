@@ -22,6 +22,7 @@ import { medios } from "./medios";
 import { crearInvitacion } from "../invitacion";
 import { archivarCliente } from "../roles";
 import { resumen } from "../cripto";
+import { crearCabeceraDeCookie, leerCookie, renovarSesion, VIDA_DE_SESION } from "../sesion";
 import { prepararRestablecimiento } from "../cuentas";
 import { rutaDeBiblioteca } from "./bibliotecaApi";
 import { bloqueoPorSuscripcion, rutaDeSuscripcion } from "./suscripcionApi";
@@ -40,7 +41,8 @@ export async function api(
     const ruta = url.pathname
       .replace(coach ? "/admin/api/v2" : "/api/v2", "")
       .replace(/\/$/, "");
-    if (ruta === "/contexto" && request.method === "GET") return json(ctx);
+    if (ruta === "/contexto" && request.method === "GET")
+      return coach ? json(ctx) : conSesionRenovada(request, env, json(ctx));
     // Staging se niega a operar si alguien le vincula una base productiva.
     const entorno = await env.ACCESO.prepare(
       "SELECT nombre FROM entorno_sfm WHERE id=1",
@@ -364,4 +366,18 @@ export async function api(
       500,
     );
   }
+}
+
+/**
+ * La app instalada puede volver del fondo sin pedir `/` (no hay navegación),
+ * así que la sesión del cliente también se renueva aquí, en la primera llamada
+ * que hace al abrirse. Mismas reglas que al servir la app: sólo con menos de
+ * media vida y sólo cuentas activas.
+ */
+async function conSesionRenovada(request: Request, env: EntornoV2, respuesta: Response): Promise<Response> {
+  const cookie = leerCookie(request);
+  if (!cookie || !(await renovarSesion(env.ACCESO, cookie))) return respuesta;
+  const salida = new Response(respuesta.body, respuesta);
+  salida.headers.set("Set-Cookie", crearCabeceraDeCookie(cookie, VIDA_DE_SESION));
+  return salida;
 }

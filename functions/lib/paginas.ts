@@ -43,23 +43,37 @@ function envolver(titulo: string, cuerpo: string): string {
         border-radius:16px;padding:32px 28px;text-align:center}
   .marca{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
          color:rgba(242,242,240,.35);margin:0 0 18px}
-  h1{font-size:25px;line-height:1.15;letter-spacing:.01em;text-transform:uppercase;
-     font-weight:700;margin:0 0 12px;text-wrap:balance}
+  h1{font-size:26px;line-height:1.2;font-weight:700;margin:0 0 20px;text-wrap:balance}
   p{font-size:16px;line-height:1.6;color:${TENUE};margin:0 0 22px}
   p:last-child{margin-bottom:0}
-  button{width:100%;padding:15px;border:0;border-radius:12px;background:${TEXTO};
-         color:${FONDO};font-family:inherit;font-size:15px;font-weight:600;
-         letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+  button{width:100%;min-height:52px;padding:14px;border:0;border-radius:12px;background:${TEXTO};
+         color:${FONDO};font-family:inherit;font-size:17px;font-weight:600;cursor:pointer}
   button:active{transform:scale(.99)}
   button:focus-visible{outline:2px solid ${ROJO};outline-offset:3px}
   input{width:100%;min-height:48px;margin:0 0 12px;padding:12px;border:1px solid ${BORDE};
-        border-radius:10px;background:${FONDO};color:${TEXTO};font:inherit}
+        border-radius:12px;background:${FONDO};color:${TEXTO};font:inherit;font-size:16px}
   label{display:block;text-align:left;font-size:14px;margin:0 0 6px}
   a{color:${TEXTO};text-decoration:underline;text-underline-offset:3px}
   .ayuda{font-size:14px;margin:16px 0 0}
   .error{color:#ffaba6}
   .boton-google{display:block;margin-top:12px;padding:13px;border:1px solid ${BORDE};
     border-radius:12px;text-decoration:none;font-size:15px;font-weight:600}
+  /* Entrar: Google es la acción principal (un toque, sin contraseña); el email
+     se despliega con details/summary, sin JavaScript (la CSP no permite scripts). */
+  .boton-principal{display:flex;align-items:center;justify-content:center;min-height:52px;
+    padding:14px;border-radius:12px;background:${TEXTO};color:${FONDO};text-decoration:none;
+    font-size:17px;font-weight:600}
+  .con-email{margin-top:12px;text-align:left}
+  .con-email>summary{display:flex;align-items:center;justify-content:center;min-height:52px;
+    border:1px solid ${BORDE};border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;
+    list-style:none}
+  .con-email>summary::-webkit-details-marker{display:none}
+  .con-email[open]>summary{margin-bottom:16px}
+  .con-email>summary:focus-visible,.boton-principal:focus-visible{outline:2px solid ${ROJO};outline-offset:3px}
+  form{text-align:left}
+  .pie{font-size:14px;margin:12px 0 0;color:${TENUE}}
+  /* Enlaces discretos, pero de 44 px de alto para el dedo. */
+  .pie a{display:inline-block;padding:14px 6px}
   .barra{width:34px;height:3px;background:${ROJO};border-radius:2px;margin:0 auto 20px}
   @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style>
@@ -118,17 +132,25 @@ export function paginaEntrar(token: string, error = false, google = false): Resp
   )
 }
 
+/**
+ * Entrar. Lo principal es «Continuar con Google»: un toque y sin contraseña que
+ * recordar. El email queda detrás de «Entrar con email» (abierto de entrada si
+ * Google no está habilitado, o si un intento con email acaba de fallar).
+ */
 export function paginaLogin(error = false, google = false): Response {
+  const formulario = `<form method="POST" action="/entrar">
+       <label for="email">Email</label><input id="email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+       <label for="clave">Contraseña</label><input id="clave" name="clave" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false" required>
+       <button type="submit">Entrar</button></form>`
   return respuesta(envolver('Entrar · Santiago Fitness Method',
-    `<div class="barra"></div><p class="marca">Santiago Fitness Method</p><h1>Bienvenido de nuevo</h1>
-     ${error ? '<p class="error">No pudimos iniciar sesión. Revisa tus datos o inténtalo más tarde.</p>' : '<p>Entra a tu espacio con tu cuenta.</p>'}
-     <form method="POST" action="/entrar">
-       <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required>
-       <label for="clave">Contraseña</label><input id="clave" name="clave" type="password" autocomplete="current-password" required>
-       <button type="submit">Entrar</button></form>
-     ${google ? '<a class="boton-google" href="/auth/google?origen=entrar">Continuar con Google</a>' : ''}
-     <p class="ayuda">¿Olvidaste tu contraseña? Pide a tu coach un enlace para cambiarla.</p>
-     <p class="ayuda"><a href="/demo">Explorar la demo</a> · <a href="/admin">Acceso del Coach</a></p>`), error ? 401 : 200)
+    `<div class="barra"></div><p class="marca">Santiago Fitness Method</p><h1>Entra a tu cuenta</h1>
+     ${error ? '<p class="error" role="alert">No pudimos entrar. Revisa tu email y tu contraseña, o inténtalo de nuevo en unos minutos.</p>' : ''}
+     ${google
+       ? `<a class="boton-principal" href="/auth/google?origen=entrar">Continuar con Google</a>
+     <details class="con-email"${error ? ' open' : ''}><summary>Entrar con email</summary>${formulario}</details>`
+       : formulario}
+     <p class="ayuda">¿Olvidaste tu contraseña? Pídele a tu coach un enlace nuevo.</p>
+     <p class="pie"><a href="/demo">Explorar la demo</a> · <a href="/admin">Soy el coach</a></p>`), error ? 401 : 200)
 }
 
 export function paginaGoogleError(): Response {

@@ -58,6 +58,14 @@ const entradaSinGoogle = await codigo(await pedir('/entrar'), 200, 'Entrada disp
 assert.ok(!(await entradaSinGoogle.text()).includes('Continuar con Google'));
 checks++;
 await codigo(await pedir('/auth/google?origen=entrar'), 401, 'Google falla cerrado sin secretos');
+// El coach con Access vigente (cookie CF_Authorization) no ve el login de clientes.
+const destino = (r) => r.headers.get("location");
+const coachCookie = { Cookie: `CF_Authorization=${acceso.jwt}` };
+assert.equal(destino(await codigo(await pedir("/", coachCookie), 302, "Coach con Access en /")), "/admin/");
+assert.equal(destino(await codigo(await pedir("/entrar", coachCookie), 302, "Coach con Access en /entrar")), "/admin/");
+assert.equal(destino(await codigo(await pedir("/", { Cookie: "CF_Authorization=inventado" }), 302, "Cookie de Access falsificada en /")), "/entrar");
+await codigo(await pedir("/entrar", { Cookie: "CF_Authorization=inventado" }), 200, "Cookie de Access falsificada en /entrar");
+assert.equal(destino(await codigo(await pedir("/"), 302, "Sin cookies, / va al login")), "/entrar");
 await codigo(await pedir('/auth/google/retorno'), 401, 'Retorno de Google falla cerrado sin estado');
 await codigo(
   await pedir("/admin/api/clientes", coach),
@@ -142,6 +150,10 @@ const entrar = await aceptar();
 await codigo(entrar, 302, "Invitación de un uso");
 const cookie = entrar.headers.get("set-cookie").split(";")[0];
 const cliente = { Cookie: cookie };
+// La sesión del cliente dura 90 días y, con ella, «/» sirve la app aunque llegue también la cookie del coach.
+assert.match(entrar.headers.get("set-cookie"), /Max-Age=7776000/);
+checks++;
+await codigo(await pedir("/", { Cookie: `${cookie}; CF_Authorization=${acceso.jwt}` }), 200, "Cliente con sesión en / ve la app");
 const segundo = await aceptar();
 assert.notEqual(segundo.status, 302, "No reutiliza invitación");
 checks++;

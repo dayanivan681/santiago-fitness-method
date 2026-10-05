@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-05 — Login simple y sesión persistente — claude-code
+
+- Coach: `verificarCoachPorCookie` (`functions/lib/v2/seguridad.ts`) verifica el JWT de la cookie `CF_Authorization` con la misma lógica que `verificarCoach` (emisor, audiencia, RS256, caducidad, JWKS; extraída a `verificarTokenDeAccess`) y exige un correo de `COACH_EMAILS`. En `_middleware.ts`, `/` sin sesión de cliente y `GET /entrar` redirigen con 302 a `/admin/` a ese coach; si no, como antes. Sólo redirige: `/admin` sigue tras Access y `verificarCoach`. `leerCookieNombrada` en `sesion.ts`.
+- Cliente: `VIDA_DE_SESION` 30 → 90 días (`Max-Age=7776000`), misma renovación a media vida y sólo cuentas activas; además se renueva en `GET /api/v2/contexto`, para la app instalada que vuelve del fondo sin navegar a `/`.
+- `/entrar` (`paginaLogin`): «Entra a tu cuenta» sin mayúsculas forzadas, sin subtítulo; «Continuar con Google» como botón principal; «Entrar con email» con `<details>` sin JavaScript (abierto de entrada sin Google o tras un intento fallido); campos con `inputmode`, `autocomplete`, `autocapitalize="off"`, `spellcheck="false"` y 16 px; ayuda en una línea; pie «Explorar la demo · Soy el coach» con 44 px de toque. Los estilos comunes de las páginas de acceso dejan las mayúsculas forzadas en títulos y botones. CSP, CSRF por origen y límites de intentos sin cambios.
+- Pruebas nuevas en `functions/lib/sesionLarga.test.ts` (coach válido en `/` y `/entrar`; caducado, otra audiencia, correo no coach e inventado; cliente con sesión; renovación a media vida, cuenta archivada y en `/contexto`, mirando la caducidad guardada porque el doble de D1 siempre informa de un cambio; página de entrada). `test:http` suma 7 comprobaciones (108). `acceso.test.ts` pasa a 90 días.
+- Verificado: 987 pruebas, tsc, lint, build, `git diff --check`, `test:http` 108. `/entrar` a 320 y 375 px con y sin Google y con el email desplegado: sin desbordes, campos de 16 px, botones de 52 px y enlaces de 50 px. Simulador iOS con la app instalada contra el runtime local: la sesión del cliente sobrevive a cerrar y reabrir la app. Pendiente: coach con Access en el teléfono del dueño y su duración de sesión de Access.
+
 ## 2026-10-05 — Gráficas de progreso: huecos de tiempo y RIR a la vista — claude-code
 
 - `src/logica/progresoGrafica.ts`: `huecosDeTiempo(puntos, umbralDias = 14)` (pares seguidos a más de 14 días, en días UTC y semanas redondeadas: «3 sem»); `resumenDeProgreso` añade `rirPrimero` y `rirUltimo`; `textoDeEsfuerzo` («con el mismo esfuerzo (RIR 2)», «con más esfuerzo (RIR 3 → 1)», «con menos esfuerzo (RIR 1 → 3)», con `formatearRir` para 5+).

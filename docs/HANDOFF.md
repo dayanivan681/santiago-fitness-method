@@ -1,5 +1,16 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-05 — Login simple y sesión persistente (coach y cliente) — claude-code
+
+- Publicada con el «sí» del dueño.
+- Preview: https://codex-premium-v2.santiago-fitness-method.pages.dev (todo el preview va detrás de Access; `/entrar` se ve tras entrar). Producción en `3fc2297`.
+- Diagnóstico:
+  - Cliente: la cookie ya era persistente (Max-Age 30 días, renovable). Simulador iOS con la app instalada («Añadir a inicio», «Open as Web App») contra el runtime local: entrar, terminar el proceso de la app (`simctl terminate com.apple.webapp`) y reabrir desde el icono → sigue dentro. iOS copió la sesión de Safari al instalar. No se pudo probar «+2 días» (el simulador usa el reloj del Mac) ni contra staging (crear cuentas de prueba en un host remoto no está permitido a los agentes).
+  - Coach: la causa es la de siempre: la app instalada abre en `/` y, sin cookie de cliente, iba a `/entrar`; y la sesión de Access caduca según su configuración. No probado en el simulador: requiere el código de Access del correo del dueño.
+- Hecho: `/` y `/entrar` redirigen a `/admin/` a un coach con `CF_Authorization` válido y de `COACH_EMAILS` (`verificarCoachPorCookie`, misma verificación que `verificarCoach`); sesión del cliente de 90 días con renovación también en `/api/v2/contexto`; `/entrar` simplificado (Google primero, email plegado, «Soy el coach»). Detalle en BUILD_LOG y `docs/ACCESO.md`.
+- Pendiente del dueño: decir la duración de sesión actual de la app de Access y subirla a 1 mes (pasos en `docs/ACCESO.md`); probar en su iPhone con la app instalada (coach y cliente).
+- Checks: 987 pruebas, tsc, lint, build, `git diff --check`, `test:http` (108) PASS.
+
 ## 2026-10-05 — Gráficas: huecos de tiempo y RIR visible — claude-code
 
 - Publicada con el «sí» del dueño, que aprobó también los dos umbrales de abajo.
@@ -162,11 +173,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-05T12:36:25.114Z
+- **Última sincronización:** 2026-10-05T13:46:15.484Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1309,6 +1320,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-05T13:46:15.485Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Login simple y sesión persistente: el coach con Access vigente (cookie CF_Authorization de COACH_EMAILS) va de / y /entrar a /admin/ (solo redirige); sesión de cliente de 90 días renovable también en /api/v2/contexto; /entrar con Google primero, email plegado sin JS y «Soy el coach». Pasos para subir la sesión de Access a 1 mes en docs/ACCESO.md.
+- **Verificación:** npx tsc -b; npm test (987; pasadas previas con timeouts intermitentes por carga alta de la máquina, aislados pasan); npm run lint; npm run build; git diff --check; npm run test:http (108); simulador iOS app instalada (cliente); preview codex-premium-v2
+- **Siguiente:** Dueño: subir la duración de sesión de Access a 1 mes y probar en su iPhone (coach y cliente)
+
 
 ### 2026-10-05T12:36:25.115Z | claude-code | CLAIM
 - **Estado:** active
