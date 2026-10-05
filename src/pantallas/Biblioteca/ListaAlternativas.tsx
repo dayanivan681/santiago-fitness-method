@@ -30,7 +30,7 @@ export function ListaAlternativas({ ejercicio, alternativas, entrenadas, onElegi
 
   if (total === 0) {
     return (
-      <div>
+      <div className="hoja__seccion">
         <span className="etiqueta-campo">Alternativas</span>
         <p className="hoja__texto">No hay otra variante de este movimiento.</p>
       </div>
@@ -38,7 +38,7 @@ export function ListaAlternativas({ ejercicio, alternativas, entrenadas, onElegi
   }
 
   return (
-    <div className="alternativas">
+    <div className="alternativas hoja__seccion">
       <span className="etiqueta-campo">Alternativas ({total})</span>
       {desplegada
         ? agruparPorEquipo(ordenadas).map(([equipo, suyas]) => (

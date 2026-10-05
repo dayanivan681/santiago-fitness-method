@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-04 — Pulido UI fase 1 (consistencia visual) — claude-code
+
+- Publicada con el «sí» del dueño (2026-10-04). La fase 2 no empieza sin su nueva aprobación.
+- Preview: https://codex-premium-v2.santiago-fitness-method.pages.dev (despliegue `1b464d92`; demo `/demo/cliente`, `/demo/coach/biblioteca`). Producción intacta en `b638b6c`.
+- Hecho: escala de espacios y radios en tokens (`--esp-1…6`, `--radio`, `--radio-chico`); ningún texto del cliente por debajo de 12 px; subtítulos de grupo de la Biblioteca fijos bajo el buscador; miniaturas con fondo neutro al cargar; «Comenzar entrenamiento» destacado; ficha con jerarquía por la escala; Progreso con gráfica y sesiones en tarjetas de 16 px (sólo cliente); Perfil con desplegable de 44 px. Detalle en BUILD_LOG.
+- Checks: 944 pruebas, tsc, lint, build, `git diff --check` y `test:http` (101) PASS. Para `test:http` se restauró, con el permiso del dueño, la ficha «Abdominal Crunch» que él había archivado a mano en el runtime local.
+- Pendiente: comprobar áreas seguras con la app instalada (Añadir a inicio) y en un teléfono físico.
+
 ## 2026-09-30 — Limpieza de evidencia temporal de gráficas — codex
 
 - Los snapshots YAML generados por Playwright se incluyeron por error al moverlos a `output/playwright` (sólo las imágenes estaban ignoradas). Se retiran del árbol versionado y se conservan en `/tmp/sfm-cli-graficas-local`; contienen QA sintético local. Sin cambios de código ni datos.
@@ -129,11 +137,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-05T01:24:05.398Z
+- **Última sincronización:** 2026-10-05T02:16:23.439Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1276,6 +1284,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-05T02:16:23.440Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Pulido UI fase 1 (consistencia visual): tokens de espacios y radios, texto del cliente >= 12 px, grupos de la Biblioteca fijos bajo el buscador, miniaturas con fondo neutro, Comenzar entrenamiento destacado, ficha con jerarquía por la escala, Progreso en tarjetas y Perfil con toque de 44 px. Coach sin cambios salvo Biblioteca y ficha compartidas.
+- **Verificación:** npx tsc -b; npm test (944); npm run lint; npm run build; git diff --check; npm run test:http (101); auditoría 320/390/1024; simulador iOS; preview codex-premium-v2
+- **Siguiente:** Fase 2 (microinteracciones) solo con el visto bueno del dueño; comprobar app instalada y teléfono físico
+
 
 ### 2026-10-05T01:24:05.399Z | claude-code | CLAIM
 - **Estado:** active

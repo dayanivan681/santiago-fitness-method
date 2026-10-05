@@ -152,12 +152,12 @@ function HistorialDeLaVariante({
   }, [repositorio, participanteId, ejercicio.id])
 
   return (
-    <div>
+    <div className="hoja__seccion">
       <span className="etiqueta-campo">Historial de esta variante</span>
       {sesiones === undefined ? null : sesiones.length === 0 ? (
         <p className="hoja__texto">Todavía sin entrenar.</p>
       ) : (
-        <div className="pila" style={{ marginTop: 6 }}>
+        <div className="pila">
           {sesiones.map((sesion) => (
             <div key={sesion.fecha} className="historial-variante">
               <span className="historial-variante__fecha">{formatearFecha(sesion.fecha)}</span>

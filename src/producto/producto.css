@@ -1139,7 +1139,7 @@ a.sfm-primary:active {
 }
 .sfm-main--client .accion {
   min-height: 56px;
-  border-radius: 14px;
+  border-radius: 12px;
   font-size: 16px;
   background: var(--sfm-white);
   color: #111;
@@ -1314,7 +1314,7 @@ a.sfm-primary:active {
 }
 .sfm-main--client .serie {
   border: 1px solid var(--sfm-line);
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--sfm-surface);
   padding: 18px;
   margin: 10px 0;
@@ -1340,7 +1340,7 @@ a.sfm-primary:active {
 }
 .serie__opciones[open] {
   background: #242529;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 0 10px;
 }
 .serie__opciones .marca {
@@ -1399,7 +1399,7 @@ a.sfm-primary:active {
   height: 48px;
   min-width: 0;
   border: 1px solid #ffffff08;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #222326;
   color: #aaa;
   font-size: 16px;
@@ -1519,7 +1519,7 @@ a.sfm-primary:active {
   margin: 24px 0;
   background: var(--sfm-surface);
   border: 1px solid var(--sfm-line);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 14px;
 }
 .sfm-main--client:has(.entreno__barra) {
@@ -2162,4 +2162,72 @@ a.sfm-primary:active {
 /* «Archivar» en la ficha: discreto, pero se lee que es destructivo. */
 .sfm-text-button--peligro {
   color: var(--sfm-red, #e5352b);
+}
+
+/* Pulido UI, fase 1: en la app del cliente ningún texto baja de 12 px.
+   Varias de estas clases las comparte el panel del coach, que no cambia. */
+.sfm-shell--client .sfm-eyebrow,
+.sfm-shell--client .sfm-save-state,
+.sfm-shell--client .sfm-metrics span,
+.sfm-shell--client .sfm-tabbar a,
+.sfm-shell--client .sfm-day-card p,
+.sfm-shell--client .sfm-profile-data dt,
+.sfm-shell--client .sfm-sync-state,
+.sfm-shell--client .sfm-date-tile small,
+.sfm-shell--client .sfm-measure-row time,
+.sfm-shell--client .sfm-measure-row small,
+.sfm-shell--client .sfm-set-history small,
+.sfm-shell--client .sfm-workout-image span,
+.sfm-shell--client .sfm-insignia,
+.sfm-main--client .entreno__plan,
+.sfm-main--client .etiqueta-campo,
+.sfm-main--client .recomendacion,
+.sfm-main--client .recomendacion__detalle,
+.sfm-main--client .serie__opciones,
+.sfm-main--client .serie__anterior,
+.sfm-main--client .entreno__paso {
+  font-size: 12px;
+}
+.sfm-shell--client .sfm-pill {
+  font-size: 12px !important;
+}
+
+/* Hoy: «Comenzar entrenamiento» es la acción de la pantalla y se nota. */
+.sfm-main--client .accion--principal {
+  min-height: 60px;
+  margin-top: var(--esp-5);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Progreso del cliente: la gráfica y la lista de sesiones son tarjetas de la
+   misma escala (16 px de radio y de relleno). En el coach no cambian. */
+.sfm-shell--client .grafica-progreso {
+  margin: var(--esp-5) 0;
+  padding: var(--esp-4);
+  border-radius: var(--radio);
+  background: var(--grupo);
+}
+.sfm-shell--client .grafica-progreso h3 {
+  margin: var(--esp-4) 0 var(--esp-1);
+}
+.sfm-shell--client .sfm-list:has(.sfm-history-row) {
+  padding: 0 var(--esp-4);
+  border-top: 0;
+  border-radius: var(--radio);
+  background: var(--grupo);
+}
+.sfm-shell--client .sfm-history-row:last-child {
+  border-bottom: 0;
+}
+
+/* Perfil: el desplegable de la foto se toca con el dedo, no con la uña. */
+.sfm-shell--client .sfm-callout > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+}
+.sfm-shell--client .sfm-secondary {
+  border-radius: var(--radio-chico);
 }

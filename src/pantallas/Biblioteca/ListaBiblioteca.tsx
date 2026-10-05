@@ -161,7 +161,7 @@ export function ListaBiblioteca({
       ) : agrupar ? (
         agruparPorMusculo(visibles).map(([m, suyos]) => (
           <section key={m} aria-label={NOMBRE_MUSCULO[m]}>
-            <h2 className="grupo__titulo biblioteca__grupo">
+            <h2 className="biblioteca__grupo">
               {NOMBRE_MUSCULO[m]} · {suyos.length}
             </h2>
             <div className="grupo grupo--pleno">{suyos.map(fila)}</div>

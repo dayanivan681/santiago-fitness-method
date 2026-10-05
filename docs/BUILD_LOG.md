@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-04 — Pulido UI fase 1: consistencia visual — claude-code
+
+- Tokens en `src/index.css`: escala de espacios `--esp-1…6` (4/8/12/16/24/32 px), `--radio` 16 px (tarjetas) y `--radio-chico` 12 px (controles); 21 radios sueltos de controles y tarjetas pasan a esos tokens (píldoras y círculos aparte). `--miniatura-carga` para el fondo de las miniaturas mientras cargan.
+- Tipografía: ningún texto del cliente por debajo de 12 px (`.filtro`, `.etiqueta-campo`, `.variante__meta`, etiquetas de la ficha, marcas Técnica/Calentamiento, pestañas…). Lo que comparte el coach se sube sólo bajo `.sfm-shell--client`; el resto del coach no cambia. Los campos ya estaban en 16 px.
+- Biblioteca (cliente y coach): subtítulos de grupo fijos bajo el buscador (`section > h2.biblioteca__grupo`, 16 px, opacos y a sangre), barra con alto conocido y ambos pegados bajo el área segura superior como `.entreno__barra`.
+- Hoy: «Comenzar entrenamiento» como acción principal (60 px, 18 px, sin margen en línea). Ficha: título 20 px, texto 14 px, datos 15 px, huecos de la escala y alternativas/historial como secciones (`.hoja__seccion`). Progreso (sólo cliente): gráfica y lista de sesiones como tarjetas de 16 px. Perfil: «Mi foto de perfil» con 44 px de toque.
+- Pruebas actualizadas por el cambio pedido: `shellMovil` (radio de los steppers y letra de la marca, 12 px).
+- Verificado: 944 pruebas, tsc, lint, build, `git diff --check`. Auditoría automática (Playwright local) en Hoy, Entrenamiento, Biblioteca, ficha, Progreso y Perfil a 320, 390 y 1024 px: sin desbordes, sin texto < 12 px (salvo el «FITNESS METHOD» del logotipo), campos ≥ 16 px, controles ≥ 44×44 y botones de icono ≥ 48×48. Capturas antes/después y clip de los grupos fijos fuera de Git. Safari del simulador iOS: Hoy y Biblioteca con barra y grupo fijos. `test:http` 101 PASS tras restaurar, con permiso del dueño, la ficha que había archivado a mano en local. Preview `codex-premium-v2` revisado por el dueño antes de publicar. Pendiente: app instalada (áreas seguras) y teléfono físico.
+
 ## 2026-10-04 — Biblioteca: fichas en el coach, lista compartida y filtros simples — claude-code
 
 - `ListaBiblioteca` (`src/pantallas/Biblioteca/`), la misma para cliente y coach: buscador y «Filtrar» fijos arriba (sticky, opacos y tan anchos como la lista), contador, estado vacío con «Quitar filtros», filas `.fila` (miniatura `lazy`/`async`, `sin-foto.svg` si falta, nombre 16 px, equipo e insignias). Sin buscar ni músculo elegido se agrupa por músculo («Pecho · 44»).

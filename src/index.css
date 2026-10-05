@@ -78,8 +78,18 @@
   --mov-progreso: 250ms;
   --mov-curva: cubic-bezier(0.2, 0, 0, 1);
 
+  /* Radios: 16 px en tarjetas, 12 px en controles. Píldoras y círculos aparte. */
   --radio: 16px;
   --radio-chico: 12px;
+  /* Escala de espacios: todo margen, hueco y relleno sale de aquí. */
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 12px;
+  --esp-4: 16px;
+  --esp-5: 24px;
+  --esp-6: 32px;
+  /* Fondo de una miniatura mientras carga: neutro, no un hueco negro. */
+  --miniatura-carga: #26282c;
 
   color-scheme: dark;
   font-family: 'Barlow', system-ui, -apple-system, sans-serif;
@@ -146,7 +156,7 @@ button,
 .kicker {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--texto-42);
@@ -155,7 +165,7 @@ button,
 .etiqueta-campo {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(242, 242, 240, 0.4);
@@ -164,7 +174,7 @@ button,
 .nota {
   padding: 12px 14px;
   border: 1px dashed rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
+  border-radius: var(--radio);
   font: 500 12px/1.45 'Barlow', sans-serif;
   color: rgba(242, 242, 240, 0.38);
   text-wrap: pretty;
@@ -192,7 +202,7 @@ button,
   margin: 0;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--texto-35);
@@ -279,7 +289,7 @@ button,
 .cabecera__meta {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--positivo);
@@ -349,7 +359,7 @@ button,
   cursor: pointer;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(242, 242, 240, 0.38);
@@ -437,7 +447,7 @@ button,
 .portada__dia {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--texto-50);
@@ -555,7 +565,7 @@ button,
   gap: 6px;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(242, 242, 240, 0.55);
@@ -575,7 +585,7 @@ button,
   background: rgba(255, 255, 255, 0.07);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -625,7 +635,7 @@ button,
 .ejercicio__marca {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--neutro);
@@ -636,7 +646,7 @@ button,
 }
 
 .ejercicio__cuenta {
-  font: 600 11px/1 'Barlow', sans-serif;
+  font: 600 12px/1 'Barlow', sans-serif;
   color: var(--texto-35);
 }
 
@@ -657,7 +667,7 @@ button,
 .referencia {
   flex: 1;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 10px;
+  border-radius: var(--radio-chico);
   padding: 8px 10px;
   display: flex;
   flex-direction: column;
@@ -701,7 +711,7 @@ button,
 }
 
 .detalle-carga__texto {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   color: var(--texto-35);
 }
 
@@ -721,7 +731,7 @@ button,
   cursor: pointer;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--positivo);
@@ -763,7 +773,7 @@ button,
 }
 
 .serie__veredicto {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
 }
 
 /* §8: las cinco reglas, con el rojo reservado a caer por debajo. */
@@ -840,7 +850,7 @@ button,
   /* El área ya medía 44 px, pero un ± sin borde parecía texto suelto y no un
      control. El recuadro mantiene la densidad y hace evidente dónde pulsar. */
   border: 1px solid var(--borde-fuerte);
-  border-radius: 9px;
+  border-radius: var(--radio-chico);
   background: var(--relleno);
   color: var(--texto-60);
   font: 600 16px/1 'Barlow', sans-serif;
@@ -878,7 +888,7 @@ button,
   min-width: 0;
   padding: 0 4px;
   border: none;
-  border-radius: 9px;
+  border-radius: var(--radio-chico);
   background: var(--relleno);
   color: var(--texto);
   font: 700 15px/1 'Barlow', sans-serif;
@@ -928,7 +938,7 @@ button,
 
 .serie__anterior {
   flex: 1;
-  font: 500 11px/1.2 'Barlow', sans-serif;
+  font: 500 12px/1.2 'Barlow', sans-serif;
   color: var(--texto-35);
 }
 
@@ -939,14 +949,14 @@ button,
      tipografía, y son 44 px reales de toque. */
   min-height: 44px;
   border: none;
-  border-radius: 9px;
+  border-radius: var(--radio-chico);
   background: var(--positivo);
   color: var(--fondo);
   display: flex;
   align-items: center;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
@@ -976,7 +986,7 @@ button,
   margin: 0 auto;
   background: #ffffff;
   color: var(--fondo);
-  border-radius: 14px;
+  border-radius: var(--radio);
   padding: 11px 14px;
   display: flex;
   align-items: center;
@@ -992,7 +1002,7 @@ button,
 .descanso__rotulo {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -1025,12 +1035,12 @@ button,
   min-width: 44px;
   padding: 6px 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radio-chico);
   background: rgba(11, 12, 13, 0.12);
   color: inherit;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -1067,10 +1077,10 @@ button,
   background: var(--superficie);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 22px 22px 0 0;
-  padding: 18px 16px calc(30px + env(safe-area-inset-bottom));
+  padding: var(--esp-4) var(--esp-4) calc(30px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--esp-3);
   max-height: 78dvh;
   overflow: auto;
   /* Llegar al final de la hoja no arrastra la página de detrás. */
@@ -1089,7 +1099,7 @@ button,
   margin: 0;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 20px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -1106,7 +1116,7 @@ button,
   cursor: pointer;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(242, 242, 240, 0.45);
@@ -1127,7 +1137,7 @@ button,
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 9px;
+  border-radius: var(--radio-chico);
   background: transparent;
   color: var(--texto-60);
   font-size: 15px;
@@ -1145,8 +1155,8 @@ button,
 
 .hoja__texto {
   margin: 0;
-  font: 500 12px/1.4 'Barlow', sans-serif;
-  color: rgba(242, 242, 240, 0.4);
+  font: 500 14px/1.45 'Barlow', sans-serif;
+  color: var(--texto-60);
   text-wrap: pretty;
 }
 
@@ -1175,8 +1185,8 @@ button,
 .historial-variante {
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  padding: 7px 10px;
+  gap: var(--esp-3);
+  padding: var(--esp-2) var(--esp-3);
   border-radius: var(--radio-chico);
   background: rgba(255, 255, 255, 0.03);
 }
@@ -1186,7 +1196,7 @@ button,
   width: 52px;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--texto-50);
@@ -1223,7 +1233,7 @@ button,
 }
 
 .variante__meta {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   color: rgba(242, 242, 240, 0.4);
 }
 
@@ -1319,7 +1329,7 @@ button,
   color: var(--texto-60);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
@@ -1340,7 +1350,7 @@ button,
 .ficha {
   background: var(--superficie);
   border: 1px solid var(--borde);
-  border-radius: 14px;
+  border-radius: var(--radio);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1368,13 +1378,13 @@ button,
 }
 
 .ficha__equipo {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   color: rgba(242, 242, 240, 0.42);
 }
 
 .ficha__pista {
   margin: 0;
-  font: 400 11px/1.35 'Barlow', sans-serif;
+  font: 400 12px/1.35 'Barlow', sans-serif;
   color: rgba(242, 242, 240, 0.32);
   text-wrap: pretty;
 }
@@ -1390,7 +1400,7 @@ button,
   flex: 1;
   background: var(--superficie);
   border: 1px solid var(--borde);
-  border-radius: 14px;
+  border-radius: var(--radio);
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -1414,14 +1424,14 @@ button,
 }
 
 .resumen__pie {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   color: rgba(242, 242, 240, 0.42);
 }
 
 .sesiones {
   background: var(--superficie);
   border: 1px solid var(--borde);
-  border-radius: 14px;
+  border-radius: var(--radio);
   overflow: hidden;
 }
 
@@ -1459,7 +1469,7 @@ button,
 .sesion__fecha {
   width: 52px;
   flex: none;
-  font: 600 11px/1.2 'Barlow', sans-serif;
+  font: 600 12px/1.2 'Barlow', sans-serif;
   color: rgba(242, 242, 240, 0.45);
 }
 
@@ -1470,8 +1480,8 @@ button,
   margin-top: 2px;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 9.5px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--texto-35);
 }
@@ -1490,7 +1500,7 @@ button,
 }
 
 .sesion__detalle {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   color: var(--texto-35);
 }
 
@@ -1498,7 +1508,7 @@ button,
   flex: none;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1534,7 +1544,7 @@ button,
 .panel__nota {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--texto-35);
@@ -1543,7 +1553,16 @@ button,
 .rejilla-datos {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: var(--esp-3) var(--esp-4);
+}
+
+/* Bloques de la ficha (alternativas, historial): un escalón más de aire que
+   entre sus propias filas, para que se lean como secciones. */
+.hoja__seccion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
 }
 
 .campo-texto {
@@ -1561,7 +1580,7 @@ button,
   min-height: 44px;
   padding: 7px 9px;
   border: 1px solid var(--borde-tenue);
-  border-radius: 9px;
+  border-radius: var(--radio-chico);
   background: rgba(255, 255, 255, 0.04);
   color: var(--texto);
   font: 600 14px/1.2 'Barlow', sans-serif;
@@ -1611,12 +1630,12 @@ button,
   min-height: 44px;
   padding: 0 12px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
+  border-radius: var(--radio-chico);
   background: transparent;
   color: var(--texto);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
@@ -1626,7 +1645,7 @@ button,
 .limitacion {
   background: rgba(229, 53, 43, 0.1);
   border: 1px solid rgba(229, 53, 43, 0.35);
-  border-radius: 10px;
+  border-radius: var(--radio-chico);
   padding: 9px 11px;
   font: 500 12px/1.35 'Barlow', sans-serif;
   color: #ff8a80;
@@ -1751,7 +1770,7 @@ button,
   color: var(--texto);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
@@ -1902,7 +1921,7 @@ button,
 }
 
 .medicion__variacion {
-  font: 600 11px/1 'Barlow', sans-serif;
+  font: 600 12px/1 'Barlow', sans-serif;
   color: var(--texto-60);
 }
 
@@ -1934,7 +1953,7 @@ button,
 }
 
 .volumen__cuenta {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1988,7 +2007,7 @@ button,
 }
 
 .volumen__indirectas {
-  font: 500 10px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   color: var(--texto-35);
 }
 
@@ -2003,7 +2022,7 @@ button,
   min-height: 44px;
   padding: 10px 12px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radio-chico);
   background: rgba(255, 255, 255, 0.04);
   color: inherit;
   text-align: left;
@@ -2016,7 +2035,7 @@ button,
 }
 
 .dia__nota {
-  font: 500 11px/1 'Barlow', sans-serif;
+  font: 500 12px/1 'Barlow', sans-serif;
   color: rgba(242, 242, 240, 0.4);
 }
 
@@ -2025,12 +2044,12 @@ button,
 .dato {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--esp-1);
   min-width: 0;
 }
 
 .dato__valor {
-  font: 600 14px/1.2 'Barlow', sans-serif;
+  font: 600 15px/1.25 'Barlow', sans-serif;
   text-wrap: pretty;
 }
 
@@ -2054,7 +2073,7 @@ button,
 .portada__marcador {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(242, 242, 240, 0.22);
@@ -2088,7 +2107,7 @@ button,
   justify-content: space-between;
   gap: 8px;
   padding: 8px 10px;
-  border-radius: 10px;
+  border-radius: var(--radio-chico);
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -2109,7 +2128,7 @@ button,
   border-radius: 99px;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -2156,8 +2175,8 @@ button,
   color: var(--texto-35);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
-  font-size: 9.5px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -2433,9 +2452,9 @@ a.fila:active {
   flex: none;
   width: 56px;
   height: 56px;
-  border-radius: 11px;
+  border-radius: var(--radio-chico);
   object-fit: cover;
-  background: var(--hundido);
+  background: var(--miniatura-carga);
 }
 /* Una fila que ejecuta en vez de navegar: se distingue por el color, no por
    meter un botón con borde dentro de la lista. */
@@ -2459,7 +2478,7 @@ a.fila:active {
   background: var(--positivo);
   color: #0b0c0d;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--radio-chico);
   font: inherit;
   font-size: 16px;
   font-weight: 700;
@@ -2499,7 +2518,7 @@ a.fila:active {
   padding: 10px 12px 10px 38px;
   background: var(--grupo);
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--radio-chico);
   color: var(--texto);
   font: inherit;
   /* 16px o iOS hace zoom al enfocar. */
@@ -2516,16 +2535,24 @@ a.fila:active {
 /* ---------- Lista de la Biblioteca (cliente y coach) ---------- */
 
 /* Buscador y «Filtrar» fijos arriba, opacos: la lista no asoma por detrás. */
+:root {
+  --alto-barra-biblioteca: 60px;
+  /* Instalada como app, el armazón tapa la barra de estado con una franja fija
+     (`.sfm-shell::before`): lo fijo se pega debajo, como `.entreno__barra`. */
+  --arriba-seguro: env(safe-area-inset-top, 0px);
+}
 .biblioteca__barra {
   position: sticky;
-  top: 0;
+  top: var(--arriba-seguro);
   z-index: 3;
   display: flex;
   gap: 8px;
   align-items: center;
   /* Tan ancha como la lista (`.grupo--pleno`), para que no asome por los lados. */
-  margin: 0 var(--sangra-der) 10px var(--sangra-izq);
-  padding: 8px calc(-1 * var(--sangra-der)) 8px calc(-1 * var(--sangra-izq));
+  margin: 0 var(--sangra-der) var(--esp-2) var(--sangra-izq);
+  padding: var(--esp-2) calc(-1 * var(--sangra-der)) var(--esp-2) calc(-1 * var(--sangra-izq));
+  /* Alto fijo y conocido: los subtítulos de grupo se pegan justo debajo. */
+  height: var(--alto-barra-biblioteca);
   background: var(--fondo);
 }
 .biblioteca__barra .busca {
@@ -2538,7 +2565,7 @@ a.fila:active {
   min-height: 44px;
   padding: 0 14px;
   border: 1px solid var(--borde-fuerte);
-  border-radius: 12px;
+  border-radius: var(--radio-chico);
   background: transparent;
   color: var(--texto);
   font: 600 15px/1 'Barlow', sans-serif;
@@ -2576,10 +2603,18 @@ a.fila:active {
   font-size: 14px;
   color: var(--texto-60);
 }
-.biblioteca__grupo {
+/* `section > h2.…`: gana a `.sfm-main h2`, que en los dos paneles lo subía a 21 px. */
+section > h2.biblioteca__grupo {
+  /* Fijo bajo el buscador mientras se recorre su grupo; opaco y a sangre como
+     la lista, para que las filas no asomen por detrás ni por los lados. */
+  position: sticky;
+  top: calc(var(--alto-barra-biblioteca) + var(--arriba-seguro));
+  z-index: 2;
+  margin: var(--esp-5) var(--sangra-der) 0 var(--sangra-izq);
+  padding: var(--esp-2) calc(-1 * var(--sangra-der)) var(--esp-2) calc(-1 * var(--sangra-izq));
+  background: var(--fondo);
   /* Es un h2: en el panel del coach los h2 van en mayúsculas condensadas. */
-  margin: 22px 0 8px;
-  font: 600 14px/1.3 'Barlow', sans-serif;
+  font: 600 16px/1.3 'Barlow', sans-serif;
   letter-spacing: normal;
   text-transform: none;
   color: var(--texto-60);
@@ -2990,7 +3025,7 @@ a.fila:active {
   gap: 10px;
   margin-top: 10px;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -3001,7 +3036,7 @@ a.fila:active {
   min-height: 44px;
   padding: 0 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: var(--radio-chico);
   background: transparent;
   color: inherit;
   font: inherit;
@@ -3043,7 +3078,7 @@ a.fila:active {
   white-space: normal;
   line-height: 1.1;
   letter-spacing: 0.06em;
-  font-size: 11px;
+  font-size: 12px;
 }
 .filtros--dias:is([data-dias="6"], [data-dias="7"]) {
   -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
@@ -3078,7 +3113,7 @@ a.fila:active {
   left: 0;
   z-index: 1;
   padding: 0 4px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
   color: var(--texto-60);
   background: var(--superficie);

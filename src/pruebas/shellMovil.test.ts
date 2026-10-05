@@ -121,7 +121,8 @@ describe('áreas táctiles', () => {
   it('los steppers tienen una affordance visual delimitada', () => {
     const bloque = /\.paso__boton\s*\{[^}]*\}/.exec(css)?.[0] ?? ''
     expect(bloque).toContain('border: 1px solid')
-    expect(bloque).toContain('border-radius: 9px')
+    // Pulido UI fase 1: radio de control de la escala (12 px).
+    expect(bloque).toContain('border-radius: var(--radio-chico)')
     expect(bloque).toContain('background: var(--relleno)')
   })
 
@@ -294,14 +295,14 @@ describe("área táctil de Técnica y Calentamiento (QA-MOB-02)", () => {
   const pseudo = /\.marca--tocable::after\s*\{[^}]*\}/.exec(css)?.[0] ?? ""
   // `inset: -11px 0 -2px 0`: los ceros van sin unidad, de ahí el px opcional.
   const inset = /inset:\s*(-?\d+)(?:px)?\s+(-?\d+)(?:px)?\s+(-?\d+)(?:px)?\s+(-?\d+)(?:px)?/.exec(pseudo)
-  /** 2 x relleno vertical + la caja de la línea de 9.5px, que mide 14. */
-  const ALTO_DE_LINEA = 14
+  /** 2 x relleno vertical + la caja de la línea de 12px, que mide 15. */
+  const ALTO_DE_LINEA = 15
   const altoVisible = Number(/padding:\s*(\d+)px/.exec(bloqueTocable)?.[1] ?? 0) * 2 + ALTO_DE_LINEA
 
-  it("la píldora sigue siendo compacta y con el mismo tamaño de letra", () => {
+  it("la píldora sigue siendo compacta, con la letra en el mínimo legible", () => {
     // Compacto es parte del diseño: lo que crece es la zona sensible, no el
-    // dibujo ni la letra.
-    expect(bloqueMarca).toContain("font-size: 9.5px")
+    // dibujo. La letra sube a 12 px, el mínimo de etiquetas (pulido UI fase 1).
+    expect(bloqueMarca).toContain("font-size: 12px")
     expect(altoVisible).toBeLessThan(44)
   })
 

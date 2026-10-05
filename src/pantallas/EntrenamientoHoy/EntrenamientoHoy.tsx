@@ -90,7 +90,7 @@ export function EntrenamientoHoy({
           <>
             {/* La única acción de la pantalla. Con una sesión abierta cambia de
                 verbo y lleva el progreso: entrar y seguir es lo mismo. */}
-            <button type="button" data-tour="comenzar" className="accion" onClick={onComenzar} style={{ marginTop: 18 }}>
+            <button type="button" data-tour="comenzar" className="accion accion--principal" onClick={onComenzar}>
               {enCurso
                 ? `Continuar · ${seriesHechas} de ${seriesObjetivo} series`
                 : terminada
