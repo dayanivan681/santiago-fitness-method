@@ -88,7 +88,7 @@ function Fila({ fila }: { readonly fila: FilaVolumen }) {
       <div className="volumen__barra">
         <div
           className={`volumen__relleno relleno--${estado}`}
-          style={{ width: `${porcentaje}%` }}
+          style={{ transform: `scaleX(${Math.min(100, Math.max(0, porcentaje)) / 100})` }}
         />
       </div>
 

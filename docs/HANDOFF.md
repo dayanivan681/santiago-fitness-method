@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-04 — Pulido UI fase 2 (microinteracciones) — claude-code
+
+- Publicada con el «sí» del dueño. Turno libre: la fase 3 (hojas con apertura y cierre animados) queda para Codex, con su propio preview y visto bueno.
+- Preview revisado: https://codex-premium-v2.santiago-fitness-method.pages.dev (demo `/demo/cliente`).
+- Hecho: respuesta al tocar uniforme en el cliente (`--mov-toque`; sin campos, deshabilitados ni puntos de la gráfica; nada con movimiento reducido); guardar serie con «Guardando…» (`aria-busy`), «Reintentar» tras un fallo y valores conservados; medidor de sesión y barra de volumen con `scaleX`; contadores con cifras de ancho fijo. Detalle en BUILD_LOG.
+- Checks: 946 pruebas, tsc, lint, build, `git diff --check`, `test:http` (101) PASS. QA con CPU ×4.
+- Pendiente: app instalada (áreas seguras) y teléfono físico; forzar un fallo de guardado en el navegador (cubierto por pruebas unitarias).
+
 ## 2026-10-04 — Pulido UI fase 1 (consistencia visual) — claude-code
 
 - Publicada con el «sí» del dueño (2026-10-04). La fase 2 no empieza sin su nueva aprobación.
@@ -137,11 +145,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-05T02:21:03.534Z
+- **Última sincronización:** 2026-10-05T03:39:52.418Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1284,6 +1292,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-05T03:39:52.419Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Pulido UI fase 2 (microinteracciones): respuesta al tocar uniforme en el cliente con --mov-toque (sin campos, deshabilitados ni puntos de la gráfica; nada con movimiento reducido); guardar serie con Guardando (aria-busy), Reintentar tras fallo y valores conservados; medidor de sesión y volumen con scaleX; contadores con tabular-nums.
+- **Verificación:** npx tsc -b; npm test (946); npm run lint; npm run build; git diff --check; npm run test:http (101); QA Chrome CPU x4; preview codex-premium-v2
+- **Siguiente:** Codex: Pulido UI fase 3 (hojas con apertura y cierre animados), con preview y visto bueno del dueño
+
 
 ### 2026-10-05T02:21:03.535Z | claude-code | CLAIM
 - **Estado:** active

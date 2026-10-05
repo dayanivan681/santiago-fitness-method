@@ -2231,3 +2231,40 @@ a.sfm-primary:active {
 .sfm-shell--client .sfm-secondary {
   border-radius: var(--radio-chico);
 }
+
+/* ---------- Pulido UI, fase 2: microinteracciones (sólo cliente) ---------- */
+
+/* Respuesta al tocar: cada botón y tarjeta accionable cede y vuelve en
+   --mov-toque. Se anima sólo transform, opacity y colores. Fuera quedan los
+   campos (no son botones), lo deshabilitado y los puntos de la gráfica, cuyo
+   transform los centra sobre el punto (ya hubo un fallo por esto). */
+.sfm-shell--client :is(button, a[href]):not(:disabled):not([aria-disabled="true"]):not(.grafica-progreso__boton) {
+  transition-property: transform, opacity, background-color, border-color, color;
+  transition-duration: var(--mov-toque);
+  transition-timing-function: var(--mov-curva);
+}
+.sfm-shell--client :is(button:disabled, [aria-disabled="true"]):active {
+  transform: none;
+}
+
+/* Guardando una serie: el botón sigue legible y dice que trabaja; no se
+   confunde con un botón apagado. */
+.sfm-main--client .boton-guardar--guardando:disabled {
+  opacity: 0.75;
+  cursor: progress;
+}
+
+/* Contadores que cambian solos (series, ejercicio N de M): cifras de ancho
+   fijo, para que actualizarse no mueva nada de alrededor. */
+.sfm-main--client .progreso-sesion__texto,
+.sfm-main--client .entreno__paso {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Movimiento reducido: ni escalados ni desplazamientos al tocar. */
+  .sfm-shell--client :is(button, a[href]):active,
+  .sfm-shell--client .pestanas__boton:active .pestanas__icono {
+    transform: none !important;
+  }
+}

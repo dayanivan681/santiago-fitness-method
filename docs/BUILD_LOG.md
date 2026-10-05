@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-04 — Pulido UI fase 2: microinteracciones — claude-code
+
+- Respuesta al tocar (sólo `.sfm-shell--client`): botones y tarjetas accionables animan `transform`, `opacity` y colores en `--mov-toque`; quedan fuera los campos, lo deshabilitado (tampoco se escala al pulsar) y `.grafica-progreso__boton`. Filtros, pestañas y segmentos cambian de selección con esa misma transición. Con `prefers-reduced-motion` no se escala nada al pulsar.
+- Guardar serie (`FilaSerie`): pendiente «Guardando…» con `aria-busy` y el botón legible (no apagado); tras un fallo, el aviso de siempre, los valores conservados y el botón «Reintentar» (sólo si falló el guardado, no el borrador). El éxito sigue siendo la fila registrada con ✓, que sólo aparece cuando `onGuardar` resuelve; la sincronización con la cuenta sigue aparte. El doble toque ya estaba protegido (`guardandoRef`). Pruebas nuevas en `FilaSerie.estados.test.tsx`.
+- Medidor de la sesión y barra de volumen: `transform: scaleX` con `transform-origin` izquierdo en vez de `transition: width` (y la duración suelta 0.25s pasa a `--mov-progreso`). «N de M series» y «Ejercicio N de M» con `tabular-nums`. El avance automático y el cronómetro ya cumplían (sin esperas ni animación por segundo).
+- Verificado: 946 pruebas, tsc, lint, build, `git diff --check`, `test:http` 101. Chrome local a 390 px con CPU ×4: ✓ visible 138 ms después de tocar; doble toque → una sola serie (9 → 10 de 16); al completar la última serie pasa solo a «Ejercicio 2 de 5»; botón pulsado escala 0,985 y con movimiento reducido no. Clip fuera de Git. Pendiente: app instalada y teléfono físico.
+
 ## 2026-10-04 — Pulido UI fase 1: consistencia visual — claude-code
 
 - Tokens en `src/index.css`: escala de espacios `--esp-1…6` (4/8/12/16/24/32 px), `--radio` 16 px (tarjetas) y `--radio-chico` 12 px (controles); 21 radios sueltos de controles y tarjetas pasan a esos tokens (píldoras y círculos aparte). `--miniatura-carga` para el fondo de las miniaturas mientras cargan.

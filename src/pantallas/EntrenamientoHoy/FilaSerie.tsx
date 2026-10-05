@@ -109,6 +109,9 @@ export function FilaSerie({
   const antesColapsada=useRef(colapsada)
   useEffect(()=>{if(antesColapsada.current&&!colapsada)filaRef.current?.scrollIntoView?.({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});antesColapsada.current=colapsada},[colapsada])
   const [guardando, setGuardando] = useState(false)
+  // Sólo un guardado fallido cambia el botón a «Reintentar»; un fallo del
+  // borrador se avisa, pero la serie aún no se intentó guardar.
+  const [guardadoFallido, setGuardadoFallido] = useState(false)
   // Tocar el valor lo abre para escribirlo directo. Sin esto, arrancar de 0
   // hasta un peso real serían decenas de toques del stepper.
   const [editandoPeso, setEditandoPeso] = useState(false)
@@ -193,6 +196,7 @@ export function FilaSerie({
     if (guardandoRef.current) return
     guardandoRef.current=true
     setError('')
+    setGuardadoFallido(false)
     setGuardando(true)
     try {
       const valores = {
@@ -215,7 +219,7 @@ export function FilaSerie({
         ayuda?.confirmarSerie();
 
       }
-    } catch(e){setError(e instanceof Error?e.message:'No se pudo guardar. Tus valores siguen aquí.')} finally {
+    } catch(e){setError(e instanceof Error?e.message:'No se pudo guardar. Tus valores siguen aquí.');setGuardadoFallido(true)} finally {
       guardandoRef.current=false
       setGuardando(false)
     }
@@ -534,12 +538,16 @@ export function FilaSerie({
         ) : (
           <button
             type="button"
-            data-tour="guardar-serie" className="boton-guardar"
+            data-tour="guardar-serie"
+            className={guardando ? 'boton-guardar boton-guardar--guardando' : 'boton-guardar'}
             onClick={guardar}
             disabled={guardando}
+            aria-busy={guardando}
             aria-label={`Guardar la ${etiqueta}`}
           >
-            {guardando ? 'Guardando…' : 'Completar serie'}
+            {/* Pendiente, error o listo: el botón dice en qué punto está. El
+                éxito lo pinta la fila ya registrada, nunca antes de guardarla. */}
+            {guardando ? 'Guardando…' : guardadoFallido ? 'Reintentar' : 'Completar serie'}
           </button>
         )}
       </div>

@@ -244,7 +244,8 @@ export function Entrenamiento({
           >
             <span
               className="progreso-sesion__relleno"
-              style={{ width: `${(seriesHechas / Math.max(1, seriesObjetivo)) * 100}%` }}
+              // scaleX y no width: animar el ancho recalcula el diseño en cada cuadro.
+              style={{ transform: `scaleX(${Math.min(1, seriesHechas / Math.max(1, seriesObjetivo))})` }}
             />
             <span className="progreso-sesion__texto">
               {seriesHechas} de {seriesObjetivo} series
