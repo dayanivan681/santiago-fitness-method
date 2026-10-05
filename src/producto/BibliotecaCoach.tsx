@@ -1,39 +1,36 @@
 import { useState } from "react";
 import { useBiblioteca } from "./contextoBiblioteca";
-import { ETIQUETA_EQUIPO, ETIQUETA_MUSCULO } from "./etiquetasBiblioteca";
-import { useMemoria } from "../aplicacion/memoria";
-import { normalizarBusqueda } from "../logica/busqueda";
-import type { Equipo, Musculo } from "../dominio/tipos";
-import { HojaEjercicio } from "./HojaEjercicio";
-import { Cabecera, ErrorVisible, Hoja, Icono, Vacio } from "./ui";
-import { segunCantidad } from "../logica/plural";
+import { HojaEjercicio as FormularioEjercicio } from "./HojaEjercicio";
+import { HojaEjercicio as Ficha } from "../pantallas/Biblioteca/HojaEjercicio";
+import { ListaBiblioteca } from "../pantallas/Biblioteca/ListaBiblioteca";
+import { Cabecera, ErrorVisible, Hoja, Icono } from "./ui";
+import type { Ejercicio } from "../dominio/tipos";
 import type { EjercicioCoach } from "../../shared/v2/biblioteca";
 
-const TODOS = "todos" as const;
+/**
+ * Lo que hay abierto encima de la lista. La ficha se guarda por id: tras editar
+ * se vuelve a leer de la biblioteca recargada y enseña los datos nuevos.
+ */
+type HojaAbierta =
+  | { tipo: "ficha"; id: string }
+  | { tipo: "anadir" }
+  | { tipo: "editar"; ejercicio: EjercicioCoach }
+  | { tipo: "archivar"; ejercicio: EjercicioCoach };
 
-type HojaAbierta = { tipo: "anadir" } | { tipo: "editar"; ejercicio: EjercicioCoach } | { tipo: "archivar"; ejercicio: EjercicioCoach };
-
-/** Biblioteca del método: las fichas fijas y las que el coach añade («Tuyo»). */
+/**
+ * Biblioteca del método: las fichas fijas y las que el coach añade («Tuyo»).
+ *
+ * La misma lista y la misma ficha que ve el cliente. Editar y archivar viven
+ * sólo dentro de la ficha de un ejercicio propio: en la lista quedaban al
+ * alcance de un toque accidental.
+ */
 export function BibliotecaCoach() {
   const { ejercicios, propios, servicio, error: errorDeCarga, recargar } = useBiblioteca();
-  const [q, setQ] = useState("");
   const [hoja, setHoja] = useState<HojaAbierta | null>(null);
   const [error, setError] = useState("");
-  const { valor: musculo, recordar: setMusculo } = useMemoria<Musculo | typeof TODOS>(TODOS);
-  const { valor: equipo, recordar: setEquipo } = useMemoria<Equipo | typeof TODOS>(TODOS);
-  const musculos = [...new Set(ejercicios.map((e) => e.musculoPrimario))].sort((a, b) =>
-    ETIQUETA_MUSCULO[a].localeCompare(ETIQUETA_MUSCULO[b], "es"),
-  );
-  const equipos = [...new Set(ejercicios.map((e) => e.equipo))].sort((a, b) =>
-    ETIQUETA_EQUIPO[a].localeCompare(ETIQUETA_EQUIPO[b], "es"),
-  );
-  const termino = normalizarBusqueda(q);
-  // Como en la biblioteca del cliente: quien escribe busca en todo; los filtros son para explorar.
-  const visibles = termino
-    ? ejercicios.filter((e) => normalizarBusqueda(e.nombre).includes(termino))
-    : ejercicios.filter(
-        (e) => (musculo === TODOS || e.musculoPrimario === musculo) && (equipo === TODOS || e.equipo === equipo),
-      );
+  const esPropio = (e: Ejercicio) => propios.has(e.id);
+  const ficha = hoja?.tipo === "ficha" ? ejercicios.find((e) => e.id === hoja.id) : undefined;
+  const abrir = (e: Ejercicio) => setHoja({ tipo: "ficha", id: e.id });
 
   async function archivar(e: EjercicioCoach) {
     try {
@@ -52,101 +49,41 @@ export function BibliotecaCoach() {
       <button className="sfm-primary" onClick={() => setHoja({ tipo: "anadir" })}>
         <Icono nombre="mas" /> Añadir ejercicio
       </button>
-      <input
-        className="sfm-search"
-        aria-label="Buscar en biblioteca"
-        placeholder="Buscar ejercicio"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
-      <nav
-        className={termino ? "filtros filtro--en-pausa" : "filtros"}
-        aria-label="Filtrar por músculo"
-        aria-disabled={termino ? true : undefined}
-      >
-        {([TODOS, ...musculos] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            className={musculo === m ? "filtro filtro--activo" : "filtro"}
-            aria-pressed={musculo === m}
-            onClick={() => setMusculo(m)}
-          >
-            {m === TODOS ? "Todos" : ETIQUETA_MUSCULO[m]}
-          </button>
-        ))}
-      </nav>
-      <label className={termino ? "filtro-equipo filtro--en-pausa" : "filtro-equipo"} aria-disabled={termino ? true : undefined}>
-        <span>Equipo</span>
-        <select value={equipo} onChange={(e) => setEquipo(e.target.value as Equipo | typeof TODOS)}>
-          <option value={TODOS}>Todos</option>
-          {equipos.map((e) => (
-            <option key={e} value={e}>
-              {ETIQUETA_EQUIPO[e]}
-            </option>
-          ))}
-        </select>
-      </label>
-      {termino && <p className="aviso-busqueda">Buscando en toda la biblioteca</p>}
-      <p className="sfm-hint">
-        {visibles.length} {segunCantidad(visibles.length, "ejercicio", "ejercicios")}
-      </p>
-      {visibles.length === 0 &&
-        (termino ? (
-          <Vacio
-            titulo={`No hay ejercicios con “${q.trim()}”.`}
-            detalle="Revisa cómo está escrito o crea uno con «Añadir ejercicio»."
-          />
-        ) : (
-          <Vacio
-            titulo="No hay ejercicios con estos filtros."
-            detalle="Prueba con otro músculo u otro equipo."
-            accion={
-              <button
-                className="sfm-secondary"
-                onClick={() => {
-                  setMusculo(TODOS);
-                  setEquipo(TODOS);
-                }}
-              >
-                Quitar filtros
-              </button>
-            }
-          />
-        ))}
-      <div className="sfm-catalog-grid">
-        {visibles.map((e) => {
+      <ListaBiblioteca
+        ejercicios={ejercicios}
+        alAbrir={abrir}
+        esPropio={esPropio}
+        insignias={(e) => {
           const propio = propios.get(e.id);
+          if (!propio) return null;
           return (
-            <article className="sfm-exercise-card" key={e.id}>
-              <img src={e.imagen} alt="" loading="lazy" />
-              <div>
-                <small>
-                  {propio && <span className="sfm-insignia-tuyo">Tuyo</span>}
-                  {propio?.tieneAnimacion && <span className="sfm-insignia-gif">GIF</span>}
-                  {ETIQUETA_EQUIPO[e.equipo]}
-                </small>
-                <h2>{e.nombre}</h2>
-                <p>{e.explicacionCorta}</p>
-                {propio && (
-                  <div className="sfm-card-actions">
-                    <button className="sfm-text-button" onClick={() => setHoja({ tipo: "editar", ejercicio: propio })}>
-                      Editar
-                    </button>
-                    <button className="sfm-text-button" onClick={() => setHoja({ tipo: "archivar", ejercicio: propio })}>
-                      Archivar
-                    </button>
-                  </div>
-                )}
-              </div>
-            </article>
+            <>
+              <span className="sfm-insignia-tuyo">Tuyo</span>
+              {propio.tieneAnimacion && <span className="sfm-insignia-gif">GIF</span>}
+            </>
           );
-        })}
-      </div>
-      {hoja?.tipo === "anadir" && <HojaEjercicio cerrar={() => setHoja(null)} />}
-      {hoja?.tipo === "editar" && <HojaEjercicio editando={hoja.ejercicio} cerrar={() => setHoja(null)} />}
+        }}
+        detalleSinResultados="Revisa cómo está escrito o crea uno con «Añadir ejercicio»."
+      />
+      {ficha && (
+        <Ficha
+          ejercicio={ficha}
+          biblioteca={ejercicios}
+          onElegir={abrir}
+          onCerrar={() => setHoja(null)}
+          acciones={<AccionesDeFicha propio={propios.get(ficha.id)} abrir={setHoja} />}
+        />
+      )}
+      {hoja?.tipo === "anadir" && <FormularioEjercicio cerrar={() => setHoja(null)} />}
+      {hoja?.tipo === "editar" && (
+        <FormularioEjercicio
+          editando={hoja.ejercicio}
+          // Guardar o volver: se regresa a la ficha, ya con los datos nuevos.
+          cerrar={() => setHoja({ tipo: "ficha", id: hoja.ejercicio.id })}
+        />
+      )}
       {hoja?.tipo === "archivar" && (
-        <Hoja titulo="Archivar ejercicio" cerrar={() => setHoja(null)}>
+        <Hoja titulo="Archivar ejercicio" cerrar={() => setHoja({ tipo: "ficha", id: hoja.ejercicio.id })}>
           <p>
             «{hoja.ejercicio.nombre}» dejará de aparecer para elegirlo en programas nuevos. Sus registros y los programas que
             ya lo usan se conservan.
@@ -154,11 +91,32 @@ export function BibliotecaCoach() {
           <button className="sfm-primary" onClick={() => void archivar(hoja.ejercicio)}>
             Archivar
           </button>
-          <button className="sfm-secondary" onClick={() => setHoja(null)}>
+          <button className="sfm-secondary" onClick={() => setHoja({ tipo: "ficha", id: hoja.ejercicio.id })}>
             Volver
           </button>
         </Hoja>
       )}
+    </>
+  );
+}
+
+/** Editar y archivar sólo en lo propio; las fichas del método explican por qué no. */
+function AccionesDeFicha({ propio, abrir }: { propio?: EjercicioCoach; abrir: (hoja: HojaAbierta) => void }) {
+  if (!propio) {
+    return (
+      <p className="nota">
+        Ficha del método: no se puede editar. Si quieres otra versión, crea una con «Añadir ejercicio».
+      </p>
+    );
+  }
+  return (
+    <>
+      <button className="sfm-secondary" onClick={() => abrir({ tipo: "editar", ejercicio: propio })}>
+        Editar
+      </button>
+      <button className="sfm-text-button sfm-text-button--peligro" onClick={() => abrir({ tipo: "archivar", ejercicio: propio })}>
+        Archivar
+      </button>
     </>
   );
 }

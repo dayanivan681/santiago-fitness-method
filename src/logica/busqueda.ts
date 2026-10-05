@@ -1,3 +1,6 @@
+import { NOMBRE_MUSCULO, etiquetaEquipo } from '../dominio/etiquetas'
+import type { Ejercicio } from '../dominio/tipos'
+
 /**
  * Normalizar un texto para buscarlo.
  *
@@ -16,4 +19,20 @@ export function normalizarBusqueda(valor: string): string {
     .replace(/[\u0300-\u036f]/g, '')
     .trim()
     .toLocaleLowerCase('es')
+}
+
+/**
+ * ¿Aparece `termino` (ya normalizado) en el ejercicio?
+ *
+ * Mira el nombre y también el músculo principal y el equipo: muchos nombres de
+ * la Biblioteca Maestra están en inglés y «hombro» o «polea» tienen que
+ * encontrar «Cable Machine Shoulder Press».
+ */
+export function coincide(
+  ejercicio: Pick<Ejercicio, 'nombre' | 'musculoPrimario' | 'equipo'>,
+  termino: string,
+): boolean {
+  return [ejercicio.nombre, NOMBRE_MUSCULO[ejercicio.musculoPrimario], etiquetaEquipo(ejercicio.equipo)].some(
+    (texto) => normalizarBusqueda(texto).includes(termino),
+  )
 }

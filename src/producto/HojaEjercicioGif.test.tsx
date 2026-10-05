@@ -47,9 +47,10 @@ it('un GIF muestra la animación en la vista previa y guarda foto fija + animaci
   expect((subirAnimacion.mock.calls[0][1] as Blob).type).toBe('image/gif')
   const [creado] = await servicio.biblioteca.listar()
   expect(creado).toMatchObject({ tieneFoto: true, tieneAnimacion: true })
-  const tarjeta = screen.getByRole('heading', { name: 'Remo con movimiento' }).closest('article')!
-  expect(within(tarjeta).getByText('GIF')).toBeInTheDocument()
-  expect(tarjeta.querySelector('img')!.getAttribute('src')).not.toBe(servicio.biblioteca.urlDeAnimacion(creado))
+  // En la lista: insignia «GIF» y la foto fija, nunca la animación.
+  const fila = (await screen.findByText('Remo con movimiento')).closest('button')!
+  expect(within(fila).getByText('GIF')).toBeInTheDocument()
+  expect(fila.querySelector('img')!.getAttribute('src')).not.toBe(servicio.biblioteca.urlDeAnimacion(creado))
 })
 
 it('un GIF de más de 5 MB se rechaza con ayuda para reducirlo', async () => {
@@ -82,12 +83,14 @@ it('cambiar el GIF por una foto normal quita la animación', async () => {
   await servicio.biblioteca.subirFoto(creado.id, new Blob(['f'], { type: 'image/jpeg' }))
   await servicio.biblioteca.subirAnimacion(creado.id, gif())
   render(<Panel servicio={servicio} />)
-  fireEvent.click(await screen.findByRole('button', { name: 'Editar' }))
+  fireEvent.click((await screen.findByText('Con GIF')).closest('button')!)
+  const ficha = await screen.findByRole('dialog', { name: 'Con GIF' })
+  fireEvent.click(within(ficha).getByRole('button', { name: 'Editar' }))
   const f = screen.getByRole('dialog', { name: 'Editar ejercicio' })
   expect(within(f).getByText('Animación')).toBeInTheDocument()
   fireEvent.change(within(f).getByLabelText(/Foto de la máquina/), { target: { files: [new File(['x'], 'f.jpg', { type: 'image/jpeg' })] } })
   await waitFor(() => expect(within(f).queryByText('Animación')).toBeNull())
   fireEvent.click(within(f).getByRole('button', { name: 'Guardar cambios' }))
-  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Editar ejercicio' })).toBeNull())
   expect((await servicio.biblioteca.listar())[0]).toMatchObject({ tieneFoto: true, tieneAnimacion: false })
 })

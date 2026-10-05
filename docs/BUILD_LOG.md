@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-04 — Biblioteca: fichas en el coach, lista compartida y filtros simples — claude-code
+
+- `ListaBiblioteca` (`src/pantallas/Biblioteca/`), la misma para cliente y coach: buscador y «Filtrar» fijos arriba (sticky, opacos y tan anchos como la lista), contador, estado vacío con «Quitar filtros», filas `.fila` (miniatura `lazy`/`async`, `sin-foto.svg` si falta, nombre 16 px, equipo e insignias). Sin buscar ni músculo elegido se agrupa por músculo («Pecho · 44»).
+- «Filtrar» abre `HojaFiltros`: Músculo (Todos + 13) y Equipo (Todos + 8) como listas de una elección, filas de 48 px con su número; en el coach, «Solo mis ejercicios»; «Ver N ejercicios» y «Quitar filtros». Los filtros puestos se ven como pastillas quitables («Pecho ✕») y el botón dice «Filtrar · 2». Buscar sigue mandando sobre los filtros, con el aviso.
+- Búsqueda: `coincide` en `src/logica/busqueda.ts` mira nombre, músculo principal y equipo sin acentos («hombro» encuentra los Shoulder Press; «polea», los de cable). Lógica de filtros y agrupación en `src/logica/filtrosBiblioteca.ts`.
+- Coach: la rejilla `.sfm-catalog-grid` desaparece (y su CSS). Tocar una fila abre la ficha del cliente (`HojaEjercicio`, nueva prop `acciones`): en «Tuyo», «Editar» y «Archivar» (texto rojo, con la confirmación de siempre); en las fichas del método, la nota «Ficha del método: no se puede editar…». Editar cierra la ficha, abre el formulario y al guardar (o volver) reabre la ficha con los datos nuevos (se guarda por id). Las alternativas cambian la ficha abierta. Ya no hay Editar/Archivar en la lista.
+- Pruebas adaptadas: `Biblioteca`, `BibliotecaCoach`, `HojaEjercicioGif`, `contextoDeSeccion` (chips y selector → hoja Filtrar y pastillas; tarjetas → filas y ficha) y `composicionCliente` (lee `ListaBiblioteca.tsx`). Nuevas: `filtrosBiblioteca`, `coincide`, ficha propia/fija, editar → ficha actualizada, alternativa en el coach, «Solo mis ejercicios», búsqueda por músculo/equipo, agrupación.
+- Verificado: 944 pruebas, tsc, lint, build, 101 HTTP. Navegador a 320, 375 y 1024 px sin desborde: coach agrupado (13 grupos, 346), «hombro» → 44 con los Shoulder Press, Filtrar → Pecho + Máquina de pila → «Ver 3 ejercicios», pastillas y «Filtrar · 2»; ficha «Tuyo» → Editar → guardar → ficha con el texto nuevo (cambio de prueba deshecho); ficha fija sin botones; cliente igual sin insignias ni edición. Safari del simulador iOS: hoja Filtrar, pastilla «Bíceps ✕», abrir y cerrar ficha. Sin cambios de datos.
+
 ## 2026-10-04 — Alternativas equivalentes como lista de teléfono — claude-code
 
 - `src/logica/alternativas.ts`: `ordenarAlternativas` (ya entrenadas si hay historial → mismo equipo → resto por nombre, `localeCompare('es')`) y `agruparPorEquipo` (orden de aparición, sin duplicados). `useEjerciciosEntrenados` lee `idsDeEjerciciosConHistorial` sólo cuando la ficha tiene participante.

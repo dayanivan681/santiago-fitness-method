@@ -18,6 +18,31 @@ function Panel({ servicio, hijo }: { servicio: ServicioCoach; hijo: React.ReactN
   return <ContextoBiblioteca.Provider value={valor}>{hijo}</ContextoBiblioteca.Provider>
 }
 
+const buscador = () => screen.getByRole('searchbox', { name: 'Buscar ejercicio' })
+const titulos = () => [...document.querySelectorAll('.fila__titulo')].map((t) => t.textContent)
+const fila = (nombre: string) =>
+  [...document.querySelectorAll<HTMLButtonElement>('button.fila')].find(
+    (b) => b.querySelector('.fila__titulo')?.textContent === nombre,
+  )!
+
+/** Abre «Filtrar», elige una opción y vuelve a la lista. */
+async function filtrar(grupo: 'Músculo' | 'Equipo', opcion: string) {
+  fireEvent.click(screen.getByRole('button', { name: /^Filtrar/ }))
+  const hoja = screen.getByRole('dialog', { name: 'Filtrar' })
+  fireEvent.click(within(within(hoja).getByRole('group', { name: grupo })).getByRole('button', { name: opcion }))
+  fireEvent.click(within(hoja).getByRole('button', { name: /^Ver \d+ ejercicio/ }))
+  // Cerrar retrocede en el historial (botón atrás de Android): llega en `popstate`.
+  await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Filtrar' })).toBeNull())
+}
+
+/** Busca el ejercicio, abre su ficha y la devuelve. */
+async function abrirFicha(nombre: string) {
+  fireEvent.change(buscador(), { target: { value: nombre } })
+  await waitFor(() => expect(fila(nombre)).toBeDefined())
+  fireEvent.click(fila(nombre))
+  return screen.findByRole('dialog', { name: nombre })
+}
+
 const abrirHoja = () => {
   fireEvent.click(screen.getByRole('button', { name: /Añadir ejercicio/ }))
   return screen.getByRole('dialog', { name: 'Añadir ejercicio' })
@@ -92,8 +117,8 @@ it('por «De mi catálogo»: busca una ficha, rellena nombre y equipo y queda co
   fireEvent.click(within(formulario).getByRole('button', { name: 'Añadir a mi biblioteca' }))
   await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
 
-  const tarjeta = (await screen.findAllByText('Tuyo'))[0].closest('article')!
-  expect(within(tarjeta).getByRole('heading', { name: 'Goblet squat' })).toBeInTheDocument()
+  const propia = (await screen.findAllByText('Tuyo'))[0].closest('button')!
+  expect(within(propia).getByText('Goblet squat')).toBeInTheDocument()
   expect((await servicio.biblioteca.listar())[0]).toMatchObject({ referenciaCatalogo: 'C173', musculoPrimario: 'cuadriceps' })
 })
 
@@ -119,7 +144,7 @@ it('por «Nuevo»: formulario en blanco, hereda el movimiento de «Se parece a�
   const [creado] = await servicio.biblioteca.listar()
   expect(creado).toMatchObject({ nombre: 'Remo en mi máquina', tieneFoto: true })
   expect(creado.movimiento).not.toBe('')
-  expect(document.querySelector('article img[src="blob:foto"]')).not.toBeNull()
+  expect(document.querySelector('.fila img[src="blob:foto"]')).not.toBeNull()
 })
 
 it('valida el nombre y las opciones de carga traen una frase de ejemplo', async () => {
@@ -133,28 +158,51 @@ it('valida el nombre y las opciones de carga traen una frase de ejemplo', async 
   expect(await within(f).findByText('Escribe el nombre.')).toBeInTheDocument()
 })
 
-it('edita y archiva un ejercicio propio; las fichas fijas no tienen esas acciones', async () => {
+it('tocar una fila abre la ficha; en la propia se edita (y vuelve a la ficha) y se archiva', async () => {
   const servicio = new ServicioCoach(true)
   await servicio.biblioteca.crear({
     referenciaCatalogo: null, nombre: 'Mi remo', equipo: 'cable', movimiento: 'coach-mi-remo', musculoPrimario: 'espalda',
     musculosSecundarios: [], tipoCarga: 'pesoMaquina', incrementoMinimoLb: 5, pesoBaseMaquinaLb: null, explicacionCorta: '',
   })
   render(<Panel servicio={servicio} hijo={<BibliotecaCoach />} />)
-  expect(await screen.findAllByRole('button', { name: 'Editar' })).toHaveLength(1)
+  // En la lista ya no hay botones de editar: sólo dentro de la ficha.
+  await waitFor(() => expect(titulos()).toContain('Mi remo'))
+  expect(screen.queryByRole('button', { name: 'Editar' })).toBeNull()
 
-  fireEvent.click(screen.getByRole('button', { name: 'Editar' }))
+  const ficha = await abrirFicha('Mi remo')
+  expect(within(ficha).getByText('Músculo principal')).toBeInTheDocument()
+  fireEvent.click(within(ficha).getByRole('button', { name: 'Editar' }))
   const editar = screen.getByRole('dialog', { name: 'Editar ejercicio' })
   fireEvent.change(within(editar).getByLabelText('Nombre'), { target: { value: 'Mi remo sentado' } })
   fireEvent(within(editar).getByLabelText(/Foto de la máquina/), new Event('cancel', { bubbles: true }))
   expect(screen.getByRole('dialog', { name: 'Editar ejercicio' })).toBe(editar)
   expect(within(editar).getByLabelText('Nombre')).toHaveValue('Mi remo sentado')
   fireEvent.click(within(editar).getByRole('button', { name: 'Guardar cambios' }))
-  expect(await screen.findByRole('heading', { name: 'Mi remo sentado' })).toBeInTheDocument()
 
-  fireEvent.click(screen.getByRole('button', { name: 'Archivar' }))
+  // Al guardar vuelve la ficha, ya con el nombre nuevo.
+  const actualizada = await screen.findByRole('dialog', { name: 'Mi remo sentado' })
+  fireEvent.click(within(actualizada).getByRole('button', { name: 'Archivar' }))
   fireEvent.click(within(screen.getByRole('dialog', { name: 'Archivar ejercicio' })).getByRole('button', { name: 'Archivar' }))
-  await waitFor(() => expect(screen.queryByRole('heading', { name: 'Mi remo sentado' })).toBeNull())
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  expect(titulos()).not.toContain('Mi remo sentado')
   expect(await servicio.biblioteca.listar()).toEqual([])
+})
+
+it('la ficha de un ejercicio del método no tiene Editar ni Archivar, y lo explica', async () => {
+  render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+  const ficha = await abrirFicha('Press de banca plano con barra')
+  expect(within(ficha).queryByRole('button', { name: 'Editar' })).toBeNull()
+  expect(within(ficha).queryByRole('button', { name: 'Archivar' })).toBeNull()
+  expect(within(ficha).getByText(/Ficha del método: no se puede editar/)).toBeInTheDocument()
+})
+
+it('tocar una alternativa cambia la ficha abierta, como en el cliente', async () => {
+  render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+  const ficha = await abrirFicha('Press de banca plano con barra')
+  const alternativa = within(ficha).getAllByRole('button').find((b) => b.classList.contains('variante'))!
+  const nombre = alternativa.querySelector('.variante__nombre')!.textContent!
+  fireEvent.click(alternativa)
+  expect(await screen.findByRole('dialog', { name: nombre })).toBeInTheDocument()
 })
 
 it('el editor de planes ofrece los ejercicios del coach con su foto y la insignia «Tuyo»', async () => {
@@ -221,7 +269,8 @@ it('editar un ejercicio propio sin cambiar su nombre guarda sin el aviso, pero n
     musculosSecundarios: [], tipoCarga: 'pesoMaquina', incrementoMinimoLb: 5, pesoBaseMaquinaLb: null, explicacionCorta: '',
   })
   render(<Panel servicio={servicio} hijo={<BibliotecaCoach />} />)
-  fireEvent.click(await screen.findByRole('button', { name: 'Editar' }))
+  await waitFor(() => expect(titulos()).toContain('Mi remo'))
+  fireEvent.click(within(await abrirFicha('Mi remo')).getByRole('button', { name: 'Editar' }))
   const editar = screen.getByRole('dialog', { name: 'Editar ejercicio' })
   fireEvent.change(within(editar).getByLabelText('Nombre'), { target: { value: 'Hack squat' } })
   fireEvent.click(within(editar).getByRole('button', { name: 'Guardar cambios' }))
@@ -229,21 +278,47 @@ it('editar un ejercicio propio sin cambiar su nombre guarda sin el aviso, pero n
   fireEvent.change(within(editar).getByLabelText('Nombre'), { target: { value: 'Mi remo' } })
   fireEvent.change(within(editar).getByLabelText('Cómo se hace'), { target: { value: 'Con la espalda recta.' } })
   fireEvent.click(within(editar).getByRole('button', { name: 'Guardar cambios' }))
-  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Editar ejercicio' })).toBeNull())
   expect((await servicio.biblioteca.listar())[0]).toMatchObject({ nombre: 'Mi remo', explicacionCorta: 'Con la espalda recta.' })
 })
 
 it('filtra por músculo y por equipo; el buscador manda sobre los filtros', async () => {
   render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
-  const titulos = () => screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
-  fireEvent.click(screen.getByRole('button', { name: 'Pecho' }))
+  await filtrar('Músculo', 'Pecho')
   expect(titulos()).toContain('Press de banca plano con barra')
   expect(titulos()).not.toContain('Prensa de piernas 45°')
-  fireEvent.change(screen.getByRole('combobox', { name: 'Equipo' }), { target: { value: 'maquinaTradicional' } })
+  await filtrar('Equipo', 'Máquina de pila (selectorizada)')
   expect(titulos()).toContain('Pec deck / fly de pecho')
   expect(titulos()).not.toContain('Press de banca plano con barra')
-  fireEvent.change(screen.getByRole('textbox', { name: 'Buscar en biblioteca' }), { target: { value: 'prensa' } })
+  expect(screen.getByRole('button', { name: 'Filtrar · 2' })).toBeInTheDocument()
+  fireEvent.change(buscador(), { target: { value: 'prensa' } })
   expect(titulos()).toContain('Prensa de piernas 45°')
+})
+
+it('«Solo mis ejercicios» deja los propios', async () => {
+  const servicio = new ServicioCoach(true)
+  await servicio.biblioteca.crear({
+    referenciaCatalogo: null, nombre: 'Mi remo', equipo: 'cable', movimiento: 'coach-mi-remo', musculoPrimario: 'espalda',
+    musculosSecundarios: [], tipoCarga: 'pesoMaquina', incrementoMinimoLb: 5, pesoBaseMaquinaLb: null, explicacionCorta: '',
+  })
+  render(<Panel servicio={servicio} hijo={<BibliotecaCoach />} />)
+  await waitFor(() => expect(titulos()).toContain('Mi remo'))
+  fireEvent.click(screen.getByRole('button', { name: /^Filtrar/ }))
+  const hoja = screen.getByRole('dialog', { name: 'Filtrar' })
+  fireEvent.click(within(hoja).getByRole('switch', { name: 'Solo mis ejercicios' }))
+  fireEvent.click(within(hoja).getByRole('button', { name: 'Ver 1 ejercicio' }))
+  await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Filtrar' })).toBeNull())
+  expect(titulos()).toEqual(['Mi remo'])
+  fireEvent.click(screen.getByRole('button', { name: 'Quitar Solo mis ejercicios' }))
+  expect(titulos().length).toBeGreaterThan(1)
+})
+
+it('buscar «hombro» o «polea» encuentra por músculo y equipo', () => {
+  render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
+  fireEvent.change(buscador(), { target: { value: 'polea' } })
+  expect(titulos().length).toBeGreaterThan(0)
+  fireEvent.change(buscador(), { target: { value: 'hombro' } })
+  expect(titulos()).toContain('Elevación lateral con mancuernas')
 })
 
 it('con «Peso corporal», la opción de discos se explica como lastre', async () => {
@@ -256,19 +331,17 @@ it('con «Peso corporal», la opción de discos se explica como lastre', async (
   expect(within(f).getByText(/Chaleco de 20 lb → 20/)).toBeInTheDocument()
 })
 
-it('al buscar, los filtros quedan en pausa con un aviso y vuelven al borrar', () => {
+it('al buscar, los filtros quedan en pausa con un aviso y vuelven al borrar', async () => {
   render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
-  fireEvent.click(screen.getByRole('button', { name: 'Pecho' }))
-  const buscar = screen.getByRole('textbox', { name: 'Buscar en biblioteca' })
-  fireEvent.change(buscar, { target: { value: 'curl' } })
+  await filtrar('Músculo', 'Pecho')
+  fireEvent.change(buscador(), { target: { value: 'curl' } })
   expect(screen.getByText('Buscando en toda la biblioteca')).toBeInTheDocument()
-  expect(screen.getByRole('navigation', { name: 'Filtrar por músculo' })).toHaveAttribute('aria-disabled', 'true')
-  expect(screen.getByRole('navigation', { name: 'Filtrar por músculo' })).toHaveClass('filtro--en-pausa')
-  const titulos = () => screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
+  expect(screen.getByRole('group', { name: 'Filtros puestos' })).toHaveAttribute('aria-disabled', 'true')
+  expect(screen.getByRole('group', { name: 'Filtros puestos' })).toHaveClass('filtro--en-pausa')
   expect(titulos().some((t) => /curl/i.test(t ?? ''))).toBe(true)
-  fireEvent.change(buscar, { target: { value: '' } })
+  fireEvent.change(buscador(), { target: { value: '' } })
   expect(screen.queryByText('Buscando en toda la biblioteca')).toBeNull()
-  expect(screen.getByRole('button', { name: 'Pecho' })).toHaveAttribute('aria-pressed', 'true')
+  expect(screen.getByRole('button', { name: 'Quitar Pecho' })).toBeInTheDocument()
   expect(titulos()).toContain('Press de banca plano con barra')
   expect(titulos().some((t) => /curl/i.test(t ?? ''))).toBe(false)
 })
@@ -319,24 +392,23 @@ describe('detalles del QA en iPhone', () => {
 
   it('cuenta en singular y en plural', () => {
     render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
-    fireEvent.change(screen.getByRole('textbox', { name: 'Buscar en biblioteca' }), { target: { value: 'Dominadas' } })
+    fireEvent.change(buscador(), { target: { value: 'Dominadas' } })
     expect(screen.getByText('1 ejercicio')).toBeInTheDocument()
-    fireEvent.change(screen.getByRole('textbox', { name: 'Buscar en biblioteca' }), { target: { value: 'press' } })
+    fireEvent.change(buscador(), { target: { value: 'press' } })
     expect(screen.getByText(/^\d+ ejercicios$/)).toBeInTheDocument()
   })
 
-  it('sin resultados explica qué hacer, con búsqueda y con filtros', () => {
+  it('sin resultados explica qué hacer, con búsqueda y con filtros', async () => {
     render(<Panel servicio={new ServicioCoach(true)} hijo={<BibliotecaCoach />} />)
-    const buscar = screen.getByRole('textbox', { name: 'Buscar en biblioteca' })
-    fireEvent.change(buscar, { target: { value: 'zzz' } })
+    fireEvent.change(buscador(), { target: { value: 'zzz' } })
     expect(screen.getByText(/No hay ejercicios con “zzz”/)).toBeInTheDocument()
     expect(screen.getByText(/crea uno con «Añadir ejercicio»/)).toBeInTheDocument()
-    fireEvent.change(buscar, { target: { value: '' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Pantorrillas' }))
-    fireEvent.change(screen.getByRole('combobox', { name: 'Equipo' }), { target: { value: 'smith' } })
+    fireEvent.change(buscador(), { target: { value: '' } })
+    await filtrar('Músculo', 'Pantorrillas')
+    await filtrar('Equipo', 'Máquina Smith')
     expect(screen.getByText('No hay ejercicios con estos filtros.')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Quitar filtros' }))
-    expect(screen.getByRole('button', { name: 'Todos' })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('combobox', { name: 'Equipo' })).toHaveValue('todos')
+    expect(screen.queryByRole('group', { name: 'Filtros puestos' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Filtrar' })).toBeInTheDocument()
   })
 })

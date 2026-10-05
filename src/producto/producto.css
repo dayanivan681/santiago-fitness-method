@@ -657,43 +657,6 @@ a.sfm-primary:active {
   line-height: 1.6;
   white-space: pre-wrap;
 }
-.sfm-catalog-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-.sfm-exercise-card {
-  overflow: hidden;
-  border: 1px solid var(--sfm-line);
-  border-radius: 14px;
-  background: var(--sfm-surface);
-}
-.sfm-exercise-card img {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  background: #1b1c1e;
-  filter: saturate(0.5);
-}
-.sfm-exercise-card > div {
-  padding: 16px;
-}
-.sfm-exercise-card h2 {
-  font-size: 17px;
-  margin: 8px 0;
-  line-height: 1.25;
-}
-.sfm-exercise-card small {
-  font-size: 10px;
-  color: var(--sfm-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.sfm-exercise-card p {
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--sfm-muted);
-}
 .sfm-stepper {
   display: flex;
   border-bottom: 1px solid var(--sfm-line);
@@ -1596,9 +1559,6 @@ a.sfm-primary:active {
     max-width: none;
     font-size: 12px;
   }
-  .sfm-catalog-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .sfm-program-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -1678,15 +1638,6 @@ a.sfm-primary:active {
   }
   .sfm-frecuencia button {
     min-width: 48px;
-  }
-  .sfm-catalog-grid {
-    gap: 10px;
-  }
-  .sfm-exercise-card > div {
-    padding: 12px;
-  }
-  .sfm-exercise-card h2 {
-    font-size: 15px;
   }
   .sfm-stepper {
     gap: 8px;
@@ -2102,11 +2053,6 @@ a.sfm-primary:active {
   font-weight: 600;
   letter-spacing: 0.02em;
 }
-.sfm-card-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 6px;
-}
 .sfm-form textarea,
 .sfm-form select {
   width: 100%;
@@ -2211,4 +2157,9 @@ a.sfm-primary:active {
   height: 1px;
   padding: 0;
   border: 0;
+}
+
+/* «Archivar» en la ficha: discreto, pero se lee que es destructivo. */
+.sfm-text-button--peligro {
+  color: var(--sfm-red, #e5352b);
 }

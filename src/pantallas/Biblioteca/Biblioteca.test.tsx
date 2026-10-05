@@ -19,6 +19,14 @@ async function abrir() {
   await screen.findByText('Biblioteca')
 }
 
+/** Abre «Filtrar», elige una opción y vuelve a la lista. */
+async function filtrar(grupo: 'Músculo' | 'Equipo', opcion: string) {
+  await userEvent.click(screen.getByRole('button', { name: /^Filtrar/ }))
+  const hoja = screen.getByRole('dialog', { name: 'Filtrar' })
+  await userEvent.click(within(within(hoja).getByRole('group', { name: grupo })).getByRole('button', { name: opcion }))
+  await userEvent.click(within(hoja).getByRole('button', { name: /^Ver \d+ ejercicio/ }))
+}
+
 async function abrirFicha(nombre: string) {
   await abrir()
   await userEvent.click(await screen.findByRole('button', { name: (texto) => texto.includes(nombre) }))
@@ -139,15 +147,39 @@ describe('la ficha se comporta como un diálogo móvil (Fase 2)', () => {
 })
 
 describe('filtro por equipo', () => {
-  test('el selector «Equipo» deja sólo las máquinas de discos y se suma al músculo', async () => {
+  test('en «Filtrar», Máquina de discos deja sólo esas y se suma al músculo', async () => {
     await abrir()
-    const equipo = screen.getByRole('combobox', { name: 'Equipo' })
-    await userEvent.selectOptions(equipo, 'maquinaDiscos')
+    await filtrar('Equipo', 'Máquina de discos (plate-loaded)')
     expect(await screen.findByText('Prensa de piernas 45°')).toBeInTheDocument()
     expect(screen.queryByText('Extensión de cuádriceps')).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Pantorrillas' }))
+    await filtrar('Músculo', 'Pantorrillas')
     expect(screen.queryByText('Prensa de piernas 45°')).not.toBeInTheDocument()
     expect(screen.getByText('Seated calf raise')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Filtrar · 2/ })).toBeInTheDocument()
+  })
+
+  test('los filtros puestos se ven como pastillas y se quitan con un toque', async () => {
+    await abrir()
+    await filtrar('Músculo', 'Pantorrillas')
+    expect(screen.queryByText('Prensa de piernas 45°')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Quitar Pantorrillas' }))
+    expect(screen.queryByRole('button', { name: 'Quitar Pantorrillas' })).not.toBeInTheDocument()
+    expect(screen.getByText('Prensa de piernas 45°')).toBeInTheDocument()
+  })
+})
+
+describe('lista larga, fácil de leer', () => {
+  test('sin buscar ni elegir músculo, se agrupa por músculo con su número', async () => {
+    await abrir()
+    expect(screen.getByRole('heading', { name: /^Pecho · \d+$/ })).toBeInTheDocument()
+    await filtrar('Músculo', 'Pecho')
+    expect(screen.queryByRole('heading', { name: /^Pecho · \d+$/ })).not.toBeInTheDocument()
+  })
+
+  test('buscar «hombro» encuentra los ejercicios de hombro aunque el nombre no lo diga', async () => {
+    await abrir()
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Buscar ejercicio' }), 'hombro')
+    expect(screen.getByText('Elevación lateral con mancuernas')).toBeInTheDocument()
   })
 })
 
@@ -160,17 +192,17 @@ describe('carga de peso corporal', () => {
 })
 
 describe('buscar con filtros', () => {
-  test('con Pecho marcado, buscar «curl» avisa y pausa los filtros; al borrar vuelve Pecho', async () => {
+  test('con Pecho puesto, buscar «curl» avisa y pausa los filtros; al borrar vuelve Pecho', async () => {
     await abrir()
-    await userEvent.click(screen.getByRole('button', { name: 'Pecho' }))
+    await filtrar('Músculo', 'Pecho')
     const buscar = screen.getByRole('searchbox', { name: 'Buscar ejercicio' })
     await userEvent.type(buscar, 'curl')
     expect(screen.getByText('Buscando en toda la biblioteca')).toBeInTheDocument()
-    expect(screen.getByRole('navigation', { name: 'Filtrar por músculo' })).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('group', { name: 'Filtros puestos' })).toHaveAttribute('aria-disabled', 'true')
     expect(screen.getAllByText(/curl/i).length).toBeGreaterThan(1)
     await userEvent.clear(buscar)
     expect(screen.queryByText('Buscando en toda la biblioteca')).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Pecho' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Quitar Pecho' })).toBeInTheDocument()
     expect(screen.queryByText(/curl/i)).not.toBeInTheDocument()
   })
 })

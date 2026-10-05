@@ -17,7 +17,8 @@ const CSS = raiz('src/index.css')
 const APP = raiz('src/producto/Cliente.tsx')
 const HOY = raiz('src/pantallas/EntrenamientoHoy/EntrenamientoHoy.tsx')
 const ENTRENO = raiz('src/pantallas/EntrenamientoHoy/Entrenamiento.tsx')
-const BIBLIOTECA = raiz('src/pantallas/Biblioteca/Biblioteca.tsx')
+// La lista vive en `ListaBiblioteca`, compartida por el cliente y el coach.
+const BIBLIOTECA = raiz('src/pantallas/Biblioteca/ListaBiblioteca.tsx')
 
 describe('entrenar es un modo, no la pantalla de inicio', () => {
   it('Hoy no importa la fila de serie: no puede registrar nada', () => {
@@ -87,7 +88,8 @@ describe('la biblioteca escala', () => {
   })
 
   it('filtrar sin resultados lo dice, en vez de dejar la pantalla en blanco', () => {
-    expect(BIBLIOTECA).toContain('No hay ningún ejercicio que se llame así.')
+    expect(BIBLIOTECA).toContain('No hay ejercicios con “${busqueda.trim()}”.')
+    expect(BIBLIOTECA).toContain('No hay ejercicios con estos filtros.')
   })
 })
 

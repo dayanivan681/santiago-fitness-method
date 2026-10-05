@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { describe, test, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { useMemoria } from './memoria'
@@ -53,8 +53,11 @@ function Aplicacion({ conMemoria }: { readonly conMemoria: boolean }) {
 
 async function filtrarPorPecho() {
   await screen.findByText('Biblioteca')
-  await userEvent.click(await screen.findByRole('button', { name: 'Pecho' }))
-  expect(screen.getByRole('button', { name: 'Pecho' })).toHaveAttribute('aria-pressed', 'true')
+  await userEvent.click(await screen.findByRole('button', { name: /^Filtrar/ }))
+  const hoja = screen.getByRole('dialog', { name: 'Filtrar' })
+  await userEvent.click(within(within(hoja).getByRole('group', { name: 'Músculo' })).getByRole('button', { name: 'Pecho' }))
+  await userEvent.click(within(hoja).getByRole('button', { name: /^Ver \d+ ejercicio/ }))
+  expect(screen.getByRole('button', { name: 'Quitar Pecho' })).toBeInTheDocument()
 }
 
 describe('contexto de sección', () => {
@@ -65,14 +68,11 @@ describe('contexto de sección', () => {
 
     // Act: la pantalla se desmonta y se vuelve a montar
     await userEvent.click(screen.getByRole('button', { name: 'Ir a otra' }))
-    expect(screen.queryByRole('button', { name: 'Pecho' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Quitar Pecho' })).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Volver' }))
 
     // Assert
-    expect(await screen.findByRole('button', { name: 'Pecho' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    expect(await screen.findByRole('button', { name: 'Quitar Pecho' })).toBeInTheDocument()
   })
 
   test('sin memoria se pierde: es exactamente lo que arregla el cambio', async () => {
@@ -84,9 +84,7 @@ describe('contexto de sección', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Ir a otra' }))
     await userEvent.click(screen.getByRole('button', { name: 'Volver' }))
 
-    expect(await screen.findByRole('button', { name: 'Pecho' })).toHaveAttribute(
-      'aria-pressed',
-      'false',
-    )
+    await screen.findByRole('button', { name: /^Filtrar/ })
+    expect(screen.queryByRole('button', { name: 'Quitar Pecho' })).not.toBeInTheDocument()
   })
 })

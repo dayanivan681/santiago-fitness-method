@@ -12,7 +12,7 @@
  */
 
 import { ImagenConMovimiento } from '../../componentes/ImagenConMovimiento'
-import { useRef } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { ListaAlternativas } from './ListaAlternativas'
 import { useEjerciciosEntrenados } from '../../aplicacion/useEjerciciosEntrenados'
 import { useLiveQuery } from '../../nube/eventos'
@@ -37,6 +37,8 @@ interface Props {
   }
   readonly onElegir: (ejercicio: Ejercicio) => void
   readonly onCerrar: () => void
+  /** Al final de la ficha, a ancho completo. El coach pone aquí Editar/Archivar. */
+  readonly acciones?: ReactNode
 }
 
 export function HojaEjercicio({
@@ -45,6 +47,7 @@ export function HojaEjercicio({
   historial,
   onElegir,
   onCerrar,
+  acciones,
 }: Props) {
   const panel = useRef<HTMLDivElement>(null)
   const cerrar = useCapa(true, onCerrar, panel)
@@ -123,6 +126,8 @@ export function HojaEjercicio({
         <p className="nota">
           Cada variante guarda su propio historial. Cambiar de una a otra no los mezcla.
         </p>
+
+        {acciones && <div className="hoja__acciones">{acciones}</div>}
       </div>
     </div>
   )

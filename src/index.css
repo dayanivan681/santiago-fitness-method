@@ -2513,6 +2513,168 @@ a.fila:active {
   appearance: none;
 }
 
+/* ---------- Lista de la Biblioteca (cliente y coach) ---------- */
+
+/* Buscador y «Filtrar» fijos arriba, opacos: la lista no asoma por detrás. */
+.biblioteca__barra {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  /* Tan ancha como la lista (`.grupo--pleno`), para que no asome por los lados. */
+  margin: 0 var(--sangra-der) 10px var(--sangra-izq);
+  padding: 8px calc(-1 * var(--sangra-der)) 8px calc(-1 * var(--sangra-izq));
+  background: var(--fondo);
+}
+.biblioteca__barra .busca {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.biblioteca__filtrar {
+  flex: none;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--texto);
+  font: 600 15px/1 'Barlow', sans-serif;
+  cursor: pointer;
+}
+.biblioteca__filtrar--activo {
+  background: var(--texto);
+  color: var(--fondo);
+  border-color: var(--texto);
+}
+
+/* Filtros puestos, en texto normal y quitables con un toque. */
+.pastillas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+.pastilla {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 999px;
+  background: var(--relleno);
+  color: var(--texto);
+  font: 500 15px/1.2 'Barlow', sans-serif;
+  cursor: pointer;
+}
+
+.biblioteca__contador {
+  margin: 4px 0 8px;
+  font-size: 14px;
+  color: var(--texto-60);
+}
+.biblioteca__grupo {
+  /* Es un h2: en el panel del coach los h2 van en mayúsculas condensadas. */
+  margin: 22px 0 8px;
+  font: 600 14px/1.3 'Barlow', sans-serif;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--texto-60);
+}
+.biblioteca__vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 8px;
+  text-align: center;
+}
+.biblioteca__vacio-titulo {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.biblioteca__vacio-detalle {
+  margin: 0;
+  color: var(--texto-60);
+}
+
+/* Hoja «Filtrar»: listas de una sola elección con filas de 48 px. */
+.hoja-filtros__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.opcion-filtro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radio-chico);
+  background: transparent;
+  color: var(--texto);
+  font: 500 16px/1.2 'Barlow', sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+.opcion-filtro--activa {
+  background: var(--relleno-alto);
+  border-color: var(--borde-fuerte);
+  font-weight: 700;
+}
+.opcion-filtro__numero {
+  flex: none;
+  color: var(--texto-50);
+  font-size: 14px;
+}
+.opcion-filtro--interruptor input {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--rojo);
+}
+.hoja-filtros__titulo {
+  margin: 10px 0 2px;
+  font: 600 15px/1.2 'Barlow', sans-serif;
+  color: var(--texto-60);
+}
+/* Pegado al borde inferior, cubriendo también el relleno del panel: la lista
+   no asoma por debajo de los botones. */
+.hoja-filtros__pie {
+  --relleno-inferior: calc(30px + env(safe-area-inset-bottom));
+  position: sticky;
+  bottom: calc(-1 * var(--relleno-inferior));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 calc(-1 * var(--relleno-inferior));
+  padding: 10px 0 var(--relleno-inferior);
+  background: var(--superficie);
+}
+.biblioteca__vacio .boton-guardar,
+.hoja-filtros__pie .boton-guardar {
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  font: 600 16px/1.2 'Barlow', sans-serif;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Editar/Archivar del coach al final de la ficha, a ancho completo. */
+.hoja__acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* ── Modo entrenamiento ──────────────────────────────────────────────────────
  *
  * Cabecera contextual propia: dice de qué día es y por dónde vas, y nada más.
