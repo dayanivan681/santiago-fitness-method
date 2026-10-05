@@ -75,6 +75,9 @@
   --mov-confirmar: 150ms;
   --mov-desplegar: 200ms;
   --mov-hoja: 220ms;
+  /* Cerrar es algo más rápido que abrir: lo que se va no se espera. Igual que
+     CIERRE_MS en src/aplicacion/usePresencia.ts. */
+  --mov-hoja-cierre: 180ms;
   --mov-progreso: 250ms;
   --mov-curva: cubic-bezier(0.2, 0, 0, 1);
 
@@ -1845,6 +1848,40 @@ button,
   }
   to {
     opacity: 1;
+  }
+}
+
+/* Al cerrar, el camino inverso: baja lo mismo que subió y el fondo se aclara.
+   `forwards` la deja en su sitio hasta que se desmonta, sin un parpadeo. */
+.hoja--saliendo {
+  pointer-events: none;
+}
+
+.hoja--saliendo .hoja__panel {
+  animation: bajar-hoja var(--mov-hoja-cierre) var(--mov-curva) forwards;
+}
+
+.hoja--saliendo .hoja__fondo {
+  animation: desatenuar var(--mov-hoja-cierre) var(--mov-curva) forwards;
+}
+
+@keyframes bajar-hoja {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+
+@keyframes desatenuar {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 

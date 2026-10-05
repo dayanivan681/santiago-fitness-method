@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-05 — Pulido UI fase 3 (hojas con apertura y cierre animados) — claude-code
+
+- Publicada con el «sí» del dueño. Con esto termina el plan de pulido UI (fases 1–3). Fuera quedaron, por diseño, las transiciones entre pantallas y la entrada animada por ejercicio.
+- Preview revisado: https://codex-premium-v2.santiago-fitness-method.pages.dev.
+- Hecho: `usePresencia` (cierre único, respaldo, limpieza al desmontar, inmediato con movimiento reducido o sin animaciones); `HojaCapa` une las cuatro hojas del cliente; `<Hoja>` del coach usa el mismo controlador. Ambas abren en 220 ms (14 px) y cierran en 180 ms (`--mov-hoja-cierre`). Detalle en BUILD_LOG.
+- Checks: 959 pruebas, tsc, lint, build, `git diff --check`, `test:http` (101) PASS.
+- Pendiente: app instalada (áreas seguras) y teléfono físico.
+
 ## 2026-10-04 — Pulido UI fase 2 (microinteracciones) — claude-code
 
 - Publicada con el «sí» del dueño. Turno libre: la fase 3 (hojas con apertura y cierre animados) queda para Codex, con su propio preview y visto bueno.
@@ -145,11 +153,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-05T03:43:17.263Z
+- **Última sincronización:** 2026-10-05T03:56:37.425Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1292,6 +1300,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-05T03:56:37.426Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Pulido UI fase 3: hojas con apertura (220 ms, 14 px) y cierre (180 ms) animados. usePresencia (cierre único, respaldo, limpieza al desmontar, inmediato con movimiento reducido); HojaCapa une las cuatro hojas del cliente; el <Hoja> del coach usa el mismo controlador sin perder foco, bloqueo, Escape, Atrás ni la cancelación de foto.
+- **Verificación:** npx tsc -b; npm test (959); npm run lint; npm run build; git diff --check; npm run test:http (101); QA Chromium real; simulador iOS; preview codex-premium-v2
+- **Siguiente:** ninguno (plan de pulido UI completo); pendiente comprobar app instalada y teléfono físico
+
 
 ### 2026-10-05T03:43:17.264Z | claude-code | CLAIM
 - **Estado:** active

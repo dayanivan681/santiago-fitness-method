@@ -1,3 +1,5 @@
+// Primero, antes de que nada cargue react-dom (ver el módulo).
+import './animacionesJsdom'
 import '@testing-library/jest-dom/vitest'
 import { configure } from '@testing-library/react'
 

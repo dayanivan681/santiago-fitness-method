@@ -5,10 +5,10 @@
  * conserva su propio historial).
  */
 
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
 import { useReferenciasDeVariantes } from '../../aplicacion/useReferenciasDeVariantes'
-import { useCapa } from '../../aplicacion/useCapa'
+import { HojaCapa } from '../../componentes/HojaCapa'
 import { debeEvitarse } from '../../logica/limitaciones'
 import { agruparPorEquipo, ordenarAlternativas } from '../../logica/alternativas'
 import { useEjerciciosEntrenados } from '../../aplicacion/useEjerciciosEntrenados'
@@ -53,8 +53,6 @@ export function HojaVariantes({
     variantes,
     rango,
   )
-  const panel = useRef<HTMLDivElement>(null)
-  const cerrar = useCapa(true, onCerrar, panel)
 
   // El caso corriente —la máquina está ocupada— es de un día, así que ése es
   // el valor por defecto. Fijar la variante en la plantilla se pide a mano.
@@ -99,58 +97,40 @@ export function HojaVariantes({
   )
 
   return (
-    <div className="hoja" role="dialog" aria-modal="true" aria-label="Variante asignada">
-      {/* El fondo también cierra, pero con su propio nombre: dos botones
-          "Cerrar" en el mismo diálogo confunden a quien usa lector de pantalla. */}
-      <button
-        type="button"
-        className="hoja__fondo"
-        onClick={cerrar}
-        aria-label="Cerrar tocando fuera"
-      />
-
-      <div className="hoja__panel" ref={panel} tabIndex={-1}>
-        <div className="hoja__cabecera">
-          <h2 className="hoja__titulo">Variante asignada</h2>
-          <button type="button" className="hoja__cerrar" onClick={cerrar}>
-            Cerrar
+    <HojaCapa etiqueta="Variante asignada" titulo="Variante asignada" onCerrar={onCerrar}>
+      <div className="filtros" role="group" aria-label="Alcance del cambio">
+        {ALCANCES.map(([valor, etiqueta]) => (
+          <button
+            key={valor}
+            type="button"
+            className={valor === alcance ? 'filtro filtro--activo' : 'filtro'}
+            aria-pressed={valor === alcance}
+            onClick={() => setAlcance(valor)}
+          >
+            {etiqueta}
           </button>
-        </div>
-
-        <div className="filtros" role="group" aria-label="Alcance del cambio">
-          {ALCANCES.map(([valor, etiqueta]) => (
-            <button
-              key={valor}
-              type="button"
-              className={valor === alcance ? 'filtro filtro--activo' : 'filtro'}
-              aria-pressed={valor === alcance}
-              onClick={() => setAlcance(valor)}
-            >
-              {etiqueta}
-            </button>
-          ))}
-        </div>
-
-        <p className="hoja__texto">
-          {alcance === 'soloHoy'
-            ? 'Cambio de un día: mañana vuelve la variante asignada. Cada una conserva su propio historial.'
-            : 'Queda asignada en la plantilla a partir de hoy. No rompe la estructura del día.'}
-        </p>
-
-        {fijadas.map(fila)}
-        {conHistorial.length > 0 && (
-          <p className="alternativas__grupo">Ya entrenadas · {conHistorial.length}</p>
-        )}
-        {conHistorial.map(fila)}
-        {agruparPorEquipo(sinHistorial).map(([equipo, suyas]) => (
-          <Fragment key={equipo}>
-            <p className="alternativas__grupo">
-              {etiquetaEquipo(equipo)} · {suyas.length}
-            </p>
-            {suyas.map(fila)}
-          </Fragment>
         ))}
       </div>
-    </div>
+
+      <p className="hoja__texto">
+        {alcance === 'soloHoy'
+          ? 'Cambio de un día: mañana vuelve la variante asignada. Cada una conserva su propio historial.'
+          : 'Queda asignada en la plantilla a partir de hoy. No rompe la estructura del día.'}
+      </p>
+
+      {fijadas.map(fila)}
+      {conHistorial.length > 0 && (
+        <p className="alternativas__grupo">Ya entrenadas · {conHistorial.length}</p>
+      )}
+      {conHistorial.map(fila)}
+      {agruparPorEquipo(sinHistorial).map(([equipo, suyas]) => (
+        <Fragment key={equipo}>
+          <p className="alternativas__grupo">
+            {etiquetaEquipo(equipo)} · {suyas.length}
+          </p>
+          {suyas.map(fila)}
+        </Fragment>
+      ))}
+    </HojaCapa>
   )
 }

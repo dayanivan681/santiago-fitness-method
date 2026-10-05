@@ -7,8 +7,7 @@
  * momento; «Ver N ejercicios» sólo cierra.
  */
 
-import { useRef } from 'react'
-import { useCapa } from '../../aplicacion/useCapa'
+import { HojaCapa } from '../../componentes/HojaCapa'
 import { ETIQUETA_EQUIPO, NOMBRE_MUSCULO } from '../../dominio/etiquetas'
 import { segunCantidad } from '../../logica/plural'
 import {
@@ -38,66 +37,58 @@ interface Props {
 }
 
 export function HojaFiltros({ ejercicios, filtros, cambiar, esPropio, cerrar: alCerrar }: Props) {
-  const panel = useRef<HTMLDivElement>(null)
-  const cerrar = useCapa(true, alCerrar, panel)
   const total = aplicarFiltros(ejercicios, filtros, esPropio).length
   const cuantos = (parcial: Partial<FiltrosBiblioteca>) =>
     aplicarFiltros(ejercicios, { ...filtros, ...parcial }, esPropio).length
 
   return (
-    <div className="hoja" role="dialog" aria-modal="true" aria-label="Filtrar">
-      <button type="button" className="hoja__fondo" onClick={cerrar} aria-label="Cerrar tocando fuera" />
-      <div className="hoja__panel" ref={panel} tabIndex={-1}>
-        <div className="hoja__cabecera">
-          <h2 className="hoja__titulo">Filtrar</h2>
-          <button type="button" className="hoja__cerrar" onClick={cerrar}>
-            Cerrar
-          </button>
-        </div>
+    <HojaCapa etiqueta="Filtrar" titulo="Filtrar" onCerrar={alCerrar}>
+      {(cerrar) => (
+        <>
+          {esPropio && (
+            <label className="opcion-filtro opcion-filtro--interruptor">
+              <span>Solo mis ejercicios</span>
+              <input
+                type="checkbox"
+                role="switch"
+                checked={filtros.soloMios}
+                onChange={(e) => cambiar({ ...filtros, soloMios: e.target.checked })}
+              />
+            </label>
+          )}
 
-        {esPropio && (
-          <label className="opcion-filtro opcion-filtro--interruptor">
-            <span>Solo mis ejercicios</span>
-            <input
-              type="checkbox"
-              role="switch"
-              checked={filtros.soloMios}
-              onChange={(e) => cambiar({ ...filtros, soloMios: e.target.checked })}
-            />
-          </label>
-        )}
+          <Opciones<FiltroMusculo>
+            titulo="Músculo"
+            valor={filtros.musculo}
+            opciones={[TODOS, ...MUSCULOS]}
+            etiqueta={(m) => (m === TODOS ? 'Todos' : NOMBRE_MUSCULO[m])}
+            numero={(m) => cuantos({ musculo: m })}
+            elegir={(musculo) => cambiar({ ...filtros, musculo })}
+          />
+          <Opciones<FiltroEquipo>
+            titulo="Equipo"
+            valor={filtros.equipo}
+            opciones={[TODOS, ...EQUIPOS]}
+            etiqueta={(e) => (e === TODOS ? 'Todos' : ETIQUETA_EQUIPO[e])}
+            numero={(e) => cuantos({ equipo: e })}
+            elegir={(equipo) => cambiar({ ...filtros, equipo })}
+          />
 
-        <Opciones<FiltroMusculo>
-          titulo="Músculo"
-          valor={filtros.musculo}
-          opciones={[TODOS, ...MUSCULOS]}
-          etiqueta={(m) => (m === TODOS ? 'Todos' : NOMBRE_MUSCULO[m])}
-          numero={(m) => cuantos({ musculo: m })}
-          elegir={(musculo) => cambiar({ ...filtros, musculo })}
-        />
-        <Opciones<FiltroEquipo>
-          titulo="Equipo"
-          valor={filtros.equipo}
-          opciones={[TODOS, ...EQUIPOS]}
-          etiqueta={(e) => (e === TODOS ? 'Todos' : ETIQUETA_EQUIPO[e])}
-          numero={(e) => cuantos({ equipo: e })}
-          elegir={(equipo) => cambiar({ ...filtros, equipo })}
-        />
-
-        <div className="hoja-filtros__pie">
-          <button type="button" className="boton-guardar" onClick={cerrar}>
-            Ver {total} {segunCantidad(total, 'ejercicio', 'ejercicios')}
-          </button>
-          <button
-            type="button"
-            className="boton-guardar boton-guardar--secundario"
-            onClick={() => cambiar(SIN_FILTROS)}
-          >
-            Quitar filtros
-          </button>
-        </div>
-      </div>
-    </div>
+          <div className="hoja-filtros__pie">
+            <button type="button" className="boton-guardar" onClick={cerrar}>
+              Ver {total} {segunCantidad(total, 'ejercicio', 'ejercicios')}
+            </button>
+            <button
+              type="button"
+              className="boton-guardar boton-guardar--secundario"
+              onClick={() => cambiar(SIN_FILTROS)}
+            >
+              Quitar filtros
+            </button>
+          </div>
+        </>
+      )}
+    </HojaCapa>
   )
 }
 

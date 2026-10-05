@@ -20,7 +20,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
 import { useControlDescanso } from '../../aplicacion/contextoDescanso'
-import { useCapa } from '../../aplicacion/useCapa'
+import { HojaCapa } from '../../componentes/HojaCapa'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { CuerpoEjercicio } from './CuerpoEjercicio'
 import { HojaVariantes } from './HojaVariantes'
@@ -30,7 +30,6 @@ import type { Ejercicio } from '../../dominio/tipos'
 import type { ClaveDeBorrador } from '../../logica/borrador'
 import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 import type { EjercicioDelDia } from '../../aplicacion/useEntrenamiento'
-import { useRef } from 'react'
 import { segunCantidad } from '../../logica/plural'
 import { Hoja as HojaResumen,ErrorVisible } from '../../producto/ui'
 
@@ -319,49 +318,31 @@ function HojaDelDia({
   readonly onElegir: (indice: number) => void
   readonly onCerrar: () => void
 }) {
-  const panel = useRef<HTMLDivElement>(null)
-  const cerrar = useCapa(true, onCerrar, panel)
-
   return (
-    <div className="hoja" role="dialog" aria-modal="true" aria-label="Ejercicios del día">
-      <button
-        type="button"
-        className="hoja__fondo"
-        onClick={cerrar}
-        aria-label="Cerrar tocando fuera"
-      />
-      <div className="hoja__panel" ref={panel} tabIndex={-1}>
-        <div className="hoja__cabecera">
-          <h2 className="hoja__titulo">Ejercicios del día</h2>
-          <button type="button" className="hoja__cerrar" onClick={cerrar}>
-            Cerrar
+    <HojaCapa etiqueta="Ejercicios del día" titulo="Ejercicios del día" onCerrar={onCerrar}>
+      <div className="grupo">
+        {ejercicios.map((ejercicioDelDia, posicion) => (
+          <button
+            key={ejercicioDelDia.ejercicio.id}
+            type="button"
+            className="fila"
+            aria-current={posicion === actual ? 'true' : undefined}
+            onClick={() => onElegir(posicion)}
+          >
+            <span className="fila__cuerpo">
+              <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>
+              <span className="fila__detalle">
+                {ejercicioDelDia.slot.seriesObjetivo} series ·{' '}
+                {ejercicioDelDia.slot.repMin}–{ejercicioDelDia.slot.repMax} reps
+              </span>
+            </span>
+            <span className="fila__valor">
+              {ejercicioDelDia.seriesDeHoy.length}/{ejercicioDelDia.slot.seriesObjetivo}
+            </span>
           </button>
-        </div>
-
-        <div className="grupo">
-          {ejercicios.map((ejercicioDelDia, posicion) => (
-            <button
-              key={ejercicioDelDia.ejercicio.id}
-              type="button"
-              className="fila"
-              aria-current={posicion === actual ? 'true' : undefined}
-              onClick={() => onElegir(posicion)}
-            >
-              <span className="fila__cuerpo">
-                <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>
-                <span className="fila__detalle">
-                  {ejercicioDelDia.slot.seriesObjetivo} series ·{' '}
-                  {ejercicioDelDia.slot.repMin}–{ejercicioDelDia.slot.repMax} reps
-                </span>
-              </span>
-              <span className="fila__valor">
-                {ejercicioDelDia.seriesDeHoy.length}/{ejercicioDelDia.slot.seriesObjetivo}
-              </span>
-            </button>
-          ))}
-        </div>
+        ))}
       </div>
-    </div>
+    </HojaCapa>
   )
 }
 

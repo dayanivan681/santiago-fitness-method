@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-05 — Pulido UI fase 3: hojas con apertura y cierre animados — claude-code
+
+- `src/aplicacion/usePresencia.ts`: la hoja pasa por «saliendo» y avisa al terminar su animación. Un solo cierre aunque se pida dos veces; respaldo con temporizador (180 + 80 ms) si no llega `animationend`; al desmontarse a mitad (navegación) no queda callback ni temporizador; con `prefers-reduced-motion`, o sin `getAnimations`, cierre inmediato. Sólo cuenta el `animationend` del propio elemento (los de dentro, como el ✓, suben y no cierran).
+- `src/componentes/HojaCapa.tsx`: armazón único de las cuatro hojas del cliente (ficha, Filtrar, variante asignada, ejercicios del día), que repetían marcado. El cierre sigue el mismo camino: botón y fondo por `useCapa` (historial y Atrás), Escape y Atrás piden la salida; foco, bloqueo del fondo y retorno del foco se conservan.
+- `<Hoja>` de `src/producto/ui.tsx` (coach): mismo controlador; Escape evita el cierre nativo del `<dialog>` para pintar la salida; la cancelación del selector de fotos sigue sin cerrar (`event.target === event.currentTarget`).
+- CSS: `--mov-hoja-cierre: 180ms`; las dos hojas abren con `subir-hoja` (220 ms, 14 px) y cierran con `bajar-hoja` + `desatenuar` (180 ms, `forwards`, sin toques durante la salida). Se retira `sfm-sheet` (24 px, 0.22s).
+- Pruebas: `usePresencia.test.tsx` (cierre repetido, respaldo, navegación durante el cierre, movimiento reducido, sin animaciones, callback más reciente) y `HojaCapa.test.tsx` (salida y retorno del foco en las dos hojas, animación interior que no cierra, Escape doble, Escape sin cierre nativo, cancelación de foto, movimiento reducido). `src/pruebas/animacionesJsdom.ts` define `AnimationEvent` antes de cargar react-dom: sin él React escucha `webkitAnimationEnd` en jsdom.
+- Verificado: 959 pruebas, tsc, lint, build, `git diff --check`, `test:http` 101. Chromium real a 390 px: con el botón, Atrás y Escape la hoja sigue a los 60 ms pintando su salida y al final no queda hoja, el fondo se desbloquea y el foco vuelve a la fila; diez aperturas y cierres rápidos con doble toque, navegar a Progreso durante el cierre y movimiento reducido (cerrada a los 30 ms) sin restos; coach «Añadir ejercicio» con × y Escape igual, foco de vuelta en el botón. Safari del simulador iOS: abrir y cerrar la ficha, sin bloqueo de scroll. Clip fuera de Git. Pendiente: app instalada y teléfono físico.
+
 ## 2026-10-04 — Pulido UI fase 2: microinteracciones — claude-code
 
 - Respuesta al tocar (sólo `.sfm-shell--client`): botones y tarjetas accionables animan `transform`, `opacity` y colores en `--mov-toque`; quedan fuera los campos, lo deshabilitado (tampoco se escala al pulsar) y `.grafica-progreso__boton`. Filtros, pestañas y segmentos cambian de selección con esa misma transición. Con `prefers-reduced-motion` no se escala nada al pulsar.

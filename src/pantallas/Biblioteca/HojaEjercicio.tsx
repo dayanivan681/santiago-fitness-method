@@ -12,11 +12,11 @@
  */
 
 import { ImagenConMovimiento } from '../../componentes/ImagenConMovimiento'
-import { useRef, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { HojaCapa } from '../../componentes/HojaCapa'
 import { ListaAlternativas } from './ListaAlternativas'
 import { useEjerciciosEntrenados } from '../../aplicacion/useEjerciciosEntrenados'
 import { useLiveQuery } from '../../nube/eventos'
-import { useCapa } from '../../aplicacion/useCapa'
 import { NOMBRE_MUSCULO, etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
 import type { Repositorio } from '../../datos/repositorio'
 import type { SerieConFecha } from '../../datos/referencias'
@@ -49,8 +49,6 @@ export function HojaEjercicio({
   onCerrar,
   acciones,
 }: Props) {
-  const panel = useRef<HTMLDivElement>(null)
-  const cerrar = useCapa(true, onCerrar, panel)
 
   // §16: mismas equivalentes que ofrece la sustitución, menos ella misma.
   const alternativas = biblioteca.filter(
@@ -60,76 +58,58 @@ export function HojaEjercicio({
   const entrenadas = useEjerciciosEntrenados(historial?.repositorio, historial?.participanteId)
 
   return (
-    <div className="hoja" role="dialog" aria-modal="true" aria-label={ejercicio.nombre}>
-      {/* El fondo también cierra, pero con su propio nombre: dos botones
-          "Cerrar" en el mismo diálogo confunden a quien usa lector de pantalla. */}
-      <button
-        type="button"
-        className="hoja__fondo"
-        onClick={cerrar}
-        aria-label="Cerrar tocando fuera"
+    <HojaCapa etiqueta={ejercicio.nombre} titulo={ejercicio.nombre} onCerrar={onCerrar}>
+      {/* §15: la imagen es lo que identifica el ejercicio sin saber su nombre. */}
+      <ImagenConMovimiento ejercicio={ejercicio} className="hoja__imagen" />
+
+      {ejercicio.imagenGenerada && (
+        <p className="hoja__texto">Imagen generada con IA · equipo representativo.</p>
+      )}
+
+      <div className="rejilla-datos">
+        <Dato etiqueta="Equipo" valor={etiquetaEquipo(ejercicio.equipo)} />
+        <Dato etiqueta="Tipo de carga" valor={etiquetaCarga(ejercicio.tipoCarga, ejercicio.equipo)} />
+        <Dato
+          etiqueta="Músculo principal"
+          valor={NOMBRE_MUSCULO[ejercicio.musculoPrimario]}
+        />
+        <Dato
+          etiqueta="Secundarios"
+          valor={
+            ejercicio.musculosSecundarios.length === 0
+              ? '—'
+              : ejercicio.musculosSecundarios.map((m) => NOMBRE_MUSCULO[m]).join(' · ')
+          }
+        />
+      </div>
+
+      {/* "Instrucciones muy breves. Evitar explicaciones largas." */}
+      <p className="hoja__texto">{ejercicio.explicacionCorta}</p>
+
+      {/* `key`: al saltar a otra variante la lista vuelve a empezar recogida. */}
+      <ListaAlternativas
+        key={ejercicio.id}
+        ejercicio={ejercicio}
+        alternativas={alternativas}
+        entrenadas={entrenadas}
+        onElegir={onElegir}
       />
 
-      <div className="hoja__panel" ref={panel} tabIndex={-1}>
-        <div className="hoja__cabecera">
-          <h2 className="hoja__titulo">{ejercicio.nombre}</h2>
-          <button type="button" className="hoja__cerrar" onClick={cerrar}>
-            Cerrar
-          </button>
-        </div>
-
-        {/* §15: la imagen es lo que identifica el ejercicio sin saber su nombre. */}
-        <ImagenConMovimiento ejercicio={ejercicio} className="hoja__imagen" />
-
-        {ejercicio.imagenGenerada && (
-          <p className="hoja__texto">Imagen generada con IA · equipo representativo.</p>
-        )}
-
-        <div className="rejilla-datos">
-          <Dato etiqueta="Equipo" valor={etiquetaEquipo(ejercicio.equipo)} />
-          <Dato etiqueta="Tipo de carga" valor={etiquetaCarga(ejercicio.tipoCarga, ejercicio.equipo)} />
-          <Dato
-            etiqueta="Músculo principal"
-            valor={NOMBRE_MUSCULO[ejercicio.musculoPrimario]}
-          />
-          <Dato
-            etiqueta="Secundarios"
-            valor={
-              ejercicio.musculosSecundarios.length === 0
-                ? '—'
-                : ejercicio.musculosSecundarios.map((m) => NOMBRE_MUSCULO[m]).join(' · ')
-            }
-          />
-        </div>
-
-        {/* "Instrucciones muy breves. Evitar explicaciones largas." */}
-        <p className="hoja__texto">{ejercicio.explicacionCorta}</p>
-
-        {/* `key`: al saltar a otra variante la lista vuelve a empezar recogida. */}
-        <ListaAlternativas
-          key={ejercicio.id}
+      {historial && (
+        <HistorialDeLaVariante
           ejercicio={ejercicio}
-          alternativas={alternativas}
-          entrenadas={entrenadas}
-          onElegir={onElegir}
+          participanteId={historial.participanteId}
+          repositorio={historial.repositorio}
         />
+      )}
 
-        {historial && (
-          <HistorialDeLaVariante
-            ejercicio={ejercicio}
-            participanteId={historial.participanteId}
-            repositorio={historial.repositorio}
-          />
-        )}
+      {/* §16: la equivalencia sirve para elegir, no para mezclar historiales. */}
+      <p className="nota">
+        Cada variante guarda su propio historial. Cambiar de una a otra no los mezcla.
+      </p>
 
-        {/* §16: la equivalencia sirve para elegir, no para mezclar historiales. */}
-        <p className="nota">
-          Cada variante guarda su propio historial. Cambiar de una a otra no los mezcla.
-        </p>
-
-        {acciones && <div className="hoja__acciones">{acciones}</div>}
-      </div>
-    </div>
+      {acciones && <div className="hoja__acciones">{acciones}</div>}
+    </HojaCapa>
   )
 }
 

@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { usePresencia } from "../aplicacion/usePresencia";
 import { Link } from "react-router";
 export function Icono({
   nombre,
@@ -150,6 +151,8 @@ export function Hoja({
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const tituloId = useId();
+  // Sale animada (180 ms) y sólo entonces avisa a `cerrar`, que la desmonta.
+  const { saliendo, salir, alTerminarAnimacion } = usePresencia(cerrar);
   useEffect(() => {
     const elemento = dialog.current;
     const origen = document.activeElement;
@@ -162,12 +165,20 @@ export function Hoja({
   return (
     <dialog
       ref={dialog}
-      className={`sfm-hoja ${clase}`}
+      className={`sfm-hoja ${saliendo ? "sfm-hoja--saliendo" : ""} ${clase}`}
       aria-labelledby={tituloId}
       onCancel={(e) => {
         // Cancelar el selector de archivos también emite «cancel» y se propaga.
-        // Sólo la cancelación del propio diálogo debe cerrar esta hoja.
-        if (e.target === e.currentTarget) cerrar();
+        // Sólo la cancelación del propio diálogo debe cerrar esta hoja, y no
+        // de golpe: se evita el cierre nativo para que pinte su salida.
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+          salir();
+        }
+      }}
+      onAnimationEnd={(e) => {
+        // Las animaciones de dentro también suben: sólo cuenta la del diálogo.
+        if (e.target === e.currentTarget) alTerminarAnimacion();
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -178,7 +189,7 @@ export function Hoja({
             e.clientY < r.top ||
             e.clientY > r.bottom
           )
-            cerrar();
+            salir();
         }
       }}
     >
@@ -187,7 +198,7 @@ export function Hoja({
         <button
           className="sfm-icon-button"
           aria-label="Cerrar"
-          onClick={cerrar}
+          onClick={salir}
         >
           ×
         </button>

@@ -888,18 +888,20 @@ a.sfm-primary:active {
   font-size: 20px;
   font-weight: 500;
 }
+/* Misma entrada y salida que las hojas del cliente (keyframes en index.css):
+   220 ms subiendo 14 px al abrir, 180 ms bajando al cerrar, fondo a la par. */
 .sfm-hoja[open] {
-  animation: sfm-sheet 0.22s ease-out;
+  animation: subir-hoja var(--mov-hoja) var(--mov-curva);
 }
-@keyframes sfm-sheet {
-  from {
-    transform: translateY(24px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.sfm-hoja[open]::backdrop {
+  animation: atenuar var(--mov-hoja) var(--mov-curva);
+}
+.sfm-hoja.sfm-hoja--saliendo {
+  pointer-events: none;
+  animation: bajar-hoja var(--mov-hoja-cierre) var(--mov-curva) forwards;
+}
+.sfm-hoja.sfm-hoja--saliendo::backdrop {
+  animation: desatenuar var(--mov-hoja-cierre) var(--mov-curva) forwards;
 }
 .sfm-demo-banner {
   position: relative;
