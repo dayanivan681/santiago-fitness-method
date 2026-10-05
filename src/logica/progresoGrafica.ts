@@ -1,5 +1,6 @@
 import type { SesionDelHistorial } from '../aplicacion/useHistorial'
 import { aComparable } from '../dominio/serie'
+import { formatearRir } from '../dominio/rir'
 import { esEfectiva, type Ejercicio } from '../dominio/tipos'
 
 export interface PuntoProgreso {
@@ -27,7 +28,60 @@ export function resumenDeProgreso(puntos: readonly PuntoProgreso[]) {
   const primero = puntos[0]
   const ultimo = puntos.at(-1)
   if (!primero || !ultimo) return null
-  return { primero, ultimo, diferenciaPeso: ultimo.pesoLb - primero.pesoLb, diferenciaReps: ultimo.reps - primero.reps }
+  return {
+    primero,
+    ultimo,
+    diferenciaPeso: ultimo.pesoLb - primero.pesoLb,
+    diferenciaReps: ultimo.reps - primero.reps,
+    // §7 «Por RIR»: una mejora sólo cuenta con un esfuerzo comparable.
+    rirPrimero: primero.rir,
+    rirUltimo: ultimo.rir,
+  }
+}
+
+/**
+ * Cómo cambió el esfuerzo entre la primera y la última sesión, para el titular.
+ * Menos RIR al final es más esfuerzo; más RIR con más carga es la mejora clara.
+ */
+export function textoDeEsfuerzo(rirPrimero: number, rirUltimo: number): string {
+  if (rirPrimero === rirUltimo) return `con el mismo esfuerzo (RIR ${formatearRir(rirUltimo)})`
+  const tramo = `RIR ${formatearRir(rirPrimero)} → ${formatearRir(rirUltimo)}`
+  return rirUltimo < rirPrimero ? `con más esfuerzo (${tramo})` : `con menos esfuerzo (${tramo})`
+}
+
+/** Más días que esto entre dos sesiones seguidas es una pausa que se marca. */
+export const UMBRAL_HUECO_DIAS = 14
+const MS_POR_DIA = 24 * 60 * 60 * 1000
+
+export interface HuecoDeTiempo {
+  /** Índices de los dos puntos que separa la pausa. */
+  readonly desde: number
+  readonly hasta: number
+  readonly dias: number
+  readonly semanas: number
+  /** Corto, para la gráfica: «3 sem». */
+  readonly texto: string
+}
+
+/** Días entre dos fechas ISO (YYYY-MM-DD), en UTC: sin saltos por horario de verano. */
+function diasEntre(desde: string, hasta: string): number {
+  return Math.round((Date.parse(`${hasta}T00:00:00Z`) - Date.parse(`${desde}T00:00:00Z`)) / MS_POR_DIA)
+}
+
+/**
+ * Las pausas largas entre sesiones seguidas.
+ *
+ * Los puntos van separados por sesión, no por tiempo (así cada uno conserva su
+ * zona táctil de 48 px), y entonces tres semanas sin entrenar no se verían.
+ * Santiago razona por semanas: el hueco se marca y se nombra en semanas.
+ */
+export function huecosDeTiempo(puntos: readonly PuntoProgreso[], umbralDias = UMBRAL_HUECO_DIAS): HuecoDeTiempo[] {
+  return puntos.slice(1).flatMap((punto, i) => {
+    const dias = diasEntre(puntos[i].fecha, punto.fecha)
+    if (dias <= umbralDias) return []
+    const semanas = Math.round(dias / 7)
+    return [{ desde: i, hasta: i + 1, dias, semanas, texto: `${semanas} sem` }]
+  })
 }
 
 /**

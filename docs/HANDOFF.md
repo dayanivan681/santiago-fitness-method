@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-05 — Gráficas: huecos de tiempo y RIR visible — claude-code
+
+- Publicada con el «sí» del dueño, que aprobó también los dos umbrales de abajo.
+- Preview revisado: https://codex-premium-v2.santiago-fitness-method.pages.dev (demo `/demo/cliente` → Progreso → Por ejercicio).
+- Hecho: `huecosDeTiempo` (> 14 días) y `textoDeEsfuerzo`; tramo discontinuo con «3 sem» / «3 sem sin entrenar», fechas a los dos lados de la pausa, «RIR n» bajo los puntos de Peso, titular con la comparación de esfuerzo y `aria-label` con las pausas. Detalle en BUILD_LOG.
+- Decisiones aprobadas por el dueño (el plan las fijaba en otro valor): RIR en todos los puntos desde 56 px de separación (no 40: los puntos nunca están a menos de 48 px, así que 40 no aplicaba nunca); etiqueta del hueco completa desde 104 px, «3 sem» desde 44 px y sólo la línea por debajo (no «omitir bajo 72 px»: en el teléfono el tramo mide 53–65 px y la etiqueta no se vería casi nunca).
+- Checks: 973 pruebas, tsc, lint, build, `git diff --check`, `test:http` (101) PASS.
+- Pendiente: teléfono físico.
+
 ## 2026-10-05 — Pulido UI fase 3 (hojas con apertura y cierre animados) — claude-code
 
 - Publicada con el «sí» del dueño. Con esto termina el plan de pulido UI (fases 1–3). Fuera quedaron, por diseño, las transiciones entre pantallas y la entrada animada por ejercicio.
@@ -153,11 +162,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-05T03:59:28.506Z
+- **Última sincronización:** 2026-10-05T12:33:20.755Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1300,6 +1309,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-05T12:33:20.756Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Gráficas de progreso: pausas de más de 14 días con tramo discontinuo y «3 sem (sin entrenar)», fechas a ambos lados, RIR bajo los puntos de Peso (todos desde 56 px de separación, si no sólo el seleccionado), titular con la comparación de esfuerzo y aria con las pausas. Demo con una pausa de 3 semanas. Umbrales aprobados por el dueño.
+- **Verificación:** npx tsc -b; npm test (973; una pasada previa con fallos intermitentes por carga de la máquina, aislados pasan); npm run lint; npm run build; git diff --check; npm run test:http (101); Chromium 320/375/1024 cliente y coach; simulador iOS; preview codex-premium-v2
+- **Siguiente:** ninguno; pendiente comprobar en teléfono físico
+
 
 ### 2026-10-05T03:59:28.507Z | claude-code | CLAIM
 - **Estado:** active

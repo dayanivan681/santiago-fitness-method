@@ -3165,3 +3165,8 @@ section > h2.biblioteca__grupo {
 .grafica-progreso__escala--max { top: calc(48 / 180 * 100%); }
 .grafica-progreso__escala--min { top: calc(138 / 180 * 100%); }
 .grafica-progreso__eje--techo { opacity: 0.5; stroke-dasharray: 3 4; }
+/* Pausa larga entre dos sesiones: el tramo se atenúa y se discontinúa. */
+.grafica-progreso__linea--hueco { stroke: var(--texto-60); stroke-width: 2; stroke-dasharray: 4 5; }
+.grafica-progreso svg text.grafica-progreso__hueco,
+.grafica-progreso svg text.grafica-progreso__rir { fill: var(--texto-60); font-size: 12px; }
+.grafica-progreso svg text.grafica-progreso__rir { font-variant-numeric: tabular-nums; }

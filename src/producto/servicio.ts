@@ -281,8 +281,11 @@ export class ServicioCoach {
     await this.sumarEjerciciosDelCoach(repo);
     for (const d of cliente.plan.dias) await repo.guardarPlantilla(d);
     if (id === "demo-persona-1") {
+      // Hace 31, 10 y 3 días: entre la primera y la segunda hay una pausa de
+      // tres semanas, para que la gráfica de progreso de la demo la enseñe.
+      const DIAS_ATRAS: Record<number, number> = { 2: 31, 1: 10, 0: 3 };
       for (const anterior of [2, 1, 0]) {
-        const fecha = new Date(Date.now() - (3 + anterior * 7) * 86400000)
+        const fecha = new Date(Date.now() - DIAS_ATRAS[anterior] * 86400000)
           .toISOString()
           .slice(0, 10);
         const sesion = {
@@ -303,7 +306,8 @@ export class ServicioCoach {
               numeroSerie: n,
               pesoRegistradoLb: (d.orden === 1 ? 25 : 30) - anterior * 2.5,
               repsRealizadas: d.repMax,
-              rir: 2,
+              // La primera, con más reserva: el titular compara el esfuerzo.
+              rir: anterior === 2 ? 3 : 2,
               tecnica: "buena",
             });
       }
