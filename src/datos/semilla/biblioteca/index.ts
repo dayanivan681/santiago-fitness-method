@@ -10,6 +10,7 @@
  * coach no puede reemplazar nada ni definir Lower A, Upper B y Lower B (§28).
  *
  * IMÁGENES: free-exercise-db (dominio público bajo Unlicense) y generación IA.
+ * ANIMACIONES: ver `animaciones.ts`; sólo las que coinciden con la ficha.
  * Procedencia y prompts en public/ejercicios/PROCEDENCIA.md. Van empaquetadas en `public/ejercicios/`
  * porque §27 exige usar la app en el gimnasio, sin depender de la conexión.
  * Conviene reconfirmar la licencia antes de un lanzamiento comercial y
@@ -26,11 +27,13 @@ import { EMPUJE } from './empuje'
 import { TRACCION } from './traccion'
 import { PIERNA } from './pierna'
 import { AMPLIACION_UNILATERAL } from './unilaterales'
+import { conAnimacionBase } from './animaciones'
 
 export * from './empuje'
 export * from './traccion'
 export * from './pierna'
 export * from './unilaterales'
 export * from './cargas'
+export * from './animaciones'
 
-export const BIBLIOTECA_INICIAL: readonly Ejercicio[] = [...EMPUJE, ...TRACCION, ...PIERNA, ...AMPLIACION_UNILATERAL]
+export const BIBLIOTECA_INICIAL: readonly Ejercicio[] = [...EMPUJE, ...TRACCION, ...PIERNA, ...AMPLIACION_UNILATERAL].map(conAnimacionBase)

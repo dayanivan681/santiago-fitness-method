@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-05 — Animaciones del catálogo base ($0) — claude-code
+
+- Publicada con el «sí» del dueño.
+- Preview: https://codex-gifs-base.santiago-fitness-method.pages.dev (detrás de Access; Biblioteca → cualquier ejercicio base).
+- Hecho: 46/57 ejercicios base con GIF libre (free-exercise-db, Unlicense) en la ficha de cliente y coach. C203 con kettlebell (aprobado). 11 unilaterales siguen con foto fija. $0, sin cuentas, sin marcas de agua. IDs, nombres, fotos e historial sin cambios. Detalle en BUILD_LOG y en `docs/ANIMACIONES-CATALOGO-BASE.md` (matriz, pendientes, costes).
+- Decisiones del dueño: sí al Smith inclinado y a C203 con kettlebell; no al vídeo wger para C161. Queda abierto completar los 11 con vídeos de Santiago o con una API de pago (desde ~$5–10/mes).
+- Riesgo: `/ejercicios/*` se sirve `immutable`. Si un GIF se regenera con el mismo nombre, hay que cambiarle el nombre o la versión.
+- Checks: 992 pruebas, tsc, lint, build, `git diff --check`, `test:http` (108) PASS.
+
 ## 2026-10-05 — Login simple y sesión persistente (coach y cliente) — claude-code
 
 - Publicada con el «sí» del dueño.
@@ -173,11 +182,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-06T01:11:39.279Z
+- **Última sincronización:** 2026-10-06T01:34:59.389Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1320,6 +1329,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-06T01:34:59.390Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Animaciones del catálogo base ($0): 46/57 ejercicios base con GIF de free-exercise-db (Unlicense) en la ficha; C203 con kettlebell y Smith inclinado aprobados por el dueño; C161 y otros 10 unilaterales siguen con foto. Matriz, pendientes y costes en docs/ANIMACIONES-CATALOGO-BASE.md
+- **Verificación:** npm test (992); npx tsc -b; npm run lint; npm run build; git diff --check; npm run test:http (108)
+- **Siguiente:** Opcional: completar los 11 unilaterales con vídeos de Santiago (formulario del coach) o una API de pago
+
 
 ### 2026-10-06T01:11:39.281Z | claude-code | CLAIM
 - **Estado:** active

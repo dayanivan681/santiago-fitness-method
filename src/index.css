@@ -1172,6 +1172,16 @@ button,
   display: block;
 }
 
+/* Animación del catálogo base (casi todas 3:2): completa, sin recorte y sin pasar de la altura del GIF del coach. */
+.hoja__imagen--movimiento-horizontal {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: min(60vh, 440px);
+  object-fit: contain;
+  margin-inline: auto;
+}
+
 /* GIF del coach (cuadro vertical 3:4): completo y centrado, a buen tamaño en el teléfono. */
 .hoja__imagen--movimiento {
   width: auto;

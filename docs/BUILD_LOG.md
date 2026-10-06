@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-05 — Animaciones del catálogo base ($0) — claude-code
+
+- 46 de los 57 ejercicios base tienen animación en la ficha: GIF de dos fotogramas de free-exercise-db (Unlicense), con corte seco, 0,9 s por fotograma, 480 px y 96 colores; 6,9 MB en `public/ejercicios/animaciones/`. 42 salen de la misma fuente que su foto, comprobado por hash. Tres usan una fuente más fiel a la ficha: Smith inclinado, pushdown con barra V y jalón con barra V. C203 usa la versión con kettlebell, aprobada por el dueño. Los otros 11 unilaterales con foto IA quedan sin animación, porque no hay equivalente libre fiel; C161 tenía un vídeo de wger que el dueño descartó.
+- `src/datos/semilla/biblioteca/animaciones.ts`: `IDS_CON_ANIMACION_BASE` y `conAnimacionBase`; `BIBLIOTECA_INICIAL` se pasa por ese mapeo. Las constantes por ejercicio no cambian. `sincronizarBiblioteca` ya añade `animacion` a las bibliotecas instaladas sin tocar la calibración.
+- `ImagenConMovimiento`: las animaciones del catálogo usan `hoja__imagen--movimiento-horizontal` (completas, sin recorte); las del coach siguen en vertical 3:4. Lo demás no cambia: sólo en la ficha, vuelta a la foto si falla la carga, «Ver movimiento» con movimiento reducido.
+- Procedencia, revisión y sha256 de cada GIF en `PROCEDENCIA.md` y `procedencia.json` (`animations`). La matriz completa, los pendientes y los costes están en `docs/ANIMACIONES-CATALOGO-BASE.md`.
+- Pruebas: `animaciones.test.ts` (solo IDs base, archivo GIF existente, 46/57, ficha sin otros cambios); un caso nuevo en `ImagenConMovimiento.test.tsx`; `EntrenamientoHoy.test.tsx` espera ahora el GIF en la ficha.
+- Verificado: 992 pruebas, tsc, lint, build y `git diff --check`. Chrome a 320 y 390 px, cliente y coach: GIF 480×320 en la ficha, listas con foto, sin desborde, sin 4xx, foto y botón con movimiento reducido, C217 con foto. Safari del simulador iOS: la ficha de Hip thrust alterna los dos fotogramas.
+
 ## 2026-10-05 — Login simple y sesión persistente — claude-code
 
 - Coach: `verificarCoachPorCookie` (`functions/lib/v2/seguridad.ts`) verifica el JWT de la cookie `CF_Authorization` con la misma lógica que `verificarCoach` (emisor, audiencia, RS256, caducidad, JWKS; extraída a `verificarTokenDeAccess`) y exige un correo de `COACH_EMAILS`. En `_middleware.ts`, `/` sin sesión de cliente y `GET /entrar` redirigen con 302 a `/admin/` a ese coach; si no, como antes. Sólo redirige: `/admin` sigue tras Access y `verificarCoach`. `leerCookieNombrada` en `sesion.ts`.

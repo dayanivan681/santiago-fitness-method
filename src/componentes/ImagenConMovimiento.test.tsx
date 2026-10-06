@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { ImagenConMovimiento } from './ImagenConMovimiento'
-import { PRESS_BANCA_15_SMITH } from '../datos/semilla/biblioteca'
+import { BIBLIOTECA_INICIAL, PRESS_BANCA_15_SMITH } from '../datos/semilla/biblioteca'
 
 afterEach(() => {
   cleanup()
@@ -41,4 +41,14 @@ it('un ejercicio con GIF se muestra en cuadro vertical; la foto normal no cambia
   expect(container.querySelector('img')!.className).toBe('hoja__imagen hoja__imagen--movimiento')
   rerender(<ImagenConMovimiento ejercicio={PRESS_BANCA_15_SMITH} className="hoja__imagen" />)
   expect(container.querySelector('img')!.className).toBe('hoja__imagen')
+})
+
+it('la animación del catálogo base sale horizontal y, sin conexión, vuelve a la foto', () => {
+  movimientoReducido(false)
+  const base = BIBLIOTECA_INICIAL.find((e) => e.id === PRESS_BANCA_15_SMITH.id)!
+  const { container } = render(<ImagenConMovimiento ejercicio={base} className="hoja__imagen" />)
+  expect(src(container)).toBe('/ejercicios/animaciones/press-banca-15-smith.gif')
+  expect(container.querySelector('img')!.className).toBe('hoja__imagen hoja__imagen--movimiento-horizontal')
+  fireEvent.error(container.querySelector('img')!)
+  expect(src(container)).toBe(PRESS_BANCA_15_SMITH.imagen)
 })
