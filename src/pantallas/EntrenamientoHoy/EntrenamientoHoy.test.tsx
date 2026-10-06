@@ -152,7 +152,7 @@ describe('el entrenamiento ya viene cargado (§3)', () => {
 
     const ficha = await screen.findByRole('dialog', { name: PRESS })
     // La ficha reproduce la animación del catálogo base; la foto queda de respaldo.
-    expect(ficha.querySelector('img')).toHaveAttribute('src', '/ejercicios/animaciones/press-banca-15-smith.gif')
+    expect(ficha.querySelector('img')?.getAttribute('src')).toMatch(/^\/ejercicios\/animaciones\/press-banca-15-smith\.gif\?v=/)
     expect(within(ficha).getByText(PRESS_BANCA_15_SMITH.explicacionCorta)).toBeInTheDocument()
 
     fireEvent.click(within(ficha).getByRole('button', { name: 'Cerrar' }))

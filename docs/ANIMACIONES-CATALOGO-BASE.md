@@ -14,7 +14,7 @@ Revisión 2026-10-05 · Claude Code · decisiones del dueño aplicadas el mismo 
 
 Dos fotogramas (0.jpg y 1.jpg) de [free-exercise-db](https://github.com/yuhonas/free-exercise-db), dominio público bajo Unlicense. Corte seco, 0,9 s por fotograma, en bucle, 480 px de ancho y 96 colores: unos 150 KB por GIF, 6,8 MB en total. 42 vienen de la misma fuente que la foto actual (comprobado por hash). En 3 se eligió una fuente más fiel a la ficha que la foto (marcadas abajo). Revisión visual fotograma a fotograma, no certificación de Santiago. Procedencia y sha256 en `public/ejercicios/PROCEDENCIA.md` y `procedencia.json`.
 
-En la app: sólo la ficha reproduce la animación (cliente y coach). Listas, Hoy y miniaturas siguen con la foto. Sin conexión o si falla la carga, vuelve a la foto. Con «reducir movimiento» se ve la foto y el botón «Ver movimiento».
+En la app: sólo la ficha reproduce la animación (cliente y coach). La URL lleva `?v=` con los 8 primeros caracteres del sha256 del GIF (`VERSION_ANIMACION_BASE`); una prueba falla si se reemplaza un GIF sin actualizarla. La nota «Imagen generada con IA» sólo sale cuando se ve la foto IA, no sobre el GIF. Listas, Hoy y miniaturas siguen con la foto. Sin conexión o si falla la carga, vuelve a la foto. Con «reducir movimiento» se ve la foto y el botón «Ver movimiento».
 
 ## Matriz
 
@@ -56,7 +56,7 @@ En la app: sólo la ficha reproduce la animación (cliente y coach). Listas, Hoy
 | sfm-catalog-c191 | Prensa de piernas 45° | ✅ GIF (176 KB) | free-exercise-db · Leg_Press | sí |  |
 | sfm-catalog-c194 | Prensa de piernas unilateral | ⏳ Foto fija | Mejor libre: Leg Press (bilateral) | — | Bilateral. |
 | sfm-catalog-c196 | Extensión de cuádriceps unilateral | ✅ GIF (180 KB) | free-exercise-db · Single-Leg_Leg_Extension | sí |  |
-| sfm-catalog-c203 | Peso muerto unilateral con mancuerna | ✅ GIF (127 KB) | free-exercise-db · Kettlebell_One-Legged_Deadlift | no | Kettlebell en vez de mancuerna; aprobado por el dueño. |
+| sfm-catalog-c203 | Peso muerto unilateral con mancuerna | ✅ GIF (127 KB) | free-exercise-db · Kettlebell_One-Legged_Deadlift | no | Kettlebell en vez de mancuerna; aprobado por el dueño. La ficha avisa: «La animación usa kettlebell; el ejercicio es el mismo con mancuerna.» |
 | sfm-catalog-c037 | Fly unilateral en cable | ✅ GIF (259 KB) | free-exercise-db · Single-Arm_Cable_Crossover | sí |  |
 | sfm-catalog-c103 | Landmine press unilateral | ✅ GIF (169 KB) | free-exercise-db · Single-Arm_Linear_Jammer | sí |  |
 | sfm-catalog-c154 | Extensión unilateral sobre cabeza con mancuerna | ✅ GIF (108 KB) | free-exercise-db · Standing_One-Arm_Dumbbell_Triceps_Extension | sí |  |

@@ -101,6 +101,8 @@ export interface Ejercicio extends PerfilCarga {
    * funciona sin conexión.
    */
   readonly animacion?: string
+  /** Aviso bajo la animación cuando enseña algo distinto de la ficha (p. ej. otro equipo). */
+  readonly notaAnimacion?: string
   /** Distingue una representación sintética de una fotografía real. */
   readonly imagenGenerada?: boolean
   readonly explicacionCorta: string

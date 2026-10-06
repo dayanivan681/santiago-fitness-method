@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-06 — Animaciones base: nota IA, aviso de equipo C203 y versión en URL — claude-code
+
+- Publicada con el «sí» del dueño.
+- Preview: https://codex-gifs-base.santiago-fitness-method.pages.dev (detrás de Access; Biblioteca → «Peso muerto unilateral con mancuerna»).
+- Hecho: la nota de IA sólo sale sobre la foto IA, no sobre el GIF real. C203 avisa del kettlebell mientras se ve la animación. Cada GIF lleva `?v=<sha256[:8]>` y una prueba exige que coincida con el archivo. Detalle en BUILD_LOG.
+- Pendiente: comprobar C203 en Safari de iOS. En el simulador no se pudo escribir en el buscador por la carga de la máquina.
+- Checks: 999 pruebas, tsc, lint, build, `git diff --check` PASS.
+
 ## 2026-10-05 — Animaciones del catálogo base ($0) — claude-code
 
 - Publicada con el «sí» del dueño.
@@ -182,11 +190,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-06T19:02:24.816Z
+- **Última sincronización:** 2026-10-06T21:05:02.488Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1329,6 +1337,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-06T21:05:02.489Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Animaciones base: nota de IA sólo sobre la foto IA, aviso de kettlebell en C203 mientras se ve el GIF, y ?v=<sha256[:8]> en cada URL de GIF con prueba que la compara con el archivo
+- **Verificación:** npm test (999); npx tsc -b; npm run lint; npm run build; git diff --check
+- **Siguiente:** Dueño: revisar C203 en Safari de iOS (no verificado en simulador por carga de la máquina)
+
 
 ### 2026-10-06T19:02:24.817Z | claude-code | CLAIM
 - **Estado:** active

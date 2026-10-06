@@ -1,5 +1,19 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-06 — Animaciones base: nota de IA correcta, aviso de equipo en C203 y versión en la URL — claude-code
+
+- `ImagenConMovimiento` decide la nota según lo que se ve. Con la foto fija y `imagenGenerada`, pone «Imagen generada con IA · equipo representativo.». Con la animación, pone `notaAnimacion` si la hay. Las animaciones del coach no llevan nota. Se quitó la nota fija de `HojaEjercicio.tsx`. No hizo falta la prop `nota`: el componente ya tiene todo lo que necesita en el ejercicio.
+- `notaAnimacion?: string` en `Ejercicio` (`src/dominio/tipos.ts`). `NOTAS_ANIMACION_BASE` en `animaciones.ts`, con C203: «La animación usa kettlebell; el ejercicio es el mismo con mancuerna.».
+- `VERSION_ANIMACION_BASE`: los 8 primeros caracteres del sha256 de cada GIF, que coinciden con `procedencia.json`. URL: `/ejercicios/animaciones/<id>.gif?v=<hash>`. Una prueba compara cada versión con el archivo real.
+- El service worker sí cachea `/ejercicios/*` al visitarlas (primero caché, clave por URL completa), así que la nueva `?v=` también renueva esa caché.
+- Pruebas: 5 casos nuevos en `ImagenConMovimiento.test.tsx` (C203 animado, reducido, con `onError`; C217; Smith y coach sin notas) y 2 en `animaciones.test.ts` (versiones = sha256; notas sólo para IDs animados, con C203). Las expectativas de la URL ahora incluyen `?v=`.
+- Verificado: 999 pruebas, tsc, lint, build, `git diff --check`. Chrome a 375 px en el runtime local:
+  - C203: GIF `?v=555d39ec` con el aviso y sin la nota de IA; con movimiento reducido, la foto IA con su nota y «Ver movimiento»;
+  - C217: foto IA con su nota;
+  - Smith: GIF `?v=3b881697` sin notas;
+  - las peticiones de GIF llevan `?v=`.
+- Simulador iOS: no se pudo comprobar C203. El buscador no recibió el texto: la máquina iba con un load average de ~300 y Maestro se quedó colgado.
+
 ## 2026-10-05 — Animaciones del catálogo base ($0) — claude-code
 
 - 46 de los 57 ejercicios base tienen animación en la ficha: GIF de dos fotogramas de free-exercise-db (Unlicense), con corte seco, 0,9 s por fotograma, 480 px y 96 colores; 6,9 MB en `public/ejercicios/animaciones/`. 42 salen de la misma fuente que su foto, comprobado por hash. Tres usan una fuente más fiel a la ficha: Smith inclinado, pushdown con barra V y jalón con barra V. C203 usa la versión con kettlebell, aprobada por el dueño. Los otros 11 unilaterales con foto IA quedan sin animación, porque no hay equivalente libre fiel; C161 tenía un vídeo de wger que el dueño descartó.
