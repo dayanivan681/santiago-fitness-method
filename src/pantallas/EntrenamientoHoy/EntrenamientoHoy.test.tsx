@@ -1576,6 +1576,19 @@ describe('bi-series: se alterna sin descanso y se descansa al cerrar la ronda', 
     expect(screen.getByText('Bi-serie A · Ronda 2 de 4')).toBeInTheDocument()
   })
 
+  test('empezar la ronda siguiente durante el descanso lo cierra: no sigue contando en B', async () => {
+    await conBiSerie()
+    await abrirUpperA()
+    await guardar(1, PRESS)
+    await guardar(1, CONVERGENTE)
+    await waitFor(() => expect(cronometro()).toBeInTheDocument())
+
+    // No espera a que acabe: arranca A2 con el descanso aún en marcha.
+    await guardar(2, PRESS)
+    expect(await screen.findByLabelText(`Guardar la serie 2 de ${CONVERGENTE}`)).toBeInTheDocument()
+    await waitFor(() => expect(cronometro()).not.toBeInTheDocument())
+  })
+
   test('tras la última ronda pasa al siguiente bloque', async () => {
     await conBiSerie()
     await abrirUpperA()

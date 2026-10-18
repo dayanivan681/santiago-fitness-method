@@ -187,7 +187,10 @@ export function Entrenamiento({
       indice,
       numeroSerie,
     )
+    // Dentro de la ronda no se descansa; si quedaba un descanso de la ronda
+    // anterior en marcha, es que ya se empezó: se cierra para que no siga contando.
     if (paso.descansar) arrancarDescanso(ejercicioId, paso.descansoSegundos)
+    else terminarDescanso()
     if (paso.indice !== indice) setActual((valor) => (valor === indice ? paso.indice : valor))
   }
 
