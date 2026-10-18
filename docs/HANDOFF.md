@@ -190,11 +190,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-18T20:54:22.033Z
+- **Última sincronización:** 2026-10-18T21:07:30.196Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1337,6 +1337,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-18T21:07:30.198Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Reducir lecturas D1: el panel del coach solo descarga cuando hay cambios
+- **Cambios:** Incidente: produccion supero el limite gratuito diario de lecturas de D1 (6,7 M de 5 M) porque el panel del coach releia la cartera y el historial completos cada 4 s. /clientes responde 304 con una huella barata (etiquetaDeClientes); ServicioCoach guarda la lista y pide el historial desde el ultimo cursor; refresco cada 15 s solo con la pestaña visible, al volver y al cambiar de pantalla. Sin migracion. Ningun dato perdido.
+- **Verificación:** npm test (1054); npm run lint; npm run build; npx tsc -b; npm run test:http (117); navegador con runtime local: 304 y cambios incrementales cada 15 s
+- **Siguiente:** Tras medianoche UTC comprobar que produccion vuelve a leer y vigilar wrangler d1 insights; luego WhatsApp a Santiago sobre bi-series con visto bueno del dueno
+
 
 ### 2026-10-18T20:54:22.034Z | claude-code | CLAIM
 - **Estado:** active
