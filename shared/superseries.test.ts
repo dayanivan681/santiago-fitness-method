@@ -12,6 +12,7 @@ import {
   puedeUnir,
   quitar,
   separar,
+  sesionCompleta,
   siguienteTrasGuardar,
   unir,
   type SlotAgrupable,
@@ -22,6 +23,36 @@ const s = (id: string, grupo?: string, series = 3, descanso = 120): S =>
   grupo
     ? { id, grupo, seriesObjetivo: series, descansoSegundos: descanso }
     : { id, seriesObjetivo: series, descansoSegundos: descanso }
+
+describe('sesión completa: mínimo de ejercicios, máximo de bloques', () => {
+  const sueltos = (n: number) => Array.from({ length: n }, (_, i) => s(`e${i}`))
+
+  it('4 ejercicios no bastan; 5 sí', () => {
+    expect(sesionCompleta(sueltos(4))).toBe(false)
+    expect(sesionCompleta(sueltos(5))).toBe(true)
+  })
+
+  it('agrupar no la deja incompleta: 3 sueltos + 1 tri-serie son 4 bloques y 6 ejercicios', () => {
+    const slots = [s('a'), s('b'), s('c'), s('d', 'A', 3, 0), s('e', 'A', 3, 0), s('f', 'A')]
+    expect(contarBloques(slots)).toBe(4)
+    expect(sesionCompleta(slots)).toBe(true)
+  })
+
+  it('2 bi-series sin más (4 ejercicios) no bastan', () => {
+    expect(sesionCompleta([s('a', 'A', 3, 0), s('b', 'A'), s('c', 'B', 3, 0), s('d', 'B')])).toBe(false)
+  })
+
+  it('8 bloques sí; 9 no', () => {
+    expect(sesionCompleta(sueltos(8))).toBe(true)
+    expect(sesionCompleta(sueltos(9))).toBe(false)
+  })
+
+  it('12 ejercicios sí; 13 no', () => {
+    const tri = (g: string) => [s(`${g}1`, g, 3, 0), s(`${g}2`, g, 3, 0), s(`${g}3`, g)]
+    expect(sesionCompleta([...tri('A'), ...tri('B'), ...tri('C'), ...tri('D')])).toBe(true)
+    expect(sesionCompleta([...tri('A'), ...tri('B'), ...tri('C'), ...tri('D'), s('x')])).toBe(false)
+  })
+})
 
 describe('bloques', () => {
   it('cuenta 1 por suelto y 1 por grupo', () => {

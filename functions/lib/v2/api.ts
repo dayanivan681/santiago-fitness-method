@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_BLOQUES, MIN_BLOQUES, contarBloques } from "../../../shared/superseries";
+import { sesionCompleta } from "../../../shared/superseries";
 import {
   Alta,
   Id,
@@ -203,13 +203,10 @@ export async function api(
       if (
         !plan.revisado ||
         plan.dias.length === 0 ||
-        plan.dias.some((d) => {
-          const bloques = contarBloques(d.slots);
-          return bloques < MIN_BLOQUES || bloques > MAX_BLOQUES;
-        })
+        plan.dias.some((d) => !sesionCompleta(d.slots))
       )
         throw new ErrorApi(
-          "Revisa las sesiones de 5–8 bloques antes de invitar.",
+          "Revisa que cada sesión tenga al menos 5 ejercicios y como máximo 8 bloques antes de invitar.",
         );
       const invitacion = await crearInvitacion(env.ACCESO, cliente);
       return json({

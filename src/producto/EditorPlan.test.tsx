@@ -180,6 +180,15 @@ describe('bi-series y tri-series', () => {
     expect(dia().some((s) => s.grupo)).toBe(false);
   });
 
+  it('agrupar no deja la sesión incompleta: 5 ejercicios en 4 bloques se pueden publicar', () => {
+    const cinco = { ...plan, dias: [{ ...plan.dias[0], slots: plan.dias[0].slots.slice(0, 5) }, ...plan.dias.slice(1)] };
+    render(<Editor inicial={cinco} />);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Unir en serie/ })[0]);
+    expect(screen.getByText('4/8 bloques · 5 ejercicios')).toBeInTheDocument();
+    expect(screen.queryByText(/necesita al menos 5 ejercicios/)).toBeNull();
+    expect(screen.getByText(/Cada sesión lleva al menos 5 ejercicios/)).toBeInTheDocument();
+  });
+
   it('publicar y releer conserva los grupos', () => {
     const conSeis = { ...plan, dias: plan.dias.map((d, i) => (i === 0 ? { ...d, slots: [...d.slots, { ...d.slots[0], orden: d.slots.length + 1 }] } : d)) };
     render(<Editor inicial={conSeis} />);

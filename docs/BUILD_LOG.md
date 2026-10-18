@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-18 — Superseries: QA, descanso entre rondas y mínimo por ejercicios — claude-code
+
+- Descanso: si se empezaba la ronda siguiente antes de acabar el descanso, el cronómetro seguía contando durante B. Al guardar una serie dentro de la ronda se cierra el descanso en marcha (`Entrenamiento.tsx`, `terminarDescanso`). Prueba nueva en `EntrenamientoHoy.test.tsx`.
+- Mínimo por sesión: al agrupar, una sesión podía bajar de 5 bloques y no se podía publicar, aunque tuviera el mismo trabajo (2 tri-series + 2 sueltos = 8 ejercicios, 4 bloques). Decisión del dueño: **mínimo 5 ejercicios** (la regla de la guía de Santiago), **máximo 8 bloques y 12 ejercicios**.
+  - `MIN_BLOQUES` pasa a `MIN_EJERCICIOS_POR_SESION`; `sesionCompleta(slots)` en `shared/superseries.ts` es la única regla para el contrato, `/invitar` y los avisos del Coach.
+  - Mensajes: «Cada sesión necesita al menos 5 ejercicios antes de publicar»; en el editor, «Cada sesión lleva al menos 5 ejercicios y como máximo 8 bloques…».
+  - «Revisa el plan antes de publicar» sale una sola vez, no una por día.
+- Verificado: 1050 pruebas, tsc, lint, build, `git diff --check` y 113 HTTP (5 ejercicios en 4 bloques se publica; 4 ejercicios dan 400). Navegador a 375 px con la demo: Upper A con dos bi-series («3/8 bloques · 5 ejercicios») sin aviso y con «Publicar» activo; al quitar uno (4 ejercicios), aviso nuevo y «Publicar» desactivado.
+
 ## 2026-10-18 — Bi-series y tri-series en el editor y en el entrenamiento — claude-code
 
 - Origen: Santiago preguntó por WhatsApp si la app no aceptaba bi-series y tri-series. No las tenía. Decisiones del dueño: la regla de 5–8 cuenta bloques (una superserie es uno), máximo técnico de 12 ejercicios, sin descanso dentro del grupo y descanso al final de cada ronda.

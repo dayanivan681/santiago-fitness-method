@@ -205,8 +205,8 @@ export function EditorPlan({
       </button>
       <p className="sfm-hint">
         {validacion.success
-          ? "Las sesiones tienen entre 5 y 8 bloques. Una bi-serie o tri-serie cuenta como un bloque."
-          : "Completa cada sesión con 5–8 bloques antes de publicar."}
+          ? "Cada sesión lleva al menos 5 ejercicios y como máximo 8 bloques. Una bi-serie o tri-serie cuenta como un bloque."
+          : "Cada sesión necesita al menos 5 ejercicios (máximo 8 bloques) antes de publicar."}
       </p>
       {perfil.limitaciones && (
         <div className="sfm-callout">

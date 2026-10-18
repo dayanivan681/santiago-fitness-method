@@ -11,7 +11,8 @@
  * Módulo puro: lo usan el servidor, el editor del coach y el entrenamiento.
  */
 
-export const MIN_BLOQUES = 5;
+/** El mínimo cuenta ejercicios: agrupar no hace una sesión más corta en trabajo. */
+export const MIN_EJERCICIOS_POR_SESION = 5;
 export const MAX_BLOQUES = 8;
 export const MAX_EJERCICIOS_POR_SESION = 12;
 export const MIN_EN_GRUPO = 2;
@@ -44,6 +45,15 @@ export function bloquesDe(slots: readonly SlotAgrupable[]): Bloque[] {
 
 export function contarBloques(slots: readonly SlotAgrupable[]): number {
   return bloquesDe(slots).length;
+}
+
+/** Sesión publicable: al menos 5 ejercicios, como máximo 8 bloques y 12 ejercicios. */
+export function sesionCompleta(slots: readonly SlotAgrupable[]): boolean {
+  return (
+    slots.length >= MIN_EJERCICIOS_POR_SESION &&
+    slots.length <= MAX_EJERCICIOS_POR_SESION &&
+    contarBloques(slots) <= MAX_BLOQUES
+  );
 }
 
 export function nombreDeGrupo(tamano: number): string {

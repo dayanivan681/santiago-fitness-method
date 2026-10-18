@@ -4,7 +4,7 @@ import { esIdDeEjercicioCoach } from "./biblioteca";
 import {
   MAX_BLOQUES,
   MAX_EJERCICIOS_POR_SESION,
-  MIN_BLOQUES,
+  MIN_EJERCICIOS_POR_SESION,
   contarBloques,
   erroresDeSuperseries,
 } from "../superseries";
@@ -78,6 +78,8 @@ export const Plan = PlanHistorico.extend({
     new Set(p.dias.map((d) => d.orden)).size !== p.dias.length
   )
     ctx.addIssue({ code: "custom", message: "Hay días duplicados" });
+  if (p.estado === "publicado" && !p.revisado && p.dias.length > 0)
+    ctx.addIssue({ code: "custom", message: "Revisa el plan antes de publicar" });
   for (const d of p.dias) {
     if (d.slots.some((s, i) => s.orden !== i + 1))
       ctx.addIssue({ code: "custom", message: "Orden de ejercicios inválido" });
@@ -86,10 +88,10 @@ export const Plan = PlanHistorico.extend({
     const bloques = contarBloques(d.slots);
     if (bloques > MAX_BLOQUES)
       ctx.addIssue({ code: "custom", message: "Una sesión tiene como máximo 8 bloques" });
-    if (p.estado === "publicado" && (bloques < MIN_BLOQUES || !p.revisado))
+    if (p.estado === "publicado" && d.slots.length < MIN_EJERCICIOS_POR_SESION)
       ctx.addIssue({
         code: "custom",
-        message: "Revisa cada sesión con 5–8 bloques antes de publicar",
+        message: "Cada sesión necesita al menos 5 ejercicios antes de publicar",
       });
   }
 });

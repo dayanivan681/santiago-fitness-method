@@ -290,6 +290,19 @@ if (m02.length) {
   await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", conGrupo(false), rev)] }), 400, "Grupo de un solo ejercicio da 400");
   checks++;
 }
+// El mínimo cuenta ejercicios: 5 con una bi-serie (4 bloques) se publica; 4 no.
+{
+  const conSlots = (f) => ({ ...plan, dias: plan.dias.map((d, i) => (i === 0 ? { ...d, slots: f(d.slots).map((sl, j) => ({ ...sl, orden: j + 1 })) } : d)) });
+  const cinco = (slots) => {
+    const s = slots.slice(0, 5);
+    return [{ ...s[0], grupo: "A", seriesObjetivo: 3, descansoSegundos: 0 }, { ...s[1], grupo: "A", seriesObjetivo: 3 }, ...s.slice(2)];
+  };
+  let rev = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
+  await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", conSlots(cinco), rev)] }), 200, "5 ejercicios en 4 bloques se publica");
+  rev = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
+  await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", conSlots((s) => s.slice(0, 4)), rev)] }), 400, "4 ejercicios no se publican");
+  checks++;
+}
 await codigo(await pedir(`${cbase}/biblioteca/${ejId}`, coach, { activo: false }, "PATCH"), 200, "Coach archiva el ejercicio");
 const tras = await (await pedir("/api/v2/biblioteca", cliente)).json();
 assert.ok(!tras.ejercicios.some((x) => x.id === ejId), "Archivado no se distribuye");

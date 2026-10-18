@@ -52,11 +52,29 @@ describe('superseries en el contrato del plan', () => {
     expect(Plan.safeParse({ ...base, dias: [{ ...base.dias[0], slots: nueve }] }).success).toBe(false)
   })
 
-  it('publicar exige al menos 5 bloques aunque haya 5 ejercicios', () => {
+  it('se publica con 5 ejercicios aunque una bi-serie los deje en 4 bloques', () => {
     const cinco = base.dias[0].slots.slice(0, 5)
     const agrupados = unir(cinco, 0).map((s, n) => ({ ...s, orden: n + 1 }))
     const plan = { ...base, dias: [{ ...base.dias[0], slots: agrupados }] }
-    expect(errores(Plan.safeParse(publicado(plan)))).toContain('Revisa cada sesión con 5–8 bloques antes de publicar')
+    expect(errores(Plan.safeParse(publicado(plan)))).toEqual([])
+  })
+
+  it('se publica con 2 tri-series y 2 sueltos (8 ejercicios, 4 bloques)', () => {
+    const plantilla = base.dias[0].slots[0]
+    const ocho = Array.from({ length: 8 }, (_, i) => ({
+      ...plantilla,
+      orden: i + 1,
+      seriesObjetivo: 3,
+      ...(i < 6 ? { grupo: i < 3 ? 'A' : 'B' } : {}),
+    }))
+    const plan = { ...base, dias: [{ ...base.dias[0], slots: ocho }] }
+    expect(errores(Plan.safeParse(publicado(plan)))).toEqual([])
+  })
+
+  it('publicar exige al menos 5 ejercicios', () => {
+    const cuatro = base.dias[0].slots.slice(0, 4)
+    const plan = { ...base, dias: [{ ...base.dias[0], slots: cuatro }] }
+    expect(errores(Plan.safeParse(publicado(plan)))).toContain('Cada sesión necesita al menos 5 ejercicios antes de publicar')
   })
 })
 
