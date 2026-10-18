@@ -190,11 +190,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-18T19:02:03.911Z
+- **Última sincronización:** 2026-10-18T20:46:11.496Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1337,6 +1337,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-18T20:46:11.497Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Bi-series y tri-series: modelo, editor y entrenamiento
+- **Cambios:** Bi-series y tri-series (superseries) en el editor del coach y en el entrenamiento: campo grupo en Slot, unir/separar en EditorPlan, A1->B1 sin descanso y descanso al final de cada ronda. Arreglos de QA: el descanso de la ronda anterior se cierra al empezar la siguiente; el minimo por sesion cuenta ejercicios (>=5) y el maximo bloques (<=8) y ejercicios (<=12), con sesionCompleta() como regla unica. Sin migracion D1.
+- **Verificación:** npm test (1050); npm run lint; npm run build; npx tsc -b; npm run test:http (113, en la rama); navegador 375 px con la demo
+- **Siguiente:** Enviar a Santiago (con visto bueno del dueno) el WhatsApp con los pasos para unir ejercicios; comprobar en produccion el panel real con una bi-serie
+
 
 ### 2026-10-18T19:02:03.915Z | claude-code | CLAIM
 - **Estado:** active
