@@ -12,6 +12,7 @@ import {
   NavLink,
   Route,
   Routes,
+  useLocation,
   useNavigate,
   useParams,
 } from "react-router";
@@ -39,6 +40,11 @@ import {
 import { EditorPlan } from "./EditorPlan";
 import { Onboarding } from "./Onboarding";
 import { ResumenSesiones } from "./Progreso";
+/**
+ * Cada cuánto el panel pregunta por novedades. El servidor contesta 304 o sólo
+ * lo nuevo, pero cada pregunta cuenta en el límite diario de lecturas de D1.
+ */
+const INTERVALO_PANEL_MS = 15_000;
 export function Coach({
   servicio,
   base,
@@ -75,15 +81,26 @@ export function Coach({
     }
   }, [servicio]);
   useEffect(() => {
+    // Refresco periódico sólo con la pestaña visible, y al volver a ella.
+    const f = () => {
+      if (!document.hidden) void cargar();
+    };
+    const t = setInterval(f, INTERVALO_PANEL_MS);
+    document.addEventListener("visibilitychange", f);
+    return () => {
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", f);
+    };
+  }, [cargar]);
+  // Al cambiar de pantalla (cliente recién creado, volver de un borrador) se
+  // pregunta ya: no hay que esperar al temporizador. Sin cambios, el servidor contesta 304.
+  const { pathname } = useLocation();
+  useEffect(() => {
     // La actualización ocurre después de leer el repositorio externo, nunca
     // durante el efecto. El mismo lector atiende publicación y refresco periódico.
     // oxlint-disable-next-line react/set-state-in-effect
     void cargar();
-    const t = setInterval(() => {
-      if (!document.hidden) void cargar();
-    }, 4000);
-    return () => clearInterval(t);
-  }, [cargar]);
+  }, [cargar, pathname]);
   return (
     <ContextoPagos.Provider value={pagos}>
     <ContextoBiblioteca.Provider value={biblioteca}>
@@ -525,11 +542,16 @@ function FichaCliente({
         .catch((e) => {
           if (vivo) setError(e.message);
         });
+    const siVisible = () => {
+      if (!document.hidden) void f();
+    };
     void f();
-    const t = setInterval(f, 4000);
+    const t = setInterval(siVisible, INTERVALO_PANEL_MS);
+    document.addEventListener("visibilitychange", siVisible);
     return () => {
       vivo = false;
       clearInterval(t);
+      document.removeEventListener("visibilitychange", siVisible);
     };
   }, [clienteId, servicio]);
   if (!c) return <p className="sfm-loading">Abriendo cliente…</p>;

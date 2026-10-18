@@ -12,6 +12,7 @@ import {
   actual,
   clientesActuales,
   ErrorApi,
+  etiquetaDeClientes,
   leerCambios,
   perfilActual,
   planActual,
@@ -50,8 +51,14 @@ export async function api(
     ).first<{ nombre: string }>();
     if (!entorno || entorno.nombre !== ctx.entorno)
       return json({ error: "La base no corresponde a este entorno." }, 503);
-    if (coach && ruta === "/clientes" && request.method === "GET")
-      return json({ clientes: await clientesActuales(env.ACCESO) });
+    if (coach && ruta === "/clientes" && request.method === "GET") {
+      const etiqueta = await etiquetaDeClientes(env.ACCESO);
+      if (request.headers.get("If-None-Match") === etiqueta)
+        return new Response(null, { status: 304, headers: { ETag: etiqueta, "Cache-Control": "no-store" } });
+      const respuesta = json({ clientes: await clientesActuales(env.ACCESO) });
+      respuesta.headers.set("ETag", etiqueta);
+      return respuesta;
+    }
     const cliente = coach
       ? (url.searchParams.get("cliente") ?? `coach:${ctx.identidad}`)
       : ctx.identidad;

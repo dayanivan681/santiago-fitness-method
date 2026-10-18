@@ -7,6 +7,7 @@ import {
   actual,
   leerCambios,
   clientesActuales,
+  etiquetaDeClientes,
 } from "../functions/lib/v2/datos";
 import { api } from "../functions/lib/v2/api";
 import {
@@ -95,6 +96,61 @@ describe("persistencia real con SQL transaccional", () => {
       clientes.find((c) => c.perfil.id === "test-a")?.plan.dias,
     ).toHaveLength(4);
     expect(local.consultas).toBeLessThanOrEqual(3);
+  });
+
+  it("la huella de la cartera sólo cambia cuando cambian sus datos, y cuesta una consulta", async () => {
+    local.reiniciarConsultas();
+    const antes = await etiquetaDeClientes(local.db);
+    expect(local.consultas).toBe(1);
+    expect(await etiquetaDeClientes(local.db)).toBe(antes);
+    await aplicar(local.db, "test-a", ctx, op("entrenamiento", entrenamiento.id, entrenamiento));
+    const trasEntrenar = await etiquetaDeClientes(local.db);
+    expect(trasEntrenar).not.toBe(antes);
+    local.ejecutar("UPDATE clientes SET activo=0, actualizado_en=actualizado_en+1 WHERE id='test-b'");
+    const trasArchivar = await etiquetaDeClientes(local.db);
+    expect(trasArchivar).not.toBe(trasEntrenar);
+    local.ejecutar("INSERT INTO rutinas(id,cliente_id,nombre,orden,slots_json,actualizado_en) VALUES('r-x','test-b','Día',1,'[]',unixepoch())");
+    expect(await etiquetaDeClientes(local.db)).not.toBe(trasArchivar);
+  });
+
+  it("GET /clientes del coach responde 304 sin leer la cartera si la huella no cambió", async () => {
+    const { privateKey, publicKey } = await generateKeyPair("RS256");
+    const env = {
+      ACCESO: local.db,
+      SFM_ENV: "local",
+      COACH_EMAILS: "coach@test.invalid",
+      ACCESS_ISSUER: "https://sfm-qa.cloudflareaccess.com",
+      ACCESS_AUD: "test",
+      LOCAL_ACCESS_JWKS: JSON.stringify({ keys: [await exportJWK(publicKey)] }),
+    } as unknown as EntornoV2;
+    local.ejecutar("CREATE TABLE IF NOT EXISTS entorno_sfm(id INTEGER PRIMARY KEY, nombre TEXT NOT NULL)");
+    local.ejecutar("INSERT OR REPLACE INTO entorno_sfm(id,nombre) VALUES(1,'local')");
+    const token = await new SignJWT({ email: "coach@test.invalid" })
+      .setProtectedHeader({ alg: "RS256" })
+      .setSubject("coach")
+      .setIssuedAt()
+      .setIssuer(env.ACCESS_ISSUER!)
+      .setAudience("test")
+      .setExpirationTime("1h")
+      .sign(privateKey);
+    const pedir = (etiqueta?: string | null) =>
+      api(
+        new Request("http://localhost/admin/api/v2/clientes", {
+          headers: { "Cf-Access-Jwt-Assertion": token, ...(etiqueta ? { "If-None-Match": etiqueta } : {}) },
+        }),
+        env,
+        true,
+      );
+    const primera = await pedir();
+    expect(primera.status).toBe(200);
+    const etiqueta = primera.headers.get("ETag");
+    expect(etiqueta).toBeTruthy();
+    const igual = await pedir(etiqueta);
+    expect(igual.status).toBe(304);
+    await aplicar(local.db, "test-a", ctx, op("entrenamiento", entrenamiento.id, entrenamiento));
+    const nueva = await pedir(etiqueta);
+    expect(nueva.status).toBe(200);
+    expect(((await nueva.json()) as { clientes: unknown[] }).clientes.length).toBeGreaterThan(0);
   });
 
   it("confirma y repite sin duplicar entrenamientos ni series", async () => {

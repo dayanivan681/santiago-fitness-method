@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-18 — Límite diario de lecturas de D1: el panel del coach sólo descarga lo nuevo — claude-code
+
+- Incidente: producción superó el límite gratuito de D1 (5 M filas leídas al día; 6,7 M en 24 h) y Cloudflare bloqueó las lecturas hasta medianoche UTC. No se perdió ningún dato. Causa (`wrangler d1 insights`): el panel del coach preguntaba cada 4 s y en cada vuelta releía la cartera entera (`clientesActuales`, ~515 filas, 7.033 veces) y la ficha del cliente releía su historial desde el cursor 0 (~347 filas, 7.447 veces), incluso en segundo plano. El coste crecía con cada entrenamiento registrado.
+- Servidor: `etiquetaDeClientes` (una consulta: `MAX(cursor)` de `cambios` más el recuento y `actualizado_en` de `clientes` y `rutinas`, más el lunes de la semana) da el ETag de `GET /clientes`. Si coincide con `If-None-Match`, responde 304 sin leer la cartera.
+- Panel (`ServicioCoach`): guarda la lista y la pide con `pedirSiCambio`. El historial se guarda por cliente y sólo pide lo posterior al último cursor; `cambios` es de sólo anexado.
+- `Coach.tsx`: refresco cada 15 s (`INTERVALO_PANEL_MS`), sólo con la pestaña visible, al volver a ella y al cambiar de pantalla, para que un cliente recién creado o un borrador aparezcan al momento.
+- Estimación: cada vuelta lee unas 60–80 filas en lugar de ~860. Con el panel abierto 24 h son ~0,4 M al día, frente a los 6,7 M de hoy.
+- Verificado: 1054 pruebas (nuevas: huella y 304 en `pruebas-v2/nube.test.ts`; caché e incremental en `servicioCoach.test.ts`), tsc, lint, build, `git diff --check` y 117 HTTP (nueva: 304 en `/clientes`). Runtime local en el navegador: tras la primera carga, cada 15 s `/clientes` da 304 con 0 B y `/cambios` pide desde el último cursor (39 B en vez de 326 KB). La ficha del cliente hace lo mismo.
+
 ## 2026-10-18 — Superseries: QA, descanso entre rondas y mínimo por ejercicios — claude-code
 
 - Descanso: si se empezaba la ronda siguiente antes de acabar el descanso, el cronómetro seguía contando durante B. Al guardar una serie dentro de la ronda se cierra el descanso en marcha (`Entrenamiento.tsx`, `terminarDescanso`). Prueba nueva en `EntrenamientoHoy.test.tsx`.

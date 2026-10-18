@@ -172,6 +172,13 @@ await codigo(
   401,
   "Cliente no entra al Coach",
 );
+// El panel del coach pregunta a menudo: sin cambios, 304 y sin releer la cartera.
+{
+  const lista = await codigo(await pedir("/admin/api/v2/clientes", coach), 200, "Coach lista clientes");
+  const etiqueta = lista.headers.get("ETag");
+  assert.ok(etiqueta, "La lista de clientes trae ETag");
+  await codigo(await pedir("/admin/api/v2/clientes", { ...coach, "If-None-Match": etiqueta }), 304, "Sin cambios: 304");
+}
 // Suscripción: sin claves de Stripe todo falla cerrado y nadie toca lo ajeno.
 await codigo(
   await fetch(new URL("/api/stripe/webhook", base), { method: "POST", body: "{}", redirect: "manual" }),

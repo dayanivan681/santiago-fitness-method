@@ -95,6 +95,28 @@ export async function planActual(db: D1Database, id: string) {
     revision: 0,
   };
 }
+/** Lunes de esta semana (AAAA-MM-DD): la actividad «esta semana» depende de él. */
+function inicioDeSemana() {
+  const semana = new Date();
+  semana.setDate(semana.getDate() - ((semana.getDay() + 6) % 7));
+  return semana.toISOString().slice(0, 10);
+}
+/**
+ * Huella de la cartera en una sola consulta barata. El panel del coach
+ * pregunta a menudo; si nada cambió responde 304 sin releer el historial.
+ * `cambios.cursor` es la clave primaria (MAX en una fila); clientes y rutinas
+ * son tablas pequeñas y su `actualizado_en` cambia al editar o archivar.
+ */
+export async function etiquetaDeClientes(db: D1Database): Promise<string> {
+  const f = await db
+    .prepare(
+      `SELECT (SELECT COALESCE(MAX(cursor),0) FROM cambios) AS cambios,
+              (SELECT COUNT(*) || '.' || COALESCE(SUM(activo),0) || '.' || COALESCE(MAX(actualizado_en),0) FROM clientes) AS clientes,
+              (SELECT COUNT(*) || '.' || COALESCE(MAX(actualizado_en),0) FROM rutinas) AS rutinas`,
+    )
+    .first<{ cambios: number; clientes: string; rutinas: string }>();
+  return `"cl-${f?.cambios ?? 0}-${f?.clientes ?? ""}-${f?.rutinas ?? ""}-${inicioDeSemana()}"`;
+}
 export async function clientesActuales(db: D1Database) {
   // Tres consultas para toda la cartera: el coste no crece por cada cliente.
   const [perfiles, versiones, rutinas] = await Promise.all([
@@ -102,9 +124,7 @@ export async function clientesActuales(db: D1Database) {
     db.prepare("SELECT * FROM cambios c WHERE tipo IN ('perfil','plan','entrenamiento') AND revision=(SELECT MAX(revision) FROM cambios v WHERE v.cliente_id=c.cliente_id AND v.tipo=c.tipo AND v.documento_id=c.documento_id) AND eliminado=0").all<FilaCambio>(),
     db.prepare("SELECT id,cliente_id,nombre,orden,slots_json FROM rutinas ORDER BY orden").all<{id:string;cliente_id:string;nombre:string;orden:number;slots_json:string}>(),
   ]);
-  const semana = new Date();
-  semana.setDate(semana.getDate() - ((semana.getDay() + 6) % 7));
-  const desde = semana.toISOString().slice(0, 10);
+  const desde = inicioDeSemana();
   return perfiles.filter(p=>p.id!=="dayan-test").map(p=>{
     const registros=versiones.results.filter(v=>v.cliente_id===p.id);
     const pv=registros.find(v=>v.tipo==="perfil"&&v.documento_id===p.id);

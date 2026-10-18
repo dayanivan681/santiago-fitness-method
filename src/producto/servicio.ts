@@ -8,7 +8,7 @@ import type {
   Plan,
   Tipo,
 } from "../../shared/v2/contratos";
-import { ClienteApi } from "../nube/cloud";
+import { ClienteApi, pedirSiCambio } from "../nube/cloud";
 import { PLANTILLAS_5_DIAS, PLANTILLAS_BASE } from "../../shared/plantillas-base";
 import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
 import { RepositorioMemoria } from "../nube/memoria";
@@ -27,6 +27,11 @@ export class ServicioCoach {
   clientes: Cliente[] = [];
   registros = new Map<string, Cambio[]>();
   repos = new Map<string, RepositorioMemoria>();
+  // El panel pregunta a menudo. Guardar lo recibido evita releer en D1 la
+  // cartera y el historial completos en cada vuelta (límite diario de lecturas).
+  private etiquetaClientes: string | null = null;
+  private clientesRecibidos: Cliente[] = [];
+  private historiales = new Map<string, { cambios: Cambio[]; cursor: number }>();
   readonly suscripciones: ServicioSuscripciones;
   readonly biblioteca: ServicioBiblioteca;
   constructor(demo = false) {
@@ -103,9 +108,16 @@ export class ServicioCoach {
       }
       return structuredClone(this.clientes);
     }
-    return (
-      await new ClienteApi(true).pedir<{ clientes: Cliente[] }>("/clientes")
-    ).clientes;
+    const r = await pedirSiCambio<{ clientes: Cliente[] }>(
+      "/admin/api/v2",
+      "/clientes",
+      this.etiquetaClientes,
+    );
+    if (r.cambio) {
+      this.clientesRecibidos = r.datos.clientes;
+      this.etiquetaClientes = r.etiqueta;
+    }
+    return structuredClone(this.clientesRecibidos);
   }
   // El cursor puede paginar un historial largo: no asumir que la primera
   // respuesta contiene todas las versiones al reconstruir la ficha.
@@ -135,21 +147,24 @@ export class ServicioCoach {
       }
       return cambios;
     }
+    // `cambios` sólo crece: basta pedir lo posterior al último cursor recibido.
+    const clave = cliente ?? "";
+    const previo = this.historiales.get(clave) ?? { cambios: [], cursor: 0 };
     const api = new ClienteApi(true, cliente);
-    const all: Cambio[] = [];
-    let cursor = 0,
-      mas = true;
+    let { cambios, cursor } = previo;
+    let mas = true;
     while (mas) {
       const r = await api.pedir<{
         cambios: Cambio[];
         cursor: number;
         mas: boolean;
       }>(`/cambios?cursor=${cursor}`);
-      all.push(...r.cambios);
+      cambios = [...cambios, ...r.cambios];
       cursor = r.cursor;
       mas = r.mas;
     }
-    return all;
+    this.historiales.set(clave, { cambios, cursor });
+    return structuredClone(cambios);
   }
   async guardar(
     cliente: string | undefined,
