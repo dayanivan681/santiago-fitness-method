@@ -45,6 +45,7 @@ describe('frontera cloud del cliente', () => {
                   repMax: 5,
                   descansoSegundos: 180,
                   progresionFijada: 'subirCarga',
+                  grupo: 'A',
                 },
               ],
             },
@@ -67,7 +68,7 @@ describe('frontera cloud del cliente', () => {
       expect.objectContaining({
         id: 'qa-role-split|upper-a',
         participanteId: 'qa-role-split',
-        slots: [expect.objectContaining({ progresionFijada: 'subirCarga' })],
+        slots: [expect.objectContaining({ progresionFijada: 'subirCarga', grupo: 'A' })],
       }),
     ])
   })

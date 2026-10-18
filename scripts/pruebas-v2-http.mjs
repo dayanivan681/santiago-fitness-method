@@ -270,6 +270,26 @@ if (m02.length) {
   assert.equal(leido.plan.dias[4].nombre, "Lower C");
   checks++;
 }
+// Bi-series: una sesión con 6 ejercicios y los dos primeros en la bi-serie A (5 bloques).
+{
+  const conGrupo = (grupoSegundo) => ({
+    ...plan,
+    dias: plan.dias.map((d, i) => {
+      if (i !== 0) return d;
+      const slots = [...d.slots, { ...d.slots.at(-1) }].map((sl, j) => ({ ...sl, orden: j + 1 }));
+      slots[0] = { ...slots[0], grupo: "A", seriesObjetivo: 3, descansoSegundos: 0 };
+      slots[1] = { ...slots[1], seriesObjetivo: 3, ...(grupoSegundo ? { grupo: "A" } : {}) };
+      return { ...d, slots };
+    }),
+  });
+  let rev = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
+  await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", conGrupo(true), rev)] }), 200, "Plan con bi-serie se publica");
+  const leido = await (await codigo(await pedir("/api/v2/inicio", cliente), 200, "Cliente lee el plan con bi-serie")).json();
+  assert.deepEqual(leido.plan.dias[0].slots.slice(0, 3).map((sl) => sl.grupo ?? null), ["A", "A", null], "El grupo se conserva al releer");
+  rev = (await (await pedir(cbase + "/inicio?cliente=" + id, coach)).json()).revision;
+  await codigo(await pedir(cbase + "/sincronizar?cliente=" + id, coach, { operaciones: [op("plan", "programa", conGrupo(false), rev)] }), 400, "Grupo de un solo ejercicio da 400");
+  checks++;
+}
 await codigo(await pedir(`${cbase}/biblioteca/${ejId}`, coach, { activo: false }, "PATCH"), 200, "Coach archiva el ejercicio");
 const tras = await (await pedir("/api/v2/biblioteca", cliente)).json();
 assert.ok(!tras.ejercicios.some((x) => x.id === ejId), "Archivado no se distribuye");

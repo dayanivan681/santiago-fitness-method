@@ -2832,6 +2832,64 @@ section > h2.biblioteca__grupo {
   font-size: 12px;
 }
 
+/* Bi-series y tri-series: dónde estás dentro de la ronda. */
+.entreno__superserie {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 14px;
+  padding-left: 12px;
+  border-left: 3px solid var(--rojo);
+}
+.entreno__superserie-posicion {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rojo);
+}
+.entreno__superserie-tira {
+  display: flex;
+  gap: 6px;
+}
+.entreno__superserie-tira button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: none;
+  color: var(--texto-50);
+  font: 600 13px/1 'Barlow', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 360px) {
+  .entreno__superserie-nombre {
+    display: none;
+  }
+}
+.entreno__superserie-tira button[aria-current] {
+  background: #f4f3f0;
+  border-color: #f4f3f0;
+  color: #111;
+}
+
+/* Hoy: los ejercicios de un grupo comparten marco y etiqueta. */
+.superserie {
+  border-left: 3px solid var(--rojo);
+  padding-left: 8px;
+}
+.superserie__etiqueta {
+  display: block;
+  padding: 10px 0 2px;
+  font: 600 11px/1 'Barlow', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rojo);
+}
+
 /* El ejercicio en curso: el nombre manda y lo demás es apoyo en texto, no en
    cajas. Antes cada dato iba en su propio recuadro con borde. */
 .entreno__ejercicio {

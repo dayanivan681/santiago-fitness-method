@@ -831,6 +831,56 @@ a.sfm-primary:active {
   display: flex;
   flex-direction: column;
 }
+/* Bi-series y tri-series: marco lateral rojo y etiqueta con sus acciones. */
+.sfm-superserie {
+  border-left: 3px solid var(--sfm-red);
+  border-radius: 4px;
+  padding-left: 10px;
+  margin: 4px 0;
+}
+.sfm-superserie__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+}
+.sfm-superserie__cabecera strong {
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--sfm-red);
+}
+.sfm-superserie__acciones {
+  display: flex;
+  align-items: center;
+}
+.sfm-superserie__acciones button:not(.sfm-text-button) {
+  width: 44px;
+  height: 44px;
+  color: var(--sfm-muted);
+  background: none;
+  border: 0;
+  font-size: 18px;
+}
+.sfm-superserie__acciones .sfm-text-button {
+  min-height: 44px;
+  padding: 0 8px;
+}
+.sfm-unir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-left: 30px;
+  padding: 0 12px;
+  background: none;
+  border: 1px dashed var(--sfm-line);
+  border-radius: 999px;
+  color: var(--sfm-muted);
+  font-size: 12px;
+}
+
 .sfm-order button {
   width: 48px;
   height: 48px;

@@ -117,6 +117,7 @@ function slotValido(slot: Partial<SlotPlantilla>, orden: number): SlotPlantilla 
     repMax: Math.max(repMin, repMax),
     descansoSegundos: entero(slot.descansoSegundos, 0, 3600, 120),
     ...(progresion ? { progresionFijada: progresion } : {}),
+    ...(typeof slot.grupo === 'string' && /^[A-Z]$/.test(slot.grupo) ? { grupo: slot.grupo } : {}),
   }
 }
 

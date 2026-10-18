@@ -17,7 +17,7 @@
  * es un flujo real, y además una regresión cubierta por `pruebas-maestro`.
  */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
 import { useControlDescanso } from '../../aplicacion/contextoDescanso'
 import { HojaCapa } from '../../componentes/HojaCapa'
@@ -32,6 +32,7 @@ import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 import type { EjercicioDelDia } from '../../aplicacion/useEntrenamiento'
 import { segunCantidad } from '../../logica/plural'
 import { Hoja as HojaResumen,ErrorVisible } from '../../producto/ui'
+import { pasoPendiente, posicionEnGrupo, siguienteTrasGuardar } from '../../../shared/superseries'
 
 /** La clave sin `numeroSerie`: cada fila añade el suyo. */
 type ClaveDelDia = Omit<ClaveDeBorrador, 'numeroSerie'>
@@ -109,6 +110,32 @@ export function Entrenamiento({
     return claves
   }, [datos])
 
+  /**
+   * Series guardadas en esta pantalla, por día y posición. Al alternar rápido en
+   * una bi-serie la recarga de `datos` puede ir un paso por detrás; sin esto el
+   * flujo contaría una serie de menos del otro miembro y repetiría la ronda.
+   */
+  const guardadas = useRef(new Map<string, number>())
+
+  /**
+   * Al abrir una sesión ya empezada —tras recargar, por ejemplo— se retoma
+   * donde iba el flujo en vez del primer ejercicio. Una vez por montaje, sólo
+   * desde la posición inicial y nunca después de que el participante haya
+   * elegido o guardado algo. Espera a que lleguen las series: tras recargar,
+   * la primera carga puede venir antes que la sincronización.
+   */
+  const reanudada = useRef(false)
+  useEffect(() => {
+    if (reanudada.current || !datos || datos.seriesHechas === 0) return
+    reanudada.current = true
+    if (actual !== 0) return
+    const destino = pasoPendiente(
+      datos.ejerciciosDelDia.map((e) => e.slot),
+      datos.ejerciciosDelDia.map((e) => e.seriesDeHoy.length),
+    )
+    if (destino !== null && destino !== 0) setActual(destino)
+  }, [datos, actual, setActual])
+
   if (cargando) return <p className="aviso">Cargando…</p>
   if (!datos || datos.ejerciciosDelDia.length === 0) {
     return <p className="aviso">No hay entrenamiento configurado todavía.</p>
@@ -133,15 +160,35 @@ export function Entrenamiento({
     ejerciciosDelDia.flatMap((ejercicioDelDia) => ejercicioDelDia.variantes),
   )
 
+  const slotsDelDia = ejerciciosDelDia.map((e) => e.slot)
+  const grupo = posicionEnGrupo(slotsDelDia, indice)
+  /** Una elección del participante manda sobre la reanudación automática. */
+  function elegir(destino: number) {
+    reanudada.current = true
+    setActual(destino)
+  }
+  const ronda = Math.min(item.seriesDeHoy.length + 1, item.slot.seriesObjetivo)
+
   /**
-   * Al completar la última serie se pasa al siguiente ejercicio.
+   * Tras guardar una serie: descanso y a qué ejercicio pasar.
    *
-   * Es lo que se hace en el gimnasio: terminas y pasas al que toca. Antes esto
-   * plegaba una tarjeta y abría la siguiente; ahora se ve, que era el sentido.
+   * Suelto, es lo de siempre: descanso y, con la última serie, al siguiente.
+   * En una bi-serie o tri-serie se alterna sin descanso (A1 → B1) y el descanso
+   * del grupo llega al cerrar la ronda. Se calcula desde lo registrado, así que
+   * saltar a mano a otro miembro no rompe el flujo.
    */
-  function avanzarSiTermino(numeroSerie: number, seriesObjetivoDelSlot: number) {
-    if (numeroSerie < seriesObjetivoDelSlot) return
-    setActual((valor) => (valor === indice && indice + 1 < ejerciciosDelDia.length ? indice + 1 : valor))
+  function avanzarTrasGuardar(ejercicioId: string, numeroSerie: number) {
+    reanudada.current = true
+    const clave = (orden: number) => `${fechaDeHoy()}|${plantilla.id}|${orden}`
+    guardadas.current.set(clave(item.slot.orden), Math.max(guardadas.current.get(clave(item.slot.orden)) ?? 0, numeroSerie))
+    const paso = siguienteTrasGuardar(
+      slotsDelDia,
+      ejerciciosDelDia.map((e) => Math.max(e.seriesDeHoy.length, guardadas.current.get(clave(e.slot.orden)) ?? 0)),
+      indice,
+      numeroSerie,
+    )
+    if (paso.descansar) arrancarDescanso(ejercicioId, paso.descansoSegundos)
+    if (paso.indice !== indice) setActual((valor) => (valor === indice ? paso.indice : valor))
   }
 
   return (
@@ -158,7 +205,9 @@ export function Entrenamiento({
         <span className="entreno__contexto">
           <span className="entreno__dia">{identidadVisible?plantilla.nombre:item.ejercicio.nombre}</span>
           <span className="entreno__paso">
-            Ejercicio {indice + 1} de {ejerciciosDelDia.length}
+            {grupo
+              ? `${grupo.nombre} ${grupo.grupo} · Ronda ${ronda} de ${item.slot.seriesObjetivo}`
+              : `Ejercicio ${indice + 1} de ${ejerciciosDelDia.length}`}
           </span>
         </span>
         <button
@@ -178,6 +227,27 @@ export function Entrenamiento({
           sesionDeHoy && !sesionDeHoy.completadaEn ? 'contenido contenido--con-barra' : 'contenido'
         }
       >
+        {grupo && (
+          <nav className="entreno__superserie" aria-label={`${grupo.nombre} ${grupo.grupo}`}>
+            <span className="entreno__superserie-posicion">
+              {grupo.grupo}{grupo.posicion} de {grupo.tamano}
+            </span>
+            <span className="entreno__superserie-tira">
+              {grupo.indices.map((i, n) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-current={i === indice ? 'step' : undefined}
+                  onClick={() => elegir(i)}
+                >
+                  {grupo.grupo}{n + 1}
+                  <span className="entreno__superserie-nombre"> · {ejerciciosDelDia[i].ejercicio.nombre}</span>
+                </button>
+              ))}
+            </span>
+          </nav>
+        )}
+
         <CuerpoEjercicio
           key={item.ejercicio.id}
           item={item}
@@ -188,8 +258,7 @@ export function Entrenamiento({
           onGuardarSerie={async (ejercicioId, numeroSerie, valores) => {
             await registrarSerie(ejercicioId, numeroSerie, valores)
             // Sólo una serie nueva confirmada inicia el descanso prescrito.
-            arrancarDescanso(ejercicioId, item.slot.descansoSegundos)
-            avanzarSiTermino(numeroSerie, item.slot.seriesObjetivo)
+            avanzarTrasGuardar(ejercicioId, numeroSerie)
           }}
           onCorregirSerie={corregirSerie}
           onDeshacerCorreccion={deshacerUltimaCorreccion}
@@ -200,7 +269,7 @@ export function Entrenamiento({
         {/* Qué viene después, sin volver a ninguna lista. */}
         {siguiente ? (
           <div className="grupo grupo--pleno" style={{ marginTop: 22 }}>
-            <button type="button" className="fila" onClick={() => setActual(indice + 1)}>
+            <button type="button" className="fila" onClick={() => elegir(indice + 1)}>
               <span className="fila__cuerpo">
                 <span className="fila__detalle">Siguiente</span>
                 <span className="fila__titulo">{siguiente.ejercicio.nombre}</span>
@@ -263,7 +332,7 @@ export function Entrenamiento({
           ejercicios={ejerciciosDelDia}
           actual={indice}
           onElegir={(destino) => {
-            setActual(destino)
+            elegir(destino)
             setListaAbierta(false)
           }}
           onCerrar={() => setListaAbierta(false)}
@@ -332,6 +401,7 @@ function HojaDelDia({
             <span className="fila__cuerpo">
               <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>
               <span className="fila__detalle">
+                {etiquetaEnGrupo(ejercicios, posicion)}
                 {ejercicioDelDia.slot.seriesObjetivo} series ·{' '}
                 {ejercicioDelDia.slot.repMin}–{ejercicioDelDia.slot.repMax} reps
               </span>
@@ -353,4 +423,10 @@ function HojaDelDia({
  */
 function ejerciciosUnicos(ejercicios: readonly Ejercicio[]): Ejercicio[] {
   return [...new Map(ejercicios.map((ejercicio) => [ejercicio.id, ejercicio])).values()]
+}
+
+/** «A1 · » para un miembro de una superserie; vacío si va suelto. */
+function etiquetaEnGrupo(ejercicios: readonly EjercicioDelDia[], indice: number): string {
+  const grupo = posicionEnGrupo(ejercicios.map((e) => e.slot), indice)
+  return grupo ? `${grupo.nombre} ${grupo.grupo} · ${grupo.grupo}${grupo.posicion} · ` : ''
 }

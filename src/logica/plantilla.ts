@@ -14,12 +14,17 @@ import {
   type RangoReps,
 } from '../dominio/estimulo'
 import type { PlantillaDia, SlotPlantilla } from '../dominio/tipos'
+import { MAX_BLOQUES, puedeAnadir } from '../../shared/superseries'
 
 /**
  * El cliente pide sesiones de 5 a 8 ejercicios: la estructura de §4 orienta,
  * pero no puede ser un tope técnico. Ocho es el máximo que él fija.
  */
-export const MAX_EJERCICIOS_POR_DIA = 8
+/**
+ * Tope de ejercicios sueltos: 8 bloques. Con bi-series o tri-series una sesión
+ * llega a 12 ejercicios (`shared/superseries`), y `anadirSlot` aplica las dos.
+ */
+export const MAX_EJERCICIOS_POR_DIA = MAX_BLOQUES
 
 /** Crea un slot con los valores por defecto de su estímulo (§10–12). */
 export function crearSlot(
@@ -83,7 +88,7 @@ export function actualizarSlot(
  * Siempre puede cambiarlo después.
  */
 export function anadirSlot(plantilla: PlantillaDia, ejercicioId: string): PlantillaDia {
-  if (plantilla.slots.length >= MAX_EJERCICIOS_POR_DIA) {
+  if (!puedeAnadir(plantilla.slots)) {
     throw new Error(
       `${plantilla.nombre} ya tiene el máximo de ${MAX_EJERCICIOS_POR_DIA} ejercicios`,
     )

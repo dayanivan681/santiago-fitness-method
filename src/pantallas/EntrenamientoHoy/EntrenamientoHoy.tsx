@@ -14,6 +14,7 @@
 
 import { useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
+import { bloquesDe, nombreDeGrupo } from '../../../shared/superseries'
 import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
 import type { Ejercicio } from '../../dominio/tipos'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
@@ -106,8 +107,12 @@ export function EntrenamientoHoy({
 
             <h2 className="grupo__titulo">Tu sesión, paso a paso</h2>
             <div className="grupo grupo--pleno">
-              {ejerciciosDelDia.map((ejercicioDelDia) => {
-                const hechas = ejercicioDelDia.seriesDeHoy.length
+              {bloquesDe(ejerciciosDelDia.map((e) => e.slot)).map((bloque) => {
+                const enGrupo = Boolean(bloque.grupo && bloque.indices.length > 1)
+                const filas = bloque.indices.map((indice, posicion) => {
+                  const ejercicioDelDia = ejerciciosDelDia[indice]
+                  const prefijo = enGrupo ? `${bloque.grupo}${posicion + 1} · ` : ''
+                  const hechas = ejercicioDelDia.seriesDeHoy.length
                 return (
                   <div className="fila" key={ejercicioDelDia.ejercicio.id}>
                     {/* Petición del coach: un cuadro al lado de cada ejercicio que el
@@ -124,7 +129,7 @@ export function EntrenamientoHoy({
                     <span className="fila__cuerpo">
                       <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>
                       <span className="fila__detalle">
-                        {ejercicioDelDia.slot.seriesObjetivo} series ·{' '}
+                        {prefijo}{ejercicioDelDia.slot.seriesObjetivo} series ·{' '}
                         {ejercicioDelDia.slot.repMin}–{ejercicioDelDia.slot.repMax} reps
                       </span>
                     </span>
@@ -133,6 +138,15 @@ export function EntrenamientoHoy({
                         {hechas}/{ejercicioDelDia.slot.seriesObjetivo}
                       </span>
                     )}
+                  </div>
+                )
+                })
+                if (!enGrupo) return filas
+                const etiqueta = `${nombreDeGrupo(bloque.indices.length)} ${bloque.grupo}`
+                return (
+                  <div className="superserie" role="group" aria-label={etiqueta} key={`grupo-${bloque.indices[0]}`}>
+                    <span className="superserie__etiqueta">{etiqueta}</span>
+                    {filas}
                   </div>
                 )
               })}

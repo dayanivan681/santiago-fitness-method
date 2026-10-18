@@ -113,7 +113,7 @@ export interface Ejercicio extends PerfilCarga {
 
 /** §3 y §4: el entrenamiento del día ya viene definido; el participante no escribe nada de esto. */
 export interface SlotPlantilla {
-  /** Posición 1–5 dentro de la sesión (§4). */
+  /** Posición 1–12 dentro de la sesión (§4). */
   readonly orden: number
   readonly ejercicioId: string
   readonly estimulo: Estimulo
@@ -131,6 +131,8 @@ export interface SlotPlantilla {
    * de que existiera este campo no lo tienen.
    */
   readonly progresionFijada?: TipoDeProgresion
+  /** Misma letra en slots consecutivos = bi-serie o tri-serie (`shared/superseries`). */
+  readonly grupo?: string
 }
 
 /** §28: Upper A · Lower A · Upper B · Lower B. */

@@ -1,5 +1,17 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-18 — Bi-series y tri-series en el editor y en el entrenamiento — claude-code
+
+- Origen: Santiago preguntó por WhatsApp si la app no aceptaba bi-series y tri-series. No las tenía. Decisiones del dueño: la regla de 5–8 cuenta bloques (una superserie es uno), máximo técnico de 12 ejercicios, sin descanso dentro del grupo y descanso al final de cada ronda.
+- Modelo: `grupo?: string` (`/^[A-Z]$/`) en `Slot` (`shared/v2/contratos.ts`) y `SlotPlantilla`. Misma letra en slots consecutivos = superserie. Módulo puro nuevo `shared/superseries.ts`: bloques, validación (consecutivos, 2–3 miembros, mismas series, letra única), `siguienteTrasGuardar`, `pasoPendiente` y las operaciones del editor (unir, separar, quitar, mover bloque, ajustar series).
+- Validación del plan: estructura de grupos siempre; máximo 8 bloques; publicar exige 5–8 bloques. `Slot.orden`, `Dia.slots`, `Borrador.orden` y `Sustitucion.orden` suben a 12. `/invitar` y los avisos del Coach cuentan bloques. `sincronizarCloud.ts` conserva `grupo`. Sin migración D1: los slots van en JSON. Los planes sin grupos no cambian.
+- Editor (`EditorPlan.tsx`): botón «Unir en serie» entre ejercicios; marco rojo con «Bi-serie A»/«Tri-serie A», ↑↓ del grupo entero y «Separar»; filas A1, A2…; series ajustadas juntas con aviso; «Descanso entre rondas» sólo en el último (los demás a 0, recuperan 120 s al separar); contador «N/8 bloques · M ejercicios»; «Añadir» se bloquea a 12 ejercicios u 8 bloques.
+- Entrenamiento: A1 → B1 sin descanso → descanso del grupo → A2…; la última ronda pasa al siguiente bloque. Cabecera «Tri-serie A · Ronda 2 de 3», tira A1/A2/A3 (sólo letras a ≤360 px) y «A2 de 3». El flujo se recalcula desde lo registrado y recuerda lo recién guardado, porque al alternar rápido la recarga de datos iba un paso por detrás. Al reabrir una sesión empezada se retoma el bloque a medias (antes siempre el ejercicio 1), salvo que el participante haya elegido o guardado algo. Hoy y la lista del día muestran el grupo.
+- La pantalla de Coach antigua (sin grupos) sigue con tope de 8: `MAX_EJERCICIOS_POR_DIA` = 8 bloques y `anadirSlot` usa `puedeAnadir`.
+- Demo: Alicia tiene en Upper B la bi-serie curl con mancuernas + extensión de tríceps y un curl martillo. Las plantillas base de clientes reales no cambian.
+- Verificado: 1041 pruebas (una corrida tuvo un fallo de tiempos en `RecorridosDemo` que pasó solo y en la corrida completa siguiente), tsc, lint, build y 110 HTTP (plan con bi-serie se publica y se relee; grupo de uno da 400). Runtime local en Chromium a 375 y 320 px: coach une dos y luego un tercero (tri-serie), series y descanso entre rondas, publica; `/qa/cliente`: Hoy con el grupo, A1 → A2 → A3 sin descanso, descanso, vuelta a A1 en ronda 2, y tras recargar retoma en A3 ronda 2. Sin desborde horizontal.
+- Sin hacer: simulador iOS (no disponible en este entorno) ni preview de Cloudflare (sin credenciales en el contenedor).
+
 ## 2026-10-06 — Animaciones base: nota de IA correcta, aviso de equipo en C203 y versión en la URL — claude-code
 
 - `ImagenConMovimiento` decide la nota según lo que se ve. Con la foto fija y `imagenGenerada`, pone «Imagen generada con IA · equipo representativo.». Con la animación, pone `notaAnimacion` si la hay. Las animaciones del coach no llevan nota. Se quitó la nota fija de `HojaEjercicio.tsx`. No hizo falta la prop `nota`: el componente ya tiene todo lo que necesita en el ejercicio.

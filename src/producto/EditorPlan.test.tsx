@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useState } from 'react';
 import { EditorPlan } from './EditorPlan';
 import { perfil, plan } from '../../pruebas-v2/fixtures';
 import { BIBLIOTECA_INICIAL } from '../datos/semilla/biblioteca';
@@ -89,4 +90,102 @@ it('«Organizar sesiones» se ve como un botón', () => {
   const boton = screen.getByRole('button', { name: /Organizar sesiones/ });
   expect(boton).toHaveClass('sfm-secondary', 'sfm-organizar');
   expect(boton).not.toHaveClass('sfm-text-button');
+});
+
+describe('bi-series y tri-series', () => {
+  function Editor({ inicial }: { inicial: typeof plan }) {
+    const [p, setP] = useState(inicial);
+    return (
+      <EditorPlan
+        plan={p}
+        perfil={perfil}
+        onChange={(nuevo) => {
+          ultimo = nuevo;
+          setP(nuevo);
+        }}
+      />
+    );
+  }
+  let ultimo = plan;
+  const dia = () => ultimo.dias[0].slots;
+  const nombre = (i: number) =>
+    BIBLIOTECA_INICIAL.find((e) => e.id === plan.dias[0].slots[i].ejercicioId)!.nombre;
+  const unirDe = (i: number) =>
+    new RegExp(`^Unir en serie ${nombre(i).replace(/[()°]/g, '\\$&')}`);
+
+  it('unir dos crea «Bi-serie A»; unir un tercero la deja en tri-serie', () => {
+    render(<Editor inicial={plan} />);
+    fireEvent.click(screen.getByRole('button', { name: unirDe(0) }));
+    const bi = screen.getByRole('region', { name: 'Bi-serie A' });
+    expect(within(bi).getByText('A1')).toBeInTheDocument();
+    expect(within(bi).getByText('A2')).toBeInTheDocument();
+    expect(dia().slice(0, 2).map((s) => s.grupo)).toEqual(['A', 'A']);
+    expect(dia()[0].descansoSegundos).toBe(0);
+    fireEvent.click(screen.getByRole('button', { name: unirDe(1) }));
+    expect(screen.getByRole('region', { name: 'Tri-serie A' })).toBeInTheDocument();
+    expect(dia().slice(0, 3).map((s) => s.grupo)).toEqual(['A', 'A', 'A']);
+    // Con tres no se admite un cuarto.
+    expect(screen.queryByRole('button', { name: unirDe(2) })).toBeNull();
+  });
+
+  it('separar deshace el grupo y devuelve el descanso', () => {
+    render(<Editor inicial={plan} />);
+    fireEvent.click(screen.getByRole('button', { name: unirDe(0) }));
+    fireEvent.click(within(screen.getByRole('region', { name: 'Bi-serie A' })).getByRole('button', { name: 'Separar' }));
+    expect(screen.queryByRole('region', { name: /Bi-serie/ })).toBeNull();
+    expect(dia().some((s) => s.grupo)).toBe(false);
+    expect(dia()[0].descansoSegundos).toBeGreaterThan(0);
+  });
+
+  it('reordenar mueve el grupo entero', () => {
+    render(<Editor inicial={plan} />);
+    const ids = plan.dias[0].slots.map((s) => s.ejercicioId);
+    fireEvent.click(screen.getByRole('button', { name: unirDe(0) }));
+    fireEvent.click(screen.getByRole('button', { name: 'Bajar Bi-serie A' }));
+    expect(dia().map((s) => s.ejercicioId).slice(0, 3)).toEqual([ids[2], ids[0], ids[1]]);
+    expect(dia().map((s) => s.grupo).slice(0, 3)).toEqual([undefined, 'A', 'A']);
+  });
+
+  it('las series se ajustan juntas y el descanso sólo se edita en el último', () => {
+    render(<Editor inicial={plan} />);
+    fireEvent.click(screen.getByRole('button', { name: unirDe(0) }));
+    fireEvent.click(screen.getByText(nombre(0)).closest('button')!);
+    let hoja = screen.getByRole('dialog', { name: 'Prescripción' });
+    expect(within(hoja).getByText(/Las series de la bi-serie se ajustan juntas/)).toBeInTheDocument();
+    expect(within(hoja).queryByLabelText(/Descanso/)).toBeNull();
+    fireEvent.change(within(hoja).getByLabelText('Series'), { target: { value: '5' } });
+    expect(dia().slice(0, 2).map((s) => s.seriesObjetivo)).toEqual([5, 5]);
+    fireEvent.click(within(hoja).getByRole('button', { name: 'Listo' }));
+    fireEvent.click(screen.getByText(nombre(1)).closest('button')!);
+    hoja = screen.getByRole('dialog', { name: 'Prescripción' });
+    fireEvent.change(within(hoja).getByLabelText('Descanso entre rondas · segundos'), { target: { value: '90' } });
+    expect(dia()[1].descansoSegundos).toBe(90);
+  });
+
+  it('el contador cuenta bloques y ejercicios; «Añadir» se bloquea a 8 bloques', () => {
+    const ocho = { ...plan, dias: [{ ...plan.dias[0], slots: Array.from({ length: 8 }, (_, i) => ({ ...plan.dias[0].slots[0], orden: i + 1 })) }, ...plan.dias.slice(1)] };
+    render(<Editor inicial={ocho} />);
+    expect(screen.getByText('8/8 bloques')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Añadir ejercicio/ })).toBeDisabled();
+    fireEvent.click(screen.getAllByRole('button', { name: /^Unir en serie/ })[0]);
+    expect(screen.getByText('7/8 bloques · 8 ejercicios')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Añadir ejercicio/ })).toBeEnabled();
+  });
+
+  it('quitar un miembro de la bi-serie la deshace', () => {
+    render(<Editor inicial={plan} />);
+    fireEvent.click(screen.getByRole('button', { name: unirDe(0) }));
+    fireEvent.click(screen.getByText(nombre(0)).closest('button')!);
+    fireEvent.click(screen.getByRole('button', { name: 'Quitar del borrador' }));
+    expect(dia().some((s) => s.grupo)).toBe(false);
+  });
+
+  it('publicar y releer conserva los grupos', () => {
+    const conSeis = { ...plan, dias: plan.dias.map((d, i) => (i === 0 ? { ...d, slots: [...d.slots, { ...d.slots[0], orden: d.slots.length + 1 }] } : d)) };
+    render(<Editor inicial={conSeis} />);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Unir en serie/ })[0]);
+    const r = Plan.safeParse(JSON.parse(JSON.stringify({ ...ultimo, estado: 'publicado', revisado: true })));
+    expect(r.success ? '' : JSON.stringify(r.error.issues)).toBe('');
+    expect(r.success && r.data.dias[0].slots.slice(0, 2).map((s) => s.grupo)).toEqual(['A', 'A']);
+  });
 });

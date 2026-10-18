@@ -1,4 +1,5 @@
 import { GuiaAyuda } from "./GuiaAyuda";
+import { MIN_BLOQUES, contarBloques } from "../../shared/superseries";
 import { CopiarInvitacion } from "./CopiarInvitacion";
 import { InsigniaSuscripcion, SuscripcionCliente } from "./SuscripcionCliente";
 import { ContextoPagos, pagoPendiente, usePagos, type Pagos } from "./pagos-contexto";
@@ -193,7 +194,7 @@ function HoyCoach({
       c.plan.estado !== "publicado" ||
       !c.plan.revisado ||
       c.plan.dias.length === 0 ||
-      c.plan.dias.some((d) => d.slots.length < 5),
+      c.plan.dias.some((d) => contarBloques(d.slots) < MIN_BLOQUES),
   );
   return (
     <>
@@ -350,7 +351,7 @@ function FilaCliente({ c, base }: { c: Cliente; base: string }) {
     c.plan.estado !== "publicado" ||
     !c.plan.revisado ||
     c.plan.dias.length === 0 ||
-    c.plan.dias.some((d) => d.slots.length < 5);
+    c.plan.dias.some((d) => contarBloques(d.slots) < MIN_BLOQUES);
   return (
     <Link className="sfm-row" data-tour-action="abrir-cliente" data-tour-client={c.perfil.id} to={`${base}/clientes/${c.perfil.id}`}>
       <Avatar nombre={c.perfil.nombre} />
@@ -701,6 +702,8 @@ function FichaCliente({
                       </span>
                       <h3>{d.nombre}</h3>
                       <p>
+                        {contarBloques(d.slots) !== d.slots.length &&
+                          `${contarBloques(d.slots)} bloques · `}
                         {d.slots.length} ejercicios ·{" "}
                         {d.slots.reduce((n, s) => n + s.seriesObjetivo, 0)}{" "}
                         series

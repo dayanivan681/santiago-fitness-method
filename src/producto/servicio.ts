@@ -13,6 +13,7 @@ import { PLANTILLAS_5_DIAS, PLANTILLAS_BASE } from "../../shared/plantillas-base
 import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
 import { RepositorioMemoria } from "../nube/memoria";
 import type { Participante, Sesion } from "../dominio/tipos";
+import { unir } from "../../shared/superseries";
 export type Cliente = {
   perfil: Perfil;
   plan: Plan;
@@ -61,7 +62,7 @@ export class ServicioCoach {
           ejerciciosEvitados: [],
         };
         const plan = {
-          ...planBase(id),
+          ...(i === 0 ? conBiSerieDeDemo(planBase(id)) : planBase(id)),
           estado: "publicado" as Plan["estado"],
           revisado: true,
         };
@@ -315,6 +316,25 @@ export class ServicioCoach {
     this.repos.set(id, repo);
     return repo;
   }
+}
+/**
+ * Sólo para la demo: Upper B con una bi-serie de bíceps y tríceps y un curl
+ * martillo al final, para enseñar cómo se ven y se entrenan. Los clientes
+ * reales reciben las plantillas base sin grupos.
+ */
+function conBiSerieDeDemo(plan: Plan): Plan {
+  return {
+    ...plan,
+    dias: plan.dias.map((d) => {
+      if (!d.id.endsWith("-upper-b")) return d;
+      const curl = d.slots.find((s) => s.ejercicioId === "curl-mancuernas")!;
+      const slots = unir(
+        [...d.slots, { ...curl, ejercicioId: "curl-martillo" }],
+        d.slots.indexOf(curl),
+      );
+      return { ...d, slots: slots.map((s, n) => ({ ...s, orden: n + 1 })) };
+    }),
+  };
 }
 /** Programa inicial según la frecuencia del alta: con 5 días, Lower–Upper–Lower–Upper–Lower; si no, los 4 de siempre. */
 export function planBase(cliente: string, frecuencia = 4): Plan {

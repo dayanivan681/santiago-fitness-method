@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { IDS_DE_EJERCICIOS } from "../ejercicios-base";
 import { esIdDeEjercicioCoach } from "./biblioteca";
+import {
+  MAX_BLOQUES,
+  MAX_EJERCICIOS_POR_SESION,
+  MIN_BLOQUES,
+  contarBloques,
+  erroresDeSuperseries,
+} from "../superseries";
 
 export const Id = z
   .string()
@@ -20,7 +27,7 @@ export const Carga = z.object({
 });
 export const Slot = z
   .object({
-    orden: z.number().int().min(1).max(8),
+    orden: z.number().int().min(1).max(MAX_EJERCICIOS_POR_SESION),
     ejercicioId: EjercicioId,
     estimulo: z.enum(["fuerza", "hipertrofia", "resistencia"]),
     seriesObjetivo: z.number().int().min(1).max(12),
@@ -31,6 +38,8 @@ export const Slot = z
     progresionFijada: z
       .enum(["mantener", "subirReps", "subirCarga", "revisarReducir"])
       .optional(),
+    /** Misma letra en slots consecutivos = bi-serie o tri-serie. */
+    grupo: z.string().regex(/^[A-Z]$/).optional(),
   })
   .refine((s) => s.repMax >= s.repMin, "Rango de repeticiones inválido");
 export const Dia = z.object({
@@ -38,7 +47,7 @@ export const Dia = z.object({
   participanteId: Id,
   nombre: z.string().min(1).max(80),
   orden: z.number().int().min(1).max(7),
-  slots: z.array(Slot).max(8),
+  slots: z.array(Slot).max(MAX_EJERCICIOS_POR_SESION),
 });
 export const Perfil = z.object({
   id: Id,
@@ -72,10 +81,15 @@ export const Plan = PlanHistorico.extend({
   for (const d of p.dias) {
     if (d.slots.some((s, i) => s.orden !== i + 1))
       ctx.addIssue({ code: "custom", message: "Orden de ejercicios inválido" });
-    if (p.estado === "publicado" && (d.slots.length < 5 || !p.revisado))
+    for (const message of erroresDeSuperseries(d.slots))
+      ctx.addIssue({ code: "custom", message });
+    const bloques = contarBloques(d.slots);
+    if (bloques > MAX_BLOQUES)
+      ctx.addIssue({ code: "custom", message: "Una sesión tiene como máximo 8 bloques" });
+    if (p.estado === "publicado" && (bloques < MIN_BLOQUES || !p.revisado))
       ctx.addIssue({
         code: "custom",
-        message: "Revisa cada sesión con 5–8 ejercicios antes de publicar",
+        message: "Revisa cada sesión con 5–8 bloques antes de publicar",
       });
   }
 });
@@ -122,7 +136,7 @@ export const Borrador = Valores.extend({
   participanteId: Id,
   fecha: Fecha,
   plantillaDiaId: Id,
-  orden: z.number().int().min(1).max(8),
+  orden: z.number().int().min(1).max(MAX_EJERCICIOS_POR_SESION),
   numeroSerie: z.number().int().min(1).max(100),
   guardadoEn: z.iso.datetime(),
 });
@@ -131,7 +145,7 @@ export const Sustitucion = z.object({
   participanteId: Id,
   fecha: Fecha,
   plantillaDiaId: Id,
-  orden: z.number().int().min(1).max(8),
+  orden: z.number().int().min(1).max(MAX_EJERCICIOS_POR_SESION),
   ejercicioId: EjercicioId,
 });
 export const Progreso = z.object({

@@ -20,6 +20,7 @@ import { evitar } from '../../logica/limitaciones'
 import { actualizarSlot, anadirSlot, MAX_EJERCICIOS_POR_DIA } from '../../logica/plantilla'
 import type { PlantillaDia } from '../../dominio/tipos'
 import { PRESS_BANCA_15_SMITH } from '../../datos/semilla/biblioteca'
+import { unir } from '../../../shared/superseries'
 
 let repositorio: RepositorioLocal
 let participanteId: string
@@ -1531,5 +1532,92 @@ describe('pestañas de días', () => {
     const dias = within(nav).getAllByRole('button').length
     expect(nav).toHaveClass('filtros', 'filtros--dias')
     expect(nav).toHaveAttribute('data-dias', String(dias))
+  })
+})
+
+describe('bi-series: se alterna sin descanso y se descansa al cerrar la ronda', () => {
+  const CONVERGENTE = 'Press convergente inclinado'
+  const cronometro = () => screen.queryByRole('status', { name: 'Temporizador de descanso' })
+
+  /** Upper A con el press y el convergente unidos en la bi-serie A (4 series, 3 min). */
+  async function conBiSerie() {
+    const plantillas = await repositorio.listarPlantillas(participanteId)
+    const upper = plantillas.find((p) => p.id === idDeDia(participanteId, 'upper-a'))!
+    await repositorio.guardarPlantilla({ ...upper, slots: unir(upper.slots, 0) })
+  }
+
+  async function guardar(numeroSerie: number, nombre: string) {
+    await userEvent.click(await screen.findByLabelText(`Guardar la serie ${numeroSerie} de ${nombre}`))
+  }
+
+  test('Hoy muestra el grupo con su etiqueta', async () => {
+    await conBiSerie()
+    await abrirResumen()
+    const grupo = screen.getByRole('group', { name: 'Bi-serie A' })
+    expect(within(grupo).getByText(PRESS)).toBeInTheDocument()
+    expect(within(grupo).getByText(CONVERGENTE)).toBeInTheDocument()
+    expect(within(grupo).getByText(/^A2 · 4 series/)).toBeInTheDocument()
+  })
+
+  test('A1 → B1 sin descanso → descanso del grupo → A2', async () => {
+    await conBiSerie()
+    await abrirUpperA()
+    expect(screen.getByText('Bi-serie A · Ronda 1 de 4')).toBeInTheDocument()
+    expect(screen.getByText('A1 de 2')).toBeInTheDocument()
+
+    await guardar(1, PRESS)
+    expect(await screen.findByLabelText(`Guardar la serie 1 de ${CONVERGENTE}`)).toBeInTheDocument()
+    expect(screen.getByText('A2 de 2')).toBeInTheDocument()
+    expect(cronometro()).not.toBeInTheDocument()
+
+    await guardar(1, CONVERGENTE)
+    await waitFor(() => expect(cronometro()).toHaveTextContent('3:00'))
+    expect(await screen.findByLabelText(`Guardar la serie 2 de ${PRESS}`)).toBeInTheDocument()
+    expect(screen.getByText('Bi-serie A · Ronda 2 de 4')).toBeInTheDocument()
+  })
+
+  test('tras la última ronda pasa al siguiente bloque', async () => {
+    await conBiSerie()
+    await abrirUpperA()
+    for (const n of [1, 2, 3, 4]) {
+      await guardar(n, PRESS)
+      await guardar(n, CONVERGENTE)
+    }
+    expect(await screen.findByLabelText('Guardar la serie 1 de Lat pulldown')).toBeInTheDocument()
+    expect(screen.getByText('Ejercicio 3 de 5')).toBeInTheDocument()
+  })
+
+  test('navegar a mano a B y guardar cierra la ronda y vuelve a A', async () => {
+    await conBiSerie()
+    await abrirUpperA()
+    const tira = screen.getByRole('navigation', { name: 'Bi-serie A' })
+    await userEvent.click(within(tira).getByRole('button', { name: /^A2/ }))
+    await guardar(1, CONVERGENTE)
+    expect(await screen.findByRole('status', { name: 'Temporizador de descanso' })).toBeInTheDocument()
+    expect(await screen.findByLabelText(`Guardar la serie 1 de ${PRESS}`)).toBeInTheDocument()
+  })
+
+  test('al recargar a mitad de la ronda se retoma en el punto del flujo', async () => {
+    await conBiSerie()
+    await abrirUpperA()
+    await guardar(1, PRESS)
+    await screen.findByLabelText(`Guardar la serie 1 de ${CONVERGENTE}`)
+    cleanup()
+    await abrirUpperA()
+    expect(await screen.findByLabelText(`Guardar la serie 1 de ${CONVERGENTE}`)).toBeInTheDocument()
+    expect(screen.getByText('A2 de 2')).toBeInTheDocument()
+  })
+
+  test('corregir una serie no mueve el flujo', async () => {
+    await conBiSerie()
+    await abrirUpperA()
+    await guardar(1, PRESS)
+    await screen.findByLabelText(`Guardar la serie 1 de ${CONVERGENTE}`)
+    await userEvent.click(within(screen.getByRole('navigation', { name: 'Bi-serie A' })).getByRole('button', { name: /^A1/ }))
+    await userEvent.click(await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`))
+    await guardar(1, PRESS)
+    await waitFor(() => expect(screen.getByLabelText(`Editar la serie 1 de ${PRESS}`)).toBeInTheDocument())
+    expect(screen.queryByLabelText(`Guardar la serie 1 de ${CONVERGENTE}`)).not.toBeInTheDocument()
+    expect(cronometro()).not.toBeInTheDocument()
   })
 })
