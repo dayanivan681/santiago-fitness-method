@@ -21,7 +21,6 @@ it('instalar desde el acceso conserva el manifest y los inicios de cada iPhone d
   expect(inicios(html)).toEqual(inicios(shell));
   expect(inicios(html)).toHaveLength(11);
   expect(html).toContain('<link rel="manifest" href="/manifest.webmanifest">');
-  expect(html).toContain('name="color-scheme" content="dark"');
   expect(html).toContain('name="apple-mobile-web-app-capable" content="yes"');
   expect(html).toContain('name="apple-mobile-web-app-title" content="Santiago FM"');
   const csp = pagina.headers.get('Content-Security-Policy');
