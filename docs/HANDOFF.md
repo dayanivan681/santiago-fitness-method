@@ -237,11 +237,16 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
 - **Última sincronización:** 2026-10-20T20:52:34.447Z
+
+**Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
+destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
+créditos sin commits, ramas ni cambios en `origin`. El dueño pidió retomarlo. Se
+libera a mano por la misma razón que abajo.
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
