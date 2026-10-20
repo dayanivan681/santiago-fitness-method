@@ -28,7 +28,7 @@ it('instalar desde el acceso conserva el manifest y los inicios de cada iPhone d
   expect(csp).toContain("img-src 'self'");
   expect(csp).toContain("manifest-src 'self'");
   expect(csp).not.toContain('script-src');
-  expect(pagina.headers.get('Referrer-Policy')).toBe('no-referrer');
+  expect(pagina.headers.get('Referrer-Policy')).toBe('strict-origin');
 });
 
 it('los enlaces con token no ofrecen una instalación que guarde su URL', async () => {

@@ -157,6 +157,8 @@ export function paginaLogin(error = false, google = false): Response {
      <p class="ayuda">¿Olvidaste tu contraseña? Pídele a tu coach un enlace nuevo.</p>
      <p class="pie"><a href="/demo">Explorar la demo</a> · <a href="/admin">Soy el coach</a></p>`, true), error ? 401 : 200, {
        'Content-Security-Policy': `${CSP_FORMULARIO}; img-src 'self'; manifest-src 'self'`,
+       // Safari envía Origin:null en el POST si la página usa no-referrer.
+       'Referrer-Policy': 'strict-origin',
      })
 }
 
