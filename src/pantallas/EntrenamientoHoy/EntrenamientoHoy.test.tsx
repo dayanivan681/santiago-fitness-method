@@ -1660,3 +1660,38 @@ describe('bi-series: se alterna sin descanso y se descansa al cerrar la ronda', 
     expect(cronometro()).not.toBeInTheDocument()
   })
 })
+
+describe('el gesto de deslizar se puede descubrir', () => {
+  const PISTA = 'Desliza a los lados para cambiar de ejercicio'
+  beforeEach(() => localStorage.removeItem('sfm:pista-deslizar-vista'))
+
+  test('la primera vez se explica, y no vuelve a salir', async () => {
+    await abrirUpperA()
+    expect(screen.getByText(PISTA)).toBeInTheDocument()
+    cleanup()
+    // Visto una vez (cerrada o usada): en este dispositivo no se repite.
+    localStorage.setItem('sfm:pista-deslizar-vista', '1')
+    await abrirUpperA()
+    expect(screen.queryByText(PISTA)).not.toBeInTheDocument()
+  })
+
+  test('se cierra sola a los pocos segundos y queda recordada', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    try {
+      await abrirUpperA()
+      expect(screen.getByText(PISTA)).toBeInTheDocument()
+      await vi.advanceTimersByTimeAsync(5100)
+      await waitFor(() => expect(screen.queryByText(PISTA)).not.toBeInTheDocument())
+      expect(localStorage.getItem('sfm:pista-deslizar-vista')).toBe('1')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  test('los puntos marcan cuántos ejercicios hay y cuál es el actual', async () => {
+    await abrirUpperA()
+    const puntos = document.querySelectorAll('.entreno__punto')
+    expect(puntos).toHaveLength(5)
+    expect(puntos[0]).toHaveClass('entreno__punto--actual')
+  })
+})

@@ -17,8 +17,9 @@ El fotograma gris de `docs/qa-ios-sensacion-nativa/se-destello-residual.jpg` era
 del simulador. Siguen sin confirmar en el teléfono físico los puntos 3 (deslizar
 entre ejercicios) y 9 (volver desde el borde, instalada).
 
-**Siguiente:** confirmar en el teléfono físico los puntos 3 y 9 (7 y B7 ya
-pasan). Detalle de publicación y límites en HANDOFF.
+**Prueba física completa (dueño, 2026-10-20):** 3, 7, 9 y B7 PASS. El 3 funcionaba
+pero no se podía descubrir: puntos de página y pista de primera vez en
+`claude/pista-deslizar`. Detalle de publicación y límites en HANDOFF.
 La implementación de los bloques 1–3 no equivale al cierre del QA físico.
 
 Preparado por claude-code el 2026-10-20 para que cualquiera de los dos agentes

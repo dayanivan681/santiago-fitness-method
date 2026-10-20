@@ -3510,3 +3510,52 @@ html[data-transicion='lateral']::view-transition-new(root) {
   .descanso__progreso > span, .progreso-sesion__relleno, .semana-sesiones > div > span { transition: none !important; }
 }
 .sfm-shell--client .resumen-sesion__cifras strong > span { font: inherit; color: inherit; max-width: none; }
+
+/* Puntos de página del entrenamiento: hay más ejercicios a los lados. */
+.entreno__puntos {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+.entreno__punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: width var(--mov-medio, 220ms) var(--curva-ios, ease), background-color var(--mov-medio, 220ms) ease;
+}
+.entreno__punto--hecho {
+  background: rgba(255, 255, 255, 0.5);
+}
+.entreno__punto--actual {
+  width: 16px;
+  background: var(--texto);
+}
+
+/* La primera vez: el ejercicio asoma hacia la izquierda y vuelve (finito). */
+.contenido--pista > :not(.pista-deslizar) {
+  animation: pista-asomar 1.1s var(--curva-ios, ease-in-out) 0.5s 2 both;
+}
+@keyframes pista-asomar {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(-36px); }
+}
+.pista-deslizar {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--texto);
+  font-size: 14px;
+  text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .contenido--pista > * {
+    animation: none !important;
+  }
+  .entreno__punto {
+    transition: none;
+  }
+}

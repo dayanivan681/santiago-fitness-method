@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-20 — Hacer descubrible el deslizar entre ejercicios — claude-code
+
+- Prueba física del dueño en su iPhone: punto 3 (deslizar entre ejercicios) y punto 9 (volver desde el borde, instalada) **PASS**; B7 sin destello. Pero el gesto del 3 no se podía descubrir.
+- Puntos de página bajo «Ejercicio N de M», como en iOS: uno por ejercicio, el actual alargado y los completos más claros. Decorativos para el lector de pantalla, que ya oye la posición.
+- Pista la primera vez por dispositivo (`localStorage` `sfm:pista-deslizar-vista`, con try/catch): «Desliza a los lados para cambiar de ejercicio» y el ejercicio asoma dos veces hacia la izquierda (animación finita). Se cierra sola a los 5 s o al usar el gesto y no vuelve. Con «Reducir movimiento», solo el texto.
+- Verificado: 1053 pruebas (3 nuevas), tsc, lint, build y diff-check. Chromium móvil 375×812: puntos 5, pista y asomo; a los 5 s se cierra y se recuerda; al recargar ya no sale. Con «Reducir movimiento», texto sin asomo.
+
 ## 2026-10-20 — Integración aprobada del QA iOS — codex
 
 - «Hágale» del dueño: PR #8 integrado con merge normal `cef5e2e`, sin cambios adicionales de producto. Árbol de producto idéntico al código `41a36d5` probado en simulador.

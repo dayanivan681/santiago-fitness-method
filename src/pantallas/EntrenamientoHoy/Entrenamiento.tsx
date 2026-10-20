@@ -18,7 +18,7 @@
  */
 
 import { Esqueleto } from '../../componentes/Esqueleto'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
 import { useControlDescanso } from '../../aplicacion/contextoDescanso'
 import { HojaCapa } from '../../componentes/HojaCapa'
@@ -224,6 +224,11 @@ export function Entrenamiento({
               ? `${grupo.nombre} ${grupo.grupo} · Ronda ${ronda} de ${item.slot.seriesObjetivo}`
               : `Ejercicio ${indice + 1} de ${ejerciciosDelDia.length}`}
           </span>
+          <PuntosDeEjercicio
+            total={ejerciciosDelDia.length}
+            actual={indice}
+            completos={ejerciciosDelDia.map((e) => e.seriesDeHoy.length >= e.slot.seriesObjetivo)}
+          />
         </span>
         <button
           type="button"
@@ -240,6 +245,7 @@ export function Entrenamiento({
       <ZonaDeslizable
         anterior={anterior}
         siguiente={siguienteEjercicio}
+        conPista={ejerciciosDelDia.length > 1}
         className={
           sesionDeHoy && !sesionDeHoy.completadaEn ? 'contenido contenido--con-barra' : 'contenido'
         }
@@ -451,21 +457,103 @@ function etiquetaEnGrupo(ejercicios: readonly EjercicioDelDia[], indice: number)
 }
 
 /** El contenido del ejercicio: deslizar a los lados pasa al anterior o al siguiente. */
+/** Una vez por dispositivo: es una ayuda de uso, no un dato del participante. */
+const PISTA_DESLIZAR = 'sfm:pista-deslizar-vista'
+
+function pistaYaVista(): boolean {
+  try {
+    return localStorage.getItem(PISTA_DESLIZAR) === '1'
+  } catch {
+    return true
+  }
+}
+
+function marcarPistaVista() {
+  try {
+    localStorage.setItem(PISTA_DESLIZAR, '1')
+  } catch {
+    // Sin almacenamiento (privado, bloqueado): se volverá a enseñar, nada más.
+  }
+}
+
+/**
+ * Puntos de página, como en iOS: dicen que hay más pantallas a los lados sin
+ * ocupar sitio. Decorativos para el lector de pantalla, que ya oye «Ejercicio
+ * 2 de 5»; se cambia con el gesto, la lista ••• o «Siguiente».
+ */
+function PuntosDeEjercicio({
+  total,
+  actual,
+  completos,
+}: {
+  readonly total: number
+  readonly actual: number
+  readonly completos: readonly boolean[]
+}) {
+  if (total < 2) return null
+  return (
+    <span className="entreno__puntos" aria-hidden="true">
+      {Array.from({ length: total }, (_, i) => (
+        <span
+          key={i}
+          className={
+            i === actual
+              ? 'entreno__punto entreno__punto--actual'
+              : completos[i]
+                ? 'entreno__punto entreno__punto--hecho'
+                : 'entreno__punto'
+          }
+        />
+      ))}
+    </span>
+  )
+}
+
 function ZonaDeslizable({
   anterior,
   siguiente,
+  conPista,
   className,
   children,
 }: {
   readonly anterior?: () => void
   readonly siguiente?: () => void
+  /** La primera vez, el contenido asoma hacia un lado y se explica el gesto. */
+  readonly conPista: boolean
   readonly className: string
   readonly children: ReactNode
 }) {
   const zona = useRef<HTMLDivElement>(null)
-  useDeslizarHorizontal(zona, { anterior, siguiente })
+  const [pista, setPista] = useState(() => conPista && !pistaYaVista())
+  const cerrarPista = useCallback(() => {
+    setPista(false)
+    marcarPistaVista()
+  }, [])
+  // Usar el gesto también cuenta como aprendido.
+  const alAnterior = useCallback(() => {
+    cerrarPista()
+    anterior?.()
+  }, [anterior, cerrarPista])
+  const alSiguiente = useCallback(() => {
+    cerrarPista()
+    siguiente?.()
+  }, [siguiente, cerrarPista])
+  useDeslizarHorizontal(zona, {
+    anterior: anterior ? alAnterior : undefined,
+    siguiente: siguiente ? alSiguiente : undefined,
+  })
+  useEffect(() => {
+    if (!pista) return
+    const t = window.setTimeout(cerrarPista, 5000)
+    return () => window.clearTimeout(t)
+  }, [pista, cerrarPista])
   return (
-    <div ref={zona} className={className}>
+    <div ref={zona} className={pista ? `${className} contenido--pista` : className}>
+      {pista && (
+        <p className="pista-deslizar" role="status">
+          Desliza a los lados para cambiar de ejercicio
+        </p>
+      )}
       {children}
     </div>
   )
