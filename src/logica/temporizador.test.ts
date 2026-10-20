@@ -25,7 +25,7 @@ describe('iniciar el descanso', () => {
     const estado = iniciarDescanso('press-banca', 180, AHORA)
 
     // Assert
-    expect(estado).toEqual({ estado: 'activo', terminaEn: AHORA + 180_000, ejercicioId: 'press-banca' })
+    expect(estado).toEqual({ estado: 'activo', terminaEn: AHORA + 180_000, ejercicioId: 'press-banca', totalSegundos: 180 })
   })
 
   it('no arranca con descanso de cero: el coach dijo que ahí no se descansa', () => {
@@ -49,6 +49,7 @@ describe('iniciar el descanso', () => {
     expect(segundo).toEqual({
       estado: 'activo',
       terminaEn: AHORA + 20_000 + 120_000,
+      totalSegundos: 120,
       ejercicioId: 'lat-pulldown',
     })
   })
@@ -118,6 +119,7 @@ describe('prorrogar', () => {
 
     // Assert: se suma al final, no al tiempo que quedaba en pantalla
     expect(segundosRestantes(prorrogado, AHORA + 10_000)).toBe(50 + PRORROGA_SEGUNDOS)
+    expect(prorrogado.estado === 'activo' && prorrogado.totalSegundos).toBe(90)
   })
 
   it('desde terminado cuenta desde ahora, no revive un instante pasado', () => {
@@ -131,6 +133,7 @@ describe('prorrogar', () => {
     expect(prorrogado).toEqual({
       estado: 'activo',
       terminaEn: AHORA + PRORROGA_SEGUNDOS * 1000,
+      totalSegundos: PRORROGA_SEGUNDOS,
       ejercicioId: 'press-banca',
     })
   })

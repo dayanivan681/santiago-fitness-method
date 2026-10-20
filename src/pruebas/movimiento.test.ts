@@ -22,16 +22,24 @@ describe('tiempos de movimiento centralizados', () => {
       '--mov-hoja',
       '--mov-progreso',
       '--mov-curva',
+      '--mov-rapido', '--mov-medio', '--mov-lento', '--curva-ios',
     ]) {
       expect(CSS, `falta ${token}`).toContain(`${token}:`)
     }
   })
 
-  test('ninguno pasa de 250 ms: no puede retrasar el siguiente toque', () => {
-    const tiempos = [...CSS.matchAll(/--mov-[a-z]+:\s*(\d+)ms/g)].map((m) => Number(m[1]))
+  test('las respuestas a los controles no pasan de 250 ms', () => {
+    const tiempos = [...CSS.matchAll(/--mov-(?:toque|confirmar|desplegar|hoja|hoja-cierre|progreso|rapido|medio|numero):\s*(\d+)ms/g)].map((m) => Number(m[1]))
 
     expect(tiempos.length).toBeGreaterThan(0)
     expect(Math.max(...tiempos)).toBeLessThanOrEqual(250)
+  })
+
+  test('las entradas y celebraciones son finitas y usan los tokens del plan', () => {
+    expect(CSS).toContain('--mov-lento: 340ms')
+    expect(CSS).toContain('--mov-resumen: 600ms')
+    expect(CSS).toContain('sfm-fin-descanso var(--mov-lento) var(--curva-ios) 2')
+    expect(CSS).toContain('transition: transform var(--mov-medio) var(--curva-ios)')
   })
 })
 

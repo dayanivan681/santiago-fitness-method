@@ -9,7 +9,9 @@ import { useAyuda } from "../../producto/ayuda-contexto";
  * de peso no es arbitrario: usa el incremento real de la máquina (§13, §17).
  */
 
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react'
+import { NumeroPaso } from '../../componentes/NumeroPaso'
+import { movimientoReducido } from '../../aplicacion/transiciones'
 import { aPesoRegistradoLb, incrementoRegistradoLb } from '../../dominio/carga'
 import { aComparable } from '../../dominio/serie'
 import { ETIQUETA_PROGRESO, evaluarSerie } from '../../logica/progreso'
@@ -107,6 +109,7 @@ export function FilaSerie({
   const [error,setError]=useState('')
   const guardandoRef=useRef(false)
   const filaRef=useRef<HTMLDivElement>(null)
+  const altoAntesDeGuardar = useRef(0)
   const antesColapsada=useRef(colapsada)
   useEffect(()=>{if(antesColapsada.current&&!colapsada)filaRef.current?.scrollIntoView?.({block:'nearest',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});antesColapsada.current=colapsada},[colapsada])
   const [guardando, setGuardando] = useState(false)
@@ -186,6 +189,23 @@ export function FilaSerie({
 
   // Registrada y sin editar: los valores se muestran en firme.
   const hecha = registrada !== undefined && !editando
+  useLayoutEffect(() => {
+    const fila = filaRef.current
+    if (!fila || !hecha || !altoAntesDeGuardar.current || movimientoReducido()) return
+    const desde = altoAntesDeGuardar.current
+    altoAntesDeGuardar.current = 0
+    fila.style.setProperty('--alto-serie-desde', `${desde}px`)
+    fila.style.setProperty('--alto-serie-hasta', `${fila.getBoundingClientRect().height}px`)
+    fila.classList.add('serie--plegando')
+    const limpiar = (evento: AnimationEvent) => {
+      if (evento.target === fila && evento.animationName === 'sfm-plegar-serie') fila.classList.remove('serie--plegando')
+    }
+    fila.addEventListener('animationend', limpiar)
+    return () => {
+      fila.removeEventListener('animationend', limpiar)
+      fila.classList.remove('serie--plegando')
+    }
+  }, [hecha])
   // El veredicto sólo tiene sentido sobre lo guardado: mientras se corrige, el
   // de antes hablaría de unos números que ya se están cambiando.
   const resultado =
@@ -195,6 +215,7 @@ export function FilaSerie({
 
   async function guardar() {
     if (guardandoRef.current) return
+    altoAntesDeGuardar.current = filaRef.current?.getBoundingClientRect().height ?? 0
     guardandoRef.current=true
     setError('')
     setGuardadoFallido(false)
@@ -416,7 +437,7 @@ export function FilaSerie({
                 aria-label={`Peso de la ${etiqueta}`}
                 onClick={() => setEditandoPeso(true)}
               >
-                {peso}
+                <NumeroPaso valor={peso} />
               </button>
               <button
                 type="button"
@@ -478,7 +499,7 @@ export function FilaSerie({
                 aria-label={`Reps de la ${etiqueta}`}
                 onClick={() => setEditandoReps(true)}
               >
-                {reps}
+                <NumeroPaso valor={reps} />
               </button>
               <button
                 type="button"

@@ -31,8 +31,8 @@ import type { Ejercicio } from '../../dominio/tipos'
 import type { ClaveDeBorrador } from '../../logica/borrador'
 import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 import type { EjercicioDelDia } from '../../aplicacion/useEntrenamiento'
-import { segunCantidad } from '../../logica/plural'
-import { Hoja as HojaResumen, ErrorVisible, Icono } from '../../producto/ui'
+import { ErrorVisible, Icono } from '../../producto/ui'
+import { ResumenSesion } from './ResumenSesion'
 import { pasoPendiente, posicionEnGrupo, siguienteTrasGuardar } from '../../../shared/superseries'
 import { conTransicion } from '../../aplicacion/transiciones'
 import { useDeslizarHorizontal } from '../../aplicacion/gestos'
@@ -343,7 +343,9 @@ export function Entrenamiento({
       )}
 
       <ErrorVisible error={errorCierre}/>
-      {resumenAbierto&&<HojaResumen titulo="Sesión completada" cerrar={()=>setResumenAbierto(false)}><p data-tour="resumen">{plantilla.nombre} · {new Date().toLocaleDateString('es',{day:'numeric',month:'long'})}</p><div className="sfm-metrics sfm-metrics--two"><div><strong>{seriesHechas}</strong><span>{segunCantidad(seriesHechas,'Serie registrada','Series registradas')}</span></div><div><strong>{ejerciciosDelDia.filter(e=>e.seriesDeHoy.length).length}</strong><span>{segunCantidad(ejerciciosDelDia.filter(e=>e.seriesDeHoy.length).length,'Ejercicio entrenado','Ejercicios entrenados')}</span></div></div><p>Tu trabajo de hoy forma parte de tu progreso.</p><button data-tour="cerrar-resumen" className="sfm-primary" onClick={()=>{setResumenAbierto(false);onSalir?.()}}>Volver a Hoy</button><button className="sfm-secondary" onClick={()=>setResumenAbierto(false)}>Revisar y corregir series</button></HojaResumen>}
+      {resumenAbierto && <ResumenSesion nombre={plantilla.nombre} series={seriesHechas} objetivo={seriesObjetivo}
+        ejercicios={ejerciciosDelDia.filter(e => e.seriesDeHoy.length).length}
+        cerrar={() => setResumenAbierto(false)} volver={() => { setResumenAbierto(false); onSalir?.() }} />}
       {listaAbierta && (
         <HojaDelDia
           ejercicios={ejerciciosDelDia}

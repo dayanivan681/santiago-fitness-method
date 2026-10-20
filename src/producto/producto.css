@@ -1524,19 +1524,6 @@ a.sfm-primary:active {
   border-bottom: 1px solid var(--sfm-line);
   border-radius: 0;
 }
-.sfm-main--client .serie__confirmacion {
-  animation: sfm-check 0.25s ease-out;
-}
-@keyframes sfm-check {
-  from {
-    transform: scale(0.8);
-    opacity: 0.3;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
 .sfm-bottom-composition .descanso {
   bottom: calc(76px + env(safe-area-inset-bottom));
   left: 50%;
@@ -2293,7 +2280,7 @@ a.sfm-primary:active {
 .sfm-shell--client :is(button, a[href]):not(:disabled):not([aria-disabled="true"]):not(.grafica-progreso__boton) {
   transition-property: transform, opacity, background-color, border-color, color;
   transition-duration: var(--mov-toque);
-  transition-timing-function: var(--mov-curva);
+  transition-timing-function: var(--curva-ios);
 }
 .sfm-shell--client :is(button:disabled, [aria-disabled="true"]):active {
   transform: none;

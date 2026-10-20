@@ -57,11 +57,29 @@ const pulsar = (nombre: string) =>
 
 afterEach(() => {
   cleanup()
+  vi.useRealTimers()
   vi.restoreAllMocks()
   document.documentElement.style.removeProperty(VARIABLE_ALTO)
 })
 
 describe('el cronómetro reserva su propio hueco (QA-MOB-01)', () => {
+  test('la barra se vacía, admite prórroga y termina sin ocultar el aviso', () => {
+    vi.useFakeTimers()
+    const { container } = montar()
+    pulsar('Arrancar')
+    const relleno = () => container.querySelector('.descanso__progreso > span') as HTMLElement
+    expect(relleno().style.transform).toBe('scaleX(1)')
+    act(() => vi.advanceTimersByTime(90_000))
+    expect(relleno().style.transform).toBe('scaleX(0.5)')
+    pulsar('Añadir 30 segundos')
+    expect(relleno().style.transform).toBe(`scaleX(${120 / 210})`)
+    act(() => vi.advanceTimersByTime(120_000))
+    expect(screen.getByText('Descanso terminado')).toBeInTheDocument()
+    expect(relleno().style.transform).toBe('scaleX(0)')
+    pulsar('Listo')
+    expect(screen.queryByLabelText('Temporizador de descanso')).not.toBeInTheDocument()
+  })
+
   test('sin descanso en marcha no reserva nada', () => {
     montar()
 

@@ -8,6 +8,7 @@ import { useLiveQuery } from '../nube/eventos'
 import { derivarReferencias, type SerieConFecha } from '../datos/referencias'
 import { fechaDeHoy, type Repositorio } from '../datos/repositorio'
 import { diaSugerido } from '../logica/rotacion'
+import { sesionesDeSemana } from '../logica/semana'
 import { reemplazarEjercicio } from '../logica/plantilla'
 import { aplicarSustituciones, idSustitucion } from '../logica/sustitucion'
 import {
@@ -54,6 +55,7 @@ export interface EjercicioDelDia {
 export type AlcanceDelCambio = 'soloHoy' | 'fijar'
 
 export interface DatosEntrenamiento {
+  readonly sesionesSemana: number
   readonly participante: Participante
   readonly plantillas: readonly PlantillaDia[]
   readonly plantilla: PlantillaDia
@@ -276,6 +278,7 @@ async function cargarEntrenamiento(
 
   return {
     participante,
+    sesionesSemana: sesionesDeSemana(sesiones),
     plantillas,
     plantilla: plantillaHistorica,
     ejerciciosDelDia,

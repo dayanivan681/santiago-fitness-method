@@ -8,7 +8,7 @@
  *
  * Sin la API, o con «Reducir movimiento», el cambio es inmediato como siempre.
  */
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState, useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
 import { useLocation, type Location } from 'react-router'
 
@@ -39,6 +39,17 @@ export function direccionEntre(desde: string, hacia: string): Direccion {
 
 export function movimientoReducido(): boolean {
   return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function suscribirMovimiento(cambio: () => void) {
+  if (typeof matchMedia !== 'function') return () => {}
+  const consulta = matchMedia('(prefers-reduced-motion: reduce)')
+  consulta.addEventListener('change', cambio)
+  return () => consulta.removeEventListener('change', cambio)
+}
+
+export function useMovimientoReducido(): boolean {
+  return useSyncExternalStore(suscribirMovimiento, movimientoReducido, () => true)
 }
 
 /**

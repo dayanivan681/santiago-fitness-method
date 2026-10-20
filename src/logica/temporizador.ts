@@ -18,7 +18,7 @@
 
 export type EstadoDescanso =
   | { readonly estado: 'inactivo' }
-  | { readonly estado: 'activo'; readonly terminaEn: number; readonly ejercicioId: string }
+  | { readonly estado: 'activo'; readonly terminaEn: number; readonly ejercicioId: string; readonly totalSegundos?: number }
   | { readonly estado: 'terminado'; readonly ejercicioId: string }
 
 export const DESCANSO_INACTIVO: EstadoDescanso = { estado: 'inactivo' }
@@ -42,7 +42,7 @@ export function iniciarDescanso(
 ): EstadoDescanso {
   if (!Number.isFinite(segundos) || segundos <= 0) return DESCANSO_INACTIVO
 
-  return { estado: 'activo', terminaEn: ahora + segundos * 1000, ejercicioId }
+  return { estado: 'activo', terminaEn: ahora + segundos * 1000, ejercicioId, totalSegundos: segundos }
 }
 
 /**
@@ -54,7 +54,8 @@ export function iniciarDescanso(
  */
 export function prorrogarDescanso(estado: EstadoDescanso, ahora: number): EstadoDescanso {
   if (estado.estado === 'activo') {
-    return { ...estado, terminaEn: estado.terminaEn + PRORROGA_SEGUNDOS * 1000 }
+    return { ...estado, terminaEn: estado.terminaEn + PRORROGA_SEGUNDOS * 1000,
+      totalSegundos: (estado.totalSegundos ?? segundosRestantes(estado, ahora)) + PRORROGA_SEGUNDOS }
   }
 
   if (estado.estado === 'terminado') {
@@ -62,6 +63,7 @@ export function prorrogarDescanso(estado: EstadoDescanso, ahora: number): Estado
       estado: 'activo',
       terminaEn: ahora + PRORROGA_SEGUNDOS * 1000,
       ejercicioId: estado.ejercicioId,
+      totalSegundos: PRORROGA_SEGUNDOS,
     }
   }
 

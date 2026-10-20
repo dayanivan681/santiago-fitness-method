@@ -124,6 +124,32 @@ beforeEach(async () => {
 })
 
 describe('el entrenamiento ya viene cargado (§3)', () => {
+  test('Hoy cuenta sólo sesiones cerradas esta semana y se actualiza tras terminar', async () => {
+    await abrirResumen()
+    expect(screen.getByText('Semana: 0 de 4 sesiones')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Comenzar entrenamiento' }))
+    await userEvent.click(await screen.findByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
+    await screen.findByRole('heading', { name: 'Sesión completada' })
+    await userEvent.click(screen.getByRole('button', { name: 'Volver a Hoy' }))
+    expect(await screen.findByText('Semana: 1 de 4 sesiones')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Sesiones de la semana' })).toHaveAttribute('aria-valuenow', '1')
+  })
+
+  test('diez toques rápidos en peso guardan el último valor una sola vez', async () => {
+    await abrirUpperA()
+    const subir = screen.getByLabelText(`Subir peso de la serie 1 de ${PRESS}`)
+    for (let n = 0; n < 10; n++) fireEvent.click(subir)
+    const campo = screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`)
+    expect(campo.querySelector('.numero-paso__actual')).toHaveTextContent('25')
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByLabelText(`Editar la serie 1 de ${PRESS}`)
+    const sesiones = await repositorio.listarSesiones(participanteId)
+    const series = await repositorio.listarSeriesDeSesion(sesiones.find(s => s.fecha === fechaDeHoy())!.id)
+    expect(series).toHaveLength(1)
+    expect(series[0].pesoRegistradoLb).toBe(25)
+  })
+
   test('muestra los 5 ejercicios de Upper A sin que el participante escriba nada', async () => {
     // El plan del día se lee en el resumen; entrenar enseña uno a la vez.
     await abrirResumen()

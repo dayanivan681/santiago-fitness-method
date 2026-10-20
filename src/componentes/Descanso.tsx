@@ -69,6 +69,8 @@ export function Descanso() {
   if (inactivo) return null
 
   const acabando = !terminado && restantes <= SEGUNDOS_DE_AVISO
+  // Las sesiones guardadas por versiones anteriores no tenían duración total.
+  const total = estado.estado === 'activo' ? estado.totalSegundos ?? restantes : 1
 
   return (
     <div
@@ -86,6 +88,7 @@ export function Descanso() {
       aria-live="polite"
       aria-label="Temporizador de descanso"
     >
+      <span className="descanso__progreso" aria-hidden="true"><span style={{ transform: `scaleX(${terminado ? 0 : Math.min(1, restantes / Math.max(1, total))})` }} /></span>
       <span className="descanso__rotulo">{terminado ? 'Descanso terminado' : 'Descanso'}</span>
       {!terminado && <span className="descanso__tiempo">{formatearSegundos(restantes)}</span>}
       <button type="button" className="descanso__boton" aria-label={`Añadir ${PRORROGA_SEGUNDOS} segundos`} onClick={prorrogar}>

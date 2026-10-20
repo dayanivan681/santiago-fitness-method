@@ -80,6 +80,14 @@
   --mov-hoja-cierre: 180ms;
   --mov-progreso: 250ms;
   --mov-curva: cubic-bezier(0.2, 0, 0, 1);
+  --mov-rapido: 120ms;
+  --mov-medio: 220ms;
+  --mov-lento: 340ms;
+  --mov-numero: 160ms;
+  --mov-check: 300ms;
+  --mov-resumen: 600ms;
+  --mov-descanso: 1000ms;
+  --curva-ios: cubic-bezier(0.32, 0.72, 0, 1);
 
   /* Radios: 16 px en tarjetas, 12 px en controles. Píldoras y círculos aparte. */
   --radio: 16px;
@@ -1772,7 +1780,7 @@ button,
   background: var(--positivo);
   /* El avance se dibuja escalando, no cambiando el ancho: sólo compone. */
   transform-origin: left center;
-  transition: transform var(--mov-progreso) var(--mov-curva);
+  transition: transform var(--mov-medio) var(--curva-ios);
 }
 
 .progreso-sesion__texto {
@@ -3386,3 +3394,119 @@ html[data-transicion='lateral']::view-transition-new(root) {
 @media (prefers-reduced-motion: reduce) {
   .esqueleto span { animation: none !important; }
 }
+
+/* Sensación nativa: respuestas locales, sin demorar el guardado ni el foco. */
+.numero-paso {
+  display: inline-grid;
+  overflow: clip;
+  vertical-align: bottom;
+  --sentido-numero: 1;
+}
+.numero-paso--baja { --sentido-numero: -1; }
+.numero-paso > span { grid-area: 1 / 1; }
+.numero-paso__actual { animation: sfm-numero-entra var(--mov-numero) var(--curva-ios); }
+.numero-paso__anterior {
+  pointer-events: none;
+  animation: sfm-numero-sale var(--mov-numero) var(--curva-ios) forwards;
+}
+@keyframes sfm-numero-entra {
+  from { transform: translateY(calc(var(--sentido-numero) * 80%)); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes sfm-numero-sale {
+  to { transform: translateY(calc(var(--sentido-numero) * -80%)); opacity: 0; }
+}
+.serie__confirmacion svg path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 0;
+  animation: sfm-check var(--mov-check) var(--curva-ios);
+}
+@keyframes sfm-check { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+.serie.serie--plegando {
+  overflow: clip;
+  animation: sfm-plegar-serie var(--mov-medio) var(--curva-ios);
+}
+/* Alturas medidas una sola vez: también funciona sin interpolate-size. */
+@keyframes sfm-plegar-serie {
+  from { height: var(--alto-serie-desde); }
+  to { height: var(--alto-serie-hasta); }
+}
+@supports (interpolate-size: allow-keywords) {
+  .serie--plegando { interpolate-size: allow-keywords; }
+  @keyframes sfm-plegar-serie {
+    from { height: var(--alto-serie-desde); }
+    to { height: auto; }
+  }
+}
+.descanso__progreso {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  overflow: hidden;
+  background: var(--relleno-alto);
+}
+.descanso__progreso > span {
+  display: block;
+  height: 100%;
+  background: var(--rojo);
+  transform-origin: left;
+  transition: transform var(--mov-descanso) linear;
+}
+.descanso--terminado .descanso__rotulo {
+  animation: sfm-fin-descanso var(--mov-lento) var(--curva-ios) 2;
+}
+@keyframes sfm-fin-descanso {
+  50% { transform: scale(1.04); color: var(--rojo); }
+}
+.resumen-sesion__sello {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  color: var(--rojo);
+  margin: 8px 0 16px;
+}
+.resumen-sesion__sello > svg:first-child { position: absolute; inset: 0; width: 100%; height: 100%; }
+.resumen-sesion__sello circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  animation: sfm-cerrar-circulo var(--mov-resumen) var(--curva-ios) both;
+}
+@keyframes sfm-cerrar-circulo { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.sfm-metrics.resumen-sesion__cifras { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.resumen-sesion__cifras > div {
+  animation: sfm-cifra-entra var(--mov-lento) var(--curva-ios) both;
+  animation-delay: var(--demora-cifra);
+}
+.resumen-sesion__cifras strong { font-variant-numeric: tabular-nums; }
+@keyframes sfm-cifra-entra { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.semana-sesiones {
+  margin: 0 0 24px;
+  animation: sfm-cifra-entra var(--mov-lento) var(--curva-ios) both;
+}
+.semana-sesiones p { margin: 0 0 8px; font-size: 14px; color: var(--texto-60); }
+.semana-sesiones > div { height: 4px; background: var(--relleno-alto); overflow: hidden; border-radius: 4px; }
+.semana-sesiones > div > span {
+  display: block;
+  height: 100%;
+  background: var(--rojo);
+  transform-origin: left;
+  transition: transform var(--mov-medio) var(--curva-ios);
+}
+@media (prefers-reduced-motion: reduce) {
+  .numero-paso__actual, .numero-paso__anterior,
+  .serie.serie--plegando, .serie__confirmacion, .serie__confirmacion svg path,
+  .descanso--terminado .descanso__rotulo, .resumen-sesion__sello circle,
+  .resumen-sesion__cifras > div, .semana-sesiones { animation: none !important; }
+  .numero-paso__anterior { display: none; }
+  .descanso__progreso > span, .progreso-sesion__relleno, .semana-sesiones > div > span { transition: none !important; }
+}
+.sfm-shell--client .resumen-sesion__cifras strong > span { font: inherit; color: inherit; max-width: none; }
