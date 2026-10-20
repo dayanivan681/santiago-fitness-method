@@ -199,11 +199,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T13:32:27.180Z
+- **Última sincronización:** 2026-10-20T13:35:06.731Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1346,6 +1346,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T13:35:06.732Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Turno reclamado por error y liberado sin cambios: Codex ya había unido los PR #6 y #7 y completado los bloques 1–3 de docs/PLAN-SENSACION-NATIVA.md.
+- **Verificación:** npm test; npm run lint; npm run build (sin cambios de código)
+- **Siguiente:** Ninguna del plan. Fuera de él: tendencias por ejercicio, valoración de esfuerzo 1–10, rachas y compartir el resumen como imagen; y que el dueño pruebe en su iPhone (Safari e instalada en inicio).
+
 
 ### 2026-10-20T13:32:27.185Z | claude-code | CLAIM
 - **Estado:** active
