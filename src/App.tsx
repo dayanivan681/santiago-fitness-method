@@ -1,6 +1,7 @@
 import {
   Component,
   Suspense,
+  useCallback,
   lazy,
   useEffect,
   useLayoutEffect,
@@ -54,6 +55,8 @@ import "./producto/producto.css";
 import { ProveedorAyudaDemo, ProveedorAyudaReal } from "./producto/Ayuda";
 import { useAyuda } from "./producto/ayuda-contexto";
 import { GuiaAyuda } from "./producto/GuiaAyuda";
+import { useUbicacionConTransicion } from "./aplicacion/transiciones";
+import { useVolverDesdeElBorde } from "./aplicacion/gestos";
 export function App() {
   return (
     <RecuperarPantalla>
@@ -67,14 +70,26 @@ export function App() {
             </div>
           }
         >
-          <Routes>
-            <Route path="/demo/*" element={<Demo />} />
-            <Route path="/admin/*" element={<CoachReal />} />
-            <Route path="*" element={<ClienteReal />} />
-          </Routes>
+          <RutasPrincipales />
         </Suspense>
       </BrowserRouter>
     </RecuperarPantalla>
+  );
+}
+/** Las rutas pintan la ubicación con transición; las anidadas la heredan. */
+function RutasPrincipales() {
+  const ubicacion = useUbicacionConTransicion();
+  const navegar = useNavigate();
+  // React Router numera las entradas: sólo se vuelve si hay una de la app detrás.
+  const hayAtras = ((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0;
+  const volver = useCallback(() => navegar(-1), [navegar]);
+  useVolverDesdeElBorde(hayAtras ? volver : null);
+  return (
+    <Routes location={ubicacion}>
+      <Route path="/demo/*" element={<Demo />} />
+      <Route path="/admin/*" element={<CoachReal />} />
+      <Route path="*" element={<ClienteReal />} />
+    </Routes>
   );
 }
 function InicioDePantalla() {

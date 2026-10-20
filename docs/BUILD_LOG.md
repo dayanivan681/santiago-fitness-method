@@ -1,5 +1,15 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-20 — Sensación de app nativa: transiciones, gestos, esqueletos, inicio iOS e iconos — claude-code
+
+- Transiciones de pantalla con la View Transitions API (`src/aplicacion/transiciones.tsx`): al avanzar, la nueva entra por la derecha y la anterior se aparta oscurecida; al volver, al revés; entre pestañas, fundido. Las rutas pintan la ubicación un paso por detrás (`useUbicacionConTransicion` + `<Routes location>`), y las anidadas la heredan. La barra de pestañas y el aviso de demo no se mueven. Sin la API o con «Reducir movimiento», cambio inmediato.
+- Gestos (`src/aplicacion/gestos.ts`, eventos touch con `passive: false` porque iOS cancela los pointer al desplazar): arrastrar las hojas hacia abajo las cierra (las dos: `Hoja` y `HojaCapa`, con asa visible); deslizar a los lados en el entrenamiento cambia de ejercicio con transición; deslizar desde el borde izquierdo vuelve atrás, sólo instalada en inicio, con indicador. `overscroll-behavior-x: none` en html y body: sin él, Chromium hacía su propio «atrás» al deslizar.
+- Esqueletos (`src/componentes/Esqueleto.tsx`) en lugar de «Cargando…» en 9 pantallas. El brillo es finito (6 pasadas), por la regla de `movimiento.test.ts`.
+- Pantallas de inicio de iOS: 11 PNG en `public/inicio/` (288 KB) enlazados en `index.html`; se regeneran con `scripts/generar-pantallas-inicio.mjs`.
+- `:hover` sólo con `@media (hover: hover)` (en iPhone se quedaba pegado). Respuesta al toque en filas y tarjetas.
+- Iconos: `lucide-react`; `Icono` mantiene su API y añade arriba, abajo, cerrar, opciones, abrir y buscar. Fuera las flechas de texto (‹ › ↑ ↓ ↗ ✓ × ✕) y `IconosNavegacion.tsx`, que no se usaba.
+- Verificado: 1037 pruebas (7 nuevas de gestos y transiciones), tsc, lint, build. Chromium móvil 390×844 con toques reales por CDP: transición «adelante» al entrar a entrenar y «atrás» al volver, «lateral» entre pestañas, ninguna con «Reducir movimiento»; deslizar cambia 1→2→1; arrastrar la lista del día la cierra. Pendiente: probar en iPhone (Safari e instalada en inicio).
+
 ## 2026-10-18 — Límite diario de lecturas de D1: el panel del coach sólo descarga lo nuevo — claude-code
 
 - Incidente: producción superó el límite gratuito de D1 (5 M filas leídas al día; 6,7 M en 24 h) y Cloudflare bloqueó las lecturas hasta medianoche UTC. No se perdió ningún dato. Causa (`wrangler d1 insights`): el panel del coach preguntaba cada 4 s y en cada vuelta releía la cartera entera (`clientesActuales`, ~515 filas, 7.033 veces) y la ficha del cliente releía su historial desde el cursor 0 (~347 filas, 7.447 veces), incluso en segundo plano. El coste crecía con cada entrenamiento registrado.

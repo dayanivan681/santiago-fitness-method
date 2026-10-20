@@ -1,3 +1,4 @@
+import { Esqueleto } from "../componentes/Esqueleto";
 import { GuiaAyuda } from "./GuiaAyuda";
 import { ProveedorAyudaReal } from "./Ayuda";
 import { ConsejoCliente } from "./Ayuda";
@@ -81,7 +82,7 @@ function ContenidoCliente({
     [ejerciciosLocales],
   );
   if (!participante)
-    return <p className="sfm-loading">Preparando tu entrenamiento…</p>;
+    return <Esqueleto etiqueta="Preparando tu entrenamiento" />;
   return (
     <ContextoBiblioteca.Provider value={biblioteca}>
     <ProveedorDescanso
@@ -282,11 +283,11 @@ function ContenidoCliente({
         <div className="sfm-bottom-composition">
           <Descanso />
           <nav className="sfm-tabbar" aria-label="Navegación del cliente">
-            {[
+            {([
               ["", "Hoy", "hoy"],
               ["/biblioteca", "Biblioteca", "biblioteca"],
               ["/progreso", "Progreso", "progreso"],
-            ].map(([ruta, label, icon]) => (
+            ] as const).map(([ruta, label, icon]) => (
               <NavLink data-tour={ruta==="/progreso"?"nav-progreso":ruta==="/biblioteca"?"nav-biblioteca":undefined} data-tour-action={ruta==="/progreso"?"progreso-abierto":ruta==="/biblioteca"?"biblioteca-abierta":undefined}
                 key={label}
                 end={ruta === ""}

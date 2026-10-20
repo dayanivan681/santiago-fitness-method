@@ -17,7 +17,8 @@
  * es un flujo real, y además una regresión cubierta por `pruebas-maestro`.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Esqueleto } from '../../componentes/Esqueleto'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
 import { useControlDescanso } from '../../aplicacion/contextoDescanso'
 import { HojaCapa } from '../../componentes/HojaCapa'
@@ -31,8 +32,10 @@ import type { ClaveDeBorrador } from '../../logica/borrador'
 import { useMemoria, type Memoria } from '../../aplicacion/memoria'
 import type { EjercicioDelDia } from '../../aplicacion/useEntrenamiento'
 import { segunCantidad } from '../../logica/plural'
-import { Hoja as HojaResumen,ErrorVisible } from '../../producto/ui'
+import { Hoja as HojaResumen, ErrorVisible, Icono } from '../../producto/ui'
 import { pasoPendiente, posicionEnGrupo, siguienteTrasGuardar } from '../../../shared/superseries'
+import { conTransicion } from '../../aplicacion/transiciones'
+import { useDeslizarHorizontal } from '../../aplicacion/gestos'
 
 /** La clave sin `numeroSerie`: cada fila añade el suyo. */
 type ClaveDelDia = Omit<ClaveDeBorrador, 'numeroSerie'>
@@ -136,7 +139,7 @@ export function Entrenamiento({
     if (destino !== null && destino !== 0) setActual(destino)
   }, [datos, actual, setActual])
 
-  if (cargando) return <p className="aviso">Cargando…</p>
+  if (cargando) return <Esqueleto etiqueta="Cargando el entrenamiento" forma="lista" />
   if (!datos || datos.ejerciciosDelDia.length === 0) {
     return <p className="aviso">No hay entrenamiento configurado todavía.</p>
   }
@@ -162,11 +165,17 @@ export function Entrenamiento({
 
   const slotsDelDia = ejerciciosDelDia.map((e) => e.slot)
   const grupo = posicionEnGrupo(slotsDelDia, indice)
-  /** Una elección del participante manda sobre la reanudación automática. */
+  /**
+   * Una elección del participante manda sobre la reanudación automática. El
+   * cambio de ejercicio se desliza en la dirección en que se avanza.
+   */
   function elegir(destino: number) {
     reanudada.current = true
-    setActual(destino)
+    if (destino === indice) return
+    conTransicion(destino > indice ? 'adelante' : 'atras', () => setActual(destino))
   }
+  const anterior = indice > 0 ? () => elegir(indice - 1) : undefined
+  const siguienteEjercicio = indice + 1 < ejerciciosDelDia.length ? () => elegir(indice + 1) : undefined
   const ronda = Math.min(item.seriesDeHoy.length + 1, item.slot.seriesObjetivo)
 
   /**
@@ -191,7 +200,10 @@ export function Entrenamiento({
     // anterior en marcha, es que ya se empezó: se cierra para que no siga contando.
     if (paso.descansar) arrancarDescanso(ejercicioId, paso.descansoSegundos)
     else terminarDescanso()
-    if (paso.indice !== indice) setActual((valor) => (valor === indice ? paso.indice : valor))
+    if (paso.indice !== indice)
+      conTransicion(paso.indice > indice ? 'adelante' : 'atras', () =>
+        setActual((valor) => (valor === indice ? paso.indice : valor)),
+      )
   }
 
   return (
@@ -203,7 +215,7 @@ export function Entrenamiento({
           onClick={onSalir}
           aria-label="Volver al resumen del día"
         >
-          ‹
+          <Icono nombre="volver" />
         </button>
         <span className="entreno__contexto">
           <span className="entreno__dia">{identidadVisible?plantilla.nombre:item.ejercicio.nombre}</span>
@@ -219,13 +231,15 @@ export function Entrenamiento({
           onClick={() => setListaAbierta(true)}
           aria-label="Ejercicios del día"
         >
-          <span aria-hidden="true">•••</span>
+          <Icono nombre="opciones" />
         </button>
       </header>
 
       {/* Con la barra de sesión abajo hace falta más hueco, o el último texto
           queda a seis píxeles de quedar tapado. */}
-      <div
+      <ZonaDeslizable
+        anterior={anterior}
+        siguiente={siguienteEjercicio}
         className={
           sesionDeHoy && !sesionDeHoy.completadaEn ? 'contenido contenido--con-barra' : 'contenido'
         }
@@ -278,7 +292,7 @@ export function Entrenamiento({
                 <span className="fila__titulo">{siguiente.ejercicio.nombre}</span>
               </span>
               <span className="fila__flecha" aria-hidden="true">
-                ›
+                <Icono nombre="flecha" size={18} />
               </span>
             </button>
           </div>
@@ -295,7 +309,7 @@ export function Entrenamiento({
             Sesión terminada. Lo registrado ya está en el historial.
           </p>
         )}
-      </div>
+      </ZonaDeslizable>
 
       {/*
        * Progreso de la sesión, siempre a la vista.
@@ -432,4 +446,25 @@ function ejerciciosUnicos(ejercicios: readonly Ejercicio[]): Ejercicio[] {
 function etiquetaEnGrupo(ejercicios: readonly EjercicioDelDia[], indice: number): string {
   const grupo = posicionEnGrupo(ejercicios.map((e) => e.slot), indice)
   return grupo ? `${grupo.nombre} ${grupo.grupo} · ${grupo.grupo}${grupo.posicion} · ` : ''
+}
+
+/** El contenido del ejercicio: deslizar a los lados pasa al anterior o al siguiente. */
+function ZonaDeslizable({
+  anterior,
+  siguiente,
+  className,
+  children,
+}: {
+  readonly anterior?: () => void
+  readonly siguiente?: () => void
+  readonly className: string
+  readonly children: ReactNode
+}) {
+  const zona = useRef<HTMLDivElement>(null)
+  useDeslizarHorizontal(zona, { anterior, siguiente })
+  return (
+    <div ref={zona} className={className}>
+      {children}
+    </div>
+  )
 }

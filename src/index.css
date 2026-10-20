@@ -108,6 +108,9 @@ html {
    * lo deja justo detrás de las pestañas, la barra de sesión o el teclado.
    */
   scroll-padding-bottom: calc(var(--sobre-barra-sesion) + 24px);
+  /* El desplazamiento de la página es de html: sin esto, deslizar de lado
+     dispara el «atrás» del navegador en vez del gesto de la app. */
+  overscroll-behavior-x: none;
 }
 
 body {
@@ -120,6 +123,9 @@ body {
   -webkit-tap-highlight-color: transparent;
   /* Evita que el tirón hacia abajo recargue la app en mitad de una sesión. */
   overscroll-behavior-y: contain;
+  /* Y que deslizar de lado (cambiar de ejercicio) dispare el «atrás» del
+     navegador: la app tiene sus propios gestos. */
+  overscroll-behavior-x: none;
 }
 
 /*
@@ -864,9 +870,11 @@ button,
     transform var(--mov-toque) var(--mov-curva);
 }
 
-.paso__boton:hover:not(:disabled) {
-  background: var(--relleno-alto);
-  border-color: var(--texto-60);
+@media (hover: hover) {
+  .paso__boton:hover:not(:disabled) {
+    background: var(--relleno-alto);
+    border-color: var(--texto-60);
+  }
 }
 
 .paso__boton:active:not(:disabled) {
@@ -1796,8 +1804,10 @@ button,
     transform var(--mov-toque) var(--mov-curva);
 }
 
-.progreso-sesion__terminar:hover {
-  background: var(--relleno-alto);
+@media (hover: hover) {
+  .progreso-sesion__terminar:hover {
+    background: var(--relleno-alto);
+  }
 }
 
 .progreso-sesion__terminar:active {
@@ -3238,3 +3248,141 @@ section > h2.biblioteca__grupo {
 .grafica-progreso svg text.grafica-progreso__hueco,
 .grafica-progreso svg text.grafica-progreso__rir { fill: var(--texto-60); font-size: 12px; }
 .grafica-progreso svg text.grafica-progreso__rir { font-variant-numeric: tabular-nums; }
+
+/* ───────────── Transiciones de pantalla (src/aplicacion/transiciones.tsx) ─────────────
+   Como iOS: al avanzar, la nueva entra por la derecha y la anterior se aparta
+   un poco hacia la izquierda y se oscurece; al volver, al revés. Entre
+   pestañas, un fundido corto. La barra de pestañas y el aviso de demo tienen
+   nombre propio para quedarse quietos mientras el resto se mueve. */
+.sfm-tabbar {
+  view-transition-name: barra-pestanas;
+}
+.sfm-demo-banner {
+  view-transition-name: aviso-demo;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  animation-fill-mode: both;
+}
+html[data-transicion='adelante']::view-transition-old(root) {
+  animation-name: vt-apartar-izquierda;
+}
+html[data-transicion='adelante']::view-transition-new(root) {
+  animation-name: vt-entrar-derecha;
+}
+html[data-transicion='atras']::view-transition-old(root) {
+  animation-name: vt-salir-derecha;
+  z-index: 1;
+}
+html[data-transicion='atras']::view-transition-new(root) {
+  animation-name: vt-volver-izquierda;
+}
+html[data-transicion='lateral']::view-transition-old(root),
+html[data-transicion='lateral']::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: ease-out;
+}
+@keyframes vt-entrar-derecha {
+  from { transform: translateX(100%); }
+}
+@keyframes vt-apartar-izquierda {
+  to { transform: translateX(-28%); filter: brightness(0.7); }
+}
+@keyframes vt-salir-derecha {
+  to { transform: translateX(100%); }
+}
+@keyframes vt-volver-izquierda {
+  from { transform: translateX(-28%); filter: brightness(0.7); }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Asa de las hojas: dice «esto se puede arrastrar hacia abajo», como en iOS. */
+.sfm-asa {
+  display: block;
+  width: 36px;
+  height: 5px;
+  margin: 0 auto 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+  flex: none;
+}
+
+/* Indicador del gesto de volver desde el borde (sólo instalada en inicio). */
+.volver-borde {
+  position: fixed;
+  z-index: 60;
+  top: -22px;
+  left: -8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(30, 31, 34, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, background-color 120ms ease;
+}
+.volver-borde::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid var(--texto);
+  border-bottom: 2px solid var(--texto);
+  transform: translateX(2px) rotate(45deg);
+}
+.volver-borde[data-listo='si'] {
+  background: var(--rojo);
+}
+.sfm-hoja > .sfm-asa {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+.hoja__panel > .sfm-asa {
+  margin: -6px auto -4px;
+}
+
+/* Esqueleto de carga (src/componentes/Esqueleto.tsx). El brillo recorre la
+   forma; con «Reducir movimiento» queda quieto. */
+.esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 0;
+}
+.esqueleto span:not(.esqueleto__fila):not(.esqueleto__textos) {
+  display: block;
+  border-radius: 10px;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0.05) 30%, rgba(255, 255, 255, 0.11) 50%, rgba(255, 255, 255, 0.05) 70%);
+  background-size: 300% 100%;
+  /* Finito: si la carga se alarga, el brillo se detiene en vez de parpadear sin fin. */
+  animation: esqueleto-brillo 1.4s ease-in-out 6;
+}
+.esqueleto__titulo { height: 34px; width: 62%; }
+.esqueleto__bloque { height: 150px; border-radius: 18px !important; }
+.esqueleto__linea { height: 12px; width: 78%; }
+.esqueleto__linea--corta { width: 38%; }
+.esqueleto__fila { display: flex; align-items: center; gap: 14px; }
+.esqueleto__miniatura { width: 56px; height: 56px; flex: none; border-radius: 12px !important; }
+.esqueleto__textos { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+@keyframes esqueleto-brillo {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto span { animation: none !important; }
+}

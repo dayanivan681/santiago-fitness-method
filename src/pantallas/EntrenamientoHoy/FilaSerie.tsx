@@ -26,6 +26,7 @@ import { idBorrador, type ClaveDeBorrador } from '../../logica/borrador'
 import { puedeDeshacerse } from '../../logica/correccion'
 import type { Repositorio } from '../../datos/repositorio'
 import type { NuevaSerie } from '../../aplicacion/useEntrenamiento'
+import { Icono } from '../../producto/ui'
 
 interface Props {
   readonly numeroSerie: number
@@ -318,7 +319,7 @@ export function FilaSerie({
               role="status"
               aria-label={`Serie ${numeroSerie} de ${ejercicio.nombre}`}
             >
-              <span aria-hidden="true">✓</span>
+              <Icono nombre="check" size={16} />
               <span className="solo-lectores">Guardada</span>
             </span>
             {registrada.tecnica && registrada.tecnica !== TECNICA_POR_DEFECTO && (

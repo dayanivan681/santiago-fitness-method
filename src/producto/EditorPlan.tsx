@@ -137,14 +137,14 @@ export function EditorPlan({
                         disabled={!puedeMover(d.slots, i, -1)}
                         onClick={() => cambiar(moverBloque(d.slots, i, -1))}
                       >
-                        ↑
+                        <Icono nombre="arriba" size={20} />
                       </button>
                       <button
                         aria-label={`Bajar ${e?.nombre}`}
                         disabled={!puedeMover(d.slots, i, 1)}
                         onClick={() => cambiar(moverBloque(d.slots, i, 1))}
                       >
-                        ↓
+                        <Icono nombre="abajo" size={20} />
                       </button>
                     </div>
                   )}
@@ -174,14 +174,14 @@ export function EditorPlan({
                     disabled={!puedeMover(d.slots, primero, -1)}
                     onClick={() => cambiar(moverBloque(d.slots, primero, -1))}
                   >
-                    ↑
+                    <Icono nombre="arriba" size={20} />
                   </button>
                   <button
                     aria-label={`Bajar ${etiqueta}`}
                     disabled={!puedeMover(d.slots, primero, 1)}
                     onClick={() => cambiar(moverBloque(d.slots, primero, 1))}
                   >
-                    ↓
+                    <Icono nombre="abajo" size={20} />
                   </button>
                   <button className="sfm-text-button" onClick={() => cambiar(separar(d.slots, primero))}>
                     Separar
@@ -244,7 +244,7 @@ export function EditorPlan({
                     setDia(0);
                   }}
                 >
-                  ↑
+                  <Icono nombre="arriba" size={20} />
                 </button>
                 <button
                   aria-label={`Atrasar ${v.nombre}`}
@@ -260,7 +260,7 @@ export function EditorPlan({
                     setDia(0);
                   }}
                 >
-                  ↓
+                  <Icono nombre="abajo" size={20} />
                 </button>
               </div>
               <button
