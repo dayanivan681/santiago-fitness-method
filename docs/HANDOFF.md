@@ -190,11 +190,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T12:30:43.810Z
+- **Última sincronización:** 2026-10-20T12:56:50.472Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1337,6 +1337,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T12:56:50.473Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Plan para continuar la sensación de app nativa en docs/PLAN-SENSACION-NATIVA.md. Bloque 1 (transiciones de pantalla, gestos, esqueletos, pantallas de inicio iOS, hover y un solo juego de iconos Lucide) está HECHO en el PR #6 (rama claude/sensacion-nativa), en borrador y SIN unir a main: espera que el dueño lo pruebe en iPhone. Bloques 2 (microanimaciones del entrenamiento) y 3 (celebración e indicador semanal) están especificados con archivos, criterios de aceptación y trampas conocidas.
+- **Verificación:** npm test; npm run lint; npm run build; git diff --check (cambio solo de documentación en main)
+- **Siguiente:** Codex o Claude Code: 1) con el visto bueno del dueño tras probar la preview https://claude-sensacion-nativa.santiago-fitness-method.pages.dev, unir el PR #6 y publicar; 2) seguir con el Bloque 2 de docs/PLAN-SENSACION-NATIVA.md en una rama nueva desde main ya con el PR #6 unido.
+
 
 ### 2026-10-20T12:30:43.811Z | claude-code | CLAIM
 - **Estado:** active
