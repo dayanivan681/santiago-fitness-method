@@ -11,8 +11,14 @@ en Pages `b711d85e`; 1050 pruebas y 117 HTTP locales PASS, lint/build PASS.
 Header y borde del SE pasan con el arreglo local, incluido
 Hoy sin ruta anterior. Quedan fotogramas claros en el arranque: B7 no está cerrado.
 
-**Siguiente:** investigar el destello residual de B7; instalación nueva y puntos
-3, 7 y 9 en teléfono físico. Detalle de publicación y límites en HANDOFF.
+**Actualización 2026-10-20 (claude-code):** el dueño reinstaló la app desde
+`/entrar` en su iPhone físico y **no hay destello gris al abrirla: B7 cerrado**.
+El fotograma gris de `docs/qa-ios-sensacion-nativa/se-destello-residual.jpg` era
+del simulador. Siguen sin confirmar en el teléfono físico los puntos 3 (deslizar
+entre ejercicios) y 9 (volver desde el borde, instalada).
+
+**Siguiente:** confirmar en el teléfono físico los puntos 3 y 9 (7 y B7 ya
+pasan). Detalle de publicación y límites en HANDOFF.
 La implementación de los bloques 1–3 no equivale al cierre del QA físico.
 
 Preparado por claude-code el 2026-10-20 para que cualquiera de los dos agentes

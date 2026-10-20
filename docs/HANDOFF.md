@@ -237,11 +237,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T22:07:07.851Z
+- **Última sincronización:** 2026-10-20T22:09:56.787Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1389,6 +1389,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T22:09:56.788Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** B7 cerrado: el dueño reinstaló desde /entrar en su iPhone físico y no hay destello gris; el fotograma de se-destello-residual.jpg era del simulador. Antes se liberó a mano el turno de codex (2f2358f, sin trabajo). Actualizados PLAN-SENSACION-NATIVA.md y el README de evidencias. Sin cambios de código.
+- **Verificación:** npm test; npm run lint; npm run build; git diff --check (solo documentación)
+- **Siguiente:** El dueño confirma en el iPhone los puntos 3 (deslizar entre ejercicios) y 9 (volver desde el borde, instalada). Después: series pendientes muestran objetivo y '1 rep'; borrador de WhatsApp a Santiago sobre bi-series.
+
 
 ### 2026-10-20T22:07:07.852Z | claude-code | CLAIM
 - **Estado:** active

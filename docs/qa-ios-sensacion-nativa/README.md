@@ -9,7 +9,8 @@ simulador o fotogramas extraídos de grabaciones de `simctl`; no son mockups.
 - `se-demo-fuera-pwa.jpg`: el mismo icono abre la demo fuera del scope instalado.
 - `se-login-local-origen.jpg`: POST de Safari rechazado por Origin:null, solo local.
 - `se-destello-residual.jpg`: fotograma claro durante el arranque local después de
-  añadir los metadatos. No prueba un fallo de hardware físico; B7 sigue pendiente.
+  añadir los metadatos. Solo del simulador: en el iPhone físico del dueño no hay
+  destello (2026-10-20), B7 cerrado.
 - Las demás imágenes muestran el logo, header, borde, progreso corregido y la raíz
   autenticada de un cliente ficticio local. La secuencia del SE puede contener el
   nombre Lucía QA; no es una cuenta real del cliente.
@@ -21,4 +22,4 @@ Los vídeos y guiones adicionales quedan en `/tmp/sfm-ios-nativa-qa/` y no se
 consideran almacenamiento permanente. Los JPG y JSON de esta carpeta sí quedan
 en Git. El PR #8 se incorporó a main con el «Hágale» del dueño: merge `cef5e2e`,
 producción Pages `b711d85e`. `produccion-integracion.json` registra la verificación
-HTTP de publicación, sin una nueva prueba nativa. El destello residual sigue pendiente.
+HTTP de publicación, sin una nueva prueba nativa. El destello residual era del simulador: cerrado tras la prueba física del dueño.
