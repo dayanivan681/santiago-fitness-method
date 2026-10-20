@@ -37,6 +37,7 @@ El dueño pidió empezar por el pulido de animaciones e iconos.
 - `reducedMotion: reduce`: sin animaciones nuevas ni transición de barra; cifras finales inmediatas. El cambio de preferencia durante la cuenta cancela el RAF, cubierto por prueba.
 - 320/375/1024 px sin desborde; cifras del resumen a 44 px. Capturas de estados finales e intermedios en `/tmp/sfm-nativa-qa/`. Browser plugin no disponible; QA con Playwright CLI. No se afirma una prueba nueva en hardware físico ni de instalación iOS por Codex.
 - No se modifican `docs/cliente`, cuentas ni datos reales. Las ideas aplazadas del bloque 3.3 siguen fuera del plan.
+- Preview completa verificada tras Access: https://codex-sensacion-nativa-compl.santiago-fitness-method.pages.dev, despliegue `44507065`, código `9e1544a`, PR #7. Flujo remoto guardar → descanso → resumen → Hoy 1/4 PASS; JS y CSS coinciden con el build probado. Integración de los dos PR autorizada por el dueño; publicación canónica se verifica después de `handoff:publish`.
 
 ### Bloque 1: lo que falta para cerrarlo
 
