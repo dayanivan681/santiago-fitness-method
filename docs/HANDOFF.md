@@ -190,11 +190,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T11:38:15.793Z
+- **Última sincronización:** 2026-10-20T11:41:49.976Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1337,6 +1337,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T11:41:49.977Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Pendientes: (1) Borrada la pantalla Coach antigua que ya no estaba en ninguna ruta: src/pantallas/Coach/{Coach,EditorSlot,Coach.test}.tsx y src/aplicacion/useCoach.ts. También quitarSlot/moverSlot/Direccion de src/logica/plantilla.ts (solo los usaba esa pantalla y no entendían de bi-series) y sus pruebas. 28 pruebas menos, todas de código borrado. (2) Comprobar el 304 en producción: no se pudo, la política de red del entorno cloud bloquea santiago-fitness-method.pages.dev y además está detrás de Access.
+- **Verificación:** npm test 1030/1030; npx tsc -b; npm run lint 0 avisos; npm run build; git diff --check
+- **Siguiente:** El dueño comprueba el 304: /admin en DevTools > Network, segunda petición a /admin/api/v2/clientes con estado 304 tras ~15 s sin cambios.
+
 
 ### 2026-10-20T11:38:15.798Z | claude-code | CLAIM
 - **Estado:** active
