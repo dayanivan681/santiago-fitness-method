@@ -9,6 +9,9 @@
  * administrador.
  */
 
+import { METADATOS_INICIO_PWA } from './inicioPwa'
+
+const CSP_FORMULARIO = "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'"
 const FONDO = '#0b0c0d'
 const TARJETA = '#111214'
 const TEXTO = '#f2f2f0'
@@ -24,7 +27,7 @@ function escapar(valor: string): string {
     .replace(/"/g, '&quot;')
 }
 
-function envolver(titulo: string, cuerpo: string): string {
+function envolver(titulo: string, cuerpo: string, instalable = false): string {
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -32,9 +35,11 @@ function envolver(titulo: string, cuerpo: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="${FONDO}">
 <meta name="robots" content="noindex, nofollow">
+${instalable ? METADATOS_INICIO_PWA : ''}
 <title>${escapar(titulo)}</title>
 <style>
   *{box-sizing:border-box}
+  html{background:${FONDO}}
   body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
        padding:24px;background:${FONDO};color:${TEXTO};
        font-family:'Barlow','Helvetica Neue',system-ui,-apple-system,sans-serif;
@@ -90,7 +95,7 @@ function respuesta(html: string, estado: number, cabeceras: HeadersInit = {}): R
       'Cache-Control': 'no-store',
       // El token viaja en la URL de esta página: que no salga hacia terceros.
       'Referrer-Policy': 'no-referrer',
-      'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'",
+      'Content-Security-Policy': CSP_FORMULARIO,
       ...cabeceras,
     },
   })
@@ -150,7 +155,11 @@ export function paginaLogin(error = false, google = false): Response {
      <details class="con-email"${error ? ' open' : ''}><summary>Entrar con email</summary>${formulario}</details>`
        : formulario}
      <p class="ayuda">¿Olvidaste tu contraseña? Pídele a tu coach un enlace nuevo.</p>
-     <p class="pie"><a href="/demo">Explorar la demo</a> · <a href="/admin">Soy el coach</a></p>`), error ? 401 : 200)
+     <p class="pie"><a href="/demo">Explorar la demo</a> · <a href="/admin">Soy el coach</a></p>`, true), error ? 401 : 200, {
+       'Content-Security-Policy': `${CSP_FORMULARIO}; img-src 'self'; manifest-src 'self'`,
+       // Safari envía Origin:null en el POST si la página usa no-referrer.
+       'Referrer-Policy': 'strict-origin',
+     })
 }
 
 export function paginaGoogleError(): Response {
