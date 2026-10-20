@@ -237,11 +237,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T22:22:18.544Z
+- **Última sincronización:** 2026-10-20T22:50:34.585Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1389,6 +1389,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T22:50:34.587Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #9 unido con el visto bueno del dueño (merge): puntos de página bajo 'Ejercicio N de M' y pista de primera vez por dispositivo ('Desliza a los lados…' + asomo finito; solo texto con Reducir movimiento) para descubrir el deslizar entre ejercicios. Prueba física del dueño: puntos 3, 7, 9 y B7 PASS.
+- **Verificación:** npm test 1053/1053; npx tsc -b; npm run lint 0 avisos; npm run build; git diff --check
+- **Siguiente:** Series pendientes: mostrar el objetivo en vez de '0/1 reps' y '1 rep'; borrador de WhatsApp a Santiago sobre bi-series (solo con visto bueno del dueño).
+
 
 ### 2026-10-20T22:22:18.546Z | claude-code | CLAIM
 - **Estado:** active
