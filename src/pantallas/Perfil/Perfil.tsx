@@ -4,6 +4,7 @@
  * vive aquí, en segundo plano según §25) y §28 (la estructura de 4 días).
  */
 
+import { Esqueleto } from '../../componentes/Esqueleto'
 import { usePerfil } from '../../aplicacion/usePerfil'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import { FichaParticipante } from './FichaParticipante'
@@ -27,7 +28,7 @@ export function Perfil({
 }: Props = {}) {
   const { participante, cargando, guardar } = usePerfil(repositorio)
 
-  if (cargando) return <p className="aviso">Cargando…</p>
+  if (cargando) return <Esqueleto etiqueta="Cargando tu perfil" />
   if (!participante) return <p className="aviso">No hay participante configurado.</p>
 
   return (

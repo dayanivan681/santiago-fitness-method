@@ -12,6 +12,7 @@
  * no el formulario: los ejercicios del día son filas de lectura, sin controles.
  */
 
+import { Esqueleto } from '../../componentes/Esqueleto'
 import { useState } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
 import { bloquesDe, nombreDeGrupo } from '../../../shared/superseries'
@@ -20,6 +21,7 @@ import type { Ejercicio } from '../../dominio/tipos'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
 import type { Repositorio } from '../../datos/repositorio'
 import type { Memoria } from '../../aplicacion/memoria'
+import { Icono } from '../../producto/ui'
 
 interface Props {
   readonly repositorio?: Repositorio
@@ -37,7 +39,7 @@ export function EntrenamientoHoy({
   const { datos, elegirPlantilla, cargando } = useEntrenamiento(repositorio, memoriaDia)
   const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
 
-  if (cargando) return <p className="aviso">Cargando…</p>
+  if (cargando) return <Esqueleto etiqueta="Cargando tu sesión" />
   if (!datos) return <p className="aviso">No hay entrenamiento configurado todavía.</p>
 
   const { plantilla, plantillas, ejerciciosDelDia, seriesHechas, seriesObjetivo, sesionDeHoy, participante } =
@@ -124,7 +126,7 @@ export function EntrenamientoHoy({
                       onClick={() => setFichaDe(ejercicioDelDia.ejercicio)}
                     >
                       <img src={ejercicioDelDia.ejercicio.imagen} alt="" loading="lazy"/>
-                      <span aria-hidden="true">↗︎</span>
+                      <span aria-hidden="true"><Icono nombre="abrir" size={14} /></span>
                     </button>
                     <span className="fila__cuerpo">
                       <span className="fila__titulo">{ejercicioDelDia.ejercicio.nombre}</span>

@@ -1,3 +1,4 @@
+import { Esqueleto } from "../componentes/Esqueleto";
 import { GuiaAyuda } from "./GuiaAyuda";
 import { contarBloques, sesionCompleta } from "../../shared/superseries";
 import { CopiarInvitacion } from "./CopiarInvitacion";
@@ -181,11 +182,11 @@ export function Coach({
         </Routes>
       </main>
       <nav className="sfm-tabbar" aria-label="Navegación del Coach">
-        {[
+        {([
           ["", "Hoy", "hoy"],
           ["/clientes", "Clientes", "clientes"],
           ["/biblioteca", "Biblioteca", "biblioteca"],
-        ].map(([ruta, label, icon]) => (
+        ] as const).map(([ruta, label, icon]) => (
           <NavLink end={ruta === ""} key={label} to={base + ruta}>
             <Icono nombre={icon} />
             <span>{label}</span>
@@ -566,7 +567,7 @@ function FichaCliente({
       document.removeEventListener("visibilitychange", siVisible);
     };
   }, [clienteId, servicio]);
-  if (!c) return <p className="sfm-loading">Abriendo cliente…</p>;
+  if (!c) return <Esqueleto etiqueta="Abriendo cliente" />;
   const cliente = c;
   const borrador = ultimos(cambios, "plan").find((v) => v.id === "borrador");
   const docPerfil = ultimos(cambios, "perfil").find((v) => v.id === clienteId);

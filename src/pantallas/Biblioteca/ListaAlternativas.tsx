@@ -10,6 +10,7 @@ import { useId, useState } from 'react'
 import { etiquetaEquipo } from '../../dominio/etiquetas'
 import { agruparPorEquipo, ordenarAlternativas } from '../../logica/alternativas'
 import type { Ejercicio } from '../../dominio/tipos'
+import { Icono } from '../../producto/ui'
 
 /** Las que caben a la vista sin hacer scroll dentro de la ficha. */
 const VISIBLES = 3
@@ -112,7 +113,7 @@ function FilaAlternativa({
         </span>
       </span>
       <span className="variante__chevron" aria-hidden="true">
-        ›
+        <Icono nombre="flecha" size={18} />
       </span>
     </button>
   )

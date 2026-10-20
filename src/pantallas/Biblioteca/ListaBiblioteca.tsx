@@ -24,6 +24,7 @@ import {
 } from '../../logica/filtrosBiblioteca'
 import { HojaFiltros } from './HojaFiltros'
 import type { Ejercicio } from '../../dominio/tipos'
+import { Icono } from '../../producto/ui'
 
 const SIN_FOTO = '/ejercicios/sin-foto.svg'
 
@@ -83,7 +84,7 @@ export function ListaBiblioteca({
         </span>
       </span>
       <span className="fila__flecha" aria-hidden="true">
-        ›
+        <Icono nombre="flecha" size={18} />
       </span>
     </button>
   )
@@ -93,11 +94,7 @@ export function ListaBiblioteca({
       {/* Fijo arriba: con 336 ejercicios, volver a buscar no puede exigir subir. */}
       <div className="biblioteca__barra">
         <div className="busca">
-          <svg className="busca__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            strokeWidth="1.9" strokeLinecap="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="6" />
-            <path d="m16 16 4 4" />
-          </svg>
+          <Icono nombre="buscar" size={20} className="busca__icono" />
           <input
             type="search"
             value={busqueda}
@@ -187,7 +184,7 @@ export function ListaBiblioteca({
 function Pastilla({ texto, quitar }: { readonly texto: string; readonly quitar: () => void }) {
   return (
     <button type="button" className="pastilla" aria-label={`Quitar ${texto}`} onClick={quitar}>
-      {texto} <span aria-hidden="true">✕</span>
+      {texto} <Icono nombre="cerrar" size={14} />
     </button>
   )
 }

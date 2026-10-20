@@ -4,6 +4,7 @@ import { ContextoAyuda, useAyuda } from "./ayuda-contexto";
 import "./guia-demo.css";
 import type { Contexto } from "../../shared/v2/contratos";
 import type { Repositorio } from "../datos/repositorio";
+import { Icono } from "./ui";
 
 /** Sólo preferencias de ayuda. Nunca guarda datos de perfil ni entrenamiento. */
 export function ProveedorAyudaReal({ contexto, repo, children }: {
@@ -125,7 +126,7 @@ export function Consejo({
         aria-label="Cerrar consejo"
         onClick={() => ayuda.cerrar(id)}
       >
-        ×
+        <Icono nombre="cerrar" size={18} />
       </button>
     </aside>
   );

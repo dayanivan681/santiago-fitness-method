@@ -1,3 +1,4 @@
+import { Esqueleto } from "../componentes/Esqueleto";
 import { useCallback, useEffect, useState } from "react";
 import type { EstadoDeAcceso, Precio, RespuestaSuscripcion } from "../../shared/v2/suscripcion";
 import { CopiarInvitacion } from "./CopiarInvitacion";
@@ -74,7 +75,7 @@ export function SuscripcionCliente({ servicio, clienteId, alCambiar }: {
 
   const accion = (a: AccionSuscripcion) => hacer(() => servicio.accion(clienteId, a));
 
-  if (!datos) return error ? <ErrorVisible error={error} /> : <p className="sfm-loading">Cargando suscripción…</p>;
+  if (!datos) return error ? <ErrorVisible error={error} /> : <Esqueleto etiqueta="Cargando suscripción" forma="tarjeta" />;
   const viva = tieneSuscripcionViva(datos);
 
   return (

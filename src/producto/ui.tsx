@@ -1,72 +1,63 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { usePresencia } from "../aplicacion/usePresencia";
+import { useArrastrarParaCerrar } from "../aplicacion/gestos";
 import { Link } from "react-router";
+import {
+  ArrowUpRight,
+  ChartLine,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  CloudCheck,
+  Dumbbell,
+  Ellipsis,
+  House,
+  Link2,
+  LogOut,
+  Plus,
+  Search,
+  Timer,
+  Users,
+  X,
+} from "lucide-react";
+/**
+ * Un solo juego de iconos para toda la app (Lucide, línea fina). Antes había
+ * cuatro estilos mezclados y flechas de texto que cambiaban con la fuente.
+ */
+const ICONOS = {
+  hoy: House,
+  clientes: Users,
+  biblioteca: Dumbbell,
+  progreso: ChartLine,
+  volver: ChevronLeft,
+  flecha: ChevronRight,
+  arriba: ChevronUp,
+  abajo: ChevronDown,
+  mas: Plus,
+  eslabon: Link2,
+  check: Check,
+  cerrar: X,
+  tiempo: Timer,
+  salir: LogOut,
+  nube: CloudCheck,
+  opciones: Ellipsis,
+  abrir: ArrowUpRight,
+  buscar: Search,
+} as const;
+export type NombreIcono = keyof typeof ICONOS;
 export function Icono({
   nombre,
   size = 22,
+  className,
 }: {
-  nombre: string;
+  nombre: NombreIcono;
   size?: number;
+  className?: string;
 }) {
-  const formas: Record<string, ReactNode> = {
-    hoy: (
-      <>
-        <path d="M3 11 12 3l9 8v10h-6v-7H9v7H3Z" />
-      </>
-    ),
-    clientes: (
-      <>
-        <circle cx="9" cy="8" r="4" />
-        <path d="M2 21v-3a7 7 0 0 1 14 0v3M17 4a4 4 0 0 1 0 8M20 21v-3a7 7 0 0 0-3-6" />
-      </>
-    ),
-    biblioteca: (
-      <>
-        <path d="M3 5v14M7 8v8M17 8v8M21 5v14M7 12h10" />
-      </>
-    ),
-    progreso: (
-      <>
-        <path d="M4 20V4M4 20h17M7 14l5-5 4 3 5-8" />
-      </>
-    ),
-    volver: <path d="m14 5-7 7 7 7" />,
-    mas: <path d="M12 5v14M5 12h14" />,
-    eslabon: (
-      <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
-    ),
-    check: <path d="m5 12 4 4L20 5" />,
-    flecha: <path d="m9 5 7 7-7 7" />,
-    tiempo: (
-      <>
-        <circle cx="12" cy="13" r="8" />
-        <path d="M12 9v5l3 2M9 2h6" />
-      </>
-    ),
-    salir: (
-      <>
-        <path d="M9 3H3v18h6M9 12h12m-5-5 5 5-5 5" />
-      </>
-    ),
-    nube: (
-      <path d="M6 18a5 5 0 0 1-1-10 7 7 0 0 1 13-1 5.5 5.5 0 0 1 0 11M9 15l3 3 5-6" />
-    ),
-  };
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.65"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {formas[nombre] ?? formas.flecha}
-    </svg>
-  );
+  const Forma = ICONOS[nombre] ?? ChevronRight;
+  return <Forma size={size} strokeWidth={1.75} className={className} aria-hidden="true" focusable="false" />;
 }
 export function Marca() {
   return (
@@ -156,6 +147,8 @@ export function Hoja({
   const tituloId = useId();
   // Sale animada (180 ms) y sólo entonces avisa a `cerrar`, que la desmonta.
   const { saliendo, salir, alTerminarAnimacion } = usePresencia(cerrar);
+  // Arrastrada hacia abajo ya sale animada: se desmonta sin repetir la salida.
+  useArrastrarParaCerrar(dialog, cerrar);
   useEffect(() => {
     const elemento = dialog.current;
     const origen = document.activeElement;
@@ -196,6 +189,7 @@ export function Hoja({
         }
       }}
     >
+      <span className="sfm-asa" aria-hidden="true" />
       <header>
         <h2 id={tituloId}>{titulo}</h2>
         <button
@@ -203,7 +197,7 @@ export function Hoja({
           aria-label="Cerrar"
           onClick={salir}
         >
-          ×
+          <Icono nombre="cerrar" size={20} />
         </button>
       </header>
       {children}

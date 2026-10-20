@@ -15,6 +15,7 @@
  * abriéndose al tocar.
  */
 
+import { Esqueleto } from '../../componentes/Esqueleto'
 import { useState } from 'react'
 import { useLiveQuery } from '../../nube/eventos'
 import { repositorio as repositorioPorDefecto } from '../../aplicacion/repositorio'
@@ -37,7 +38,7 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
 
   const ejercicios = useLiveQuery(() => repositorio.listarEjercicios(), [repositorio])
 
-  if (ejercicios === undefined) return <p className="aviso">Cargando…</p>
+  if (ejercicios === undefined) return <Esqueleto etiqueta="Cargando la biblioteca" forma="lista" />
 
   return (
     <>

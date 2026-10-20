@@ -4,6 +4,7 @@
  * referencia y última sesión), §9 (son dos datos diferentes) y §25.
  */
 
+import { Esqueleto } from '../../componentes/Esqueleto'
 import { useState } from 'react'
 import { GraficaProgreso } from '../../componentes/GraficaProgreso'
 import { puntosDeProgreso } from '../../logica/progresoGrafica'
@@ -32,7 +33,7 @@ export function Historial({ repositorio = repositorioPorDefecto, memoriaEjercici
   // Una sola sesión abierta a la vez: corregir es puntual, no se navega así.
   const [abierta, setAbierta] = useState<string | null>(null)
 
-  if (cargando) return <p className="aviso">Cargando…</p>
+  if (cargando) return <Esqueleto etiqueta="Cargando el historial" forma="lista" />
   if (!datos || datos.entrenados.length === 0) {
     return (
       <div className="contenido">

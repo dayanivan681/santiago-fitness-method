@@ -21,6 +21,7 @@ import type { Repositorio } from '../../datos/repositorio'
 import type { EjercicioDelDia, NuevaSerie } from '../../aplicacion/useEntrenamiento'
 import { esEfectiva } from '../../dominio/tipos'
 import type { Ejercicio, SerieComparable, SerieRegistrada } from '../../dominio/tipos'
+import { Icono } from '../../producto/ui'
 
 const ETIQUETA_ESTIMULO = {
   fuerza: 'Fuerza',
@@ -102,7 +103,7 @@ export function CuerpoEjercicio({
   return (
     <section className="entreno__ejercicio">
       <header ref={identidad} className="entreno__identidad">
-        <button type="button" className="sfm-workout-image" onClick={onAbrirFicha} aria-label="Ver ficha del ejercicio"><img src={ejercicio.imagen} alt=""/><span>Ver ejercicio{"\u00a0"}↗︎</span></button>
+        <button type="button" className="sfm-workout-image" onClick={onAbrirFicha} aria-label="Ver ficha del ejercicio"><img src={ejercicio.imagen} alt=""/><span>Ver ejercicio <Icono nombre="abrir" size={14} /></span></button>
         <span className={`ejercicio__tag tinta--${slot.estimulo}`}>
           <span className={`ejercicio__punto punto--${slot.estimulo}`} />
           {ETIQUETA_ESTIMULO[slot.estimulo]}

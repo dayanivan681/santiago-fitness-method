@@ -1,3 +1,4 @@
+import { Esqueleto } from "../componentes/Esqueleto";
 import { useEffect, useState } from "react";
 import { segunCantidad } from "../logica/plural";
 import type { Cambio } from "../../shared/v2/contratos";
@@ -41,7 +42,7 @@ export function ProgresoCliente({
     ]);
     return { p, sesiones, medidas };
   }, [repo]);
-  if (!datos) return <p className="sfm-loading">Preparando tu progreso…</p>;
+  if (!datos) return <Esqueleto etiqueta="Preparando tu progreso" />;
   async function guardar() {
     if (!datos) return;
     setOcupado(true);

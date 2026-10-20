@@ -137,14 +137,18 @@
   background: var(--rojo);
   color: white !important;
 }
-.landing-primary:hover {
-  background: #c92921;
+@media (hover: hover) {
+  .landing-primary:hover {
+    background: #c92921;
+  }
 }
 .landing-secondary {
   border: 1px solid #626367;
 }
-.landing-secondary:hover {
-  background: var(--superficie);
+@media (hover: hover) {
+  .landing-secondary:hover {
+    background: var(--superficie);
+  }
 }
 .landing-demo {
   min-width: 0;

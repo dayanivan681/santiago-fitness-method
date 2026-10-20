@@ -2320,3 +2320,17 @@ a.sfm-primary:active {
     transform: none !important;
   }
 }
+
+/* Respuesta al toque en filas y tarjetas tocables: en iOS cada toque se ve. */
+.sfm-row,
+.sfm-exercise-card,
+.sfm-next-card {
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+.sfm-row:active,
+a.sfm-next-card:active {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+.sfm-exercise-card:active {
+  transform: scale(0.98);
+}

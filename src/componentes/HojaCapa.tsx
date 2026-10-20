@@ -12,6 +12,7 @@
 import { useRef, type AnimationEvent, type ReactNode } from 'react'
 import { useCapa } from '../aplicacion/useCapa'
 import { usePresencia } from '../aplicacion/usePresencia'
+import { useArrastrarParaCerrar } from '../aplicacion/gestos'
 
 interface Props {
   /** Nombre del diálogo para el lector de pantalla. */
@@ -26,6 +27,7 @@ export function HojaCapa({ etiqueta, titulo, onCerrar, children }: Props) {
   const panel = useRef<HTMLDivElement>(null)
   const { saliendo, salir, alTerminarAnimacion } = usePresencia(onCerrar)
   const cerrar = useCapa(true, salir, panel)
+  useArrastrarParaCerrar(panel, onCerrar)
 
   // `animationend` sube desde dentro (el ✓ de una serie, un borrador
   // recuperado…): sólo cuenta la salida del propio panel.
@@ -49,6 +51,7 @@ export function HojaCapa({ etiqueta, titulo, onCerrar, children }: Props) {
         aria-label="Cerrar tocando fuera"
       />
       <div className="hoja__panel" ref={panel} tabIndex={-1} onAnimationEnd={alAnimar}>
+        <span className="sfm-asa" aria-hidden="true" />
         <div className="hoja__cabecera">
           <h2 className="hoja__titulo">{titulo}</h2>
           <button type="button" className="hoja__cerrar" onClick={cerrar}>
