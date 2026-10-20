@@ -6,6 +6,7 @@ const PANTALLAS = [
 ] as const
 
 export const METADATOS_INICIO_PWA = `
+<meta name="color-scheme" content="dark">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
