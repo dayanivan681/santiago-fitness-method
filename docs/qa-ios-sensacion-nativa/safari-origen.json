@@ -1,0 +1,10 @@
+[
+  {
+    "politica": "sin-referrer",
+    "respuesta": "{\"origin\":\"null\",\"referer\":null,\"site\":\"same-origin\"}"
+  },
+  {
+    "politica": "estricto",
+    "respuesta": "{\"origin\":\"http://127.0.0.1:4199\",\"referer\":\"http://127.0.0.1:4199/\",\"site\":\"same-origin\"}"
+  }
+]

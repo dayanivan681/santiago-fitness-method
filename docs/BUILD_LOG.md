@@ -1,5 +1,16 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-20 — QA en Safari iOS y PWA; tres arreglos aislados — codex
+
+- Turno `4cbc629`: «QA iOS de sensación nativa». Safari iOS 27.0 en simuladores 16 Pro (402×874) y SE (375×667); matriz completa de nueve puntos en HANDOFF. SafariDriver observa el DOM/animaciones; Maestro/XCUITest hace gestos nativos, Ajustes e instalación. UDID y dimensiones contrastados; conexión de Maestro aislada por dispositivo.
+- Producción: transiciones, hojas/scroll, swipes, microanimaciones y movimiento reducido PASS; descanso y pulso x2 PASS tras tres minutos reales en ambos. FALLO: progreso/cierre cubiertos por el descanso. Arreglo CSS local PASS en ambos, incluidos hit tests de los controles finales.
+- Instalar desde la demo en el 16 muestra el logo; instalar desde el login en el SE guardaba `/entrar` sin manifest, daba blanco prolongado y abría la demo en navegador interno. Metadatos solo en login + permisos CSP estáticos del mismo origen: logo, scope raíz, header y borde del SE PASS local. Persisten fotogramas claros en la composición del inicio: B7 queda pendiente, sin prometer un arreglo no demostrado.
+- Login por email en Safari local: FALLO 403. Formulario aislado confirma `no-referrer` → `Origin:null`; `strict-origin` → origen correcto. La política del login cambia a strict-origin, conservando el filtro del servidor. Repetición nativa con cuenta local sintética: POST 302, GET raíz 200 y Hoy PASS; borde en esa raíz sin ruta anterior no actúa. No se guardó la contraseña en el sistema.
+- PR #8 `codex/qa-ios-descanso`, código final `41a36d5`; preview `80386fa5`: https://codex-qa-ios-descanso.santiago-fitness-method.pages.dev. Access intacto; no se certifica QA remoto autenticado. Mismo frontend en vite preview y funciones en qa:servir, sin CSS inyectado. PR abierto, sin merge.
+- Checks finales: 1050 pruebas / 123 archivos, lint, build con tsc, diff-check y 117 HTTP locales PASS. Avisos conocidos Node/JSDOM. Pruebas nuevas contrastan los 11 inicios con index.html y comprueban que las páginas con token no ofrecen instalación; login mantiene el origen del formulario.
+- Capturas de cada fallo en docs/qa-ios-sensacion-nativa; vídeos/guiones extra en /tmp/sfm-ios-nativa-qa. Movimiento reducido restaurado a desactivado; sin datos reales ni cambios en docs/cliente. Cuenta/fixture y sesiones usados únicamente en el runtime local.
+- Siguiente: revisar PR #8 y el destello residual; no integrar sin aprobación nueva. Prueba física de 3, 7 y 9 pendiente, además de tacto/rendimiento. El handoff de main publica documentación y capturas, sin incorporar las correcciones.
+
 ## 2026-10-20 — Plan de sensación nativa: microanimaciones y cierre de sesión — codex
 
 - Se completa la implementación de los bloques 2 y 3 sobre el bloque 1 del PR #6. El dueño pidió terminar el plan y dio el visto bueno pendiente en este chat; rama de trabajo `codex/sensacion-nativa-completa`, preview y PR antes de integrar.

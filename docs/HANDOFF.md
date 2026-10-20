@@ -1,5 +1,33 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-20 — QA iOS de sensación nativa — codex
+
+- Turno `4cbc629`, sincronizado y reclamado como «QA iOS de sensación nativa». Producción: https://santiago-fitness-method.pages.dev. Demo en memoria y fixture/cuenta **sintéticos, exclusivamente locales**; sin cuentas, programas ni entrenamientos reales modificados. `docs/cliente` intacto.
+- Simuladores **iPhone 16 Pro** (`A57A612D…`, pantalla 402×874; Safari 402×714) y **SE, 3.ª generación** (`DB83DB23…`, pantalla 375×667; Safari 375×549), **iOS/Safari 27.0, build 24A434**. La geometría SE no mide el rendimiento de un SE físico.
+- SafariDriver observó animaciones/geometría y activó controles DOM en Safari iOS; Maestro/XCUITest ejecutó los gestos, Ajustes e instalación. Los clics JS no se presentan como gestos táctiles. Se contrastaron UDID y dimensiones. La conexión de Maestro se aisló al cambiar de modelo porque conservaba el anterior; las acciones/aserciones fallidas por una interfaz aún en transición se repitieron desde el estado visible. **N/C = no comprobado; no equivale a PASS.**
+
+| Punto | Producción: 16 Pro | Producción: SE | Resultado y comprobación del arreglo |
+|---|---|---|---|
+| A1. Entrada desde derecha, regreso inverso, fundido de pestañas y barra inmóvil | PASS | PASS | `vt-entrar-derecha`, `vt-salir-derecha`, `vt-volver-izquierda`; fundido lateral. Rectángulo de pestañas idéntico antes/después: y=638/h=76 en 16; y=473/h=76 en SE. Se repitió el SE esperando el fin de cada transición. |
+| A2. Asa y arrastre de las tres hojas, prioridad del scroll | PASS | PASS | «Ejercicios del día», «Prescripción» y «Añadir ejercicio»: asa visible, scroll interior conservado y cierre mediante otro arrastre tras volver arriba. La lista del día requiere scroll en SE y cabe en 16. Gestos nativos. |
+| A3. Deslizar ejercicios sin atrás de Safari | PASS | PASS | Gestos nativos 1→2→1 conservan Entrenar. Falta el tacto real con dedo. |
+| A4. Barra/pulso del descanso y tarjeta que asoma debajo | **FALLO de disposición** | **FALLO de disposición** | Barra 1→0 y pulso final de **2 iteraciones PASS** en ambos, tras agotar 3 minutos reales. La tarjeta relativa queda tapada: [16](qa-ios-sensacion-nativa/16-fallo-descanso.jpg), [SE](qa-ios-sensacion-nativa/se-fallo-descanso.jpg). Arreglo local PASS en ambos: tarjeta completa, separación de 8 px y último control accesible al final del scroll. |
+| A5. Check, plegado, peso/reps, resumen y semana | PASS | PASS | Diez incrementos → 25 lb/lado; reps=4. Check 300 ms y plegado 220 ms. Resumen: círculo 600 ms, cifras escalonadas, final 1 serie / 1 ejercicio / 6%; Hoy: «Semana: 1 de 4 sesiones». El resumen final del SE se comprobó también con el build corregido. |
+| A6. Reducir movimiento desde Ajustes | PASS | PASS | Preferencia activada en Ajustes y reconocida por Safari (`matchMedia`=true); cero View Transitions, cifras finales inmediatas y guardar/cerrar funcionan. Sin animaciones perceptibles; el backdrop legado emite un evento de 0,01 ms. Preferencias originales desactivadas restauradas. |
+| B7. Reinstalar, logo y ausencia de blanco | PASS **desde la demo**; desde acceso N/C | **FALLO desde /entrar** | En 16 se borró solo el icono antiguo de producción, preservando el local, y se instaló desde el shell/demo: [logo](qa-ios-sensacion-nativa/16-arranque.jpg), sin blanco observado. En SE no existía icono; desde acceso se instalaba sin manifest, con URL `/entrar`, sin logo y varios segundos en blanco: [captura](qa-ios-sensacion-nativa/se-fallo-inicio-blanco.jpg), [secuencia](qa-ios-sensacion-nativa/se-fallo-inicio-secuencia.jpg). El arreglo instala desde acceso con nombre Santiago FM, URL `/`, manifest y [logo](qa-ios-sensacion-nativa/se-arranque-corregido.jpg), pero **persisten fotogramas claros en la composición de arranque del SE**: [residual](qa-ios-sensacion-nativa/se-destello-residual.jpg). B7 no queda cerrado. |
+| B8. Header bajo la barra de estado | PASS | N/C en cliente instalado por B7 | Sin manifest, la demo salía a [navegador interno](qa-ios-sensacion-nativa/se-demo-fuera-pwa.jpg). Arreglo local SE PASS: demo y cliente sintético completos bajo la barra de estado, sin toolbar de navegador. |
+| B9. Borde: atrás con círculo; Hoy sin anterior no actúa | PASS regreso; Hoy raíz N/C | N/C instalada por B7 | Arreglo local SE PASS: Entrenar→Hoy con círculo rojo, y [Hoy raíz permanece](qa-ios-sensacion-nativa/se-hoy-raiz-no-retrocede.jpg) tras un gesto de 1.500 ms. La raíz se abrió con navegación HTTP completa después de entrar con la cuenta sintética; se cerró la bienvenida sin navegar. No se repitió ese estado autenticado en el 16. |
+
+**Hallazgo adicional al comprobar B9:** el login nativo por email devolvía 403 «Origen no autorizado» en el runtime local: [captura](qa-ios-sensacion-nativa/se-login-local-origen.jpg). Safari con `Referrer-Policy: no-referrer` envía `Origin: null` en el POST del formulario; con `strict-origin` envía el origen correcto. Se verificaron ambas políticas con un formulario aislado en Safari iOS ([respuesta de cabeceras](qa-ios-sensacion-nativa/safari-origen.json)). Arreglo limitado a la política del login, igual que la invitación: mantiene la comprobación de origen. **Repetición nativa PASS:** POST `/entrar` 302 → GET `/` 200 → Hoy de Lucía QA; sin guardar la contraseña en el sistema. No se intentó acceder a una cuenta real en producción.
+
+**PR sin merge:** [#8](https://github.com/dayanivan681/santiago-fitness-method/pull/8), `codex/qa-ios-descanso`, código **`41a36d5`**. Cuatro archivos de producto/pruebas: CSS del progreso y espacio de scroll; metadatos iOS solo en el login, con 11 inicios contrastados contra `index.html`; CSP que permite únicamente sus imágenes/manifest del mismo origen; `strict-origin` para el POST de acceso. Las páginas con token no ofrecen instalación. El destello residual no tiene un arreglo demostrado y queda pendiente.
+
+**Preview:** https://codex-qa-ios-descanso.santiago-fitness-method.pages.dev, deployment **`80386fa5`**. Access conservado; acceso anónimo redirige al login. No se certifica un recorrido autenticado por ese URL remoto. Se comprobó el mismo frontend compilado con `vite preview` y el conjunto completo con `qa:servir`, sin inyectar CSS ni modificar el reloj. En los dos tamaños, hit tests positivos para «Terminar sesión» y «Siguiente», con y sin descanso, al inicio/final del scroll; el último control queda 42 px por encima del progreso.
+
+**Checks finales:** `npm test -- --maxWorkers=3` **1050/1050, 123 archivos**; `npm run lint`, `npm run build` (incluye tsc), `git diff --check` y `npm run test:http` **117 PASS** en runtime local. Avisos conocidos de Node MaxListeners/JSDOM. El handoff en `main` contiene únicamente documentación/capturas; los arreglos permanecen en el PR abierto.
+
+**Límites y siguiente:** revisar PR #8 y el destello residual de B7; **no integrar sin visto bueno nuevo**. Falta confirmar tacto, gestos del sistema y rendimiento en un iPhone físico; allí repetir 3, 7 y 9 tras una instalación nueva. La instalación desde acceso del 16 y Hoy autenticado sin anterior en ese modelo no se certifican. No atribuir el destello residual a hardware real ni dar por cerrado el QA físico. Vídeos/guiones adicionales: `/tmp/sfm-ios-nativa-qa/`; fallos y mediciones relevantes versionados en `docs/qa-ios-sensacion-nativa/`.
+
 ## 2026-10-20 — Cierre del plan de sensación nativa — codex
 
 - El dueño pidió «termina ese plan» y dio el visto bueno pendiente del PR #6 en este chat. Se completan los bloques 2 y 3 en `codex/sensacion-nativa-completa`, conservando el bloque 1, con preview antes de integrar.
@@ -199,11 +227,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T14:22:01.658Z
+- **Última sincronización:** 2026-10-20T19:24:48.927Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1346,6 +1374,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T19:24:48.928Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA iOS 16 Pro y SE documentada con matriz y capturas; tres errores tratados en PR #8 sin merge. B7 conserva destello residual; fixes solo en rama 41a36d5 y preview 80386fa5.
+- **Verificación:** npm test -- --maxWorkers=3: 1050/1050, 123 archivos; npm run lint; npm run build; git diff --check; npm run test:http: 117 PASS; Safari iOS y PWA con gestos nativos y limites detallados en la matriz.
+- **Siguiente:** Revisar PR #8 y destello residual B7. No integrar sin visto bueno nuevo. Probar 3, 7 y 9 en iPhone fisico tras instalacion nueva; no cerrar QA fisico desde el simulador.
+
 
 ### 2026-10-20T14:22:01.660Z | codex | CLAIM
 - **Estado:** active
