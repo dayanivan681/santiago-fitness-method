@@ -1565,7 +1565,7 @@ a.sfm-primary:active {
   padding: 14px;
 }
 .sfm-main--client:has(.entreno__barra) {
-  padding-bottom: calc(145px + env(safe-area-inset-bottom) + var(--alto-cronometro, 0px));
+  padding-bottom: calc(145px + env(safe-area-inset-bottom));
 }
 .sfm-main--client .entreno__herramientas button {
   min-height: 48px;
@@ -1738,7 +1738,7 @@ a.sfm-primary:active {
 }
 .sfm-main--client:has(.entreno__barra) {
   padding-top: 0;
-  padding-bottom: calc(180px + env(safe-area-inset-bottom));
+  padding-bottom: calc(180px + env(safe-area-inset-bottom) + var(--alto-cronometro, 0px));
 }
 .sfm-main--client .entreno__barra {
   padding: 4px 0 10px;
