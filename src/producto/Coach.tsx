@@ -6,7 +6,7 @@ import { ContextoPagos, pagoPendiente, usePagos, type Pagos } from "./pagos-cont
 import { segunCantidad } from "../logica/plural";
 import { Consejo } from "./Ayuda";
 import { useAyuda } from "./ayuda-contexto";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Link,
   NavLink,
@@ -45,6 +45,7 @@ import { ResumenSesiones } from "./Progreso";
  * lo nuevo, pero cada pregunta cuenta en el límite diario de lecturas de D1.
  */
 const INTERVALO_PANEL_MS = 15_000;
+const INTERVALO_PAGOS_MS = 120_000;
 export function Coach({
   servicio,
   base,
@@ -62,15 +63,26 @@ export function Coach({
   const [listo, setListo] = useState(false);
   const biblioteca = useBibliotecaDelCoach(servicio);
   const [pagos, setPagos] = useState<Pagos>({ disponibles: false, porCliente: new Map() });
-  const cargar = useCallback(async () => {
+  /**
+   * Los pagos no van en el 304 de /clientes: preguntarlos en cada refresco
+   * periódico era una lectura de D1 cada 15 s con el panel abierto. Se piden al
+   * cambiar de pantalla, si cambia la lista de clientes o cada 2 minutos.
+   */
+  const ultimosPagos = useRef({ clave: "", en: 0 });
+  const cargar = useCallback(async (forzarPagos = false) => {
     try {
       const [c, b] = await Promise.all([servicio.listar(), servicio.cambios()]);
       setClientes(c);
-      // Los pagos nunca impiden ver a los clientes: si fallan, sin insignias.
-      void servicio.suscripciones
-        .listar(c.map((x) => x.perfil.id))
-        .then((r) => setPagos({ disponibles: r.pagosDisponibles, porCliente: new Map(r.suscripciones.map((x) => [x.clienteId, x])) }))
-        .catch(() => setPagos({ disponibles: false, porCliente: new Map() }));
+      const ids = c.map((x) => x.perfil.id);
+      const clave = ids.join("|");
+      if (forzarPagos || clave !== ultimosPagos.current.clave || Date.now() - ultimosPagos.current.en > INTERVALO_PAGOS_MS) {
+        ultimosPagos.current = { clave, en: Date.now() };
+        // Los pagos nunca impiden ver a los clientes: si fallan, sin insignias.
+        void servicio.suscripciones
+          .listar(ids)
+          .then((r) => setPagos({ disponibles: r.pagosDisponibles, porCliente: new Map(r.suscripciones.map((x) => [x.clienteId, x])) }))
+          .catch(() => setPagos({ disponibles: false, porCliente: new Map() }));
+      }
       setBorradores(
         ultimos(b, "alta").filter((v) => !(v.datos as Alta).completado),
       );
@@ -99,7 +111,7 @@ export function Coach({
     // La actualización ocurre después de leer el repositorio externo, nunca
     // durante el efecto. El mismo lector atiende publicación y refresco periódico.
     // oxlint-disable-next-line react/set-state-in-effect
-    void cargar();
+    void cargar(true);
   }, [cargar, pathname]);
   return (
     <ContextoPagos.Provider value={pagos}>
@@ -144,7 +156,7 @@ export function Coach({
                 clientes={clientes}
                 servicio={servicio}
                 base={base}
-                actualizar={cargar}
+                actualizar={() => cargar(true)}
                 preview={preview}
                 entrenar={entrenar}
               />

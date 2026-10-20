@@ -273,8 +273,9 @@ export function separar<T extends SlotAgrupable>(slots: readonly T[], i: number)
 export function quitar<T extends SlotAgrupable>(slots: readonly T[], i: number): T[] {
   const pos = posicionEnGrupo(slots, i);
   const salida = slots.map((s) => ({ ...s }));
-  // Si se quita el último de un grupo, su descanso pasa al nuevo último.
-  if (pos && pos.posicion === pos.tamano && pos.tamano > 2) {
+  // Si se quita el último de un grupo, su descanso pasa al nuevo último; en una
+  // bi-serie, al que queda suelto, que conserva así el descanso del coach.
+  if (pos && pos.posicion === pos.tamano) {
     const nuevoUltimo = pos.indices[pos.tamano - 2];
     salida[nuevoUltimo] = { ...salida[nuevoUltimo], descansoSegundos: slots[i].descansoSegundos };
   }

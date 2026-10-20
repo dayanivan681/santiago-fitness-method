@@ -174,6 +174,17 @@ export async function autenticar(
     googleVinculado: cliente.google === 1,
   };
 }
+/**
+ * ¿El navegador ya tiene esta versión? Comparación débil (RFC 9110): al
+ * comprimir, Cloudflare convierte `"x"` en `W/"x"`, y el navegador devuelve esa
+ * forma; con una comparación literal el 304 no saldría nunca en producción.
+ */
+export function yaLaTiene(request: Request, etiqueta: string): boolean {
+  const cabecera = request.headers.get("If-None-Match");
+  if (!cabecera) return false;
+  const sinDebil = (e: string) => e.trim().replace(/^W\//, "");
+  return cabecera.split(",").some((e) => e.trim() === "*" || sinDebil(e) === sinDebil(etiqueta));
+}
 export function json(datos: unknown, status = 200) {
   return new Response(JSON.stringify(datos), {
     status,

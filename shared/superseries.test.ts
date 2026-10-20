@@ -173,6 +173,11 @@ describe('edición', () => {
     expect('grupo' in r[0]).toBe(false)
   })
 
+  it('quitar el último de una bi-serie deja al otro con el descanso del grupo', () => {
+    const r = quitar([s('a', 'A', 3, 0), s('b', 'A', 3, 180)], 1)
+    expect(r.map((x) => [x.id, x.grupo, x.descansoSegundos])).toEqual([['a', undefined, 180]])
+  })
+
   it('quitar de una bi-serie la deshace; de una tri-serie la deja en bi-serie', () => {
     expect(quitar([s('a', 'A', 3, 0), s('b', 'A'), s('c')], 0).map((x) => x.grupo)).toEqual([undefined, undefined])
     const tri = [s('a', 'A', 3, 0), s('b', 'A', 3, 0), s('c', 'A', 3, 90)]

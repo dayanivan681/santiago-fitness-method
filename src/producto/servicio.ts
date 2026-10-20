@@ -8,7 +8,7 @@ import type {
   Plan,
   Tipo,
 } from "../../shared/v2/contratos";
-import { ClienteApi, pedirSiCambio } from "../nube/cloud";
+import { ClienteApi, ErrorAcceso, estadoCambiar, pedirSiCambio } from "../nube/cloud";
 import { PLANTILLAS_5_DIAS, PLANTILLAS_BASE } from "../../shared/plantillas-base";
 import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
 import { RepositorioMemoria } from "../nube/memoria";
@@ -112,7 +112,16 @@ export class ServicioCoach {
       "/admin/api/v2",
       "/clientes",
       this.etiquetaClientes,
-    );
+    ).catch((e) => {
+      // Igual que `ClienteApi.pedir`: un acceso caducado se dice como tal,
+      // no como un error suelto, y detiene lo demás hasta volver a entrar.
+      if (e instanceof ErrorAcceso)
+        estadoCambiar({
+          bloqueado: true,
+          mensaje: "Tu acceso caducó. Vuelve a entrar; lo pendiente se conserva.",
+        });
+      throw e;
+    });
     if (r.cambio) {
       this.clientesRecibidos = r.datos.clientes;
       this.etiquetaClientes = r.etiqueta;
@@ -151,7 +160,8 @@ export class ServicioCoach {
     const clave = cliente ?? "";
     const previo = this.historiales.get(clave) ?? { cambios: [], cursor: 0 };
     const api = new ClienteApi(true, cliente);
-    let { cambios, cursor } = previo;
+    const cambios = [...previo.cambios];
+    let { cursor } = previo;
     let mas = true;
     while (mas) {
       const r = await api.pedir<{
@@ -159,7 +169,7 @@ export class ServicioCoach {
         cursor: number;
         mas: boolean;
       }>(`/cambios?cursor=${cursor}`);
-      cambios = [...cambios, ...r.cambios];
+      cambios.push(...r.cambios);
       cursor = r.cursor;
       mas = r.mas;
     }

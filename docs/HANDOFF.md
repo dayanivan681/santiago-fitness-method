@@ -190,11 +190,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T11:16:17.273Z
+- **Última sincronización:** 2026-10-20T11:24:23.468Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1337,6 +1337,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T11:24:23.469Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Run de bugs y optimizaciones sobre superseries y panel del coach (revisión de código + verificación). Arreglado: (1) sesión caducada del coach: listar() con pedirSiCambio ya no marcaba el acceso bloqueado; vuelve el aviso 'Tu acceso caducó' (servicio.ts). (2) ETag: comparación débil yaLaTiene() en seguridad.ts para /clientes y /biblioteca; Cloudflare convierte el ETag en W/ al comprimir y el 304 nunca salía en producción. (3) quitar() de una bi-serie: el que queda suelto conserva el descanso del grupo en vez de 120 s. (4) Panel del coach: los pagos ya no se piden cada 15 s; al cambiar de pantalla, al cambiar la lista o cada 2 min (menos lecturas D1). (5) Historial paginado sin copias cuadráticas. Descartados tras verificar: pantalla Coach antigua y plantilla.ts (no se usan en la app), roles.ts (solo planes previos a grupos), guardadas (no existe borrar series).
+- **Verificación:** npm test 1058/1058; npx tsc -b; npm run lint 0 avisos; npm run build; git diff --check; npm run test:http 115 PASS
+- **Siguiente:** Comprobar en producción que /admin/api/v2/clientes devuelve 304 con If-None-Match W/ (cabeceras en DevTools). Opcional: borrar la pantalla Coach antigua (src/pantallas/Coach) y useCoach si ya no se usan.
+
 
 ### 2026-10-20T11:16:17.277Z | claude-code | CLAIM
 - **Estado:** active

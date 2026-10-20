@@ -21,7 +21,7 @@ import {
 } from "./bibliotecaDatos";
 import { ErrorApi } from "./datos";
 import { leerAnimacionValidada, leerFotoValidada, rechazarSiDeclaraDemasiado } from "./medios";
-import { json, type EntornoV2 } from "./seguridad";
+import { json, yaLaTiene, type EntornoV2 } from "./seguridad";
 
 const PREFIJO = "/biblioteca";
 const CACHE_DE_FOTO = "private, max-age=300";
@@ -82,7 +82,7 @@ async function atender(request: Request, env: EntornoV2, ctx: Contexto, ruta: st
 /** Con ~300 ejercicios y un cliente que pregunta cada minuto, responder 304 ahorra bajar la lista entera. */
 async function listar(request: Request, env: EntornoV2): Promise<Response> {
   const etiqueta = await etiquetaDeBiblioteca(env.ACCESO);
-  if (request.headers.get("If-None-Match") === etiqueta)
+  if (yaLaTiene(request, etiqueta))
     return new Response(null, { status: 304, headers: { ETag: etiqueta, "Cache-Control": "no-store" } });
   const respuesta = json({ ejercicios: await ejerciciosActivos(env.ACCESO) });
   respuesta.headers.set("ETag", etiqueta);

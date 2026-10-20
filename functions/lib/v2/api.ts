@@ -17,7 +17,7 @@ import {
   perfilActual,
   planActual,
 } from "./datos";
-import { autenticar, json, origenSeguro, type EntornoV2 } from "./seguridad";
+import { autenticar, json, origenSeguro, yaLaTiene, type EntornoV2 } from "./seguridad";
 import { importar } from "./importar";
 import { revisarImportaciones } from "./revisarImportaciones";
 import { medios } from "./medios";
@@ -53,7 +53,7 @@ export async function api(
       return json({ error: "La base no corresponde a este entorno." }, 503);
     if (coach && ruta === "/clientes" && request.method === "GET") {
       const etiqueta = await etiquetaDeClientes(env.ACCESO);
-      if (request.headers.get("If-None-Match") === etiqueta)
+      if (yaLaTiene(request, etiqueta))
         return new Response(null, { status: 304, headers: { ETag: etiqueta, "Cache-Control": "no-store" } });
       const respuesta = json({ clientes: await clientesActuales(env.ACCESO) });
       respuesta.headers.set("ETag", etiqueta);

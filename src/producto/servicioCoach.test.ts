@@ -52,3 +52,15 @@ describe('ServicioCoach no relee lo que ya tiene', () => {
     expect(cursores).toEqual(['0', '2', '2'])
   })
 })
+
+describe('acceso caducado en el panel', () => {
+  it('si la sesión caducó al pedir los clientes, el panel queda bloqueado con el aviso de siempre', async () => {
+    const nube = await import('../nube/cloud')
+    nube.estadoCambiar({ bloqueado: false, mensaje: '' })
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(respuesta({ error: 'Acceso requerido' }, 401))
+    await expect(new ServicioCoach(false).listar()).rejects.toThrow('Acceso privado requerido')
+    expect(nube.estadoNube.bloqueado).toBe(true)
+    expect(nube.estadoNube.mensaje).toMatch(/Tu acceso caducó/)
+    nube.estadoCambiar({ bloqueado: false, mensaje: '' })
+  })
+})
