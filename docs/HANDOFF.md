@@ -7,7 +7,7 @@
 - Checks: **1048/1048 pruebas, 123 archivos** (`npm test -- --maxWorkers=3`), tsc, lint 0 avisos, build, diff-check y **117 comprobaciones HTTP locales PASS**. Primer intento con paralelismo por defecto agotó un test; aislado y dos suites completas con tres procesos PASS. Avisos conocidos de Node/JSDOM.
 - Chromium táctil 375×812 normal/reducido: diez toques, guardar, descanso/prórroga/agotamiento, resumen y Hoy 1/4 PASS; gestos 1→2→1 y arrastre de hoja PASS; 320/1024 sin desborde ni errores de consola. Muestra del plegado ~60 fps. Evidencia en `/tmp/sfm-nativa-qa/`, detalle en el plan y BUILD_LOG. No se atribuye a Codex una prueba nueva en iPhone físico ni de instalación.
 - Preview del PR #7: https://codex-sensacion-nativa-compl.santiago-fitness-method.pages.dev (despliegue `44507065`, código `9e1544a`). Access conservado; acceso Google del dueño a través de Chrome. QA remota en demo: guardar 2,5 lb/lado, descanso 3:00, resumen 1 serie / 1 ejercicio / 6% y volver a Hoy → Semana 1/4 PASS. HTML sirve `index-oC8PSuj8.js` y `index-BwhFVnlT.css`, los mismos del build probado. Sin errores de la app; avisos ajenos de una extensión de Chrome. Captura `/tmp/sfm-nativa-qa/preview-remota-resumen.png`.
-- Siguiente de este turno: integrar PR #6 y #7 con `handoff:publish` y comprobar la publicación canónica usando el visto bueno recibido. Fuera del plan siguen tendencias, valoración 1–10, rachas y compartir imagen.
+- PR #6 y #7 integrados en `main`, sin reescribir historial. Árbol de producto idéntico al de la preview probada; publicación mediante `handoff:publish` y comprobación canónica a continuación. Ninguna implementación pendiente del plan. Fuera del plan siguen tendencias, valoración 1–10, rachas y compartir imagen.
 
 ## 2026-10-06 — Animaciones base: nota IA, aviso de equipo C203 y versión en URL — claude-code
 
@@ -199,11 +199,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T13:11:43.590Z
+- **Última sincronización:** 2026-10-20T13:32:04.607Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1346,6 +1346,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T13:32:04.608Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Plan de sensacion nativa completo: PR 6 y 7 integrados con visto bueno; microanimaciones, descanso, resumen y semana. Preview remota verificada; mismo arbol de producto en main.
+- **Verificación:** npm test -- --maxWorkers=3: 1048/1048 en 123 archivos; npx tsc -b; npm run lint: 0 avisos; npm run build; git diff --check; npm run test:http: 117 PASS; Chromium 320/375/1024 normal y reducido; QA remota de preview PASS
+- **Siguiente:** Ninguna implementacion pendiente del plan; verificar el despliegue canonico tras este push en el mismo turno
+
 
 ### 2026-10-20T13:11:43.591Z | codex | CLAIM
 - **Estado:** active

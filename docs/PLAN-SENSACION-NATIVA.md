@@ -21,9 +21,9 @@ El dueño pidió empezar por el pulido de animaciones e iconos.
 
 | Bloque | Estado | Dónde |
 |---|---|---|
-| 1. Transiciones, gestos, esqueletos, inicio iOS, hover, iconos | Implementado; integración autorizada por el dueño el 20-oct | PR #6 |
-| 2. Microanimaciones del entrenamiento | Implementado y verificado; preview antes de integrar | `codex/sensacion-nativa-completa` |
-| 3. Momentos de celebración | Implementado y verificado; preview antes de integrar | `codex/sensacion-nativa-completa` |
+| 1. Transiciones, gestos, esqueletos, inicio iOS, hover, iconos | Completo, integrado con el visto bueno del dueño | PR #6 → `main` |
+| 2. Microanimaciones del entrenamiento | Completo, pruebas y preview PASS | PR #7 → `main` |
+| 3. Momentos de celebración | Completo, pruebas y preview PASS | PR #7 → `main` |
 
 ### Verificación de cierre — Codex, 2026-10-20
 
@@ -37,21 +37,18 @@ El dueño pidió empezar por el pulido de animaciones e iconos.
 - `reducedMotion: reduce`: sin animaciones nuevas ni transición de barra; cifras finales inmediatas. El cambio de preferencia durante la cuenta cancela el RAF, cubierto por prueba.
 - 320/375/1024 px sin desborde; cifras del resumen a 44 px. Capturas de estados finales e intermedios en `/tmp/sfm-nativa-qa/`. Browser plugin no disponible; QA con Playwright CLI. No se afirma una prueba nueva en hardware físico ni de instalación iOS por Codex.
 - No se modifican `docs/cliente`, cuentas ni datos reales. Las ideas aplazadas del bloque 3.3 siguen fuera del plan.
-- Preview completa verificada tras Access: https://codex-sensacion-nativa-compl.santiago-fitness-method.pages.dev, despliegue `44507065`, código `9e1544a`, PR #7. Flujo remoto guardar → descanso → resumen → Hoy 1/4 PASS; JS y CSS coinciden con el build probado. Integración de los dos PR autorizada por el dueño; publicación canónica se verifica después de `handoff:publish`.
+- Preview completa verificada tras Access: https://codex-sensacion-nativa-compl.santiago-fitness-method.pages.dev, despliegue `44507065`, código `9e1544a`, PR #7. Flujo remoto guardar → descanso → resumen → Hoy 1/4 PASS; JS y CSS coinciden con el build probado. Ambos PR integrados en `main` con autorización del dueño; publicación canónica se verifica después de `handoff:publish`.
 
-### Bloque 1: lo que falta para cerrarlo
+### Bloque 1: cierre y mantenimiento
 
-1. **El dueño prueba la preview en su iPhone**
-   (https://claude-sensacion-nativa.santiago-fitness-method.pages.dev):
-   - en Safari: transiciones, arrastrar hojas, deslizar entre ejercicios;
-   - instalada en inicio (borrar el icono y volver a añadirlo): pantalla de inicio con el logo y deslizar desde el borde izquierdo para volver.
-2. **Con su visto bueno:**
-   1. `git checkout main && npm run handoff:sync`;
-   2. reclamar el turno;
-   3. unir la rama (`git merge --ff-only origin/claude/sensacion-nativa` si se puede; si no, merge normal);
-   4. pasar las comprobaciones;
-   5. `handoff:publish`.
-3. **Si algo falla en iPhone,** lo más probable:
+El visto bueno pendiente se recibió en este chat el 2026-10-20. El PR #6 y el
+complemento #7 se integraron con merge normal, sin reescribir historial. El árbol
+de producto resultante coincide con el verificado en preview. Codex no realizó
+una nueva prueba en hardware físico: su QA propia es Chromium y el runtime local.
+Para revisar instalación en un iPhone, volver a añadir el icono permite comprobar
+las pantallas de inicio; el gesto del borde sólo se activa en modo instalado.
+
+**Si algo falla en iPhone,** lo más probable:
    - **Hojas:** que el arrastre compita con el scroll interno. El arrastre solo empieza con `scrollTop <= 0`; revisar `src/aplicacion/gestos.ts`, `useArrastrarParaCerrar`.
    - **Volver desde el borde:** que Safari en modo navegador también haga su propio gesto. Por eso solo se activa instalada en inicio (`display-mode: standalone`).
 
