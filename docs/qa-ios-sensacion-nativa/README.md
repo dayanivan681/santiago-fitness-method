@@ -19,4 +19,6 @@ simulador o fotogramas extraídos de grabaciones de `simctl`; no son mockups.
 
 Los vídeos y guiones adicionales quedan en `/tmp/sfm-ios-nativa-qa/` y no se
 consideran almacenamiento permanente. Los JPG y JSON de esta carpeta sí quedan
-en Git. El arreglo está exclusivamente en PR #8; no se incorporó a main.
+en Git. El PR #8 se incorporó a main con el «Hágale» del dueño: merge `cef5e2e`,
+producción Pages `b711d85e`. `produccion-integracion.json` registra la verificación
+HTTP de publicación, sin una nueva prueba nativa. El destello residual sigue pendiente.

@@ -1,6 +1,16 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-20 — PR #8 aprobado, integrado y publicado — codex
+
+- Con el «Hágale» del dueño se sincronizó y reclamó el turno `9531b26`. [PR #8](https://github.com/dayanivan681/santiago-fitness-method/pull/8) integrado mediante merge normal **`cef5e2e`**. El árbol de producto coincide con el código `41a36d5` probado en el simulador; no se añadieron cambios de producto en esta integración.
+- Producción https://santiago-fitness-method.pages.dev: Pages **`b711d85e`**, commit `cef5e2e`, check SUCCESS. Tras finalizar el despliegue, `/demo/cliente` sirve `index-C6ojQqxB.js` y `index-B7nj7LDr.css`; los seis archivos enlazados coinciden byte por byte con el build local. CSS publicado con progreso fijo y espacio del descanso en el scroll.
+- `/entrar` responde 200, ofrece manifest y 11 pantallas de inicio, CSP con imágenes/manifest del mismo origen y `Referrer-Policy: strict-origin`. Manifest con inicio/scope `/`, modo standalone; PNG de SE y 16 Pro disponibles. API cliente anónima 401; admin 302 a Access. Verificación remota solo mediante GET, sin cuentas ni datos reales modificados. [Mediciones de publicación](qa-ios-sensacion-nativa/produccion-integracion.json).
+- Checks repetidos sobre el merge: **1050/1050 pruebas, 123 archivos**, lint, build con TypeScript, `git diff --check` y **117 HTTP locales PASS**. Runtime local detenido al terminar. Se conservan los avisos conocidos Node/JSDOM. `docs/cliente` intacto.
+- **Siguiente:** investigar el destello residual de B7 y confirmar en teléfono físico los puntos **3, 7 y 9** tras una instalación nueva. Se mantiene la matriz histórica inferior: sus FALLO describen la producción anterior al PR. La publicación no añade una nueva prueba nativa ni cierra B7; siguen sin certificar la instalación desde acceso y Hoy raíz del 16 Pro.
+
 ## 2026-10-20 — QA iOS de sensación nativa — codex
+
+Informe previo a la aprobación e integración; estado actual en la entrada superior.
 
 - Turno `4cbc629`, sincronizado y reclamado como «QA iOS de sensación nativa». Producción: https://santiago-fitness-method.pages.dev. Demo en memoria y fixture/cuenta **sintéticos, exclusivamente locales**; sin cuentas, programas ni entrenamientos reales modificados. `docs/cliente` intacto.
 - Simuladores **iPhone 16 Pro** (`A57A612D…`, pantalla 402×874; Safari 402×714) y **SE, 3.ª generación** (`DB83DB23…`, pantalla 375×667; Safari 375×549), **iOS/Safari 27.0, build 24A434**. La geometría SE no mide el rendimiento de un SE físico.
@@ -227,11 +237,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T20:11:22.564Z
+- **Última sincronización:** 2026-10-20T20:14:13.890Z
 
 **Liberación del turno (claude-code, 2026-09-26):** codex lo reclamó el 2026-09-17
 para validar la ayuda real en Safari/PWA (`f6ad0d3`) y en nueve días no hubo ni
@@ -1374,6 +1384,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-20T20:14:13.891Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #8 aprobado e integrado en cef5e2e; producción b711d85e verificada con archivos idénticos al build y acceso iOS corregido; documentación y evidencia actualizadas
+- **Verificación:** npm test -- --maxWorkers=3: 1050/1050; npm run lint; npm run build; git diff --check; npm run test:http: 117 PASS; Pages SUCCESS y GET de producción
+- **Siguiente:** Investigar destello residual B7; reinstalar en iPhone físico y verificar puntos 3, 7 y 9. No cerrar QA físico ni certificar instalación desde acceso/Hoy raíz del 16 Pro sin prueba.
+
 
 ### 2026-10-20T20:11:22.565Z | codex | CLAIM
 - **Estado:** active

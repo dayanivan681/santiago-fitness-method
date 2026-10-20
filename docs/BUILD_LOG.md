@@ -1,6 +1,15 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-20 — Integración aprobada del QA iOS — codex
+
+- «Hágale» del dueño: PR #8 integrado con merge normal `cef5e2e`, sin cambios adicionales de producto. Árbol de producto idéntico al código `41a36d5` probado en simulador.
+- Pages `b711d85e`, SUCCESS: producción sirve JS `index-C6ojQqxB.js` y CSS `index-B7nj7LDr.css`; seis archivos enlazados idénticos al build local. Confirmados progreso fijo/espacio de descanso, manifest, 11 inicios y strict-origin en acceso; imágenes de ambos tamaños disponibles. API cliente 401 y admin redirige a Access. GET remotos de solo lectura; sin nueva prueba nativa ni acceso a cuentas reales.
+- Checks repetidos: 1050/1050 pruebas en 123 archivos, lint, build con tsc, diff-check y 117 HTTP locales PASS. Runtime local detenido. Evidencia en `docs/qa-ios-sensacion-nativa/produccion-integracion.json`.
+- Siguiente: destello residual B7 y prueba física de 3, 7 y 9 tras reinstalar. Los fallos de la matriz anterior documentan la versión previa; B7 sigue abierto.
+
 ## 2026-10-20 — QA en Safari iOS y PWA; tres arreglos aislados — codex
+
+Registro histórico anterior a la aprobación; integración publicada en la entrada superior.
 
 - Turno `4cbc629`: «QA iOS de sensación nativa». Safari iOS 27.0 en simuladores 16 Pro (402×874) y SE (375×667); matriz completa de nueve puntos en HANDOFF. SafariDriver observa el DOM/animaciones; Maestro/XCUITest hace gestos nativos, Ajustes e instalación. UDID y dimensiones contrastados; conexión de Maestro aislada por dispositivo.
 - Producción: transiciones, hojas/scroll, swipes, microanimaciones y movimiento reducido PASS; descanso y pulso x2 PASS tras tres minutos reales en ambos. FALLO: progreso/cierre cubiertos por el descanso. Arreglo CSS local PASS en ambos, incluidos hit tests de los controles finales.

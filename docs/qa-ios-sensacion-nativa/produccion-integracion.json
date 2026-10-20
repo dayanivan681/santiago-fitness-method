@@ -1,0 +1,51 @@
+{
+  "assets": [
+    "/assets/index-C6ojQqxB.js",
+    "/assets/rolldown-runtime-CbXtAM7H.js",
+    "/assets/interfaz-Bt-ex7k9.js",
+    "/assets/almacenamiento-DhbQmMzc.js",
+    "/assets/contratos-Bf5_00o2.js",
+    "/assets/index-B7nj7LDr.css"
+  ],
+  "local_match": {
+    "/assets/index-C6ojQqxB.js": true,
+    "/assets/rolldown-runtime-CbXtAM7H.js": true,
+    "/assets/interfaz-Bt-ex7k9.js": true,
+    "/assets/almacenamiento-DhbQmMzc.js": true,
+    "/assets/contratos-Bf5_00o2.js": true,
+    "/assets/index-B7nj7LDr.css": true
+  },
+  "css_sha256": "0e4092f7a8b795baf2d0b9b77af9d802383c0df5de9e5f17a38e3c7d173620cf",
+  "fixed_progress": true,
+  "progress_rule": ".sfm-main--client .progreso-sesion{bottom:calc(84px + env(safe-area-inset-bottom) + var(--alto-cronometro,0px));width:min(calc(100% - 40px), calc(var(--sfm-width) - 40px));background:var(--sfm-surface);border:1px solid var(--sfm-line);border-radius:16px;max-width:none;margin:0;padding:14px;position:fixed;left:50%;right:auto;transform:translate(-50%)",
+  "scroll_rules": [
+    ".sfm-main--client:has(.entreno__barra){padding-bottom:calc(145px + env(safe-area-inset-bottom))",
+    ".sfm-main--client:has(.entreno__barra){padding-top:0;padding-bottom:calc(180px + env(safe-area-inset-bottom) + var(--alto-cronometro,0px))"
+  ],
+  "login": {
+    "manifest": true,
+    "startup_links": 11
+  },
+  "manifest": {
+    "name": "Santiago Fitness Method",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone"
+  },
+  "startup_images": {
+    "/inicio/inicio-750x1334.png": 14340,
+    "/inicio/inicio-1206x2622.png": 26602
+  },
+  "/api/v2/inicio": [
+    "HTTP/2 401 "
+  ],
+  "/admin/api/v2/clientes": [
+    "HTTP/2 302",
+    "location: Cloudflare Access (login)"
+  ],
+  "commit": "cef5e2e9e9a7e206ac98c3608eaabeb875265c0c",
+  "deployment": "b711d85e-3388-4771-aeb8-16f00ef17d07",
+  "referrer_policy": "strict-origin",
+  "csp_login": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; img-src 'self'; manifest-src 'self'",
+  "scope": "GET anónimos de solo lectura; sin login ni acciones de cuentas reales"
+}

@@ -6,11 +6,13 @@ Matriz de Safari/PWA en simuladores 16 Pro y SE (iOS 27) en [HANDOFF](HANDOFF.md
 Se reproducen el progreso cubierto por el descanso, la instalación incompleta desde
 el acceso y un POST de login rechazado por Origin:null en Safari. Arreglos y preview
 en [PR #8](https://github.com/dayanivan681/santiago-fitness-method/pull/8), código
-41a36d5, **sin merge**. Header y borde del SE pasan con el arreglo local, incluido
+41a36d5, **integrado con el «Hágale» del dueño en `cef5e2e`**. Producción verificada
+en Pages `b711d85e`; 1050 pruebas y 117 HTTP locales PASS, lint/build PASS.
+Header y borde del SE pasan con el arreglo local, incluido
 Hoy sin ruta anterior. Quedan fotogramas claros en el arranque: B7 no está cerrado.
 
-**Siguiente:** revisar PR #8 y el destello residual; no integrar sin visto bueno
-nuevo. Tras la revisión, instalación nueva y puntos 3, 7 y 9 en teléfono físico.
+**Siguiente:** investigar el destello residual de B7; instalación nueva y puntos
+3, 7 y 9 en teléfono físico. Detalle de publicación y límites en HANDOFF.
 La implementación de los bloques 1–3 no equivale al cierre del QA físico.
 
 Preparado por claude-code el 2026-10-20 para que cualquiera de los dos agentes
