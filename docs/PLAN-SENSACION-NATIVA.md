@@ -21,9 +21,23 @@ El dueño pidió empezar por el pulido de animaciones e iconos.
 
 | Bloque | Estado | Dónde |
 |---|---|---|
-| 1. Transiciones, gestos, esqueletos, inicio iOS, hover, iconos | Hecho, **sin publicar** | PR #6, rama `claude/sensacion-nativa` |
-| 2. Microanimaciones del entrenamiento | Por hacer | Este plan |
-| 3. Momentos de celebración | Por hacer | Este plan |
+| 1. Transiciones, gestos, esqueletos, inicio iOS, hover, iconos | Implementado; integración autorizada por el dueño el 20-oct | PR #6 |
+| 2. Microanimaciones del entrenamiento | Implementado y verificado; preview antes de integrar | `codex/sensacion-nativa-completa` |
+| 3. Momentos de celebración | Implementado y verificado; preview antes de integrar | `codex/sensacion-nativa-completa` |
+
+### Verificación de cierre — Codex, 2026-10-20
+
+- El dueño pidió «termina ese plan» y respondió «Sí» al visto bueno pendiente. Se completa el conjunto en rama y preview antes de integrar a `main` mediante handoff.
+- Bloque 2: tokens comunes; check dibujado; plegado de altura sólo tras recibir el registro; números con salida/entrada y sustitución inmediata en toques rápidos; barra de descanso con duración total persistida y prórroga, pulso final de dos iteraciones; progreso de sesión con curva común; componente `ResumenSesion`, tres cifras (series, ejercicios, % del plan), cuenta de 600 ms y escalonado 0/60/120 ms. Los botones del cliente comparten la curva.
+- El plegado usa `interpolate-size` cuando existe. Como respaldo se animan las alturas inicial/final medidas una vez, sin duplicar formularios ni conservar controles ocultos. No se mide cada fotograma ni se añaden librerías.
+- Bloque 3: círculo rojo finito al cerrar la sesión; indicador semanal en Hoy usando frecuencia y sesiones cerradas, lunes local como inicio. Cliente y demo del coach comparten `sesionesDeSemana`; el texto conserva los valores reales aunque se supere el objetivo y el medidor se acota al 100%.
+- Pruebas finales: `npm test -- --maxWorkers=3`: **1048/1048, 123 archivos**; `npx tsc -b`, lint (0 avisos), build y diff-check PASS. `test:http`: **117 PASS** en runtime local aislado.
+- La primera suite sin limitar procesos agotó el tiempo en la nueva prueba de Hoy (1046 pasaron). La misma prueba aislada pasó; dos ejecuciones completas con tres procesos pasaron (1047 y, tras añadir la prueba de cambio dinámico de movimiento reducido, 1048). Persisten los avisos conocidos de Node/JSDOM.
+- Chromium con tacto CDP, 375×812: diez toques → 25 lb/lado, guardado y descanso, prórroga y fin, gesto 1→2→1, arrastre de la hoja, resumen, regreso a Hoy → 1/4 sesiones. Animación de plegado: muestra de 15 intervalos de 16,6–16,8 ms (~60 fps). Una muestra inicial más amplia bajo carga tuvo un salto de 200 ms previo al tramo medido; no representa rendimiento de un iPhone físico.
+- `reducedMotion: reduce`: sin animaciones nuevas ni transición de barra; cifras finales inmediatas. El cambio de preferencia durante la cuenta cancela el RAF, cubierto por prueba.
+- 320/375/1024 px sin desborde; cifras del resumen a 44 px. Capturas de estados finales e intermedios en `/tmp/sfm-nativa-qa/`. Browser plugin no disponible; QA con Playwright CLI. No se afirma una prueba nueva en hardware físico ni de instalación iOS por Codex.
+- No se modifican `docs/cliente`, cuentas ni datos reales. Las ideas aplazadas del bloque 3.3 siguen fuera del plan.
+- Preview completa verificada tras Access: https://codex-sensacion-nativa-compl.santiago-fitness-method.pages.dev, despliegue `44507065`, código `9e1544a`, PR #7. Flujo remoto guardar → descanso → resumen → Hoy 1/4 PASS; JS y CSS coinciden con el build probado. Integración de los dos PR autorizada por el dueño; publicación canónica se verifica después de `handoff:publish`.
 
 ### Bloque 1: lo que falta para cerrarlo
 

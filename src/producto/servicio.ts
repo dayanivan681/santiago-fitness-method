@@ -14,6 +14,7 @@ import { BIBLIOTECA_INICIAL } from "../datos/semilla/biblioteca";
 import { RepositorioMemoria } from "../nube/memoria";
 import type { Participante, Sesion } from "../dominio/tipos";
 import { unir } from "../../shared/superseries";
+import { sesionesDeSemana } from "../logica/semana";
 export type Cliente = {
   perfil: Perfil;
   plan: Plan;
@@ -94,13 +95,8 @@ export class ServicioCoach {
       for (const c of this.clientes) {
         const repo = await this.repoDemo(c.perfil.id);
         const sesiones = await repo.listarSesiones(c.perfil.id);
-        const semana = new Date();
-        semana.setDate(semana.getDate() - ((semana.getDay() + 6) % 7));
         c.actividad = {
-          semana: sesiones.filter(
-            (s) =>
-              s.completadaEn && s.fecha >= semana.toISOString().slice(0, 10),
-          ).length,
+          semana: sesionesDeSemana(sesiones),
           total: sesiones.filter((s) => s.completadaEn).length,
           ultima:
             sesiones.sort((a, b) => b.fecha.localeCompare(a.fecha))[0] ?? null,

@@ -67,6 +67,16 @@ export function EntrenamientoHoy({
           </p>
         </header>
 
+        <div className="semana-sesiones">
+          <p>Semana: {datos.sesionesSemana} de {participante.frecuenciaEntrenamiento} sesiones</p>
+          <div role="progressbar" aria-label="Sesiones de la semana" aria-valuemin={0}
+            aria-valuemax={participante.frecuenciaEntrenamiento}
+            aria-valuenow={Math.min(datos.sesionesSemana, participante.frecuenciaEntrenamiento)}
+            aria-valuetext={`${datos.sesionesSemana} de ${participante.frecuenciaEntrenamiento} sesiones`}>
+            <span style={{ transform: `scaleX(${Math.min(1, datos.sesionesSemana / Math.max(1, participante.frecuenciaEntrenamiento))})` }} />
+          </div>
+        </div>
+
         {ejerciciosDelDia.length>0&&<div className="sfm-session-visual" aria-hidden="true">{ejerciciosDelDia.slice(0,3).map(e=><img key={e.ejercicio.id} src={e.ejercicio.imagen} alt=""/>)}</div>}
         {/* Hasta 5 días caben todos a la vista (no hay que descubrir que la fila se desliza); con 6 o 7 se desplaza. */}
         <nav className="filtros filtros--dias" data-dias={plantillas.length} aria-label="Día de entrenamiento">

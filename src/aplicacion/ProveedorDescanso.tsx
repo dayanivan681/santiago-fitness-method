@@ -36,7 +36,13 @@ interface Props {
 export function ProveedorDescanso({ children, clavePersistencia }: Props) {
   const [estado, setEstado] = useState<EstadoDescanso>(() => {
     if (!clavePersistencia) return DESCANSO_INACTIVO
-    try { const guardado=JSON.parse(localStorage.getItem(clavePersistencia)??'null'); return guardado?.estado==='activo' && Number.isFinite(guardado.terminaEn) ? avanzarDescanso(guardado,Date.now()) : DESCANSO_INACTIVO } catch { return DESCANSO_INACTIVO }
+    try {
+      const guardado = JSON.parse(localStorage.getItem(clavePersistencia) ?? 'null')
+      if (guardado?.estado !== 'activo' || !Number.isFinite(guardado.terminaEn)) return DESCANSO_INACTIVO
+      // Compatibilidad con descansos persistidos antes de añadir la barra.
+      const ahora = Date.now()
+      return avanzarDescanso({ ...guardado, totalSegundos: guardado.totalSegundos ?? segundosRestantes(guardado, ahora) }, ahora)
+    } catch { return DESCANSO_INACTIVO }
   })
   const [restantes, setRestantes] = useState(0)
   const [barraDeSesion, setBarraDeSesion] = useState(false)

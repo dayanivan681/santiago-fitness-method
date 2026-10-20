@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-20 — Cierre del plan de sensación nativa — codex
+
+- El dueño pidió «termina ese plan» y dio el visto bueno pendiente del PR #6 en este chat. Se completan los bloques 2 y 3 en `codex/sensacion-nativa-completa`, conservando el bloque 1, con preview antes de integrar.
+- Hecho: check dibujado y plegado al registrar, números con dirección sin cola, barra y pulso final finito del descanso, progreso con curva común; `ResumenSesion` con círculo propio y cifras escalonadas; indicador semanal en Hoy con frecuencia y sesiones cerradas desde el lunes local. Movimiento reducido también cancela el contador JS. Sin cambios de datos reales ni PDFs.
+- Checks: **1048/1048 pruebas, 123 archivos** (`npm test -- --maxWorkers=3`), tsc, lint 0 avisos, build, diff-check y **117 comprobaciones HTTP locales PASS**. Primer intento con paralelismo por defecto agotó un test; aislado y dos suites completas con tres procesos PASS. Avisos conocidos de Node/JSDOM.
+- Chromium táctil 375×812 normal/reducido: diez toques, guardar, descanso/prórroga/agotamiento, resumen y Hoy 1/4 PASS; gestos 1→2→1 y arrastre de hoja PASS; 320/1024 sin desborde ni errores de consola. Muestra del plegado ~60 fps. Evidencia en `/tmp/sfm-nativa-qa/`, detalle en el plan y BUILD_LOG. No se atribuye a Codex una prueba nueva en iPhone físico ni de instalación.
+- Preview del PR #7: https://codex-sensacion-nativa-compl.santiago-fitness-method.pages.dev (despliegue `44507065`, código `9e1544a`). Access conservado; acceso Google del dueño a través de Chrome. QA remota en demo: guardar 2,5 lb/lado, descanso 3:00, resumen 1 serie / 1 ejercicio / 6% y volver a Hoy → Semana 1/4 PASS. HTML sirve `index-oC8PSuj8.js` y `index-BwhFVnlT.css`, los mismos del build probado. Sin errores de la app; avisos ajenos de una extensión de Chrome. Captura `/tmp/sfm-nativa-qa/preview-remota-resumen.png`.
+- Siguiente de este turno: integrar PR #6 y #7 con `handoff:publish` y comprobar la publicación canónica usando el visto bueno recibido. Fuera del plan siguen tendencias, valoración 1–10, rachas y compartir imagen.
+
 ## 2026-10-06 — Animaciones base: nota IA, aviso de equipo C203 y versión en URL — claude-code
 
 - Publicada con el «sí» del dueño.
