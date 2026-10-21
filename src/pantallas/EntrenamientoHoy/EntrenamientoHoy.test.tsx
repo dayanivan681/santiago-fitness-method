@@ -1695,3 +1695,16 @@ describe('el gesto de deslizar se puede descubrir', () => {
     expect(puntos[0]).toHaveClass('entreno__punto--actual')
   })
 })
+
+describe('las series pendientes muestran el objetivo, no un valor que parezca hecho', () => {
+  test('sin peso de partida, sólo el rango de reps del coach', async () => {
+    await abrirUpperA()
+    // Upper A empieza por el press de fuerza: 1–5 reps, sin historial.
+    const pendientes = document.querySelectorAll('.serie__pendiente-valor')
+    expect(pendientes.length).toBeGreaterThan(0)
+    for (const p of pendientes) {
+      expect(p).toHaveTextContent('1–5 reps')
+      expect(p).not.toHaveTextContent(/0 lb/)
+    }
+  })
+})

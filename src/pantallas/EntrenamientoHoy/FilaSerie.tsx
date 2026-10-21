@@ -1,4 +1,5 @@
 import { OpcionesSerie } from "./OpcionesSerie";
+import { segunCantidad } from '../../logica/plural'
 import { useAyuda } from "../../producto/ayuda-contexto";
 /**
  * Una serie: peso, reps y RIR.
@@ -309,9 +310,13 @@ export function FilaSerie({
       >
         <span className="serie__titulo">Serie {numeroSerie}</span>
         {/* Con `×` chocaría literalmente con el formato de «Última vez», y no
-            son lo mismo: esto es de dónde parte, aquello es lo que se hizo. */}
+            son lo mismo: esto es de dónde parte, aquello es lo que se hizo.
+            Las reps son el objetivo del coach, no un valor que parezca hecho;
+            sin peso de partida, sólo el rango en vez de «0 lb». */}
         <span className="serie__pendiente-valor">
-          {peso} lb{porLado ? '/lado' : ''} · {reps} reps
+          {peso > 0
+            ? `${peso} lb${porLado ? '/lado' : ''} · ${objetivoDeReps(repMin, repMax, reps)}`
+            : objetivoDeReps(repMin, repMax, reps)}
         </span>
       </button>
     )
@@ -591,4 +596,11 @@ function siguienteTecnica(actual: Tecnica): Tecnica {
 
 function redondear(valor: number): number {
   return Math.round(valor * 100) / 100
+}
+
+/** «6–15 reps», «8 reps» o «1 rep». Sin tope prescrito, las reps de partida. */
+function objetivoDeReps(repMin: number, repMax: number, reps: number): string {
+  if (repMax >= 100) return `${reps} ${segunCantidad(reps, 'rep', 'reps')}`
+  if (repMin === repMax) return `${repMin} ${segunCantidad(repMin, 'rep', 'reps')}`
+  return `${repMin}–${repMax} reps`
 }

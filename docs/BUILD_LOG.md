@@ -1,5 +1,11 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-20 — Series pendientes con el objetivo y «1 rep» — claude-code
+
+- Las series aún no hechas mostraban «0 lb/lado · 1 reps», como si ya estuvieran registradas. Ahora muestran el objetivo del coach: «1–5 reps» sin peso de partida, y «7.5 lb/lado · 1–5 reps» cuando hay uno. Con un solo valor, «8 reps» o «1 rep»; sin tope prescrito, las reps de partida. Sin el prefijo «Objetivo:», que ya usa la recomendación del día.
+- Singular «rep» también en las recomendaciones de `CuerpoEjercicio` («Objetivo: 1 rep…»).
+- Verificado: 1054 pruebas (1 nueva), tsc, lint, build y diff-check. Chromium 375 px: antes «1–5 reps», tras registrar 7.5 lb «7.5 lb/lado · 1–5 reps».
+
 ## 2026-10-20 — Seguimiento de simulador y relevo al PR #10 — codex
 
 - Sin cambios de producto. Instalación nueva desde acceso de producción en el SE: nombre, raíz y logo correctos; persiste el aclarado del simulador. Control HTML sin JavaScript y con fondo/color-scheme tempranos también aclara, con menor intensidad. Inferencia limitada sobre composición nativa; informe y capturas en `docs/qa-ios-sensacion-nativa/SEGUIMIENTO-B7.md`.

@@ -11,6 +11,7 @@
  * recomendación y sus cifras, y el acceso a descanso, ficha y variantes.
  */
 
+import { segunCantidad } from '../../logica/plural'
 import { useEffect,useRef } from 'react'
 import { describirSerie, resumirUltimaVez } from '../../logica/ultimaVez'
 import { etiquetaCarga, etiquetaEquipo } from '../../dominio/etiquetas'
@@ -215,7 +216,7 @@ function detalleDeSugerencia(sugerencia: Sugerencia, ejercicio: Ejercicio): stri
   const porLado = ejercicio.tipoCarga === 'porLado' ? '/lado' : ''
 
   if (sugerencia.tipo === 'subirReps') {
-    return `Objetivo: ${sugerencia.repsObjetivo} reps con el mismo peso.`
+    return `Objetivo: ${sugerencia.repsObjetivo} ${segunCantidad(sugerencia.repsObjetivo, 'rep', 'reps')} con el mismo peso.`
   }
 
   if (sugerencia.tipo === 'subirCarga') {
@@ -223,7 +224,7 @@ function detalleDeSugerencia(sugerencia: Sugerencia, ejercicio: Ejercicio): stri
     // §11: en hipertrofia se reinicia en el rango bajo al subir el peso.
     return sugerencia.repsObjetivo === undefined
       ? `Objetivo: ${carga}.`
-      : `Objetivo: ${carga}, reiniciando en ${sugerencia.repsObjetivo} reps.`
+      : `Objetivo: ${carga}, reiniciando en ${sugerencia.repsObjetivo} ${segunCantidad(sugerencia.repsObjetivo, 'rep', 'reps')}.`
   }
 
   return ''
