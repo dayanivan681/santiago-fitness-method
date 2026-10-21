@@ -3,8 +3,9 @@
 **Actualización 2026-10-21:** el dueño eligió la **propuesta 2**. Implementada en
 [PR #11](https://github.com/dayanivan681/santiago-fitness-method/pull/11), código
 `528ebbf`, con [preview](https://9b5c6324.santiago-fitness-method.pages.dev/demo/cliente)
-y [QA de diseño](../../design-qa.md). Pendiente revisión y visto bueno para merge;
-main contiene documentación y evidencia, todavía sin el nuevo código de producto.
+y [QA de diseño](../../design-qa.md). El dueño aprobó el merge: integrado en
+`de9a703` y [publicado en producción](https://santiago-fitness-method.pages.dev/demo/cliente),
+Pages `6247ae6f` SUCCESS. [Verificación de archivos publicados](implementacion/produccion-merge.json).
 El diagnóstico y los pasos de selección inferiores describen la fase del 20.
 
 Fecha: 2026-10-20. Base: `main`, producto integrado en `b42290e`, turno `34e74d9`.

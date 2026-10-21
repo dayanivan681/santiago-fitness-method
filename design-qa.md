@@ -1,5 +1,9 @@
 # QA de diseño — cliente centrado en la rutina
 
+Actualización: el dueño aprobó el merge del PR #11. Integrado en `de9a703` y
+publicado; [verificación de producción](docs/refinamiento-ios-2026-10-20/implementacion/produccion-merge.json).
+El resto del informe conserva la evidencia de la implementación previa al merge.
+
 Fecha: 2026-10-21. Rama: `codex/cliente-rutina-ios`.
 Selección del dueño: propuesta **2**, con prioridad explícita en mantener al
 cliente enfocado en su rutina. Se refina el producto existente React/PWA.

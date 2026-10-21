@@ -2,7 +2,8 @@
 
 Resultado y comparación: [design-qa.md](../../../design-qa.md).
 Código en [PR #11](https://github.com/dayanivan681/santiago-fitness-method/pull/11),
-commit `528ebbf`, sin merge.
+commit `528ebbf`; merge aprobado `de9a703`, publicado en producción.
+[Verificación de publicación](produccion-merge.json).
 
 ## Safari del simulador · comprobación final 16 Pro
 

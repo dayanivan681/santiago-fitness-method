@@ -1,0 +1,63 @@
+{
+  "commit": "de9a703e35c5fa76fa35aca169bab28fd007c931",
+  "deployment": "6247ae6f-0fcb-428f-9583-2835f49b67e8",
+  "demo_status": 200,
+  "assets": {
+    "/assets/index-CKwnXAnf.js": {
+      "status": 200,
+      "bytes": 142283,
+      "equals_local_build": true,
+      "sha256": "a9d50d8f520b4fe374e84b04b3b16328511a865b81464b3fdbf2ec159e0ce40a"
+    },
+    "/assets/rolldown-runtime-CbXtAM7H.js": {
+      "status": 200,
+      "bytes": 589,
+      "equals_local_build": true,
+      "sha256": "bbf7c5086ae414dc3f33777e3eebf16ea8631325b8bb4690d25091c03567f31a"
+    },
+    "/assets/interfaz-Bt-ex7k9.js": {
+      "status": 200,
+      "bytes": 228983,
+      "equals_local_build": true,
+      "sha256": "68eabcf17948e3842104af3cf58a7c136daa858b7cad089ce73ccc3e8684b10e"
+    },
+    "/assets/almacenamiento-DhbQmMzc.js": {
+      "status": 200,
+      "bytes": 96496,
+      "equals_local_build": true,
+      "sha256": "e16c6943c724635e6e77fe0a6b0c71c8960f12dd22052a6ef4b78cf32f064569"
+    },
+    "/assets/contratos-Bf5_00o2.js": {
+      "status": 200,
+      "bytes": 86550,
+      "equals_local_build": true,
+      "sha256": "3cd5250e27a3e5a6534b2653be017f18ee383761e40a1fda93a72695f93a1e4f"
+    },
+    "/assets/index-D_8fqSF9.css": {
+      "status": 200,
+      "bytes": 92101,
+      "equals_local_build": true,
+      "sha256": "bc475da8744a3b6d8eeb318fd0ef11aaf43aae6374a4eea6854495724cd65243"
+    },
+    "/assets/Cliente-BGCmWM-u.js": {
+      "status": 200,
+      "bytes": 47104,
+      "equals_local_build": true,
+      "sha256": "ee3af156b5fed1ac32f9a933e97a764f74aad0dc6a149ffb9685cf9ca2422da0"
+    },
+    "/sw.js": {
+      "status": 200,
+      "bytes": 2508,
+      "equals_local_build": true,
+      "sha256": "f33dbf613444d2452b4a2e0c372a746315745c72eb148c394a9be6f607358bfe"
+    }
+  },
+  "/api/v2/inicio": {
+    "status": 401,
+    "redirects_to_access": false
+  },
+  "/admin/api/v2/clientes": {
+    "status": 302,
+    "redirects_to_access": true
+  }
+}

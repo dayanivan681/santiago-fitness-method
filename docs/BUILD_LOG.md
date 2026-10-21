@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-21 — Merge aprobado y publicación del refinamiento iOS — codex
+
+- El dueño autorizó «Merge». PR #11 integrado en `de9a703`, producto idéntico al `528ebbf` revisado. Sin conflictos, dependencias, migraciones ni cambios adicionales de producto.
+- Repetición sobre el merge: 1054/1054 pruebas (123 archivos), lint, build/TypeScript y diff-check PASS. Avisos conocidos Node/JSDOM; sin nueva prueba física o instalada.
+- Pages `6247ae6f` / `de9a703` SUCCESS. Demo 200; seis assets enlazados, módulo Cliente y service worker idénticos al build local. API cliente anónima 401, admin 302 a Access. [Hashes y estados](refinamiento-ios-2026-10-20/implementacion/produccion-merge.json). Verificación GET; datos reales y `docs/cliente` intactos.
+- Refinamiento publicado. No vídeo ni envío externo. Siguiente: revisión opcional del dueño en su iPhone; ideas fuera del plan permanecen sin iniciar.
+
 ## 2026-10-21 — Cliente centrado en la rutina: propuesta 2, PR #11 — codex
 
 - Código `528ebbf`, rama `codex/cliente-rutina-ios`: Hoy con sesión/CTA continuo; registro compacto; sistema visual común para Biblioteca, Progreso, Perfil, hojas, descanso y resumen. Tipografía de sistema y firma Barlow, fotos reales, rojo SFM y pestañas flotantes. Sin cambios de lógica de entrenamiento, API o datos remotos.

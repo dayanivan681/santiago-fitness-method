@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-21 — PR #11 aprobado, integrado y publicado — codex
+
+- El dueño indicó **«Merge»** después de revisar y aceptar la propuesta 2. Sincronizado y reclamado turno `3c38cbd`. [PR #11](https://github.com/dayanivan681/santiago-fitness-method/pull/11) integrado mediante merge normal **`de9a703e35c5fa76fa35aca169bab28fd007c931`**. Árbol de producto idéntico al `528ebbf` aprobado; sin conflictos ni cambios adicionales de producto.
+- Producción https://santiago-fitness-method.pages.dev: Pages **`6247ae6f-0fcb-428f-9583-2835f49b67e8`**, source `de9a703`, check **SUCCESS**. `/demo/cliente` 200; seis archivos enlazados, módulo `Cliente-BGCmWM-u.js` y `sw.js` coinciden byte por byte con el build local del merge. CSS `index-D_8fqSF9.css`, entrada `index-CKwnXAnf.js`. [Mediciones](refinamiento-ios-2026-10-20/implementacion/produccion-merge.json).
+- Checks repetidos sobre el merge: `npm test -- --maxWorkers=3` **1054/1054, 123 archivos**, `npm run lint`, `npm run build` con TypeScript y `git diff --check` PASS. Avisos conocidos Node MaxListeners/JSDOM. API cliente anónima 401 y admin 302 a Access. Solo GET remotos; sin cuentas, entrenamientos reales, migraciones ni cambios en `docs/cliente`. Python urllib recibió un 403 del entorno; la repetición con curl obtuvo 200 y permitió contrastar los ocho archivos; no es un fallo demostrado de la app.
+- Sin nueva prueba instalada o de teléfono físico: se conserva el QA Safari 16 Pro/SE de la implementación como evidencia previa, con sus límites en [design-qa.md](../design-qa.md). No se ha regenerado vídeo ni enviado nada a Santiago.
+- **Siguiente:** ninguna implementación pendiente de este refinamiento. El dueño puede revisar el diseño publicado en su iPhone instalada; registrar ajustes si aparecen. Tendencias por ejercicio, esfuerzo 1–10, rachas y compartir resumen siguen fuera del alcance aprobado.
+
 ## 2026-10-21 — Propuesta 2 implementada; PR #11 y preview, sin merge — codex
 
 - El dueño eligió **la propuesta 2** y priorizó mantener al cliente enfocado en la rutina. Turno reclamado `a0496c6`; implementación en `codex/cliente-rutina-ios`, **`528ebbf`**. [PR #11 en borrador](https://github.com/dayanivan681/santiago-fitness-method/pull/11), sin integrar. La elección visual autoriza esta implementación, no un merge nuevo.
@@ -276,11 +284,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T12:11:47.545Z
+- **Última sincronización:** 2026-10-21T12:14:06.634Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1428,6 +1436,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T12:14:06.635Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #11 integrado con aprobación; refinamiento iOS publicado y verificado en producción
+- **Verificación:** 1054/1054 pruebas en 123 archivos; npm run lint; npm run build con TypeScript; git diff --check; Pages SUCCESS; demo 200 y ocho archivos idénticos al build; API cliente 401 y admin 302 a Access
+- **Siguiente:** Ninguna implementación pendiente del refinamiento. Revisión opcional del dueño en iPhone instalada. Ideas fuera del plan sin iniciar; no vídeo ni envío a Santiago.
+
 
 ### 2026-10-21T12:11:47.546Z | codex | CLAIM
 - **Estado:** active
