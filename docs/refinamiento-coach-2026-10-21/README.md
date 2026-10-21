@@ -9,7 +9,7 @@ más compactos y coherentes con el cliente aprobado.
 
 [Inventario de implementación](IMPLEMENTACION.md) · [QA y comparación visual](../../design-qa.md).
 1057/1057 pruebas, lint y build PASS. Safari del simulador 16 Pro y SE verificados;
-instalación y teléfono físico pendientes. Entrega en PR y preview; sin merge nuevo.
+instalación y teléfono físico pendientes. Entrega en [PR #12](https://github.com/dayanivan681/santiago-fitness-method/pull/12) y [preview Pages](https://f5bd9e07.santiago-fitness-method.pages.dev/demo/coach) SUCCESS (`9c18cc1`), protegida por Access; sin merge nuevo.
 
 ## Diagnóstico previo y alternativas
 
