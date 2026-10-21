@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-21 — Chequeo rápido del bloqueo en alta de tres días — codex
+
+- Solicitud: escuchar primero el audio de WhatsApp (41 s) y comprobar el bloqueo al crear una persona que entrena tres días. Audio transcrito localmente con Whisper; dos fotos aportadas muestran frecuencia 3, cuatro pestañas (Upper A/Lower A/Upper B/Lower B), una sesión con 7/8 bloques y error Zod en bruto. Evidencia del cliente, no autorización para publicar su plan. No se archivan datos personales, audio o fotos en Git.
+- Confirmado en código y demo: `planBase(..., 3)` conserva cuatro sesiones de rotación; frecuencia semanal y número de sesiones del programa son conceptos distintos. `Plan` valida todas las sesiones, no solo la visible. El aviso genérico de `EditorPlan.tsx` aparece incluso al ver una sesión válida si otra tiene menos de cinco ejercicios. `Onboarding.tsx` muestra `ZodError.message` como JSON, sin identificar el día que falla. Es un fallo de claridad reproducible; no se ha inspeccionado el borrador privado de la clienta ni confirmado su cuarta sesión.
+- Reproducción IAB local, 918×924: alta ficticia → frecuencia 3 → cuatro pestañas → quitar un ejercicio de Lower B (4) → volver a Upper A (5) → revisar/publicar. Se reproduce el mismo error técnico. Organizar sesiones muestra 5/5/5/4; quitar Lower B del borrador → Listo → remarcar revisión → publicar crea correctamente un programa ficticio de tres sesiones. Consola sin errores/avisos, contenido visible y sin overlay. Capturas temporales fuera de Git: `/tmp/sfm-alta-3dias/`.
+- Comprobación del contrato con casos sintéticos: [7,7,7,4] rechaza por mínimo; [7,7,7] acepta; [7,7,7,5] acepta. No es un rechazo por tener siete ejercicios ni por entrenar tres días. La cuarta sesión incompleta es una hipótesis coherente con las fotos, no una certeza sobre el borrador real.
+- Checks de la base actual: **1071/1071 pruebas en 126 archivos**, lint, build/TypeScript y diff-check PASS; avisos conocidos Node/JSDOM. Servidor y pestaña propios cerrados. Solo documentación en este cierre, sin cambios de producto, datos reales, cuentas, vídeos, mensajes o docs/cliente. No se repite Safari/hardware.
+- **Siguiente:** comprobar en Organizar sesiones los recuentos del borrador real. Si se desean exactamente tres sesiones, el coach puede quitar la sobrante; si desea la rotación de cuatro, completar la cuarta. Para una corrección posterior: indicar nombre y recuento de cada sesión inválida, sustituir JSON por texto comprensible y explicar frecuencia versus rotación; añadir regresión [7,7,7,4]. El dueño solo pidió verificación, por lo que no se implementa ni cambia la programación real. La investigación de GIF/costes anterior de Claude sigue pendiente y no se reanuda en este chequeo.
+
 ## 2026-10-21 — PR #12 integrado por autorización; relevo a Claude — codex
 
 - El dueño indicó «integralo» y que usará Claude para el bug run y test. [PR #12](https://github.com/dayanivan681/santiago-fitness-method/pull/12) integrado mediante merge normal **`e22134a0026357006d6e9f80c66664ce47d7a984`**, cabeza aprobada `20fd8d1`. Sin conflictos; producto idéntico al `9c18cc1` probado y al PR aprobado. Turno sincronizado y reclamado `ddbfd8a`.
@@ -312,11 +321,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T17:30:03.552Z
+- **Última sincronización:** 2026-10-21T17:33:32.630Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1464,6 +1473,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T17:33:32.631Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Verificado bloqueo del alta de 3 días: rotación de cuatro, validación global y error técnico reproducidos; salida de tres sesiones comprobada en demo. Sin cambios de código ni datos reales.
+- **Verificación:** 1071/1071 pruebas, 126 archivos; lint, build y diff-check PASS. IAB alta inválida y publicación ficticia de tres sesiones; contrato [7,7,7,4] rechaza, [7,7,7] y [7,7,7,5] aceptan.
+- **Siguiente:** Comprobar cuarta sesión en el borrador real; si se desean solo tres, Organizar sesiones permite quitar la sobrante. Mejora de mensajes pendiente de implementación autorizada. No reanudar GIF/costes en este chequeo.
+
 
 ### 2026-10-21T17:30:03.553Z | codex | CLAIM
 - **Estado:** active
