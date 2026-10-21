@@ -48,6 +48,7 @@ interface Props {
   readonly memoriaAbierta?: Memoria<number>
   /** Salir del modo y volver al resumen del día. */
   readonly onSalir?: () => void
+  readonly consejo?: ReactNode
 }
 
 export function Entrenamiento({
@@ -55,6 +56,7 @@ export function Entrenamiento({
   memoriaDia,
   memoriaAbierta,
   onSalir,
+  consejo,
 }: Props = {}) {
   const {
     datos,
@@ -240,6 +242,7 @@ export function Entrenamiento({
         </button>
       </header>
 
+
       {/* Con la barra de sesión abajo hace falta más hueco, o el último texto
           queda a seis píxeles de quedar tapado. */}
       <ZonaDeslizable
@@ -288,6 +291,8 @@ export function Entrenamiento({
           repositorio={repositorio}
           claveDeBorrador={clavesDelDia.get(item.slot.orden)}
         />
+
+        {consejo && <div className="sfm-client-advice">{consejo}</div>}
 
         {/* Qué viene después, sin volver a ninguna lista. */}
         {siguiente ? (

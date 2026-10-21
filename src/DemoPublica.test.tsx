@@ -32,7 +32,7 @@ it("entrena y cambia entre ambos roles sin red privada ni persistencia de navega
   fireEvent.click(screen.getByRole("link", { name: "Ver Coach" }));
   await screen.findByText("Tu coaching, hoy.");
   fireEvent.click(screen.getByRole("link", { name: "Ver Cliente" }));
-  await screen.findByRole("heading", { name: "Vamos, Alicia." });
+  await screen.findByText(/Vamos, Alicia\./);
   expect(abrir).not.toHaveBeenCalled();
   expect(persistir).not.toHaveBeenCalled();
   expect(red).not.toHaveBeenCalled();

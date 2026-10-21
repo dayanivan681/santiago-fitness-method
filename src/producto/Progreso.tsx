@@ -22,9 +22,11 @@ import { Importaciones } from "./Importaciones";
 export function ProgresoCliente({
   repo,
   conexion,
+  conCabecera = true,
 }: {
   repo: Repositorio;
   conexion?: ConexionCloud;
+  conCabecera?: boolean;
 }) {
   const [seccion, setSeccion] = useState("historial");
   const [agregar, setAgregar] = useState(false);
@@ -76,7 +78,7 @@ export function ProgresoCliente({
   }
   return (
     <>
-      <Cabecera titulo="Lo que estás construyendo." kicker="Tu progreso" />
+      {conCabecera && <Cabecera titulo="Progreso" />}
       {conexion && <Importaciones api={conexion.api} />}
       <div className="sfm-metrics sfm-metrics--two">
         <div>

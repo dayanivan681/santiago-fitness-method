@@ -31,9 +31,10 @@ interface Props {
   readonly repositorio?: Repositorio
   /** Filtro de músculo, recordado por `App` entre visitas. */
   readonly memoriaFiltro?: Memoria<FiltroMusculo>
+  readonly conCabecera?: boolean
 }
 
-export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro }: Props = {}) {
+export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro, conCabecera = true }: Props = {}) {
   const [abierto, setAbierto] = useState<Ejercicio | null>(null)
 
   const ejercicios = useLiveQuery(() => repositorio.listarEjercicios(), [repositorio])
@@ -45,10 +46,10 @@ export function Biblioteca({ repositorio = repositorioPorDefecto, memoriaFiltro 
       <div className="contenido">
         {/* La biblioteca es el catálogo del método, no datos de nadie: aquí el
             nombre del participante no aportaba nada y además estaba fijo. */}
-        <header className="pantalla">
+        {conCabecera && <header className="pantalla">
           <h1 className="pantalla__titulo">Biblioteca</h1>
           <p className="pantalla__sub">{ejercicios.length} {segunCantidad(ejercicios.length, 'ejercicio', 'ejercicios')} del método</p>
-        </header>
+        </header>}
 
         <ListaBiblioteca ejercicios={ejercicios} alAbrir={setAbierto} memoriaMusculo={memoriaFiltro} />
 

@@ -24,13 +24,14 @@ import { ProveedorDescanso } from "../aplicacion/ProveedorDescanso";
 import { Descanso } from "../componentes/Descanso";
 import type { Musculo } from "../dominio/tipos";
 import { ConexionCloud, estadoNube } from "../nube/cloud";
-import { Cabecera, Icono, Marca } from "./ui";
+import { Icono } from "./ui";
 import { ProgresoCliente, Fotos } from "./Progreso";
 import { AvatarCuenta } from "./AvatarCuenta";
 import { Recuperacion } from "./Recuperacion";
 import { Conflictos } from "./Conflictos";
 import { AvisoSuscripcion, MiSuscripcion } from "./SuscripcionCuenta";
 import { suscripcionBloquea, useSuscripcion } from "./useSuscripcion";
+import "./cliente-ios.css";
 export function ClienteApp(props: Parameters<typeof ContenidoCliente>[0]) {
   const { conexion, modo = "real", repo } = props;
   if (modo === "real" && conexion) {
@@ -83,6 +84,26 @@ function ContenidoCliente({
   );
   if (!participante)
     return <Esqueleto etiqueta="Preparando tu entrenamiento" />;
+  const titulo = ubicacion.pathname.endsWith("/biblioteca") ? "Biblioteca"
+    : /\/(progreso|historial)$/.test(ubicacion.pathname) ? "Progreso"
+    : ubicacion.pathname.endsWith("/perfil") ? "Mi perfil" : "Hoy";
+  const atencionNube = Boolean(estadoNube.conflictos || estadoNube.pendientes || !estadoNube.conectado);
+  const sincronizacion = conexion && (
+    <button
+      className={`sfm-sync-state ${atencionNube ? "sfm-sync-state--notice" : "sfm-sync-state--compact"} ${estadoNube.conflictos ? "sfm-sync-state--warning" : ""}`}
+      title={!atencionNube ? "Guardado en tu cuenta · Sincronizar" : undefined}
+      onClick={() => estadoNube.conflictos ? setConflictos(true) : void conexion.sincronizar()}
+    >
+      <Icono nombre="nube" size={20} />
+      <span>{estadoNube.conflictos
+        ? `${estadoNube.conflictos} cambio(s) por revisar`
+        : estadoNube.pendientes && estadoNube.suscripcionInactiva
+          ? `${estadoNube.pendientes} pendiente(s) · se enviarán al renovar`
+          : estadoNube.pendientes ? `${estadoNube.pendientes} pendiente(s) de sincronizar`
+            : estadoNube.conectado ? "Guardado en tu cuenta"
+              : "Sin conexión · Guardado en este dispositivo"}</span>
+    </button>
+  );
   return (
     <ContextoBiblioteca.Provider value={biblioteca}>
     <ProveedorDescanso
@@ -105,38 +126,20 @@ function ContenidoCliente({
             <Link data-tour="volver-coach" data-tour-action="volver-coach" to={volver ?? "/admin"}>Volver al Coach</Link>
           </aside>
         )}
-        <div className="sfm-brandbar">
-          <Marca />
+        <header className="sfm-client-header">
+          <div>
+            <h1>{titulo}</h1>
+            <p className="sfm-client-wordmark">SANTIAGO FM</p>
+          </div>
           <div className="sfm-brand-actions">
+          {!atencionNube && sincronizacion}
           {modo === "real" && <GuiaAyuda base={base} permitirBienvenida={!bloqueada} />}
           <Link data-tour="perfil-cliente" data-tour-action="perfil-cliente-abierto" to={`${base}/perfil`} aria-label="Mi perfil">
             <AvatarCuenta nombre={participante.nombre} conexion={conexion} />
           </Link>
           </div>
-        </div>
-        {conexion && (
-          <button
-            className={`sfm-sync-state ${estadoNube.conflictos ? "sfm-sync-state--warning" : ""}`}
-            onClick={() =>
-              estadoNube.conflictos
-                ? setConflictos(true)
-                : void conexion.sincronizar()
-            }
-          >
-            <Icono nombre="nube" size={15} />
-            <span>
-              {estadoNube.conflictos
-                ? `${estadoNube.conflictos} cambio(s) por revisar`
-                : estadoNube.pendientes && estadoNube.suscripcionInactiva
-                  ? `${estadoNube.pendientes} pendiente(s) · se enviarán al renovar`
-                  : estadoNube.pendientes
-                  ? `${estadoNube.pendientes} pendiente(s) de sincronizar`
-                  : estadoNube.conectado
-                    ? "Guardado en tu cuenta"
-                    : "Sin conexión · Guardado en este dispositivo"}
-            </span>
-          </button>
-        )}
+        </header>
+        {atencionNube && sincronizacion}
         <main className="sfm-main sfm-main--client">
           {conexion && modo === "real" && (
             <Recuperacion conexion={conexion} compacto />
@@ -153,19 +156,18 @@ function ContenidoCliente({
               index
               element={
                 <>
-                  <Cabecera
-                    titulo={`Vamos, ${participante.nombre.split(" ")[0]}.`}
-                    kicker={new Date().toLocaleDateString("es", {
+                  <p className="sfm-client-greeting">
+                    {new Date().toLocaleDateString("es", {
                       weekday: "long",
                       day: "numeric",
                       month: "long",
-                    })}
-                  />
-                  {(modo === "demo" || modo === "real") && <ConsejoCliente />}
+                    })} · Vamos, {participante.nombre.split(" ")[0]}.
+                  </p>
                   <EntrenamientoHoy
                     repositorio={repo}
                     memoriaDia={dia}
                     onComenzar={comenzar}
+                    consejo={(modo === "demo" || modo === "real") && <ConsejoCliente />}
                   />
                 </>
               }
@@ -174,11 +176,11 @@ function ContenidoCliente({
               path="entrenar"
               element={
                 bloqueada ? <Navigate to={base || "/"} replace /> : <>
-                {(modo === "demo" || modo === "real") && <ConsejoCliente entrenando />}
                 <Entrenamiento
                   repositorio={repo}
                   memoriaDia={dia}
                   memoriaAbierta={ejercicio}
+                  consejo={(modo === "demo" || modo === "real") && <ConsejoCliente entrenando />}
                   onSalir={() => {
                     setRetomar(false);
                     navegar(base || "/");
@@ -189,25 +191,24 @@ function ContenidoCliente({
             />
             <Route
               path="biblioteca"
-              element={<Biblioteca repositorio={repo} memoriaFiltro={filtro} />}
+              element={<Biblioteca repositorio={repo} memoriaFiltro={filtro} conCabecera={false} />}
             />
             <Route
               path="progreso"
-              element={<ProgresoCliente repo={repo} conexion={conexion} />}
+              element={<ProgresoCliente repo={repo} conexion={conexion} conCabecera={false} />}
             />
             <Route
               path="historial"
-              element={<ProgresoCliente repo={repo} conexion={conexion} />}
+              element={<ProgresoCliente repo={repo} conexion={conexion} conCabecera={false} />}
             />
             <Route
               path="perfil"
               element={
                 <>
-                  <Cabecera
-                    titulo={participante.nombre}
-                    kicker="Tu cuenta"
-                    volver={base || "/"}
-                  />
+                  <div className="sfm-client-profile">
+                    <Link className="sfm-icon-button" to={base || "/"} aria-label="Volver a Hoy"><Icono nombre="volver" /></Link>
+                    <h2>{participante.nombre}</h2>
+                  </div>
                   <dl className="sfm-profile-data" data-tour="perfil-pagina">
                     <div>
                       <dt>Tu objetivo</dt>

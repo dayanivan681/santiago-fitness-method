@@ -1,0 +1,88 @@
+{
+  "hoy": {
+    "nav": {
+      "x": 12,
+      "height": 68,
+      "bottom": 541,
+      "y": 473,
+      "width": 351,
+      "left": 12,
+      "top": 473,
+      "right": 363
+    },
+    "overflow": false,
+    "v": [
+      375,
+      549
+    ],
+    "start": {
+      "x": 28,
+      "height": 50,
+      "bottom": 412.609375,
+      "y": 362.609375,
+      "width": 319,
+      "left": 28,
+      "top": 362.609375,
+      "right": 347
+    }
+  },
+  "serie": {
+    "r": {
+      "x": 29,
+      "height": 50,
+      "bottom": 154.609375,
+      "y": 104.609375,
+      "width": 317,
+      "left": 29,
+      "top": 104.609375,
+      "right": 346
+    },
+    "hit": true,
+    "overflow": false
+  },
+  "barras": [
+    {
+      "s": ".progreso-sesion",
+      "r": {
+        "x": 12,
+        "height": 62,
+        "bottom": 403,
+        "y": 341,
+        "width": 351,
+        "left": 12,
+        "top": 341,
+        "right": 363
+      }
+    },
+    {
+      "s": ".descanso",
+      "r": {
+        "x": 12,
+        "height": 62,
+        "bottom": 469,
+        "y": 407,
+        "width": 351,
+        "left": 12,
+        "top": 407,
+        "right": 363
+      }
+    },
+    {
+      "s": ".sfm-tabbar",
+      "r": {
+        "x": 12,
+        "height": 68,
+        "bottom": 541,
+        "y": 473,
+        "width": 351,
+        "left": 12,
+        "top": 473,
+        "right": 363
+      }
+    }
+  ],
+  "cierre": {
+    "hit": true
+  },
+  "semana": "Semana: 1 de 4 sesiones"
+}
