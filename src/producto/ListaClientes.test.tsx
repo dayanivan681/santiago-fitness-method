@@ -1,5 +1,5 @@
 import "fake-indexeddb/auto";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, expect, it, vi } from "vitest";
 import { Coach } from "./Coach";
@@ -23,4 +23,22 @@ it("la lista de clientes cuenta las sesiones del programa, no los días del perf
   expect(fila).toHaveTextContent("5 sesiones · Programa publicado");
   expect(fila).not.toHaveTextContent("4 días");
   expect(await filaDe("Marcos Vega")).toHaveTextContent("4 sesiones · Programa publicado");
+});
+
+it("Ver todos los clientes también quita el filtro de pagos después de una búsqueda vacía", async () => {
+  render(
+    <MemoryRouter initialEntries={["/clientes"]}>
+      <Coach servicio={new ServicioCoach(true)} base="/demo/coach" preview={vi.fn()} entrenar={vi.fn()} />
+    </MemoryRouter>,
+  );
+  const pagos = await screen.findByRole("button", { name: "Pagos pendientes (2)" });
+  fireEvent.click(pagos);
+  expect(screen.queryByText("Alicia Rivera")).not.toBeInTheDocument();
+  fireEvent.change(screen.getByRole("textbox", { name: "Buscar cliente" }), { target: { value: "Alicia" } });
+  expect(screen.getByRole("heading", { name: "No encontramos esa persona" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Ver todos los clientes" }));
+  expect(screen.getByText("Alicia Rivera")).toBeInTheDocument();
+  expect(screen.getByText("Marcos Vega")).toBeInTheDocument();
+  expect(pagos).toHaveAttribute("aria-pressed", "false");
+  expect(screen.getByRole("textbox", { name: "Buscar cliente" })).toHaveValue("");
 });

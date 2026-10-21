@@ -44,11 +44,12 @@ export function BibliotecaCoach() {
 
   return (
     <>
-      <Cabecera titulo="Conoce cada variante." kicker="Biblioteca del método" />
+      <Cabecera titulo="Biblioteca" accion={
+        <button className="sfm-icon-button" aria-label="Añadir ejercicio" onClick={() => setHoja({ tipo: "anadir" })}>
+          <Icono nombre="mas" />
+        </button>
+      } />
       <ErrorVisible error={error || errorDeCarga} />
-      <button className="sfm-primary" onClick={() => setHoja({ tipo: "anadir" })}>
-        <Icono nombre="mas" /> Añadir ejercicio
-      </button>
       <ListaBiblioteca
         ejercicios={ejercicios}
         alAbrir={abrir}

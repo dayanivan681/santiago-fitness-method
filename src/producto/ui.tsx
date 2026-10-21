@@ -11,6 +11,7 @@ import {
   ChevronRight,
   ChevronUp,
   CloudCheck,
+  CreditCard,
   Dumbbell,
   Ellipsis,
   House,
@@ -47,6 +48,7 @@ const ICONOS = {
   abrir: ArrowUpRight,
   buscar: Search,
   comenzar: Play,
+  pago: CreditCard,
 } as const;
 export type NombreIcono = keyof typeof ICONOS;
 export function Icono({

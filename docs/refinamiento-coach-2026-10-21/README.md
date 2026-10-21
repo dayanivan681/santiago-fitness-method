@@ -1,4 +1,17 @@
-# Coach · revisión y propuestas visuales
+# Coach · refinamiento de la experiencia
+
+## Estado actual
+
+Implementación terminada en `codex/coach-claridad-ios`, turno `acc9ac6`.
+El dueño aprobó continuar con claridad, enfoque y acción; se tomó la propuesta 1
+como base. Hoy prioriza revisar programas, con listas, ficha, editor y Biblioteca
+más compactos y coherentes con el cliente aprobado.
+
+[Inventario de implementación](IMPLEMENTACION.md) · [QA y comparación visual](../../design-qa.md).
+1057/1057 pruebas, lint y build PASS. Safari del simulador 16 Pro y SE verificados;
+instalación y teléfono físico pendientes. Entrega en PR y preview; sin merge nuevo.
+
+## Diagnóstico previo y alternativas
 
 Fecha: 2026-10-21. Turno `a383808`. El dueño acepta revisar/refinar el coach
 después de completar el cliente en PR #11. Esta entrega contiene diagnóstico y
@@ -64,7 +77,6 @@ Base actual: `npm test -- --maxWorkers=3` **1054/1054, 123 archivos**;
 Avisos conocidos Node MaxListeners/JSDOM; consola de la app sin errores en lo revisado.
 Estos checks validan la base, no un rediseño implementado.
 
-**Siguiente:** el dueño elige 1, 2 o 3, o pide ajustes. Después concretar las
-pantallas móvil/escritorio de esa dirección, implementar en rama con PR y preview,
-verificar flujos y Safari y esperar visto bueno antes de merge. Sin vídeo,
+**Siguiente actual:** revisar la implementación en PR/preview y esperar visto
+bueno antes de merge. Las alternativas siguientes quedan como historial de diseño. Sin vídeo,
 mensajes a Santiago, funciones fuera del plan ni cambios en `docs/cliente`.

@@ -1,4 +1,5 @@
 import { act, cleanup, renderHook } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RESPALDO_CIERRE_MS, usePresencia } from './usePresencia'
 
@@ -33,6 +34,16 @@ afterEach(() => {
 })
 
 describe('usePresencia', () => {
+  it.each([false, true])('cierra tras el montaje doble de StrictMode, movimiento reducido=%s', (reducir) => {
+    movimientoReducido(reducir)
+    const alCerrar = vi.fn()
+    const { result } = renderHook(() => usePresencia(alCerrar), { wrapper: StrictMode })
+    act(() => result.current.salir())
+    act(() => vi.advanceTimersByTime(RESPALDO_CIERRE_MS))
+    expect(alCerrar).toHaveBeenCalledTimes(1)
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
   it('pedir el cierre dos veces cierra una sola vez', () => {
     const alCerrar = vi.fn()
     const { result } = renderHook(() => usePresencia(alCerrar))

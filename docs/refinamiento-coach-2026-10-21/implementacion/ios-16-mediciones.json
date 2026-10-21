@@ -1,0 +1,38 @@
+{
+  "hoy": {
+    "viewport": [
+      402,
+      714
+    ],
+    "cta_visible": true,
+    "sin_desborde": true,
+    "nota": "Revisi\u00f3n abierta desde Hoy y Cerrar en Prescripci\u00f3n comprobados antes de esta captura"
+  },
+  "prescripcion_listo_inicial": {
+    "r": {
+      "x": 40,
+      "height": 50,
+      "bottom": 702,
+      "y": 652,
+      "width": 322,
+      "left": 40,
+      "top": 652,
+      "right": 362
+    },
+    "hit": true
+  },
+  "quitar_al_final": {
+    "r": {
+      "x": 40,
+      "height": 48,
+      "bottom": 684.859375,
+      "y": 636.859375,
+      "width": 123.328125,
+      "left": 40,
+      "top": 636.859375,
+      "right": 163.328125
+    },
+    "hit": true
+  },
+  "listo_cierra": true
+}

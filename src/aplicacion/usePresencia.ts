@@ -79,9 +79,14 @@ export function usePresencia(alCerrar: () => void): Presencia {
 
   // Desmontada a mitad de la salida (se navegó): nada queda pendiente.
   useEffect(
-    () => () => {
-      terminado.current = true
-      clearTimeout(temporizador.current)
+    () => {
+      // StrictMode ensaya setup → cleanup → setup conservando los refs.
+      // El segundo montaje sigue vivo y debe poder terminar el cierre.
+      terminado.current = false
+      return () => {
+        terminado.current = true
+        clearTimeout(temporizador.current)
+      }
     },
     [],
   )

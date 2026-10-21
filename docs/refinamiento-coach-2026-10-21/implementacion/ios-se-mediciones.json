@@ -1,0 +1,47 @@
+{
+  "viewport": [
+    375,
+    549
+  ],
+  "hoy": {
+    "r": {
+      "x": 30,
+      "height": 50,
+      "bottom": 404.125,
+      "y": 354.125,
+      "width": 315,
+      "left": 30,
+      "top": 354.125,
+      "right": 345
+    },
+    "hit": true
+  },
+  "sin_desborde": true,
+  "prescripcion_listo": {
+    "r": {
+      "x": 40,
+      "height": 50,
+      "bottom": 537,
+      "y": 487,
+      "width": 295,
+      "left": 40,
+      "top": 487,
+      "right": 335
+    },
+    "hit": true
+  },
+  "quitar_al_final": {
+    "r": {
+      "x": 40,
+      "height": 48,
+      "bottom": 519.359375,
+      "y": 471.359375,
+      "width": 123.328125,
+      "left": 40,
+      "top": 471.359375,
+      "right": 163.328125
+    },
+    "hit": true
+  },
+  "borrador_guardado": true
+}

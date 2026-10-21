@@ -1,122 +1,72 @@
-# QA de diseño — cliente centrado en la rutina
+# QA de diseño · coach claro y accionable
 
-Actualización: el dueño aprobó el merge del PR #11. Integrado en `de9a703` y
-publicado; [verificación de producción](docs/refinamiento-ios-2026-10-20/implementacion/produccion-merge.json).
-El resto del informe conserva la evidencia de la implementación previa al merge.
+Fecha: 2026-10-21. Rama `codex/coach-claridad-ios`, turno `acc9ac6`.
+El dueño considera buenas las alternativas y delega continuar con claridad,
+enfoque y acción. Se adopta la **propuesta 1**, comunicado antes de construir.
+El [informe previo del cliente](docs/refinamiento-ios-2026-10-20/implementacion/design-qa-cliente.md) se conserva como histórico.
 
-Fecha: 2026-10-21. Rama: `codex/cliente-rutina-ios`.
-Selección del dueño: propuesta **2**, con prioridad explícita en mantener al
-cliente enfocado en su rutina. Se refina el producto existente React/PWA.
+## Referencia, captura y comparación
 
-## Referencia y capturas
+- Verdad visual: [propuesta 1](docs/refinamiento-coach-2026-10-21/propuestas/1.png), primer resultado mostrado, **853×1844**.
+- [Render final compilado](docs/refinamiento-coach-2026-10-21/implementacion/hoy-final.jpg), **390×844**. IAB a 390×908; clip x=0/y=64/w=390/h=844 excluye solo la banda DEMO, ausente del concepto. Sin CSS inyectado ni datos falsificados para imitar una cuenta real.
+- Fuente normalizada a 390×844 CSS px, densidad de comparación 1. Estado común: Nora por revisar, 3 clientes, 2 pagos pendientes, 0 sesiones esta semana, actividad de Alicia 18 oct.
+- Referencia y render colocados juntos e inspeccionados con `view_image`: [completa](docs/refinamiento-coach-2026-10-21/implementacion/comparacion-final.jpg), [tarea/pagos](docs/refinamiento-coach-2026-10-21/implementacion/comparacion-tarea.jpg), [actividad/navegación](docs/refinamiento-coach-2026-10-21/implementacion/comparacion-navegacion.jpg).
+- El JPEG de IAB representa el rojo de forma distinta al CSS. Se contrasta con los PNG completos de Safari [16 Pro](docs/refinamiento-coach-2026-10-21/implementacion/ios-16-hoy.png) y [SE](docs/refinamiento-coach-2026-10-21/implementacion/ios-se-hoy.png): valor calculado **#db3027**. No se cambia el color para compensar la captura.
 
-- Verdad visual: [propuesta 2](docs/refinamiento-ios-2026-10-20/propuestas/2.png),
-  853×1844 píxeles, normalizada a 390×844 para comparar la composición.
-- Continuación del sistema para registro:
-  [objetivo Entrenar](docs/refinamiento-ios-2026-10-20/implementacion/objetivo-entrenar.png).
-  ImageGen con la propuesta elegida y el formulario actual como referencias;
-  es una guía de jerarquía, conservando las reglas del producto.
-- Implementación compilada, IAB a **390×844 CSS px**, captura JPEG 390×844
-  (densidad normalizada 1): [Hoy](docs/refinamiento-ios-2026-10-20/implementacion/hoy.jpg),
-  [Entrenar](docs/refinamiento-ios-2026-10-20/implementacion/entrenar.jpg).
-- Comparaciones conjuntas abiertas e inspeccionadas con `view_image`:
-  [vista completa](docs/refinamiento-ios-2026-10-20/implementacion/comparacion-hoy.jpg),
-  [cabecera](docs/refinamiento-ios-2026-10-20/implementacion/comparacion-header.jpg),
-  [sesión y CTA](docs/refinamiento-ios-2026-10-20/implementacion/comparacion-sesion.jpg).
-  También se comparan juntos [el registro previsto y el real](docs/refinamiento-ios-2026-10-20/implementacion/comparacion-entrenar.jpg).
-- Estado: Lower A, 5 ejercicios, 16 series, semana 0/4, sin registro. El mock
-  muestra Alicia y 20 de octubre; el runtime usa Lucía · QA aislado y 21 de
-  octubre, datos sintéticos y fecha real. No se falsificó el estado para igualarlos.
-- El JPEG de IAB representa el rojo de forma distinta al valor CSS calculado.
-  Se contrasta con los PNG de Safari: `#db3027` en el botón, igual al CSS.
-  No se alteró el producto para compensar ese comportamiento de captura.
-
-## Hallazgos resueltos y comparación posterior
+## Iteraciones resueltas
 
 | Iteración | Hallazgo | Cambio y evidencia posterior |
 |---|---|---|
-| 1 · P1 | Un `font !important` heredado conservaba el titular condensado de 48 px. | Se elimina esa prioridad y se aplica la escala del cliente: Hoy 34 px, sesión 32 px, ejercicio 21 px. Las comparaciones finales muestran la jerarquía de la propuesta. |
-| 1 · P2 | Búsqueda y listas conservaban márgenes negativos del diseño anterior y llegaban al borde. | Márgenes a cero dentro del cliente, alineación con 16 px laterales. [Biblioteca final](docs/refinamiento-ios-2026-10-20/implementacion/biblioteca.jpg). |
-| 2 · P1 | En Safari 16 Pro, «Completar serie» terminaba en y=753, bajo las pestañas que comienzan en y=638. | Ayuda contextual después del registro, identidad en fila, menos huecos y explicación RIR a todo el ancho. Resultado compilado: botón termina en y=561, pestañas en y=638. Sin quitar referencias, RIR ni ayudas. |
-| 2 · P2 | Un margen antiguo de 24 px sobre «Comenzar» y la ayuda entre sesión/semana desplazaban la lista. | CTA sin margen heredado; ayuda al final del contenido; agrupación más compacta. Comparación final completa y enfocada arriba. |
-| 3 · P2 | La foto del SE recortaba parte de la cabeza al centrar verticalmente una imagen de poca altura. | Foco superior de la foto; el recorte decorativo conserva cabeza y barra. La ficha sigue ofreciendo el medio completo del catálogo. [Pantalla SE final](docs/refinamiento-ios-2026-10-20/implementacion/ios-se-pantalla.png). |
+| 1 · P2 | Tarjeta demasiado alta y nombres/secciones grandes; actividad desplazada. | Ajustados altura, padding, nombre 16/500 y sección 18. [Antes](docs/refinamiento-coach-2026-10-21/implementacion/comparacion-inicial.jpg), [después](docs/refinamiento-coach-2026-10-21/implementacion/comparacion-final.jpg). Diferencia restante por controles de 48–50 px. |
+| 2 · P2 | Listo exigía bajar hasta el final de Prescripción. | Acción fija dentro de la hoja, conservando campos y Quitar separado. [Antes](docs/refinamiento-coach-2026-10-21/implementacion/prescripcion.jpg), [después](docs/refinamiento-coach-2026-10-21/implementacion/prescripcion-fija.jpg). Listo y Quitar final con hit tests positivos en Safari, ambos tamaños. |
+| 2 · P2 | Ver todos mantenía el filtro de pagos después de una búsqueda vacía. | Limpia consulta y filtro. Browser repite la recuperación de Alicia/Marcos/Nora; regresión añadida. El filtro de pagos sigue excluyendo a Alicia al día. |
+| 3 · P1 solo desarrollo | Cerrar quedaba en saliendo tras el montaje doble de StrictMode: cleanup heredado dejaba terminado=true. | Restablecer el flag en el montaje vivo. Dos regresiones primero FALLAN, después **8/8** pruebas del hook PASS, normal/reducido. Cierre en desarrollo y cliente compilado repetidos. Producción ya cerraba en Safari; no es un fallo causado por el diseño nuevo. |
 
-No quedan hallazgos P0/P1/P2 accionables dentro de esta implementación.
+No quedan hallazgos P0/P1/P2 accionables en la entrega.
 
 ## Cinco superficies de fidelidad
 
-| Superficie | Comparación y resultado |
+| Superficie | Resultado |
 |---|---|
-| Tipografía | Familia de sistema para lectura y controles, firma Barlow; pesos 500–700. Se revisan títulos, nombres largos, valores, etiquetas, pasos, fechas, pestañas, herramientas y hojas. Se eliminan mayúsculas condensadas heredadas de esos controles del cliente. |
-| Espaciado y composición | Cabecera breve → selector → foto/sesión/CTA continuo → semana → filas agrupadas. Márgenes de 16 px, tarjeta de sesión 20 px, grupos 18 px y barra de pestañas 36 px. Se mantiene la jerarquía elegida; los controles reales de 44–50 px requieren algo más de altura que los dibujados. |
-| Color y tokens | Fondo `#0b0c0d`, superficie `#141517`, elevado `#1b1c1f`, rojo SFM `#e5352b`. Acción `#db3027` con blanco: contraste calculado **4,70:1**. El rojo de acción es un ajuste de contraste, no otra identidad. Foco y avisos siguen visibles. |
-| Calidad y fidelidad de medios | Hero y miniaturas usan fotos existentes del ejercicio elegido, sin filtros desaturados. No se usa la foto generada del mock como prueba de técnica. Se conservan medios del catálogo, su procedencia y la ficha completa. Sin assets nuevos de ejercicios ni dibujos de sustitución. Iconos del mismo catálogo Lucide, incluido Play. |
-| Texto y datos | «Hoy», «Comenzar entrenamiento», «Semana», «Tu sesión, paso a paso» y las tres pestañas siguen la propuesta. Nombres, series/reps, lb/lado, equipo, RIR, progreso y variantes proceden del producto. Se descartan los ejercicios/rangos inventados por ImageGen. El modo continuar, sesión terminada y día vacío conservan su comportamiento. |
+| Tipografía | Sistema en títulos, filas, controles, hojas y pestañas; firma Barlow. Hoy 40, ficha 28, secciones 18, cuerpo 14–16, auxiliares 12–13. Calculado Hoy 700/40/44; cliente sigue 700/34/37.4. |
+| Composición | Firma → Hoy/fecha → revisión/CTA → pagos → resumen → actividad → Ver clientes. Márgenes 16, grupos contenidos, sin duplicar a Nora como otra tarea. Comparaciones completas y enfocadas arriba. |
+| Color | Fondo #0b0c0d, superficie #141517, elevado #1b1c1f, marca #e5352b, CTA #db3027. Blanco/CTA **4,70:1**, activo #ff685e/fondo **6,00:1**, secundario/superficie **7,01:1**. Foco y estados visibles. |
+| Medios e iconos | Sin nuevas fotos requeridas. Iniciales y Lucide existentes, CreditCard para pagos. Catálogo, miniaturas/GIF e instrucciones conservados; sin técnica generada ni SVG dibujados a mano. |
+| Texto y datos | Coinciden Hoy, revisión, persona, CTA, pagos, resumen, actividad, fecha y pestañas. Sin publicar solo cuando el plan no está publicado; no se infiere de revisado=false. |
 
-### Diferencias deliberadas respecto al mock
+### Diferencias deliberadas
 
-- La foto corresponde al catálogo real; no se genera ni sustituye técnica.
-- El mock omite sincronización y ayuda. El producto conserva ambas: éxito como
-  botón de nube con nombre accesible; offline, pendientes y conflictos con texto
-  visible. La ayuda inicial se mantiene después de la tarea principal.
-- Objetivos táctiles de al menos 44 px y texto real con saltos naturales. Por eso
-  se ven menos filas completas antes de bajar que en la imagen generada.
-- La barra de progreso/cierre aparece cuando existe sesión, como antes. No se
-  inventa una sesión vacía para reproducir el dibujo de Entrenar.
-- «Terminar sesión» es secundario frente a «Completar serie». Prescripción,
-  última vez y mejor referencia siguen siendo datos distintos y visibles.
+- Controles **48–50 px** frente a algunos menores del dibujo; cuerpo y auxiliares legibles. Añaden algo de altura. Fidelidad estructural verificada; no se declara réplica píxel por píxel ni certificación completa de accesibilidad.
+- Más pendientes, borradores y errores aparecen cuando existen. No se ocultan datos para imitar la cartera mínima del mock. Ayuda real sigue accesible y la banda DEMO queda fuera del clip comparado.
+- Escritorio usa navegación lateral y columnas y conserva la lista/ficha existente. Es continuación responsive. El editor concentra el contexto; salir restaura las otras secciones y acciones.
+- Guardar borrador dice que el programa actual no cambió; evita afirmar que ya hay uno publicado en un cliente que aún no lo tiene.
 
-Estas diferencias responden a las funciones existentes y a la prioridad elegida;
-no se presenta el resultado como una réplica píxel por píxel.
+## Verificación funcional
 
-## Verificación funcional y adaptable
-
-| Comprobación | Resultado |
+| Entorno o flujo | Resultado |
 |---|---|
-| IAB, compilado local, 320/390/1024 px | Hoy, Biblioteca y Progreso sin desborde horizontal; cabecera real con nube, ayuda y avatar cabe a 320 px. Perfil y hoja revisados a 390 px. |
-| Safari iPhone 16 Pro, iOS 27.0 | Viewport 402×714. Comenzar termina en y=496, pestañas en y=638; primer registro termina en y=561. Fotos cargadas y cabecera legible. |
-| Safari SE 3.ª generación, iOS 27.0 | Viewport 375×549. Comenzar termina en y=413, pestañas en y=473. Guardar accesible tras scroll, hit test positivo. Registro y cierre parcial operativos. |
-| Capas inferiores SE | Progreso y=341–403; descanso y=407–469; pestañas y=473–541. Separación de 4 px, cierre con hit test positivo. El contenido conserva espacio de scroll. |
-| Registro → descanso → resumen → Hoy | Demo: 25 lb/lado, 4 reps, RIR 3 confirmados; volver desde Biblioteca conserva sesión y reloj. Resumen 1 serie / 1 ejercicio / 6%; semana 1/4. Repetición local positiva en SE. |
-| Bi-serie de demo Upper B | A1 → A2 sin descanso; después A2 → A1, ronda 2 y descanso 2:00. Series pendientes mantienen «6–15 reps» y unidades reales. Se repitió el primer toque desde el estado estable tras la transición de la hoja. |
-| Hojas y navegación | Biblioteca → buscar → ficha → cerrar; lista del día y saltar de ejercicio; navegación entre pestañas y perfil. No se cambian `useCapa`, Escape, historial, foco ni gestos. |
-| Movimiento reducido | IAB emulado: preferencia detectada, transición de Guardar `0s`, animación de puntos `none`; guardar y resumen 1/1/6 operativos. Emulación restaurada. No es una prueba nueva de Ajustes del iPhone. |
-| Consola de la app | IAB: sin errores en las vistas revisadas. |
-| Suite | **1054/1054**, 123 archivos; lint, build/TypeScript y diff-check PASS. Avisos conocidos de Node/JSDOM. |
+| IAB identidad/render/overlay/consola | `/demo/coach`, contenido útil, sin overlay ni errores/avisos relevantes. Render final compilado; desarrollo durante iteración. Sin Playwright CLI. |
+| 320×568 | Hoy y Biblioteca sin desborde. CTA revisión y=342–392. Buscar Smith → ficha → cerrar; Añadir → Nuevo → cerrar sin crear. |
+| 390×908, clip 390×844 | Comparación, ficha, programa, editor, actividad, pagos y recuperación de búsqueda, hoja fija. |
+| 1024×844 / 1440×1024 | Hoy sin desborde; columnas 472/472 a 1024. Escritorio [Hoy](docs/refinamiento-coach-2026-10-21/implementacion/hoy-desktop.jpg) y [ficha](docs/refinamiento-coach-2026-10-21/implementacion/ficha-desktop.jpg), navegación lateral y lista/ficha. |
+| Programa ficticio | Nora → preparar → series 4→5 → Listo → guardar borrador → retomar conserva 5 → publicar en demo → Upper A 17 series. Hoy elimina la revisión. Sin escrituras remotas. |
+| Pagos | Pendientes muestra Marcos/Nora, no Alicia. Buscar Alicia con filtro → vacío → Ver todos recupera los tres y desactiva filtro. |
+| Safari 16 Pro / iOS 27.0 | 402×714; revisión visible/hit positivo, ficha/editor/hoja; Listo y Quitar final positivos, cierre operativo. [Mediciones](docs/refinamiento-coach-2026-10-21/implementacion/ios-16-mediciones.json). Capturas previas al arreglo StrictMode, mismo CSS móvil; ese arreglo afecta al montaje doble de desarrollo. |
+| Safari SE / iOS 27.0, compilado final | 375×549; revisión y=354–404, Listo y=487–537: hit tests positivos. Quitar accesible al final, Listo cierra y Guardar borrador confirma el texto correcto. [Mediciones](docs/refinamiento-coach-2026-10-21/implementacion/ios-se-mediciones.json). |
+| Cliente | Cambio de rol, Hoy conserva estilo/fuente y no desborda; abrir/cerrar Sentadilla devuelve a Hoy sin hoja. [Captura](docs/refinamiento-coach-2026-10-21/implementacion/cliente-regresion.jpg). Estilos propios del cliente sin cambios. |
+| Checks | **1057/1057, 123 archivos**, lint, build/TypeScript y diff-check PASS. Avisos conocidos Node/JSDOM. Sin HTTP suite nueva: no se cambian API, permisos o migraciones. |
 
-No se usó Playwright CLI ni se modificaron cuentas o rutinas remotas. SafariDriver
-activó controles DOM: no se atribuyen a esos clics gestos físicos. Capturas de
-pantalla completa del simulador se obtienen también con `simctl io screenshot`;
-las capturas de página de SafariDriver no se confunden con el chrome del sistema.
+## Revisión React y límites
 
-## Revisión React
+Hoy y fila separados para reutilizar estados e insignias; sin efectos, fetches,
+modelos o dependencias nuevos. Conservados polling visible, cache/304, aislamiento
+de pagos, revisión, borradores, validación y tours. El único ajuste del ciclo de
+vida restablece el flag de StrictMode, cubierto por regresiones normal/reducida y
+los casos previos de cierre único/desmontaje.
 
-Sin dependencias, endpoints ni modelos nuevos. Se reutilizan repositorio, hooks,
-memoria de día/ejercicio, validación, borradores y proveedor de descanso. Sin
-efectos nuevos ni lecturas de datos adicionales. Props opcionales conservan la
-cabecera por defecto para consumidores existentes. Los tests de demo verifican
-ahora el saludo como texto y esperan la ayuda que carga con la sesión; la prueba
-semanal conserva el avance y el atributo accesible del medidor.
-
-## Límites y seguimiento
-
-- Nueva instalación PWA, gesto con dedo y rendimiento de un iPhone físico no
-  repetidos en esta entrega. El QA físico anterior permanece como histórico,
-  no como una prueba de este nuevo diseño. Revisar la preview instalada antes
-  de dar el visto bueno al merge.
-- No es una certificación completa de accesibilidad. Se comprueban nombres
-  accesibles, tamaños, contraste del CTA, foco de las hojas y desbordes concretos.
-- P3: el vacío heredado de Progreso comparte textos en tercera persona con el
-  coach; una futura revisión de textos puede separar ambas voces.
-- Guardar o sincronizar con errores conserva las pruebas existentes; no se
-  forzaron fallos de red nuevos en una cuenta remota.
-
-## Lista de cierre
-
-- [x] Propuesta elegida y capturas actuales comparadas juntas.
-- [x] Cabecera, CTA, agrupación, tipografía, tokens, medios y texto revisados.
-- [x] Flujo principal y bi-serie operativos; tamaños pequeño y grande revisados.
-- [x] Pruebas, lint, TypeScript/build y consola revisados.
-- [x] Código preparado en rama para PR/preview, sin merge autorizado.
+SafariDriver usa controles DOM: no certifica arrastres de dedo. Sin prueba nueva
+de PWA instalada, VoiceOver, teclado nativo o rendimiento de hardware antiguo.
+No se ejecutan cobros, subidas o invitaciones reales; solo datos sintéticos locales.
+No se certifica una sesión remota autenticada de preview protegida por Access.
 
 final result: passed

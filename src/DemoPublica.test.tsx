@@ -30,7 +30,7 @@ it("entrena y cambia entre ambos roles sin red privada ni persistencia de navega
     name: "Editar la serie 1 de Press inclinado bajo (15°) en Smith",
   });
   fireEvent.click(screen.getByRole("link", { name: "Ver Coach" }));
-  await screen.findByText("Tu coaching, hoy.");
+  await screen.findByRole("heading", { name: "Hoy", level: 1 });
   fireEvent.click(screen.getByRole("link", { name: "Ver Cliente" }));
   await screen.findByText(/Vamos, Alicia\./);
   expect(abrir).not.toHaveBeenCalled();
