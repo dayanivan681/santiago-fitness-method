@@ -490,9 +490,11 @@ export function EditorPlan({
               <option value="revisarReducir">Revisar / reducir</option>
             </select>
           </label>
-          <button data-tour="prescripcion-lista" data-tour-action="prescripcion-lista" className="sfm-primary" onClick={() => setEditar(null)}>
-            Listo
-          </button>
+          <div className="sfm-prescription-action">
+            <button data-tour="prescripcion-lista" data-tour-action="prescripcion-lista" className="sfm-primary" onClick={() => setEditar(null)}>
+              Listo
+            </button>
+          </div>
           <button
             className="sfm-text-button sfm-danger"
             onClick={() => {

@@ -1,10 +1,9 @@
 import { Esqueleto } from "../componentes/Esqueleto";
 import { GuiaAyuda } from "./GuiaAyuda";
-import { contarBloques, sesionCompleta } from "../../shared/superseries";
+import { contarBloques } from "../../shared/superseries";
 import { CopiarInvitacion } from "./CopiarInvitacion";
-import { InsigniaSuscripcion, SuscripcionCliente } from "./SuscripcionCliente";
+import { SuscripcionCliente } from "./SuscripcionCliente";
 import { ContextoPagos, pagoPendiente, usePagos, type Pagos } from "./pagos-contexto";
-import { segunCantidad } from "../logica/plural";
 import { Consejo } from "./Ayuda";
 import { useAyuda } from "./ayuda-contexto";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -35,10 +34,12 @@ import {
   ErrorVisible,
   Hoja,
   Icono,
-  Marca,
   Vacio,
 } from "./ui";
 import { EditorPlan } from "./EditorPlan";
+import { HoyCoach } from "./CoachHoy";
+import { FilaCliente } from "./FilaCliente";
+import "./coach-ios.css";
 import { Onboarding } from "./Onboarding";
 import { ResumenSesiones } from "./Progreso";
 /**
@@ -119,13 +120,12 @@ export function Coach({
     <ContextoBiblioteca.Provider value={biblioteca}>
     <div className="sfm-shell sfm-shell--coach">
       <div className="sfm-brandbar">
-        <Marca />
+        <span className="sfm-coach-wordmark">SANTIAGO FM · COACH</span>
         <div className="sfm-brand-actions">
           {!servicio.demo && <GuiaAyuda base={base} permitirBienvenida={listo} clientes={clientes.length} />}
-          <span className="sfm-role">Coach</span>
         </div>
       </div>
-      <main className="sfm-main">
+      <main className="sfm-main sfm-main--coach">
         <ErrorVisible error={error} />
         <Routes>
           <Route
@@ -198,210 +198,6 @@ export function Coach({
     </ContextoPagos.Provider>
   );
 }
-function HoyCoach({
-  clientes,
-  borradores,
-  base,
-  listo,
-}: {
-  clientes: Cliente[];
-  borradores: Cambio[];
-  base: string;
-  listo: boolean;
-}) {
-  const actividad = clientes
-    .filter((c) => c.actividad?.ultima)
-    .sort((a, b) =>
-      b.actividad!.ultima!.fecha.localeCompare(a.actividad!.ultima!.fecha),
-    )
-    .slice(0, 4);
-  const pagos = usePagos();
-  const pagosPendientes = pagos.disponibles
-    ? clientes.filter((c) => pagoPendiente(pagos.porCliente.get(c.perfil.id))).length
-    : 0;
-  const pendientes = clientes.filter(
-    (c) =>
-      c.plan.estado !== "publicado" ||
-      !c.plan.revisado ||
-      c.plan.dias.length === 0 ||
-      c.plan.dias.some((d) => !sesionCompleta(d.slots)),
-  );
-  return (
-    <>
-      <Cabecera
-        titulo="Tu coaching, hoy."
-        kicker={new Date().toLocaleDateString("es", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-        })}
-        accion={
-          <Link
-            className="sfm-icon-button"
-            data-tour="nuevo" data-tour-action="abrir-alta" to={`${base}/nuevo`}
-            aria-label="Nuevo cliente"
-          >
-            <Icono nombre="mas" />
-          </Link>
-        }
-      />
-      {pendientes[0] && (
-        <Link
-          className="sfm-next-card"
-          to={`${base}/clientes/${pendientes[0].perfil.id}`}
-        >
-          <span>
-            <small>El siguiente paso</small>
-            <strong>
-              Revisar el plan de {pendientes[0].perfil.nombre.split(" ")[0]}
-            </strong>
-          </span>
-          <Icono nombre="flecha" />
-        </Link>
-      )}
-      {pagosPendientes > 0 && (
-        <Link className="sfm-next-card" to={`${base}/clientes?pagos=pendientes`}>
-          <span>
-            <small>Pagos</small>
-            <strong>
-              {segunCantidad(pagosPendientes, "1 cliente con el pago pendiente", `${pagosPendientes} clientes con el pago pendiente`)}
-            </strong>
-          </span>
-          <Icono nombre="flecha" />
-        </Link>
-      )}
-      <div className="sfm-metrics">
-        <div>
-          <strong>{listo ? clientes.length : "—"}</strong>
-          <span>{segunCantidad(listo ? clientes.length : 0, "Cliente activo", "Clientes activos")}</span>
-        </div>
-        <div>
-          <strong>
-            {listo
-              ? clientes.reduce((n, c) => n + (c.actividad?.semana ?? 0), 0)
-              : "—"}
-          </strong>
-          <span>
-            {segunCantidad(
-              listo ? clientes.reduce((n, c) => n + (c.actividad?.semana ?? 0), 0) : 0,
-              "Sesión esta semana",
-              "Sesiones esta semana",
-            )}
-          </span>
-        </div>
-        <div>
-          <strong>{listo ? borradores.length : "—"}</strong>
-          <span>En onboarding</span>
-        </div>
-      </div>
-      {borradores.length > 0 && (
-        <>
-          <div className="sfm-section-heading">
-            <h2>Continúa donde lo dejaste</h2>
-          </div>
-          {borradores.map((c) => (
-            <Link
-              className="sfm-next-card"
-              key={c.id}
-              to={`${base}/nuevo/${c.id}`}
-            >
-              <span>
-                <small>{base.startsWith("/demo") ? "Nuevo cliente" : "Onboarding"} · Paso {(c.datos as Alta).paso} de 3</small>
-                <strong>{(c.datos as Alta).perfil.nombre}</strong>
-              </span>
-              <Icono nombre="flecha" />
-            </Link>
-          ))}
-        </>
-      )}
-      {actividad.length > 0 && (
-        <>
-          <div className="sfm-section-heading">
-            <h2>Actividad reciente</h2>
-          </div>
-          <div className="sfm-list">
-            {actividad.map((c) => (
-              <Link
-                className="sfm-row"
-                key={c.perfil.id}
-                to={`${base}/clientes/${c.perfil.id}?seccion=actividad`}
-              >
-                <Avatar nombre={c.perfil.nombre} />
-                <span className="sfm-row-body">
-                  <strong>{c.perfil.nombre}</strong>
-                  <small>
-                    {c.actividad!.ultima!.prescripcion?.nombre ??
-                      "Entrenamiento"}{" "}
-                    ·{" "}
-                    {c.actividad!.ultima!.completadaEn
-                      ? "Completado"
-                      : "En curso"}
-                  </small>
-                </span>
-                <time className="sfm-activity-date">
-                  {new Date(
-                    c.actividad!.ultima!.fecha + "T12:00:00",
-                  ).toLocaleDateString("es", {
-                    day: "numeric",
-                    month: "short",
-                  })}
-                </time>
-              </Link>
-            ))}
-          </div>
-        </>
-      )}
-      <div className="sfm-section-heading">
-        <h2>{pendientes.length ? "Necesitan tu atención" : "Tus clientes"}</h2>
-        <Link to={`${base}/clientes`}>Ver todos</Link>
-      </div>
-      <div className="sfm-list">
-        {(pendientes.length ? pendientes : clientes).slice(0, 4).map((c) => (
-          <FilaCliente key={c.perfil.id} c={c} base={base} />
-        ))}
-      </div>
-      {listo && !clientes.length && (
-        <Vacio
-          titulo="El método empieza con una persona"
-          detalle="Prepara su objetivo, contexto y primer plan."
-          accion={
-            <Link className="sfm-primary" data-tour="nuevo" data-tour-action="abrir-alta" to={`${base}/nuevo`}>
-              Comenzar onboarding
-            </Link>
-          }
-        />
-      )}
-    </>
-  );
-}
-function FilaCliente({ c, base }: { c: Cliente; base: string }) {
-  const pagos = usePagos();
-  const suscripcion = pagos.disponibles ? pagos.porCliente.get(c.perfil.id) : undefined;
-  const incompleto =
-    c.plan.estado !== "publicado" ||
-    !c.plan.revisado ||
-    c.plan.dias.length === 0 ||
-    c.plan.dias.some((d) => !sesionCompleta(d.slots));
-  return (
-    <Link className="sfm-row" data-tour-action="abrir-cliente" data-tour-client={c.perfil.id} to={`${base}/clientes/${c.perfil.id}`}>
-      <Avatar nombre={c.perfil.nombre} />
-      <span className="sfm-row-body">
-        <strong>{c.perfil.nombre}</strong>
-        {suscripcion && <InsigniaSuscripcion acceso={suscripcion.acceso} />}
-        <small>
-          {incompleto
-            ? "Programa por revisar"
-            : `${c.plan.dias.length} ${segunCantidad(c.plan.dias.length, "sesión", "sesiones")} · Programa publicado`}
-        </small>
-      </span>
-      <span
-        className={`sfm-status-dot ${incompleto ? "sfm-status-dot--pending" : ""}`}
-        aria-label={incompleto ? "Pendiente" : "Publicado"}
-      />
-      <Icono nombre="flecha" size={16} />
-    </Link>
-  );
-}
 function ListaClientes({
   clientes,
   borradores,
@@ -427,8 +223,7 @@ function ListaClientes({
   return (
     <>
       <Cabecera
-        titulo="Personas, antes que planes."
-        kicker="Tus clientes"
+        titulo="Clientes"
         accion={
           <Link
             className="sfm-icon-button"
@@ -462,7 +257,7 @@ function ListaClientes({
             titulo="No encontramos esa persona"
             detalle="Prueba con otro nombre o vuelve a ver todos tus clientes."
           />
-          <button className="sfm-text-button" onClick={() => setQ("")}>
+          <button className="sfm-text-button" onClick={() => { setQ(""); setSoloPagos(false); }}>
             Ver todos los clientes
           </button>
         </div>
@@ -595,7 +390,7 @@ function FichaCliente({
       setMensaje(
         publicar
           ? "Programa publicado. El cliente lo recibirá automáticamente."
-          : "Borrador guardado. El programa publicado sigue disponible.",
+          : "Borrador guardado. El programa actual no ha cambiado.",
       );
       setCambios(await servicio.cambios(clienteId));
       await actualizar();
@@ -635,10 +430,9 @@ function FichaCliente({
           <FilaCliente key={persona.perfil.id} c={persona} base={base} />
         ))}
       </aside>
-      <div className="sfm-client-detail">
+      <div className={`sfm-client-detail${plan ? " sfm-client-detail--editing" : ""}`}>
         <Cabecera
           titulo={c.perfil.nombre}
-          kicker="Su proceso"
           volver={`${base}/clientes`}
           accion={<Avatar nombre={c.perfil.nombre} />}
         />
@@ -681,7 +475,7 @@ function FichaCliente({
             {plan ? (
               <>
                 <div className="sfm-section-heading">
-                  <h2>Preparando el siguiente paso</h2>
+                  <h2>Editar programa</h2>
                   <button
                     className="sfm-text-button"
                     onClick={() => setPlan(null)}
@@ -743,12 +537,12 @@ function FichaCliente({
                         {d.slots.reduce((n, s) => n + s.seriesObjetivo, 0)}{" "}
                         series
                       </p>
-                      <span className="sfm-day-rule" />
+                      <Icono nombre="flecha" size={20} className="sfm-day-chevron" />
                     </button>
                   ))}
                 </div>
                 <button
-                  className="sfm-secondary" data-tour="preparar-plan" data-tour-action="preparar-plan"
+                  className="sfm-primary" data-tour="preparar-plan" data-tour-action="preparar-plan"
                   onClick={() => setPlan(structuredClone(c.plan))}
                 >
                   Preparar cambios
@@ -775,7 +569,7 @@ function FichaCliente({
                       : "La invitación se utiliza una vez para crear su cuenta."}</p>
                   </div>
                   <button
-                    className="sfm-primary"
+                    className="sfm-secondary"
                     disabled={ocupado || tieneCuenta === null}
                     data-tour="invitar" onClick={() => void (tieneCuenta ? restablecerClave() : invitar())}
                   >

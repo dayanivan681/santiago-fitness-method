@@ -1,0 +1,252 @@
+/* Coach: una tarea clara, después contexto. No cambia las superficies del cliente. */
+.sfm-shell--coach {
+  --sfm-width: 1200px;
+  --sfm-action-red: #db3027;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+.sfm-shell--coach .sfm-brandbar {
+  padding: 32px 16px 0;
+  min-height: 0;
+  gap: 12px;
+}
+.sfm-coach-wordmark {
+  font: 600 11px/1.3 Barlow, sans-serif;
+  letter-spacing: 2.2px;
+  color: var(--sfm-white);
+}
+.sfm-shell--coach .sfm-brand-actions { gap: 4px; }
+.sfm-shell--coach .sfm-main { padding: 0 16px calc(112px + env(safe-area-inset-bottom)); }
+.sfm-shell--coach .sfm-cabecera { padding: 16px 0 20px; }
+.sfm-shell--coach .sfm-cabecera > div:first-of-type { display: flex; flex-direction: column; }
+.sfm-shell--coach .sfm-cabecera h1 {
+  margin: 0;
+  font: 700 40px/1.1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -1.3px;
+}
+.sfm-shell--coach .sfm-cabecera .sfm-eyebrow {
+  order: 2;
+  font: 400 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  margin: 6px 0 0;
+}
+.sfm-shell--coach .sfm-cabecera .sfm-eyebrow::first-letter { text-transform: uppercase; }
+.sfm-shell--coach .sfm-main h2,
+.sfm-shell--coach .sfm-main h3 { font-family: inherit; font-weight: 600; }
+.sfm-shell--coach .sfm-main h2 { font-size: 20px; letter-spacing: -0.4px; }
+.sfm-shell--coach .sfm-main .sfm-coach-section-title { margin: 0 0 8px; font-size: 18px; line-height: 1.35; }
+.sfm-coach-work,
+.sfm-coach-overview { min-width: 0; }
+.sfm-coach-review-card {
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--sfm-surface);
+}
+.sfm-coach-review-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  margin-bottom: 12px;
+}
+.sfm-coach-review-person > svg { flex: none; color: var(--sfm-muted); }
+.sfm-coach-review-person strong { font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
+.sfm-coach-review-person .sfm-row-body { gap: 2px; }
+.sfm-coach-review-person small { font-size: 13px; color: var(--sfm-muted); }
+.sfm-shell--coach .sfm-pill { align-self: flex-start; font-size: 12px; letter-spacing: 0; }
+.sfm-shell--coach .sfm-primary {
+  background: var(--sfm-action-red);
+  color: #fff;
+  min-height: 50px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font: 600 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.sfm-shell--coach .sfm-secondary {
+  min-height: 48px;
+  border-radius: 12px;
+  font: 500 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.sfm-shell--coach .sfm-primary > svg { margin-left: 0; }
+.sfm-shell--coach .sfm-avatar {
+  font: 500 14px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+}
+.sfm-coach-payment {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 12px 16px;
+  margin-top: 20px;
+  background: var(--sfm-surface);
+  border: 1px solid var(--sfm-line);
+  border-radius: 12px;
+  font-size: 15px;
+}
+.sfm-coach-payment > svg { flex: none; color: var(--sfm-muted); }
+.sfm-coach-payment > span { flex: 1; }
+.sfm-coach-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 12px 0;
+  margin: 20px 0 24px;
+  border-block: 1px solid var(--sfm-line);
+  font-size: 14px;
+  color: var(--sfm-muted);
+}
+.sfm-coach-work > section + section,
+.sfm-coach-overview > section + section { margin-top: 24px; }
+.sfm-shell--coach .sfm-row { gap: 12px; padding: 16px 0; min-height: 80px; }
+.sfm-shell--coach .sfm-row strong { font-size: 16px; font-weight: 500; line-height: 1.4; }
+.sfm-shell--coach .sfm-row small { font-size: 13px; }
+.sfm-shell--coach .sfm-row-body { gap: 4px; }
+.sfm-shell--coach .sfm-activity-date { font-size: 12px; }
+.sfm-coach-all {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--sfm-line);
+  font-size: 15px;
+  color: #ff685e;
+}
+.sfm-coach-all > svg { color: var(--sfm-muted); }
+.sfm-shell--coach .sfm-tabbar {
+  bottom: calc(8px + env(safe-area-inset-bottom));
+  height: 68px;
+  padding: 6px 12px;
+  width: min(calc(100% - 16px), 760px);
+  border: 1px solid #ffffff20;
+  border-radius: 36px;
+  background: #1b1c1fef;
+}
+.sfm-shell--coach .sfm-tabbar a { font-size: 12px; color: var(--sfm-muted); }
+.sfm-shell--coach .sfm-tabbar a.active { color: #ff685e; }
+.sfm-shell--coach .sfm-search { margin: 0 0 16px; font-size: 16px; border-radius: 14px; }
+.sfm-shell--coach .sfm-client-detail .sfm-cabecera { padding-bottom: 12px; }
+.sfm-shell--coach .sfm-client-detail .sfm-cabecera h1 { font-size: 28px; letter-spacing: -0.8px; }
+.sfm-shell--coach .sfm-client-goal { font-size: 14px; line-height: 1.5; }
+.sfm-shell--coach .sfm-client-actions { margin: 16px 0; gap: 8px; }
+.sfm-shell--coach .sfm-segmentos { margin: 16px 0 20px; border-radius: 14px; }
+.sfm-shell--coach .sfm-segmentos button { font: 500 13px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.sfm-shell--coach .sfm-section-heading { margin: 20px 0 10px; }
+.sfm-shell--coach .sfm-section-heading h2 { font-size: 18px; }
+.sfm-shell--coach .sfm-client-detail .sfm-program-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  border: 1px solid var(--sfm-line);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.sfm-shell--coach .sfm-day-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 14px;
+  min-height: 80px;
+  border: 0;
+  border-bottom: 1px solid var(--sfm-line);
+  border-radius: 0;
+  background: var(--sfm-surface);
+}
+.sfm-shell--coach .sfm-day-card:last-child { border-bottom: 0; }
+.sfm-shell--coach .sfm-day-card .sfm-eyebrow {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+}
+.sfm-shell--coach .sfm-day-card h3 { grid-column: 2; margin: 0; font-size: 18px; }
+.sfm-shell--coach .sfm-day-card p { grid-column: 2; margin: 0; font-size: 13px; line-height: 1.4; }
+.sfm-day-chevron { grid-column: 3; grid-row: 1 / 3; color: var(--sfm-muted); }
+.sfm-shell--coach .sfm-access-card { margin-top: 24px; padding: 16px; border-radius: 18px; }
+.sfm-shell--coach .sfm-access-card h2 { font-size: 18px; }
+.sfm-shell--coach .sfm-client-detail--editing > .sfm-client-goal,
+.sfm-shell--coach .sfm-client-detail--editing > .sfm-client-actions,
+.sfm-shell--coach .sfm-client-detail--editing > .sfm-segmentos { display: none; }
+.sfm-shell--coach .sfm-editor .sfm-segmentos { margin-top: 8px; }
+.sfm-shell--coach .sfm-editor .sfm-organizar { margin-bottom: 16px; }
+.sfm-shell--coach .sfm-editor .sfm-row strong { font-size: 15px; }
+.sfm-shell--coach .sfm-ordinal { font: 500 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.sfm-shell--coach .sfm-unir { margin-left: 30px; font-size: 12px; border-style: solid; }
+.sfm-shell--coach .sfm-field > span { font-size: 13px; }
+.sfm-shell--coach input,
+.sfm-shell--coach select,
+.sfm-shell--coach textarea { font-size: 16px; }
+.sfm-shell--coach .sfm-form-footer { margin-top: 20px; }
+.sfm-shell--coach .sfm-hoja { font-family: inherit; padding-inline: 20px; }
+.sfm-shell--coach .sfm-hoja h2 { font-size: 22px; font-weight: 600; }
+.sfm-shell--coach .sfm-hoja h3 { font-size: 18px; font-weight: 600; }
+.sfm-shell--coach .sfm-hoja .sfm-field { margin-bottom: 16px; }
+.sfm-shell--coach .sfm-prescription-action {
+  position: sticky;
+  bottom: -30px;
+  z-index: 1;
+  padding: 12px 20px;
+  margin-inline: -20px;
+  background: #17181b;
+  border-top: 1px solid var(--sfm-line);
+}
+.sfm-shell--coach .biblioteca { margin: 0; padding: 0; }
+.sfm-shell--coach .biblioteca__busqueda { margin-inline: 0; }
+.sfm-shell--coach .biblioteca__buscar { font-size: 16px; }
+.sfm-shell--coach .biblioteca__filtrar { font: 500 14px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.sfm-shell--coach .grupo { margin-inline: 0; border-radius: 18px; }
+.sfm-shell--coach .fila { padding-inline: 12px; }
+.sfm-shell--coach .fila__titulo { font-size: 15px; font-family: inherit; }
+.sfm-shell--coach .fila__detalle { font-size: 13px; }
+.sfm-shell--coach .sfm-insignia { font-size: 11px; letter-spacing: 0; }
+.sfm-shell--coach .sfm-metrics strong { font: 600 28px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.sfm-shell--coach .sfm-metrics span { font-size: 12px; }
+@media (min-width: 760px) {
+  .sfm-coach-today { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+  .sfm-shell--coach .sfm-brandbar { padding-inline: 24px; }
+  .sfm-shell--coach .sfm-main { padding-inline: 24px; }
+}
+@media (min-width: 1100px) {
+  .sfm-shell--coach { display: grid; grid-template-columns: 180px minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 24px; }
+  .sfm-shell--coach .sfm-brandbar,
+  .sfm-shell--coach .sfm-main { grid-column: 2; }
+  .sfm-shell--coach .sfm-main { padding-bottom: 40px; }
+  .sfm-shell--coach .sfm-tabbar {
+    position: sticky;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    top: 32px;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    border-radius: 20px;
+    margin-top: 32px;
+    padding: 8px;
+  }
+  .sfm-shell--coach .sfm-tabbar a { flex-direction: row; justify-content: flex-start; gap: 12px; padding: 12px; font-size: 14px; }
+  .sfm-shell--coach .sfm-tabbar a.active { background: #ffffff06; }
+  .sfm-shell--coach .sfm-client-detail-layout { grid-template-columns: 210px minmax(0, 1fr); gap: 24px; }
+  .sfm-shell--coach .sfm-client-sidebar { padding-right: 16px; }
+  .sfm-shell--coach .sfm-client-sidebar .sfm-row { gap: 8px; }
+  .sfm-shell--coach .sfm-client-sidebar .sfm-row strong { font-size: 14px; }
+  .sfm-shell--coach .sfm-client-sidebar .sfm-row small { font-size: 12px; }
+}
+@media (max-width: 359px) {
+  .sfm-shell--coach .sfm-cabecera h1 { font-size: 34px; }
+  .sfm-shell--coach .sfm-client-detail .sfm-cabecera h1 { font-size: 26px; }
+  .sfm-shell--coach .sfm-coach-wordmark { font-size: 10px; letter-spacing: 1.6px; }
+  .sfm-shell--coach .sfm-segmentos button { padding-inline: 6px; font-size: 12px; }
+  .sfm-shell--coach .sfm-day-card { grid-template-columns: 38px minmax(0, 1fr) 18px; gap: 4px 8px; }
+}
