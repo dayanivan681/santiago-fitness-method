@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-20 — Merge aprobado del PR #10; vídeo aplazado — codex
+
+- PR #10 actualizado con main y unido con autorización expresa del dueño mediante merge `b42290e`. Conflicto solo documental en BUILD_LOG, conservando las dos entradas. Código de producto sin cambios respecto a `f027c57`.
+- 1054/1054 pruebas en 123 archivos, lint, build con tsc y diff-check PASS sobre `8462fc9`, producto idéntico al merge. Pages del PR SUCCESS; recompilación del merge para verificar publicación.
+- Producción Pages `43840396` / `b42290e`, SUCCESS: demo 200, siete archivos (seis enlazados + `Cliente-IsitoBOG.js`) idénticos al build local. JS `index--C_ZBuVn.js`, CSS `index-AzE0jwqj.css`; API cliente 401 y admin 302 a Access. Verificación remota con GET, sin escrituras reales ni nueva prueba física.
+- El dueño pidió no hacer el vídeo todavía. No se ejecutan los guiones de captura/render ni se envían mensajes a Santiago. Regeneración aplazada hasta nueva indicación.
+
 ## 2026-10-20 — Series pendientes con el objetivo y «1 rep» — claude-code
 
 - Las series aún no hechas mostraban «0 lb/lado · 1 reps», como si ya estuvieran registradas. Ahora muestran el objetivo del coach: «1–5 reps» sin peso de partida, y «7.5 lb/lado · 1–5 reps» cuando hay uno. Con un solo valor, «8 reps» o «1 rep»; sin tope prescrito, las reps de partida. Sin el prefijo «Objetivo:», que ya usa la recomendación del día.

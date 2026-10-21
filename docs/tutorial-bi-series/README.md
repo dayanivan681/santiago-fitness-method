@@ -1,5 +1,8 @@
 # Tutorial de bi-series y tri-series (vídeo)
 
+**Estado (2026-10-20):** el dueño pidió aplazar el vídeo. No regenerarlo
+automáticamente tras el merge del PR #10; esperar una nueva indicación explícita.
+
 Vídeo vertical 1080×1920, 30 fps, ~40 s, hecho con capturas reales de la demo. Guion visual en Claude Design: https://claude.ai/artifact/VNkGw7FofoFWg3zeo6CzLC (privado del dueño).
 
 Cómo regenerarlo (por ejemplo, tras unir el PR #10, para que las series pendientes digan «6–15 reps»):

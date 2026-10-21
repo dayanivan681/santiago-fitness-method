@@ -1,6 +1,16 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-20 — PR #10 aprobado e integrado; vídeo aplazado — codex
+
+- El dueño autorizó el merge y pidió expresamente **no hacer el vídeo todavía**. [PR #10](https://github.com/dayanivan681/santiago-fitness-method/pull/10) integrado con merge normal **`b42290e`**. El conflicto al actualizar la rama afectaba solo a `docs/BUILD_LOG.md`; se conservaron ambos registros. Código de producto idéntico al original del PR `f027c57` y al conjunto probado `8462fc9`.
+- Resultado: las series pendientes muestran el objetivo del coach, incluido su rango de reps, y omiten «0 lb» cuando no hay peso de partida. Se corrige «1 rep» en los textos afectados. No se cambian registros ni programas reales.
+- Comprobación previa al merge: **1054/1054 pruebas en 123 archivos**, lint, build con TypeScript y diff-check PASS; Pages del PR SUCCESS. Avisos conocidos Node/JSDOM, sin fallos. Se recompila el merge para contrastar los archivos publicados.
+- Producción verificada en Pages **`43840396`**, commit `b42290e`, check SUCCESS: `/demo/cliente` 200; JS `index--C_ZBuVn.js`, CSS `index-AzE0jwqj.css` y módulo `Cliente-IsitoBOG.js`. Los seis archivos enlazados y el módulo del cliente coinciden byte por byte con el build local del merge. API cliente anónima 401; admin 302 a Access. GET de solo lectura, sin cuentas reales ni nueva prueba física. Informe de comparación en `/tmp/sfm-pr10-produccion.json`.
+- **Siguiente:** vídeo **aplazado por orden del dueño**, sin generación, captura ni render en esta tarea. Requiere una nueva indicación antes de retomarlo. No enviar nada a Santiago sin visto bueno. QA opcional de bi-series en teléfono físico e ideas fuera del plan siguen sin iniciarse.
+
 ## 2026-10-20 — Continuidad actual: PR #10 y tutorial — codex
+
+Registro histórico: el estado actual del PR y la decisión sobre el vídeo están arriba.
 
 - Sincronizado `main` con `559780a` y reclamado de nuevo en `e4bda5f`, después del relevo de Claude Code. El registro actualizado recoge la **prueba física del dueño: 3, 7, 9 y B7 PASS**. Es la referencia actual; los pendientes de las entradas antiguas inferiores son históricos.
 - [PR #10](https://github.com/dayanivan681/santiago-fitness-method/pull/10), `claude/series-pendientes`, cabeza `f027c570c1584937548282db49e20bdf36356d7c`: abierto en borrador, Pages SUCCESS y sin conflictos al consultar. **Esperar «merge» del dueño**; esta continuación no lo integra.
@@ -246,11 +256,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T03:24:47.970Z
+- **Última sincronización:** 2026-10-21T03:28:12.604Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1398,6 +1408,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T03:28:12.605Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #10 aprobado e integrado mediante b42290e; producción 43840396 verificada y siete archivos idénticos al build. Vídeo aplazado expresamente por el dueño; no se ejecutaron captura, render ni envíos.
+- **Verificación:** npm test -- --maxWorkers=3: 1054/1054 en 123 archivos; npm run lint; npm run build; git diff --check; Pages SUCCESS; demo 200 y siete archivos idénticos; API cliente 401 y admin 302 a Access
+- **Siguiente:** Ninguno dentro del merge solicitado. Vídeo aplazado hasta nueva indicación del dueño; no generarlo ni enviar mensajes a Santiago. QA opcional y funcionalidades fuera del plan sin iniciar.
+
 
 ### 2026-10-21T03:24:47.971Z | codex | CLAIM
 - **Estado:** active
