@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-21 — Coach: auditoría visual y alternativas — codex
+
+- Sincronizado/reclamado `a383808`; revisión de la demo actual en IAB móvil/escritorio. Siete pasos operativos: Hoy, lista/búsqueda, ficha, actividad, editor, Prescripción y Biblioteca. Solo estado sintético local; cancelar editor sin guardar. [Evidencia y límites](refinamiento-coach-2026-10-21/AUDITORIA.md).
+- Tres propuestas ImageGen independientes con referencias reales adjuntas, preservando SFM y el diseño aprobado del cliente. [Opciones, prompts, hashes y correcciones de contenido](refinamiento-coach-2026-10-21/README.md). Error de agrupación de pagos en la imagen 3 explicitado; no se traslada a producto.
+- 1054/1054 tests (123 archivos), lint, build/TypeScript y diff-check PASS sobre la base sin cambios de código. Avisos conocidos Node/JSDOM; consola de la demo sin errores en lo revisado. Sin nueva certificación nativa/física ni cambios en datos reales o `docs/cliente`.
+- Siguiente: selección del dueño antes de implementación en PR/preview. Solo documentación y conceptos en este cierre. No vídeo ni mensajes externos.
+
 ## 2026-10-21 — Merge aprobado y publicación del refinamiento iOS — codex
 
 - El dueño autorizó «Merge». PR #11 integrado en `de9a703`, producto idéntico al `528ebbf` revisado. Sin conflictos, dependencias, migraciones ni cambios adicionales de producto.

@@ -1,0 +1,41 @@
+{
+  "fecha": "2026-10-21",
+  "herramienta": "ImageGen integrada",
+  "referencias_adjuntas_en_cada_llamada": [
+    "actual/02-hoy-movil.jpg",
+    "actual/03-clientes-movil.jpg",
+    "../refinamiento-ios-2026-10-20/implementacion/ios-16-hoy.png"
+  ],
+  "opciones": [
+    {
+      "numero_mostrado": 1,
+      "archivo": "propuestas/1.png",
+      "origen": "/Users/dayanmacbookpro/.codex/generated_images/01a1596f-5d4b-72a1-85df-28c7562e7767/exec-1b9057a3-2de8-4115-902a-ad60f5dcbd13.png",
+      "sha256": "e981d51d80432f464ffc5e9e19cf4ec094dc3379be2b07291571d5446ce62882",
+      "dimensiones": [
+        853,
+        1844
+      ]
+    },
+    {
+      "numero_mostrado": 2,
+      "archivo": "propuestas/2.png",
+      "origen": "/Users/dayanmacbookpro/.codex/generated_images/01a1596f-5d4b-72a1-85df-28c7562e7767/exec-4ac7511e-fa34-49d2-ab25-5216db358f2f.png",
+      "sha256": "7332293bca95bf78cf80371a951831ecd59493fedf0eaeb3648f5e830bffdedf",
+      "dimensiones": [
+        853,
+        1844
+      ]
+    },
+    {
+      "numero_mostrado": 3,
+      "archivo": "propuestas/3.png",
+      "origen": "/Users/dayanmacbookpro/.codex/generated_images/01a1596f-5d4b-72a1-85df-28c7562e7767/exec-407fb651-78b4-4584-90a0-56d077a6ba26.png",
+      "sha256": "fc8137186dc39d3c28c46ffccc931ad6d82b1423f2cba34f306b4b428800be89",
+      "dimensiones": [
+        853,
+        1844
+      ]
+    }
+  ]
+}

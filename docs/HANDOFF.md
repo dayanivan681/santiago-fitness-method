@@ -1,5 +1,13 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-21 — Coach: diagnóstico y tres propuestas, sin implementar — codex
+
+- El dueño aceptó continuar con el refinamiento del coach después de integrar el cliente. Sincronizado y reclamado `a383808`. [Informe, recorrido, capturas y propuestas](refinamiento-coach-2026-10-21/README.md). El estilo publicado del cliente permanece como referencia; sin cambios de producto ni datos reales.
+- Demo compilada local en IAB, 390×844 y 1440×1024: Hoy → Clientes/búsqueda → ficha/programa → Actividad → editor → Prescripción → Biblioteca. Recorridos consultados operativos; borrador en memoria cancelado sin guardar/publicar. Hallazgos de jerarquía: cabecera extensa, atención debajo de contadores, varias capas antes del programa, creación de ejercicio antes de buscar. La lista lateral de escritorio ya existe. No se inventan bugs ni nuevas métricas.
+- Tres conceptos ImageGen mostrados una vez en este orden: [1](refinamiento-coach-2026-10-21/propuestas/1.png), [2](refinamiento-coach-2026-10-21/propuestas/2.png), [3](refinamiento-coach-2026-10-21/propuestas/3.png). Referencias adjuntas: Hoy/lista actuales y cliente aprobado; prompts y hashes versionados. Error visual en 3: Alicia «Al día» bajo «Pagos pendientes»; se señaló al dueño y se documenta como contenido que **no debe implementarse**. Otras inferencias del mock también se corrigen en el informe.
+- Checks de la base actual: 1054/1054 tests en 123 archivos, lint, build/TypeScript y diff-check PASS; avisos conocidos Node/JSDOM. Consola sin errores en las vistas revisadas. Sin Safari nativo/PWA/VoiceOver/hardware nuevos ni escrituras remotas. Viewport restaurado y pestaña de auditoría cerrada. No vídeo ni envío a Santiago; `docs/cliente` intacto.
+- **Siguiente:** el dueño elige 1, 2 o 3 o pide ajustes. Después implementar la dirección elegida para móvil/escritorio en rama con PR/preview y QA, sin merge antes de visto bueno nuevo. Este turno entrega diagnóstico y opciones; el dashboard del coach aún conserva su interfaz anterior.
+
 ## 2026-10-21 — PR #11 aprobado, integrado y publicado — codex
 
 - El dueño indicó **«Merge»** después de revisar y aceptar la propuesta 2. Sincronizado y reclamado turno `3c38cbd`. [PR #11](https://github.com/dayanivan681/santiago-fitness-method/pull/11) integrado mediante merge normal **`de9a703e35c5fa76fa35aca169bab28fd007c931`**. Árbol de producto idéntico al `528ebbf` aprobado; sin conflictos ni cambios adicionales de producto.
@@ -284,11 +292,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T12:17:43.752Z
+- **Última sincronización:** 2026-10-21T12:28:26.587Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1436,6 +1444,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T12:28:26.588Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Coach: revisión de siete recorridos y tres propuestas visuales entregadas, sin cambios de interfaz
+- **Verificación:** 1054/1054 tests en 123 archivos; npm run lint; npm run build con TypeScript; git diff --check; revisión IAB 390/1440 con capturas inspeccionadas; consola sin errores
+- **Siguiente:** El dueño elige propuesta 1, 2 o 3, o pide ajustes. Después implementar móvil/escritorio en rama con PR y preview; sin merge antes de visto bueno nuevo. Corregir el error de pagos del mock 3. No vídeo ni envío a Santiago.
+
 
 ### 2026-10-21T12:17:43.753Z | codex | CLAIM
 - **Estado:** active
