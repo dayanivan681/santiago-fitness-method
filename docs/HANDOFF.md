@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T22:53:47.533Z
+- **Última sincronización:** 2026-10-21T22:59:43.733Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T22:59:43.733Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Cuaderno de descripciones en docs/gifs-servicios-costo-2026-10-21/CUADERNO-DESCRIPCIONES.md, generado por scripts/cuaderno-animaciones.mjs desde la biblioteca real: 286 ejercicios activos agrupados en 31 familias, ordenadas de mayor a menor. Decision de diseno del cuaderno: dentro de una familia el gesto es el mismo y solo cambia el equipo, asi que la descripcion (movimiento, posicion inicial, posicion final, punto fijo) se escribe UNA VEZ POR FAMILIA y no por ejercicio; por ejercicio solo se anota en una linea que lo distingue. Son 31 descripciones, no 286, y rellenar las cinco primeras familias ya cubre 135 de los 286. Cada ejercicio va marcado con si tiene animacion fotografica hoy (236 si, 50 no) para saber cual sirve de referencia al describirlo. Corregido el lote piloto: la primera version dejaba tres de los seis en la familia sentadilla, lo que anulaba el proposito; ahora son cinco familias y cinco equipos distintos (Low-Bar Back Squat, Bench Press con mancuernas, Single-Arm Lat Pulldown, Machine Biceps Curl, Plate-Loaded Row) mas el Pendulum Squat como caso duro a proposito. El script queda en scripts/ y se puede regenerar cuando la biblioteca cambie. HALLAZGO APARTE, no relacionado con esta tarea: el test intermitente que reporte el turno pasado ya esta identificado. Es src/RecorridosDemo.test.tsx, el caso 'crea con revision explicita, permite explorar, conserva persona y aisla Vista previa'. Falla al no encontrar el texto 'Cliente creado. Su plan esta listo.' tras 5810 ms, es decir por agotar el tiempo de espera, no por logica. Ocurrio 2 de 7 pasadas, siempre con la maquina cargada por ejecuciones encadenadas, lo que apunta a un timeout demasiado justo mas que a una condicion de carrera. No lo he tocado por estar fuera del encargo.
+- **Verificación:** npm test: 7 pasadas, 5 en verde (1082 en 128 archivos) y 2 con el fallo intermitente ya identificado arriba; npm run lint; npm run build
+- **Siguiente:** El dueno rellena las familias del cuaderno empezando por las cinco primeras, con Santiago para la tecnica; aparte, decidir si se arregla el timeout de RecorridosDemo.test.tsx
+
 
 ### 2026-10-21T22:53:47.534Z | claude-code | CLAIM
 - **Estado:** active
