@@ -198,3 +198,16 @@ describe('bi-series y tri-series', () => {
     expect(r.success && r.data.dias[0].slots.slice(0, 2).map((s) => s.grupo)).toEqual(['A', 'A']);
   });
 });
+
+it('señala Lower B aunque se vea Upper A válida, lleva a revisarla y conserva el programa', () => {
+  const inicial = { ...plan, dias: plan.dias.map((d, i) => ({ ...d, slots: Array.from({ length: i === 3 ? 4 : 7 }, (_, j) => ({ ...d.slots[j % d.slots.length], orden: j + 1 })) })) };
+  const cambiar = vi.fn();
+  render(<EditorPlan plan={inicial} perfil={{ ...perfil, frecuenciaEntrenamiento: 3 }} onChange={cambiar} />);
+  expect(screen.getByRole('heading', { level: 2, name: 'Upper A' })).toBeInTheDocument();
+  expect(screen.getByRole('alert')).toHaveTextContent('Lower B: tiene 4 ejercicios y necesita al menos 5.');
+  fireEvent.click(screen.getByRole('button', { name: 'Revisar Lower B' }));
+  expect(screen.getByRole('heading', { level: 2, name: 'Lower B' })).toBeInTheDocument();
+  expect(screen.getByRole('textbox', { name: 'Nombre de la sesión' })).toHaveFocus();
+  expect(cambiar).not.toHaveBeenCalled();
+  expect(inicial.dias.map(d => d.slots.length)).toEqual([7, 7, 7, 4]);
+});

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Plan, Perfil } from "../../shared/v2/contratos";
 import { Plan as ValidarPlan } from "../../shared/v2/contratos";
 import { useBiblioteca } from "./contextoBiblioteca";
 import { ETIQUETA_EQUIPO } from "./etiquetasBiblioteca";
 import { pasarACincoDias, puedePasarACincoDias } from "./cincoDias";
 import type { SlotPlantilla } from "../dominio/tipos";
-import { Hoja, Icono } from "./ui";
+import { ErrorVisible, Hoja, Icono } from "./ui";
 import {
   ajustarSeries,
   bloquesDe,
@@ -31,6 +31,7 @@ export function EditorPlan({
 }) {
   const { ejercicios, propios } = useBiblioteca();
   const [dia, setDia] = useState(0);
+  const nombreSesion = useRef<HTMLInputElement>(null);
   const [editar, setEditar] = useState<number | null>(null);
   const [buscar, setBuscar] = useState("");
   const [anadir, setAnadir] = useState(false);
@@ -58,15 +59,36 @@ export function EditorPlan({
     estado: "publicado",
     revisado: true,
   });
+  const incidencias = validacion.success ? [] : validacion.error.issues;
+  const pendientes = plan.dias.flatMap((sesion, indice) =>
+    incidencias.some((i) => i.path[0] === "dias" && i.path[1] === indice)
+      ? [{ sesion, indice }] : [],
+  );
   return (
     <div className="sfm-editor" data-tour="editor-plan">
       <div className="sfm-segmentos" aria-label="Sesión del programa">
         {plan.dias.map((d, i) => (
-          <button key={d.id} aria-pressed={i === dia} onClick={() => setDia(i)}>
+          <button key={d.id} aria-pressed={i === dia}
+            aria-label={pendientes.some((p) => p.indice === i) ? `${d.nombre}, pendiente` : undefined}
+            onClick={() => setDia(i)}>
             {d.nombre}
+            {pendientes.some((p) => p.indice === i) && <span className="sfm-session-pending" aria-hidden="true" />}
           </button>
         ))}
       </div>
+      <ErrorVisible
+        titulo={pendientes.length === 1 ? "Falta completar una sesión" : "Revisa el programa"}
+        error={[...new Set(incidencias.map((i) => i.message))].join(" ")}
+        accion={pendientes.map(({ sesion, indice }) => (
+          <button key={sesion.id} className="sfm-text-button" onClick={() => {
+            setDia(indice);
+            nombreSesion.current?.focus();
+          }}>
+            Revisar {sesion.nombre}
+            <Icono nombre="flecha" size={16} />
+          </button>
+        ))}
+      />
       <button className="sfm-secondary sfm-organizar" onClick={() => setSesiones(true)}>
         Organizar sesiones
         <Icono nombre="flecha" size={18} />
@@ -81,6 +103,7 @@ export function EditorPlan({
       <label className="sfm-field sfm-field--compact">
         <span>Nombre de la sesión</span>
         <input
+          ref={nombreSesion}
           value={d.nombre}
           maxLength={80}
           onChange={(e) =>
@@ -204,9 +227,7 @@ export function EditorPlan({
         <Icono nombre="mas" /> Añadir ejercicio
       </button>
       <p className="sfm-hint">
-        {validacion.success
-          ? "Cada sesión lleva al menos 5 ejercicios y como máximo 8 bloques. Una bi-serie o tri-serie cuenta como un bloque."
-          : "Cada sesión necesita al menos 5 ejercicios (máximo 8 bloques) antes de publicar."}
+        Cada sesión lleva al menos 5 ejercicios y como máximo 8 bloques. Una bi-serie o tri-serie cuenta como un bloque.
       </p>
       {perfil.limitaciones && (
         <div className="sfm-callout">

@@ -27,6 +27,7 @@ export function Onboarding({
   const rev = useRef(0);
   const ultima = useRef("");
   const publicando = useRef(false);
+  const editor = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let vivo = true;
     void (async () => {
@@ -134,10 +135,23 @@ export function Onboarding({
     setError("");
     setOcupado(true);
     try {
-      const listo = ValidarAlta.parse({
+      const validacion = ValidarAlta.safeParse({
         ...a,
         plan: { ...a.plan, id: "programa", estado: "publicado" },
       });
+      if (!validacion.success) {
+        const aviso = validacion.error.issues.every((i) => i.path[0] === "plan")
+          ? editor.current?.querySelector<HTMLElement>('[role="alert"]') : null;
+        if (aviso) {
+          setError("");
+          (aviso.querySelector<HTMLButtonElement>("button") ?? aviso).focus();
+        } else {
+          setError([...new Set(validacion.error.issues.map((i) => i.message))].join(" "));
+        }
+        publicando.current = false;
+        return;
+      }
+      const listo = validacion.data;
       await guardar(listo);
       const id = await servicio.crear(listo, rev.current);
       ayuda?.confirmarCliente(id);
@@ -286,17 +300,19 @@ export function Onboarding({
           <div className="sfm-onboarding-summary">
             <strong>{p.nombre}</strong>
             <p>{p.objetivo}</p>
-            <span>{p.frecuenciaEntrenamiento} días por semana</span>
+            <span>{p.frecuenciaEntrenamiento} días por semana · {a.plan.dias.length} {a.plan.dias.length === 1 ? "sesión" : "sesiones"} en el programa</span>
           </div>
           <p className="sfm-hint">
-            Punto de partida: rotación del método. Revisa la prescripción para
-            esta persona antes de publicarla.
+            Las sesiones se alternan según los días que entrena. En «Organizar sesiones»
+            puedes ajustar cuántas sesiones tendrá el programa.
           </p>
+          <div ref={editor}>
           <EditorPlan
             plan={a.plan}
             perfil={p}
-            onChange={(plan) => setAlta({ ...a, plan })}
+            onChange={(plan) => { setError(""); setAlta({ ...a, plan }); }}
           />
+          </div>
           <label className="sfm-check" data-tour="alta-revision">
             <input
               type="checkbox"

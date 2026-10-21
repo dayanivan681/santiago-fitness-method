@@ -80,18 +80,19 @@ export const Plan = PlanHistorico.extend({
     ctx.addIssue({ code: "custom", message: "Hay días duplicados" });
   if (p.estado === "publicado" && !p.revisado && p.dias.length > 0)
     ctx.addIssue({ code: "custom", message: "Revisa el plan antes de publicar" });
-  for (const d of p.dias) {
+  for (const [indice, d] of p.dias.entries()) {
     if (d.slots.some((s, i) => s.orden !== i + 1))
-      ctx.addIssue({ code: "custom", message: "Orden de ejercicios inválido" });
+      ctx.addIssue({ code: "custom", message: "Orden de ejercicios inválido", path: ["dias", indice, "slots"] });
     for (const message of erroresDeSuperseries(d.slots))
-      ctx.addIssue({ code: "custom", message });
+      ctx.addIssue({ code: "custom", message, path: ["dias", indice, "slots"] });
     const bloques = contarBloques(d.slots);
     if (bloques > MAX_BLOQUES)
-      ctx.addIssue({ code: "custom", message: "Una sesión tiene como máximo 8 bloques" });
+      ctx.addIssue({ code: "custom", message: `${d.nombre}: tiene ${bloques} bloques. El máximo es 8.`, path: ["dias", indice, "slots"] });
     if (p.estado === "publicado" && d.slots.length < MIN_EJERCICIOS_POR_SESION)
       ctx.addIssue({
         code: "custom",
-        message: "Cada sesión necesita al menos 5 ejercicios antes de publicar",
+        message: `${d.nombre}: tiene ${d.slots.length} ${d.slots.length === 1 ? "ejercicio" : "ejercicios"} y necesita al menos ${MIN_EJERCICIOS_POR_SESION}.`,
+        path: ["dias", indice, "slots"],
       });
   }
 });

@@ -74,7 +74,7 @@ describe('superseries en el contrato del plan', () => {
   it('publicar exige al menos 5 ejercicios', () => {
     const cuatro = base.dias[0].slots.slice(0, 4)
     const plan = { ...base, dias: [{ ...base.dias[0], slots: cuatro }] }
-    expect(errores(Plan.safeParse(publicado(plan)))).toContain('Cada sesión necesita al menos 5 ejercicios antes de publicar')
+    expect(errores(Plan.safeParse(publicado(plan)))).toContain('Upper A: tiene 4 ejercicios y necesita al menos 5.')
   })
 })
 
@@ -90,3 +90,15 @@ describe('demo', () => {
     expect(planBase('x').dias.flatMap((d) => d.slots).some((s) => 'grupo' in s)).toBe(false)
   })
 })
+
+// Caso recibido de Santiago: frecuencia de tres días con una cuarta sesión en la rotación.
+it('identifica la cuarta sesión incompleta y acepta tres sesiones de siete sin cambiar las reglas', () => {
+  const inicial = planBase('qa-santiago', 3);
+  const dias = inicial.dias.map((d, i) => ({ ...d, slots: Array.from({ length: i === 3 ? 4 : 7 }, (_, j) => ({ ...d.slots[j % d.slots.length], orden: j + 1 })) }));
+  const r = Plan.safeParse(publicado({ ...inicial, dias }));
+  expect(r.success).toBe(false);
+  if (!r.success) expect(r.error.issues).toEqual([{ code: 'custom', message: 'Lower B: tiene 4 ejercicios y necesita al menos 5.', path: ['dias', 3, 'slots'] }]);
+  expect(Plan.safeParse(publicado({ ...inicial, dias: dias.slice(0, 3) })).success).toBe(true);
+  const cuatro = dias.map((d, i) => i === 3 ? { ...d, slots: [...d.slots, { ...d.slots[0], orden: 5 }] } : d);
+  expect(Plan.safeParse(publicado({ ...inicial, dias: cuatro })).success).toBe(true);
+});

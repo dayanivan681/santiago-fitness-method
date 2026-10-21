@@ -2,8 +2,10 @@ import { useEffect, useId, useRef, type ReactNode } from "react";
 import { usePresencia } from "../aplicacion/usePresencia";
 import { useArrastrarParaCerrar } from "../aplicacion/gestos";
 import { Link } from "react-router";
+import { mensajeError } from "./mensajeError";
 import {
   ArrowUpRight,
+  CircleAlert,
   ChartLine,
   Check,
   ChevronDown,
@@ -49,6 +51,7 @@ const ICONOS = {
   buscar: Search,
   comenzar: Play,
   pago: CreditCard,
+  aviso: CircleAlert,
 } as const;
 export type NombreIcono = keyof typeof ICONOS;
 export function Icono({
@@ -129,11 +132,21 @@ export function Vacio({
     </div>
   );
 }
-export function ErrorVisible({ error }: { error: string }) {
-  return error ? (
-    <p className="sfm-error" role="alert">
-      {error}
-    </p>
+export function ErrorVisible({ error, titulo = "Revisa este detalle", accion }: {
+  error: string;
+  titulo?: string;
+  accion?: ReactNode;
+}) {
+  const mensaje = mensajeError(error);
+  return mensaje ? (
+    <div className="sfm-error sfm-notice" role="alert" tabIndex={-1}>
+      <Icono nombre="aviso" size={20} />
+      <div className="sfm-notice-body">
+        <strong>{titulo}</strong>
+        <p>{mensaje}</p>
+        {accion && <div className="sfm-notice-actions">{accion}</div>}
+      </div>
+    </div>
   ) : null;
 }
 export function Hoja({
