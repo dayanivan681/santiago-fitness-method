@@ -165,7 +165,7 @@ export function Onboarding({
     }
   }
   return (
-    <section className="sfm-onboarding">
+    <section className="sfm-onboarding" data-paso={a.paso}>
       <Cabecera
         titulo={
           ["Datos del cliente", "Días y limitaciones", "Revisa el plan"][
@@ -306,7 +306,7 @@ export function Onboarding({
             Las sesiones se alternan según los días que entrena. En «Organizar sesiones»
             puedes ajustar cuántas sesiones tendrá el programa.
           </p>
-          <div ref={editor}>
+          <div ref={editor} className="sfm-onboarding-editor">
           <EditorPlan
             plan={a.plan}
             perfil={p}
