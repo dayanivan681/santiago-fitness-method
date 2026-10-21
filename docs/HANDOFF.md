@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T22:46:31.830Z
+- **Última sincronización:** 2026-10-21T22:49:59.786Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T22:49:59.787Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Prompts listos para pegar en Claude Design, en docs/gifs-servicios-costo-2026-10-21/design-system/PROMPTS.md: uno crea el sistema de diseno (figura en tres poses, kit de equipo, valores escritos y lamina de destino, con las reglas que lo hacen articulable) y otro es la plantilla por ejercicio, reutilizable para los 286, con huecos para las dos posiciones, el punto fijo y el rasgo que identifica el aparato; va rellenada de ejemplo con el Pendulum Squat 90 incluido el aviso de que no es un hack squat. Ademas, respuesta a la idea de conectar Claude Design a git: es mejor que pasar archivos a mano porque llega vector y queda versionado, PERO no puede escribir en main. CLAUDE.md fija main como rama coordinada con Codex y turno exclusivo, y handoff:claim y publish dan por hecho arbol limpio y un unico dueno; un tercero empujando a main bloquea a los dos agentes. Configuracion propuesta: rama diseno/sistema-visual y carpeta arte/sistema-visual/, sin tocar docs/cliente, src, functions, public ni migrations. Anotado que entrega-diseno/ no sirve para esto porque esta en .gitignore. Solo documentacion.
+- **Verificación:** npm test dos pasadas en verde (1082 en 128 archivos cada una); npm run lint; npm run build
+- **Siguiente:** El dueno conecta Claude Design a la rama diseno/sistema-visual, lanza el prompt 1 y avisa; yo leo esa rama, compruebo que el arte sea articulable y lo implemento en el esqueleto
+
 
 ### 2026-10-21T22:46:31.832Z | claude-code | CLAIM
 - **Estado:** active
