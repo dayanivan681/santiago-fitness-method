@@ -193,6 +193,12 @@ tropieza con el mismo problema.
 
 ## Recomendación
 
+> **Actualización 2026-10-21:** el cruce recomendado aquí abajo **ya está hecho**.
+> Resultado: **28 de los 50 se cubren con $0** (11 reutilizando GIF que ya están en
+> el repositorio y 17 generables desde free-exercise-db); los otros 22 no tienen
+> fuente libre fiel porque son máquinas concretas del gimnasio. Detalle ejercicio
+> por ejercicio en [CRUCE.md](CRUCE.md).
+
 **Antes de pagar nada, hacer el cruce.** Tomar los 50 nombres que faltan y
 comprobar cuántos tiene ya `free-exercise-db`, que es gratis, de dominio público y
 de donde salieron los 46 GIF del catálogo de arranque. Cuesta $0 y un rato de

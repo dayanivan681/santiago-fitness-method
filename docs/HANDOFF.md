@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T20:00:50.967Z
+- **Última sincronización:** 2026-10-21T20:07:12.852Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T20:07:12.853Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Cruce de los 50 ejercicios activos sin animacion contra las fuentes gratuitas, en docs/gifs-servicios-costo-2026-10-21/CRUCE.md. Resultado medido: 28 de 50 se cubren con coste cero, 11 reutilizando GIF que ya estan en public/ejercicios/animaciones y 17 generables desde free-exercise-db (876 ejercicios, 873 con dos fotogramas, descargado hoy); de esos 28, 20 son fieles sin reservas y 8 llevan una reserva que Santiago debe aprobar. Los 22 restantes no tienen fuente libre fiel: 14 son una maquina concreta del gimnasio (pendulum squat, power squat, belt squat sumo, hip thrust de pie, elevacion lateral en maquina, abductores de pie, jalon convergente, jalon de discos, maquinas de asistencia) y 4 son variantes unilaterales en cable o maquina. Hacer los 28 llevaria la biblioteca de 236/286 a 264/286. Plank y Side Plank se cubren pero son isometricos y un GIF no aporta nada. Recomendacion: hacer los 28 gratis, que Santiago grabe los 22 restantes y no comprar los 199 dolares sin antes pedir a ExerciseDB su lista de ejercicios. Solo documentacion: sin cambios de codigo de producto ni GIF generados.
+- **Verificación:** npm test (1082 en 128 archivos); npm run lint; npm run build
+- **Siguiente:** Que el dueno decida si se generan los 28 GIF gratuitos y si aprueba las 8 reservas; despues pedir a Santiago las grabaciones de los 22 aparatos
+
 
 ### 2026-10-21T20:00:50.969Z | claude-code | CLAIM
 - **Estado:** active
