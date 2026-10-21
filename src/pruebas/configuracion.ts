@@ -2,6 +2,8 @@
 import './animacionesJsdom'
 import '@testing-library/jest-dom/vitest'
 import { configure } from '@testing-library/react'
+import { beforeEach } from 'vitest'
+import { NOVEDADES } from '../producto/notas-novedades'
 
 /**
  * Margen para las esperas de la interfaz.
@@ -13,6 +15,17 @@ import { configure } from '@testing-library/react'
  * roto.
  */
 configure({ asyncUtilTimeout: 5000 })
+
+// El aviso de novedades depende de la fecha real: fuera de sus propias pruebas,
+// el dispositivo de prueba ya las vio todas para que no tape otras pantallas.
+beforeEach(() => {
+  // Las pruebas de functions corren en Node, sin almacenamiento del navegador.
+  if (typeof localStorage === 'undefined') return
+  for (const audiencia of ['coach', 'cliente'] as const) {
+    const ids = NOVEDADES.filter((n) => n.audiencia === audiencia).map((n) => n.id)
+    localStorage.setItem(`sfm-novedades-vistas:${audiencia}`, JSON.stringify(ids))
+  }
+})
 
 // jsdom no implementa todavía los métodos nativos del diálogo. Las pruebas
 // funcionales verifican su apertura; foco y geometría se comprueban en navegador.

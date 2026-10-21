@@ -1,5 +1,7 @@
 import { Esqueleto } from "../componentes/Esqueleto";
 import { GuiaAyuda } from "./GuiaAyuda";
+import { AvisoNovedades } from "./Novedades";
+import { useNovedades } from "./useNovedades";
 import { ProveedorAyudaReal } from "./Ayuda";
 import { ConsejoCliente } from "./Ayuda";
 import { useMemo, useState } from "react";
@@ -55,6 +57,7 @@ function ContenidoCliente({
 }) {
   const navegar = useNavigate();
   const ubicacion = useLocation();
+  const novedades = useNovedades("cliente", modo === "real");
   const [retomar, setRetomar] = useState(() =>
     ubicacion.pathname.endsWith("/entrenar"),
   );
@@ -133,7 +136,8 @@ function ContenidoCliente({
           </div>
           <div className="sfm-brand-actions">
           {!atencionNube && sincronizacion}
-          {modo === "real" && <GuiaAyuda base={base} permitirBienvenida={!bloqueada} />}
+          {modo === "real" && <GuiaAyuda base={base} permitirBienvenida={!bloqueada && !novedades.pendientes.length} />}
+          {novedades.pendientes.length > 0 && <AvisoNovedades novedades={novedades.pendientes} cerrar={novedades.marcarVistas} />}
           <Link data-tour="perfil-cliente" data-tour-action="perfil-cliente-abierto" to={`${base}/perfil`} aria-label="Mi perfil">
             <AvatarCuenta nombre={participante.nombre} conexion={conexion} />
           </Link>

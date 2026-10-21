@@ -312,11 +312,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T15:33:48.098Z
+- **Última sincronización:** 2026-10-21T15:40:07.904Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1464,6 +1464,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T15:40:07.906Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Aviso de novedades por versión para coach y clientes. Notas curadas en src/producto/notas-novedades.ts (id, fecha, audiencia, 1–3 puntos); hoja «Novedades» con botón Entendido en Coach y Cliente real, recordada por dispositivo en localStorage (sfm-novedades-vistas:coach|cliente). Dispositivo sin registro: solo la nota más reciente si tiene ≤14 días. Las novedades salen antes que el recorrido/bienvenida de GuiaAyuda y no se apilan. Inactivo en demo. Primeras notas aprobadas por el dueño: coach «Tu panel, más claro» y cliente «Tu rutina, más a mano». Regla añadida en CLAUDE.md y AGENTS.md: todo cambio visible en producción lleva nota aprobada por el dueño. Archivos: notas-novedades.ts, useNovedades.ts, Novedades.tsx, Novedades.test.tsx, Coach.tsx, Cliente.tsx, GuiaCoachReal.test.tsx, producto.css, pruebas/configuracion.ts (marca las novedades como vistas fuera de sus pruebas). No verificado en pantalla con sesión real; el dueño lo verá en su teléfono.
+- **Verificación:** npm test (1067/1067, 125 archivos); npm run lint; npm run build
+- **Siguiente:** El dueño confirma que ve la hoja Novedades al abrir la app; desde ahora cada cambio visible añade su nota
+
 
 ### 2026-10-21T15:33:48.099Z | claude-code | CLAIM
 - **Estado:** active

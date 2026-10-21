@@ -52,6 +52,16 @@ los archivos que va a incluir.
 - Ejecuta las pruebas relevantes mientras trabajas.
 - Si encuentras una ambigüedad, registra la pregunta en el handoff en vez de inventar una regla.
 
+## Novedades para Santiago y los clientes
+
+Todo cambio visible para el coach o los clientes que se publica en producción añade
+una nota en `src/producto/notas-novedades.ts`, arriba del todo: id único, fecha de
+publicación, audiencia (`coach` o `cliente`) y 1–3 puntos en lenguaje de quien la
+lee, sin términos técnicos. La app la muestra una vez por dispositivo al abrirla.
+El dueño aprueba el texto antes de publicar; muéstraselo en el chat. Los cambios
+internos (documentación, pruebas, handoff, refactors sin efecto visible) no llevan
+nota.
+
 ## Cierre del turno
 
 Antes de publicar, ejecuta:

@@ -36,5 +36,9 @@ npm run handoff:publish -- \
   --next "Indica el siguiente paso o escribe ninguno"
 ```
 
+Cada cambio visible que llegue a producción añade su nota de novedades en
+`src/producto/notas-novedades.ts`, con el texto aprobado por el dueño (ver la sección
+«Novedades para Santiago y los clientes» de `CLAUDE.md`).
+
 Nunca modifiques `docs/cliente`; es la fuente de requisitos del cliente y permanece en
 solo lectura.

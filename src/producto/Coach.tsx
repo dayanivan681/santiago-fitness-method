@@ -38,6 +38,8 @@ import {
 } from "./ui";
 import { EditorPlan } from "./EditorPlan";
 import { HoyCoach } from "./CoachHoy";
+import { AvisoNovedades } from "./Novedades";
+import { useNovedades } from "./useNovedades";
 import { FilaCliente } from "./FilaCliente";
 import "./coach-ios.css";
 import { Onboarding } from "./Onboarding";
@@ -61,6 +63,7 @@ export function Coach({
 }) {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [borradores, setBorradores] = useState<Cambio[]>([]);
+  const novedades = useNovedades("coach", !servicio.demo);
   const [error, setError] = useState("");
   const [listo, setListo] = useState(false);
   const biblioteca = useBibliotecaDelCoach(servicio);
@@ -122,7 +125,8 @@ export function Coach({
       <div className="sfm-brandbar">
         <span className="sfm-coach-wordmark">SANTIAGO FM · COACH</span>
         <div className="sfm-brand-actions">
-          {!servicio.demo && <GuiaAyuda base={base} permitirBienvenida={listo} clientes={clientes.length} />}
+          {!servicio.demo && <GuiaAyuda base={base} permitirBienvenida={listo && !novedades.pendientes.length} clientes={clientes.length} />}
+          {novedades.pendientes.length > 0 && <AvisoNovedades novedades={novedades.pendientes} cerrar={novedades.marcarVistas} />}
         </div>
       </div>
       <main className="sfm-main sfm-main--coach">

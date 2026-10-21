@@ -938,6 +938,16 @@ a.sfm-primary:active {
   font-size: 20px;
   font-weight: 500;
 }
+.sfm-novedad h3 { margin: 0 0 8px; }
+.sfm-novedad ul {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding-left: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--sfm-muted);
+}
 /* Misma entrada y salida que las hojas del cliente (keyframes en index.css):
    220 ms subiendo 14 px al abrir, 180 ms bajando al cerrar, fondo a la par. */
 .sfm-hoja[open] {
