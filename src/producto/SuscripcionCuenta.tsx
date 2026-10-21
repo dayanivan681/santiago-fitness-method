@@ -1,3 +1,4 @@
+import { ErrorVisible } from "./ui";
 import { useState } from "react";
 import type { RespuestaSuscripcion } from "../../shared/v2/suscripcion";
 import { ETIQUETA_DE_ACCESO, fechaDeCobro } from "./suscripcionTextos";
@@ -26,7 +27,7 @@ function BotonStripe({ api, ruta, texto, navegar, clase = "sfm-primary" }: {
   return (
     <>
       <button className={clase} disabled={ocupado} onClick={() => void ir()}>{texto}</button>
-      {error && <p className="sfm-error" role="alert">{error}</p>}
+      <ErrorVisible error={error} />
     </>
   );
 }
