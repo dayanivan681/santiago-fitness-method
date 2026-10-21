@@ -21,11 +21,15 @@ Los tres primeros vienen de `src/index.css` y **no se cambian**: son los de la a
 | Cuerpo | `#f2f2f0` | fijo, `--texto`. Lado cercano de la figura |
 | Acento de marca | `#e5352b` | fijo, `--rojo` |
 | Cuerpo, lado lejano | `#b4b5b1` | brazo y pierna del lado lejano (`cuerpoLejano`) |
-| Ropa | `#33363c` | camiseta sin mangas y pantalón corto, lisos |
-| Equipo (acero) | `#6b717b` | tubos, bastidor, placas de la pila |
-| Equipo (borde) | `#3f444c` | contorno de 2 px de todo el acero y los tapizados |
-| Equipo (acero claro) | `#8d949e` | piezas que giran o se mueven: ejes, pivotes, manguitos, guía del Smith, pasador |
+| Ropa | `#3d4046` | sólo pantalón corto, liso. Torso descubierto para que se lea la anatomía |
+| Definición muscular | `#000000` al 22 % | líneas de 2,5 px; oscurecen igual piel, ropa y rojo (`OPACIDAD_LINEA`) |
+| Equipo (acero) | `#7b828c` | tubos, bastidor, placas de la pila |
+| Equipo (borde) | `#454a52` | contorno de 2 px de todo el acero y los tapizados |
+| Equipo (acero claro) | `#a1a8b1` | piezas que giran o se mueven: ejes, pivotes, manguitos, guía del Smith, pasador |
 | Tapizado | `#2a2d33` | asientos, respaldos, almohadillas, rodillos |
+| Costura | `#3b3f46` | una línea de 2 px a lo largo de cada tapizado |
+| Cubierta | `#1b1e22` | carcasa detrás de la pila de placas |
+| Goma | `#16181b` | tacos de apoyo del bastidor en el suelo |
 | Discos | `#25282d` | cara del disco |
 | Discos (aro) | `#555b64` | aro exterior y anillo interior |
 | Cable | `#9aa0a8` | 3 px |
@@ -40,18 +44,19 @@ tocan (`ARTICULACION`), y por eso la unión aguanta cualquier ángulo.
 
 | Segmento | Grosor máximo | En la articulación (radio) |
 |---|---|---|
-| Torso | pelvis 88 · cintura 67 · pecho 95 | cadera 34 · hombro 24 |
-| Muslo | 72 | cadera r 34 · rodilla r 22 |
-| Pierna | 53 (gemelo) | rodilla r 22 · tobillo r 14 |
+| Torso | glúteo 90 · cintura 68 · pecho 110 | cadera 34 · hombro 26 |
+| Muslo | 74 | cadera r 34 · rodilla r 22 |
+| Pierna | 55 (gemelo) | rodilla r 22 · tobillo r 14 |
 | Pie | 42 en el tobillo, 14 en la punta | tobillo r 14 |
-| Brazo | 48 (deltoides) | hombro r 24 · codo r 15 |
-| Antebrazo | 35 | codo r 15 · muñeca r 10 |
-| Mano abierta / puño | 23 / 28 | muñeca r 10 |
-| Cuello | 36 | base r 18 · atlas r 17 |
+| Brazo | 52 (deltoides) · 47 (bíceps + tríceps) | hombro r 26 · codo r 15 |
+| Antebrazo | 38 | codo r 15 · muñeca r 10 |
+| Mano abierta / puño | 32 con el pulgar · 21 la palma / 29 | muñeca r 10 |
+| Cuello | 35 | base r 18 · atlas r 17 |
 | Cabeza (radio) | óvalo de 86 de fondo × 94 de alto, equivalente a r 45 | gira sobre el atlas |
 
 Trazos: separador de segmento 3 px de color fondo bajo cada pieza (se ven 1,5 px
-fuera del contorno) · borde de equipo 2 px a cada lado · cable 3 px · suelo 2 px.
+fuera del contorno) · definición muscular 2,5 px · borde de equipo 2 px a cada lado ·
+cable 3 px · suelo 2 px.
 
 ## Proporciones
 
@@ -66,9 +71,9 @@ Figura de 1,75 m a 411,4 px/m (`PX_POR_METRO`).
 | Largo del torso (cadera → hombro) | 202 |
 | Largo del brazo | 134 (hombro → codo) |
 | Largo del antebrazo | 105 (codo → muñeca) |
-| Largo del pie | 112 (talón → punta); tobillo a 28 del suelo, 26 por delante del talón |
+| Largo del pie | 114 (talón → punta); tobillo a 28 del suelo, 26 por delante del talón |
 | Largo del cuello | 40 (base → atlas) |
-| Largo de la mano | 66 abierta · 30 puño (muñeca → centro de la yema) |
+| Largo de la mano | 72 abierta (muñeca → punta de los dedos) · 42 puño (muñeca → nudillos) |
 | Cabeza | 88 del atlas a la coronilla |
 
 Alturas en la pose neutra: tobillo 28 · rodilla 205 · cadera 381 · hombro 583 ·
@@ -77,6 +82,29 @@ base del cuello 593 · atlas 632 · coronilla 720.
 Puntos fijos dentro del torso (marco local, +x de cadera a hombro, +y hacia
 delante): hombro en (202, 0), base del cuello en (212, -2).
 
+## Definición muscular
+
+Inspirada en el registro de RepDB (cuerpo atlético con anatomía legible), pero sin
+su sombreado 3D: aquí la anatomía son **líneas fijas en el marco de cada
+segmento**. No suponen una luz ni una postura, giran con la pieza y por eso no
+rompen la regla 4.
+
+```
+torso      borde inferior del pectoral · serrato · oblicuo · cresta ilíaca ·
+           borde del dorsal · escápula
+muslo      recto femoral / vasto · isquiotibiales · rótula
+pierna     gemelo · tibia
+brazo      contorno del deltoides · separación bíceps / tríceps
+antebrazo  braquiorradial
+cuello     esternocleidomastoideo
+mano       dedos (abierta) · pulgar (puño)
+pie        dedos
+```
+
+Se pintan después de la ropa y del rojo, en negro al 22 %: sobre la piel salen
+gris cálido, sobre el rojo un rojo más oscuro, y el lado lejano no necesita otro
+color. Definidas en `LINEA` de `generar.mjs`.
+
 ## Músculo que trabaja
 
 Usamos la firma de marca: el rojo queda reservado al músculo que trabaja.
@@ -84,7 +112,8 @@ Usamos la firma de marca: el rojo queda reservado al músculo que trabaja.
 ```
 Forma encima del segmento, en el marco local del propio segmento, recortada
 con clip-path a su contorno. Relleno #e5352b opaco, sin contorno ni degradado.
-Se pinta encima de la ropa: es un diagrama, no una prenda.
+Se pinta encima de la ropa: es un diagrama, no una prenda. Cubre el vientre
+entero del músculo (no una franja), como en RepDB.
 
 Como va dentro del grupo del segmento, gira con él: no hay que recalcularla
 por pose. Sólo en el lado cercano; el lado lejano nunca lleva rojo.
@@ -125,7 +154,7 @@ arriba del lienzo: del hombro a la punta del puño hay 282 px. Con 896 queda a
 en vertical lo que está centrado es el recorrido completo, de los puños arriba
 a la planta.
 
-**Manos.** Hay dos formas: `mano` (abierta) y `puno` (cerrada, para agarrar).
+**Manos.** Hay dos formas: `mano` (abierta, con pulgar) y `puno` (cerrada, para agarrar).
 Cambian sin tocar el antebrazo porque comparten el radio de muñeca. La mano es
 un segmento propio aunque el encargo no lo pedía: hace falta para que la muñeca
 se doble al agarrar una barra o un asa.
@@ -139,9 +168,10 @@ barra libre y la mancuerna en agarre prono se ven **de punta**: disco de frente
 más manguito. `mancuerna.svg` trae las dos vistas (`mancuerna-lado` para agarre
 neutro, `mancuerna-punta` para el resto).
 
-**Sin texturas.** Ni moleteado, ni marcas, ni brillos. El único "volumen" de la
-figura es el separador color fondo entre piezas, que es lo que la hace leerse
-como maniquí articulado.
+**Sin texturas.** Ni moleteado, ni marcas, ni brillos. El volumen de la figura
+lo dan el separador color fondo entre piezas (que la hace leerse como maniquí
+articulado) y las líneas de definición muscular. En el equipo sí hay detalle
+de material plano: costura en el tapizado, carcasa tras la pila, tacos de goma.
 
 **Pendulum squat.** El carro gira sobre el pivote (610, 240). Arriba φ = 0°;
 abajo φ = -19,7°, que es el giro que deja la rodilla a 90° con el pie fijo en la

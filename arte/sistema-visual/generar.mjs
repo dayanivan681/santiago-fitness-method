@@ -35,21 +35,30 @@ export const COLOR = {
   fondo: '#0b0c0d', // --fondo
   cuerpo: '#f2f2f0', // --texto
   cuerpoLejano: '#b4b5b1', // brazo y pierna del lado lejano
-  ropa: '#33363c',
+  linea: '#000000', // definición muscular, al 22 % de opacidad (ver OPACIDAD_LINEA)
+  ropa: '#3d4046',
   acento: '#e5352b', // --rojo
   musculo: '#e5352b', // músculo que trabaja = acento
-  acero: '#6b717b',
-  aceroBorde: '#3f444c',
-  aceroClaro: '#8d949e', // ejes, pivotes, manguitos, pasador
+  acero: '#7b828c',
+  aceroBorde: '#454a52',
+  aceroClaro: '#a1a8b1', // ejes, pivotes, manguitos, pasador
   tapizado: '#2a2d33',
+  costura: '#3b3f46', // línea de costura del tapizado
+  cubierta: '#1b1e22', // carcasa detrás de la pila de placas
+  goma: '#16181b', // tacos de apoyo en el suelo
   discoCara: '#25282d',
   discoAro: '#555b64',
   cable: '#9aa0a8',
   suelo: '#1c1e22',
 };
 
+// Las líneas de definición son negro translúcido: oscurecen por igual piel,
+// ropa y músculo rojo, así que valen para los dos lados y para cualquier zona.
+export const OPACIDAD_LINEA = 0.22;
+
 export const TRAZO = {
   separador: 3, // contorno color fondo bajo cada segmento (se ve 1,5 px)
+  linea: 2.5, // definición muscular
   bordeEquipo: 2, // borde a cada lado de un tubo de acero
   cable: 3,
   suelo: 2,
@@ -65,8 +74,8 @@ export const LARGO = {
   cuello: 40, // base del cuello → atlas
   brazo: 134, // hombro → codo
   antebrazo: 105, // codo → muñeca
-  mano: 66, // muñeca → centro de la yema (mano abierta)
-  puno: 30, // muñeca → centro del puño (mano cerrada)
+  mano: 72, // muñeca → punta de los dedos (mano abierta)
+  puno: 42, // muñeca → nudillos (mano cerrada)
 };
 
 // Puntos fijos dentro del torso (marco local del torso: +x cadera→hombro, +y delante)
@@ -115,6 +124,19 @@ function curvaCerrada(puntos) {
   return `${d}Z`;
 }
 
+// Curva abierta Catmull-Rom (líneas de definición)
+function curvaAbierta(puntos) {
+  const ext = [puntos[0], ...puntos, puntos[puntos.length - 1]];
+  let d = `M${f(puntos[0][0])} ${f(puntos[0][1])}`;
+  for (let i = 1; i < ext.length - 2; i++) {
+    const [p0, p1, p2, p3] = [ext[i - 1], ext[i], ext[i + 1], ext[i + 2]];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${f(c1[0])} ${f(c1[1])} ${f(c2[0])} ${f(c2[1])} ${f(p2[0])} ${f(p2[1])}`;
+  }
+  return d;
+}
+
 // Segmento de extremos redondeados: círculo r0 en la articulación proximal,
 // círculo r1 en la distal, y un perfil de músculo a cada lado.
 // lado -y y lado +y: listas de { t (0..1 del largo), w (semigrosor) }.
@@ -141,7 +163,7 @@ export const ARTICULACION = {
   cadera: 34,
   rodilla: 22,
   tobillo: 14,
-  hombro: 24,
+  hombro: 26,
   codo: 15,
   muneca: 10,
   cuello: 18,
@@ -154,98 +176,127 @@ export const SEGMENTO = {
     L: LARGO.muslo,
     r0: ARTICULACION.cadera,
     r1: ARTICULACION.rodilla,
-    menosY: [{ t: 0.3, w: 37 }, { t: 0.72, w: 29 }],
-    masY: [{ t: 0.15, w: 35 }, { t: 0.6, w: 28 }],
+    menosY: [{ t: 0.32, w: 39 }, { t: 0.74, w: 29 }],
+    masY: [{ t: 0.18, w: 35 }, { t: 0.5, w: 32 }, { t: 0.82, w: 24 }],
   },
   pierna: {
     L: LARGO.pierna,
     r0: ARTICULACION.rodilla,
     r1: ARTICULACION.tobillo,
-    menosY: [{ t: 0.25, w: 22 }, { t: 0.7, w: 16 }],
-    masY: [{ t: 0.28, w: 31 }, { t: 0.62, w: 21 }],
+    menosY: [{ t: 0.2, w: 22 }, { t: 0.7, w: 15 }],
+    masY: [{ t: 0.24, w: 33 }, { t: 0.5, w: 25 }, { t: 0.78, w: 16 }],
   },
   brazo: {
     L: LARGO.brazo,
     r0: ARTICULACION.hombro,
     r1: ARTICULACION.codo,
-    menosY: [{ t: 0.5, w: 20 }],
-    masY: [{ t: 0.3, w: 23 }, { t: 0.72, w: 18 }],
+    menosY: [{ t: 0.55, w: 22 }],
+    masY: [{ t: 0.32, w: 25 }, { t: 0.72, w: 19 }],
   },
   antebrazo: {
     L: LARGO.antebrazo,
     r0: ARTICULACION.codo,
     r1: ARTICULACION.muneca,
-    menosY: [{ t: 0.32, w: 17 }],
-    masY: [{ t: 0.25, w: 18 }],
-  },
-  mano: {
-    L: LARGO.mano,
-    r0: ARTICULACION.muneca,
-    r1: 8,
-    menosY: [{ t: 0.45, w: 12 }],
-    masY: [{ t: 0.45, w: 11 }],
-  },
-  puno: {
-    L: LARGO.puno,
-    r0: ARTICULACION.muneca,
-    r1: 13,
-    menosY: [{ t: 0.55, w: 14 }],
-    masY: [{ t: 0.55, w: 14 }],
+    menosY: [{ t: 0.22, w: 20 }, { t: 0.6, w: 14 }],
+    masY: [{ t: 0.25, w: 18 }, { t: 0.65, w: 13 }],
   },
   cuello: {
     L: LARGO.cuello,
     r0: ARTICULACION.cuello,
     r1: 17,
     menosY: [{ t: 0.5, w: 17 }],
-    masY: [{ t: 0.5, w: 17 }],
+    masY: [{ t: 0.5, w: 18 }],
   },
 };
 
 const FORMA = Object.fromEntries(Object.entries(SEGMENTO).map(([k, s]) => [k, capsula(s)]));
 
-// Torso: cadera en (0,0), hombro en (202,0). +y delante.
+// Torso atlético: glúteo redondo, cintura estrecha, dorsal y pectoral marcados.
+// Cadera en (0,0), hombro en (202,0). +y delante.
 FORMA.torso = curvaCerrada([
-  [-34, -14], [-14, -46], [20, -50], [60, -38], [100, -31], [145, -38], [185, -44],
-  [215, -38], [232, -22], [240, -6], [238, 10], [226, 26], [205, 44], [172, 53],
-  [140, 46], [100, 36], [50, 38], [10, 36], [-24, 22], [-38, 6],
+  [-34, -14], [-18, -50], [12, -56], [46, -46], [80, -32], [105, -30], [140, -42],
+  [172, -50], [200, -46], [222, -36], [236, -20], [242, -4], [240, 10], [230, 26],
+  [212, 48], [190, 60], [164, 60], [146, 50], [124, 42], [96, 38], [60, 38], [24, 36],
+  [-6, 30], [-26, 20], [-38, 6],
 ]);
 
-// Pie: tobillo en (0,0), +x hacia la punta, planta en y = 28.
+// Pie: tobillo en (0,0), +x hacia la punta, planta en y = 28. Talón, arco y dedos.
 FORMA.pie = curvaCerrada([
-  [0, -14], [-12, -8], [-21, 4], [-26, 16], [-22, 26], [-10, 28], [30, 28], [64, 28],
-  [80, 27], [86, 21], [82, 13], [64, 6], [40, -2], [18, -10],
+  [0, -14], [-12, -8], [-20, 2], [-26, 14], [-24, 24], [-14, 28], [8, 28], [40, 27],
+  [66, 28], [80, 28], [88, 24], [87, 17], [78, 12], [60, 6], [40, -2], [18, -10],
+]);
+
+// Mano abierta: muñeca en (0,0), dedos juntos hacia +x, pulgar en el lado -y.
+FORMA.mano = curvaCerrada([
+  [0, -10], [12, -12], [20, -17], [30, -21], [36, -18], [34, -12], [48, -10], [62, -8],
+  [71, -3], [70, 4], [60, 8], [40, 11], [18, 11], [0, 10], [-7, 7], [-10, 0], [-7, -7],
+]);
+
+// Puño: muñeca en (0,0), nudillos en x ≈ 42.
+FORMA.puno = curvaCerrada([
+  [0, -10], [12, -13], [26, -15], [37, -12], [42, -4], [42, 6], [35, 13], [18, 14],
+  [0, 10], [-7, 7], [-10, 0], [-7, -7],
 ]);
 
 // Cabeza: atlas (punta del cuello) en (0,0), +x hacia la coronilla, +y delante.
-// Sin rasgos: cráneo y mandíbula como una sola forma lisa.
+// Huevo de maniquí con mandíbula; sin rasgos.
 FORMA.cabeza = curvaCerrada([
-  [88, 2], [80, 26], [62, 40], [42, 44], [22, 42], [6, 36], [-6, 24], [-6, 12],
-  [2, 2], [8, -20], [22, -36], [46, -42], [70, -32],
+  [88, 2], [82, 24], [66, 38], [46, 44], [26, 43], [10, 38], [-2, 28], [-6, 16],
+  [0, 6], [6, -18], [20, -34], [44, -42], [70, -32],
 ]);
 
 // Zonas musculares (firma de marca): formas encima del segmento, recortadas a él.
 export const MUSCULO = {
-  cuadriceps: { segmento: 'muslo', puntos: [[24, -28], [60, -37], [105, -33], [148, -21], [160, -11], [130, -15], [80, -18], [40, -16]] },
-  isquios: { segmento: 'muslo', puntos: [[30, 24], [70, 30], [120, 26], [150, 16], [120, 12], [70, 14]] },
-  gemelo: { segmento: 'pierna', puntos: [[18, 20], [45, 31], [80, 27], [105, 16], [80, 12], [45, 14]] },
-  gluteo: { segmento: 'torso', puntos: [[-28, -16], [-12, -44], [18, -49], [50, -40], [44, -24], [14, -20], [-12, -10]] },
-  abdominal: { segmento: 'torso', puntos: [[30, 30], [60, 36], [110, 35], [140, 40], [130, 28], [90, 26], [50, 26]] },
-  pectoral: { segmento: 'torso', puntos: [[150, 40], [172, 51], [200, 43], [214, 30], [195, 28], [165, 30]] },
-  dorsal: { segmento: 'torso', puntos: [[110, -30], [150, -38], [190, -43], [200, -30], [170, -24], [135, -22]] },
-  trapecio: { segmento: 'torso', puntos: [[205, -36], [228, -24], [238, -8], [222, -14], [208, -24]] },
-  deltoides: { segmento: 'brazo', puntos: [[-18, -14], [0, -24], [30, -20], [50, -10], [52, 6], [30, 18], [0, 22], [-18, 12]] },
-  biceps: { segmento: 'brazo', puntos: [[35, -15], [70, -20], [105, -14], [90, -8], [60, -8]] },
-  triceps: { segmento: 'brazo', puntos: [[25, 14], [55, 23], [100, 17], [110, 10], [70, 10]] },
+  cuadriceps: { segmento: 'muslo', puntos: [[18, -34], [60, -41], [110, -35], [150, -24], [168, -14], [164, -2], [148, 4], [120, 0], [80, -2], [40, -6], [20, -14]] },
+  isquios: { segmento: 'muslo', puntos: [[30, 30], [80, 34], [130, 28], [160, 16], [150, 6], [110, 8], [60, 8], [32, 12]] },
+  gemelo: { segmento: 'pierna', puntos: [[10, 24], [44, 35], [80, 30], [110, 18], [100, 8], [70, 6], [40, 8], [16, 12]] },
+  gluteo: { segmento: 'torso', puntos: [[-34, -12], [-20, -50], [12, -58], [44, -48], [58, -30], [40, -14], [14, -8], [-12, -2]] },
+  abdominal: { segmento: 'torso', puntos: [[20, 34], [60, 40], [100, 40], [130, 44], [146, 50], [140, 34], [110, 22], [70, 20], [30, 22]] },
+  pectoral: { segmento: 'torso', puntos: [[140, 50], [164, 62], [192, 62], [214, 48], [226, 30], [210, 18], [184, 22], [156, 34]] },
+  dorsal: { segmento: 'torso', puntos: [[96, -30], [140, -44], [176, -52], [200, -46], [204, -30], [180, -20], [140, -14], [110, -16]] },
+  trapecio: { segmento: 'torso', puntos: [[196, -46], [222, -38], [238, -20], [244, -4], [230, -6], [214, -22], [200, -30]] },
+  deltoides: { segmento: 'brazo', puntos: [[-26, -14], [-8, -28], [28, -24], [56, -10], [54, 10], [30, 22], [-6, 28], [-26, 14]] },
+  biceps: { segmento: 'brazo', puntos: [[36, -16], [70, -24], [110, -16], [124, -8], [100, -2], [66, -2], [40, -6]] },
+  triceps: { segmento: 'brazo', puntos: [[18, 18], [56, 27], [100, 21], [118, 10], [96, 4], [56, 4], [24, 8]] },
 };
 
-// Ropa: rectángulos en el marco local, recortados al segmento.
-const ROPA = {
+// Definición muscular: líneas fijas en el marco del segmento. No suponen luz
+// ni postura, así que giran con la pieza sin romper la regla de sombras.
+export const LINEA = {
   torso: [
-    [30, -80, 192, 160], // camiseta sin mangas: x 30 → 222
-    [-60, -80, 94, 160], // pantalón corto: x -60 → 34
+    [[150, 50], [170, 41], [196, 35]], // borde inferior del pectoral
+    [[128, 36], [140, 30], [150, 28]], // serrato
+    [[34, 26], [72, 26], [110, 29], [132, 34]], // oblicuo
+    [[40, 20], [22, 18], [4, 24]], // cresta ilíaca
+    [[112, -22], [150, -30], [184, -36]], // borde del dorsal
+    [[178, -40], [196, -34], [208, -28]], // escápula
   ],
-  muslo: [[-60, -60, 132, 120]], // pantalón corto: hasta el 41 % del muslo
+  muslo: [
+    [[32, -12], [90, -15], [146, -10]], // recto femoral / vasto
+    [[44, 14], [100, 16], [148, 10]], // isquiotibiales
+    [[150, -22], [162, -24], [172, -17]], // rótula
+  ],
+  pierna: [
+    [[22, 18], [56, 22], [92, 20], [110, 12]], // gemelo
+    [[18, -8], [80, -6], [140, -4]], // tibia
+  ],
+  brazo: [
+    [[-4, -22], [30, -15], [50, -2], [40, 14], [18, 22]], // deltoides
+    [[58, 2], [92, 2], [122, 0]], // bíceps / tríceps
+  ],
+  antebrazo: [[[10, -4], [42, -2], [80, 0]]],
+  cuello: [[[4, 8], [22, 2], [36, -8]]], // esternocleidomastoideo
+  puno: [[[16, -12], [28, -6], [36, 2]]], // pulgar
+  mano: [[[42, -4], [64, -2]]],
+  pie: [[[50, 12], [70, 16], [80, 20]]], // dedos
 };
+
+// Ropa: sólo pantalón corto, liso. Rectángulos en el marco local, recortados al segmento.
+const ROPA = {
+  torso: [[-60, -80, 92, 160]], // cintura del pantalón en x = 32
+  muslo: [[-60, -60, 132, 120]], // pierna del pantalón hasta el 41 % del muslo
+};
+
 
 // ---------------------------------------------------------------------------
 // Figura: cinemática directa
@@ -297,11 +348,15 @@ function dibujarSegmento(id, tipo, { o, th }, color, musculos = []) {
     .filter((m) => MUSCULO[m].segmento === tipo)
     .map((m) => `<path data-musculo="${m}" d="${curvaCerrada(MUSCULO[m].puntos)}"/>`)
     .join('');
+  const lineas = (LINEA[tipo] ?? []).map((l) => `<path d="${curvaAbierta(l)}"/>`).join('');
   return [
     `<g id="${id}" data-segmento="${tipo}" transform="translate(${f(o[0])} ${f(o[1])}) rotate(${f(th)})">`,
     `<path d="${FORMA[tipo]}" fill="${color}" stroke="${COLOR.fondo}" stroke-width="${TRAZO.separador * 2}" paint-order="stroke" stroke-linejoin="round"/>`,
     ropa ? `<g clip-path="url(#recorte-${tipo})" fill="${COLOR.ropa}">${ropa}</g>` : '',
     zonas ? `<g clip-path="url(#recorte-${tipo})" fill="${COLOR.musculo}">${zonas}</g>` : '',
+    lineas
+      ? `<g clip-path="url(#recorte-${tipo})" fill="none" stroke="${COLOR.linea}" stroke-opacity="${OPACIDAD_LINEA}" stroke-width="${TRAZO.linea}" stroke-linecap="round">${lineas}</g>`
+      : '',
     '</g>',
   ].join('');
 }
@@ -401,7 +456,17 @@ function polilineaTubo(puntos, w, color = COLOR.acero) {
 function almohadilla(a, b, w) {
   const linea = (c, g) =>
     `<line x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}" stroke="${c}" stroke-width="${g}" stroke-linecap="round"/>`;
-  return linea(COLOR.aceroBorde, w + TRAZO.bordeEquipo * 2) + linea(COLOR.tapizado, w);
+  const largoPad = largo(resta(b, a));
+  const u = escala(resta(b, a), 1 / (largoPad || 1));
+  const n = [-u[1], u[0]];
+  const k = w * 0.22;
+  const c0 = suma(a, escala(n, -k));
+  const c1 = suma(b, escala(n, -k));
+  const costura =
+    largoPad > w
+      ? `<line x1="${f(c0[0])}" y1="${f(c0[1])}" x2="${f(c1[0])}" y2="${f(c1[1])}" stroke="${COLOR.costura}" stroke-width="2" stroke-linecap="round"/>`
+      : '';
+  return linea(COLOR.aceroBorde, w + TRAZO.bordeEquipo * 2) + linea(COLOR.tapizado, w) + costura;
 }
 
 function eje([x, y], r = 14) {
@@ -444,7 +509,11 @@ function puntaBarra([cx, cy]) {
   return `<g id="manguito" data-centro="${f(cx)},${f(cy)}">${c(21, COLOR.aceroBorde)}${c(19, COLOR.acero)}${c(13, COLOR.aceroBorde)}${c(11, COLOR.aceroClaro)}${c(4, COLOR.aceroBorde)}</g>`;
 }
 
-const base = (x1, x2) => tubo([x1, SUELO - 10], [x2, SUELO - 10], 16);
+// Bastidor en el suelo con tacos de goma en los extremos.
+const taco = (x) => `<rect x="${x - 16}" y="${SUELO - 6}" width="32" height="6" rx="2" fill="${COLOR.goma}"/>`;
+const base = (x1, x2) => tubo([x1, SUELO - 12], [x2, SUELO - 12], 16) + taco(x1 + 10) + taco(x2 - 10);
+const cubierta = (x, y, w, h) =>
+  `<rect id="cubierta" x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="8" fill="${COLOR.cubierta}" stroke="${COLOR.aceroBorde}" stroke-width="2"/>`;
 
 // ---------------------------------------------------------------------------
 // Kit de equipo (cada pieza sin figura; mismo suelo y misma escala)
@@ -494,10 +563,14 @@ export const EQUIPO = {
       '<g id="polea-cable">',
       '<g id="bastidor">',
       base(300, 610),
+      cubierta(xc + 20, top + 40, xp - xc - 28, SUELO - top - 66),
       `<g id="pila" data-placas="14">${placas}<circle cx="${f((xc + xp) / 2 - 9)}" cy="${f(SUELO - 30 - 8 * 25 + 11)}" r="6" fill="${COLOR.aceroClaro}" stroke="${COLOR.aceroBorde}" stroke-width="2"/></g>`,
       tubo([xp, SUELO - 10], [xp, top], 14),
       tubo([xc, SUELO - 10], [xc, top], 28),
       tubo([xc - 10, top], [xp + 10, top], 20),
+      `<g id="polea-alta" data-pivote="${xc + 62},${f(top + 28)}"><circle cx="${xc + 62}" cy="${f(top + 28)}" r="17" fill="${COLOR.aceroBorde}"/><circle cx="${xc + 62}" cy="${f(top + 28)}" r="15" fill="${COLOR.acero}"/><circle cx="${xc + 62}" cy="${f(top + 28)}" r="6" fill="${COLOR.aceroClaro}"/></g>`,
+      cable([[xc + 77, SUELO - 30 - 14 * 25], [xc + 77, top + 28]]),
+      cable([[xc + 62, top + 13], [xc - 14, top + 13], [xc - 14, yCarro + 4]]),
       '</g>',
       `<g id="carro-polea" data-riel="${xc},${f(top + 40)},${xc},${SUELO - 60}">`,
       `<rect x="${xc - 22}" y="${yCarro}" width="44" height="64" rx="6" fill="${COLOR.acero}" stroke="${COLOR.aceroBorde}" stroke-width="2"/>`,
@@ -527,6 +600,7 @@ export const EQUIPO = {
       '<g id="maquina-pin">',
       '<g id="bastidor">',
       base(130, 610),
+      cubierta(176, 346, 76, SUELO - 372),
       `<g id="pila" data-placas="15">${placas}`,
       tubo([214, yPila], [214, 360], 6, COLOR.aceroClaro),
       '</g>',
@@ -724,7 +798,7 @@ export const PENDULUM = {
   tobillo: [462, 812],
   anguloPie: -20, // plataforma con la punta arriba
   caderaATobilloArriba: 345, // rodilla casi extendida, sin bloquear
-  reclinadoTorso: -115, // torso a 25° del vertical, recostado
+  reclinadoTorso: -110, // torso a 20° del vertical, recostado
   caderaATobilloAbajo: Math.hypot(LARGO.muslo, LARGO.pierna), // rodilla a 90°
 };
 
