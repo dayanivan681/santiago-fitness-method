@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T22:51:56.599Z
+- **Última sincronización:** 2026-10-21T22:52:53.388Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T22:52:53.390Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Creada y publicada la rama diseno/sistema-visual con la carpeta arte/sistema-visual lista para que Claude Design escriba: figura/, equipo/, destino/, un tokens.md de plantilla para los valores y un README con el contrato de la rama. El README fija por que no se escribe en main (rama coordinada con Codex, turno exclusivo, un tercero empujando ahi rompe handoff:claim y publish), que solo se toca arte/sistema-visual, que docs/cliente es solo lectura, que se entrega en SVG o codigo y nunca en imagen plana, y las cinco reglas que hacen el arte articulable. En tokens.md los tres colores de la app (0b0c0d, f2f2f0, e5352b) van marcados como fijos para que no se cambien. Main queda intacto salvo el registro de handoff: el arte vive solo en su rama y el paso a main lo hare desde mi turno con las comprobaciones del contrato. Arbol limpio y de vuelta en main.
+- **Verificación:** git status limpio en main; rama publicada en origin con los cinco archivos verificados por git ls-tree. No se ejecutaron npm test/lint/build: no hay cambios de codigo ni de producto en main, solo estructura de carpetas en otra rama
+- **Siguiente:** El dueno conecta Claude Design a diseno/sistema-visual, lanza el prompt 1 y avisa; yo leo la rama, compruebo que el arte sea articulable y lo implemento en el esqueleto
+
 
 ### 2026-10-21T22:51:56.601Z | claude-code | CLAIM
 - **Estado:** active
