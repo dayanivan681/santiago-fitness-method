@@ -312,11 +312,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T16:39:57.596Z
+- **Última sincronización:** 2026-10-21T16:48:53.224Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1464,6 +1464,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T16:48:53.225Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Bug run del coach sobre el build de e251a38 en demo compilada local (375x812). Dos fallos reproducibles, ninguno bloqueante, documentados en docs/bug-run-coach-2026-10-21/README.md: (1) P2, publicar el programa no retira el borrador guardado, la ficha sigue ofreciendo Borrador disponible / Retomar programacion aunque ese contenido ya este en vivo (guardar(true) en src/producto/Coach.tsx escribe programa y nunca sustituye el documento borrador; no ocurre si se publica sin borrador previo); (2) P3, el filtro ?pagos=pendientes no se limpia de la URL al pulsar Ver todos los clientes ni al desactivar el chip, asi que una recarga reaplica el filtro ya descartado (soloPagos se inicializa una vez desde la URL). Verificado correcto: Hoy y su tarjeta de revision, prescripcion 4->5 series y 25 lb, guardar/retomar/publicar, pagos/busqueda/vacios con la regresion de Ver todos del PR #12, Biblioteca 57 ejercicios, hojas con dialog modal real, Escape y foco devuelto al origen, areas tactiles >=44 px en tres pantallas y regresion del cliente hasta Completar serie, sin errores de consola. El dueno confirmo en su telefono que ve la hoja Novedades publicada en e251a38. Movimiento reducido no emulado en vivo: verificado por codigo y pruebas de usePresencia. Sin cambios de producto; solo documentacion. Sin telefono fisico, PWA nueva, VoiceOver ni escrituras remotas.
+- **Verificación:** npm test (1067/1067, 125 archivos); npm run lint; npm run build; git diff --check
+- **Siguiente:** El dueno decide si se corrigen los dos fallos; la correccion del borrador tras publicar es visible para el coach y necesitaria nota de novedades aprobada
+
 
 ### 2026-10-21T16:39:57.597Z | claude-code | CLAIM
 - **Estado:** active
