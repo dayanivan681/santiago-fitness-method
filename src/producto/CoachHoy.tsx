@@ -41,8 +41,7 @@ export function HoyCoach({ clientes, borradores, base, listo }: {
             {segunCantidad(pendientes.length, "Necesita revisión", "Necesitan revisión")}
           </h2>
           <div className="sfm-coach-review-card">
-            <Link className="sfm-coach-review-person" data-tour-action="abrir-cliente"
-              data-tour-client={siguiente.perfil.id} to={`${base}/clientes/${siguiente.perfil.id}`}>
+            <div className="sfm-coach-review-person">
               <Avatar nombre={siguiente.perfil.nombre} />
               <span className="sfm-row-body">
                 <strong>{siguiente.perfil.nombre}</strong>
@@ -50,9 +49,9 @@ export function HoyCoach({ clientes, borradores, base, listo }: {
                 <small>{siguiente.plan.estado !== "publicado" ? "Programa sin publicar"
                   : !siguiente.plan.revisado ? "Revisión pendiente" : "Sesiones por completar"}</small>
               </span>
-              <Icono nombre="flecha" size={20} />
-            </Link>
-            <Link className="sfm-primary" to={`${base}/clientes/${siguiente.perfil.id}`}>Revisar programa</Link>
+            </div>
+            <Link className="sfm-primary" data-tour-action="abrir-cliente" data-tour-client={siguiente.perfil.id}
+              to={`${base}/clientes/${siguiente.perfil.id}`}>Revisar programa</Link>
           </div>
         </section>}
         {pagosPendientes > 0 && <Link className="sfm-coach-payment" to={`${base}/clientes?pagos=pendientes`}>
@@ -60,7 +59,7 @@ export function HoyCoach({ clientes, borradores, base, listo }: {
           <span>{segunCantidad(pagosPendientes, "1 pago pendiente", `${pagosPendientes} pagos pendientes`)}</span>
           <Icono nombre="flecha" size={20} />
         </Link>}
-        <p className="sfm-coach-summary" aria-label="Resumen del coaching">
+        <p className="sfm-coach-summary">
           <span>{listo ? segunCantidad(clientes.length, "1 cliente", `${clientes.length} clientes`) : "— clientes"}</span>
           <span aria-hidden="true">·</span>
           <span>{listo ? segunCantidad(sesiones, "1 sesión esta semana", `${sesiones} sesiones esta semana`) : "— sesiones esta semana"}</span>

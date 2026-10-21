@@ -312,11 +312,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T14:44:50.756Z
+- **Última sincronización:** 2026-10-21T14:46:36.148Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1464,6 +1464,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T14:46:36.149Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Corregidos los dos P3 de accesibilidad del Hoy del coach. (1) La tarjeta Necesita revisión tenía dos enlaces seguidos al mismo programa: ahora la persona es un bloque informativo y el único enlace es el CTA Revisar programa, que conserva data-tour-action=abrir-cliente y data-tour-client; se quitó el chevron huérfano en coach-ios.css. (2) p.sfm-coach-summary pierde el aria-label sin rol; el texto ya es autoexplicativo. Archivos: src/producto/CoachHoy.tsx, src/producto/coach-ios.css, src/producto/CoachHoy.test.tsx (nuevo, 2 pruebas que fallaban antes y pasan después). Verificado en navegador integrado: un solo enlace /demo/coach/clientes/demo-persona-3, sin aria-label, sin desborde. Sin cambios de datos, API ni docs/cliente. Safari nativo sigue sin verificarse en esta rama.
+- **Verificación:** npm test (1059/1059, 124 archivos); npm run lint; npm run build
+- **Siguiente:** Probar en iPhone físico/Safari nativo; no se integra a producción sin visto bueno del dueño
+
 
 ### 2026-10-21T14:44:50.758Z | claude-code | CLAIM
 - **Estado:** active

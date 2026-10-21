@@ -50,7 +50,6 @@
   min-height: 64px;
   margin-bottom: 12px;
 }
-.sfm-coach-review-person > svg { flex: none; color: var(--sfm-muted); }
 .sfm-coach-review-person strong { font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
 .sfm-coach-review-person .sfm-row-body { gap: 2px; }
 .sfm-coach-review-person small { font-size: 13px; color: var(--sfm-muted); }
