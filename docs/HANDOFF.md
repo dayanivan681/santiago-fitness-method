@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** blocked
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T23:10:49.786Z
+- **Última sincronización:** 2026-10-21T23:12:49.685Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T23:12:49.687Z | claude-code | PUBLISH
+- **Estado:** blocked
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** NO se pudieron subir los 9 GIF a staging: el token de esta maquina responde 403 Forbidden sobre R2, tanto en lectura como en escritura, en sfm-fotos-staging igual que en sfm-fotos-production. Es el mismo permiso que ya falto al intentar medir los bytes de los GIF de produccion. Nada subido, nada escrito en D1 de staging. Lo que si quedo verificado del circuito: staging tiene 279 ejercicios activos y CERO animaciones; los 9 existen alli y sus ids son IDENTICOS a los de produccion (ids deterministas UUIDv5), asi que lo que se valide en staging promociona limpio sin remapear; la migracion 0013 esta aplicada en staging (la tabla ejercicios_coach_animacion existe); y los 10 archivos pasan la validacion de la API comprobada en local: firma GIF89a correcta y entre 169 KB y 200 KB, muy por debajo del tope de 5 MB. HALLAZGO IMPORTANTE que el circuito saca a la luz: los 10 son horizontales 480x320, pero una animacion subida como del coach se pinta SIEMPRE en marco vertical 3:4. ImagenConMovimiento.tsx linea 28 elige la clase con esAnimacionBase(), que mira si la URL empieza por /ejercicios/animaciones/; la del coach es /api/v2/biblioteca/<id>/animacion, asi que recibe la clase vertical y quedaria con bandas negras arriba y abajo usando poco mas de la mitad del alto. Para el plan B esto fija un requisito: las ilustradas deben nacer en 3:4 vertical, no recortarse despues. CAVEAT: intente escribir un archivo de prueba _prueba-circuito.txt en la raiz de sfm-fotos-staging; el 403 dice que no se escribio, pero no puedo verificarlo porque tampoco puedo leer. Si apareciera, son 7 bytes y el dueno puede borrarlo.
+- **Verificación:** Consultas de solo lectura a D1 de staging; validacion local de firma y tamano de los 10 GIF. No se ejecutaron npm test/lint/build: no hubo cambios de codigo (git status limpio)
+- **Siguiente:** El dueno refresca el token con wrangler login para recuperar el permiso de R2; o mejor, probar el circuito real subiendo un GIF desde el panel del coach en la preview de staging, que ademas ejercita la validacion de firma, el tope de 5 MB, el ETag y el primer cuadro como foto fija
+
 
 ### 2026-10-21T23:10:49.787Z | claude-code | CLAIM
 - **Estado:** active
