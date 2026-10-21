@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-20 — Refinamiento visual iOS: diagnóstico y tres propuestas — codex
+
+- El dueño pide refinar **todas** las áreas del cliente hacia la experiencia de Apple Fitness, conservando las funciones. Sincronizado y reclamado en `34e74d9`. Se aplica Build iOS Apps para revisar Safari del simulador y las guías de diseño para preparar una referencia visual antes de implementar.
+- [Diagnóstico, recorrido, capturas y propuestas](refinamiento-ios-2026-10-20/README.md): Hoy, Entrenar/registro, Biblioteca, Progreso, Perfil, descanso terminado y resumen. Safari iPhone 16 Pro, iOS 27.0; demo sintética local, controles DOM. Sin nueva prueba física, SE ni instalación; no se reabre el QA físico ya cerrado. Ningún dato real ni archivo de `docs/cliente` modificado.
+- Hallazgos: cabeceras y mensajes desplazan la acción principal; registro demasiado separado de la información del ejercicio; exceso de capas inferiores en entrenamiento; jerarquía desigual entre pantallas. Son problemas de composición, sin un bug nuevo demostrado. **No hay cambios de interfaz todavía.** Tres conceptos ImageGen mostrados una vez en el chat, numerados por orden de aparición: [1](refinamiento-ios-2026-10-20/propuestas/1.png), [2](refinamiento-ios-2026-10-20/propuestas/2.png), [3](refinamiento-ios-2026-10-20/propuestas/3.png). Sus invenciones de contenido se documentan para no trasladarlas al producto.
+- Checks: **1054/1054 pruebas, 123 archivos**, lint, build/TypeScript y diff-check PASS; avisos conocidos Node/JSDOM. Se valida la base actual, no una interfaz nueva. Solo documentación e imágenes en este cierre.
+- **Vídeo resuelto por el dueño:** indicó que ya se lo envió a Santiago. La instrucción anterior de aplazarlo es histórica; no regenerar ni enviar nada.
+- **Siguiente:** pendiente elegir propuesta 1, 2 o 3, o una combinación. Después implementar todas las superficies del cliente en rama con PR y preview, verificar funciones y Safari 16 Pro/SE, sin merge sin visto bueno nuevo. La guía de ideación requiere selección antes de construir; esta fase de diagnóstico queda entregada y el refinamiento sigue pendiente.
+
 ## 2026-10-20 — PR #10 aprobado e integrado; vídeo aplazado — codex
 
 - El dueño autorizó el merge y pidió expresamente **no hacer el vídeo todavía**. [PR #10](https://github.com/dayanivan681/santiago-fitness-method/pull/10) integrado con merge normal **`b42290e`**. El conflicto al actualizar la rama afectaba solo a `docs/BUILD_LOG.md`; se conservaron ambos registros. Código de producto idéntico al original del PR `f027c57` y al conjunto probado `8462fc9`.
@@ -256,11 +265,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T03:31:43.427Z
+- **Última sincronización:** 2026-10-21T03:47:39.848Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1408,6 +1417,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T03:47:39.849Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Diagnóstico visual iOS del cliente y tres propuestas; implementación pendiente de elección
+- **Verificación:** npm test -- --maxWorkers=3: 1054/1054, 123 archivos PASS; npm run lint PASS; npm run build PASS; git diff --check PASS; 8 capturas Safari y 3 conceptos guardados
+- **Siguiente:** Elegir propuesta 1, 2 o 3 (o combinación) del chat; después implementar todas las pantallas del cliente en rama con PR y preview, sin merge sin nuevo visto bueno. Vídeo ya enviado por el dueño; no regenerar ni enviar.
+
 
 ### 2026-10-21T03:31:43.428Z | codex | CLAIM
 - **Estado:** active

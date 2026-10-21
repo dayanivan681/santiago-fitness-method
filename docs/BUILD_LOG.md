@@ -1,5 +1,11 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-20 — Diagnóstico visual iOS y propuestas; sin implementación — codex
+
+- Revisión del cliente completo en Safari del simulador iPhone 16 Pro sobre demo local sintética. Se guardan ocho capturas actuales y tres conceptos independientes en [refinamiento-ios-2026-10-20](refinamiento-ios-2026-10-20/README.md), con fuentes Apple, límites y correcciones de contenido necesarias antes de construir.
+- Se preserva React/PWA y la identidad oscura/roja SFM. Pendiente elección del dueño antes de implementar el sistema visual en Hoy, Entrenar, Biblioteca, Progreso, Perfil, hojas, descanso y resumen. Sin cambios de código, datos reales ni `docs/cliente`; sin vídeo ni envío externo.
+- Checks de la base: `npm test -- --maxWorkers=3` 1054/1054 (123 archivos), lint, build con TypeScript y diff-check PASS. Avisos conocidos Node/JSDOM. La revisión no certifica nuevos gestos, hardware físico ni un diseño implementado.
+
 ## 2026-10-20 — Merge aprobado del PR #10; vídeo aplazado — codex
 
 - PR #10 actualizado con main y unido con autorización expresa del dueño mediante merge `b42290e`. Conflicto solo documental en BUILD_LOG, conservando las dos entradas. Código de producto sin cambios respecto a `f027c57`.
