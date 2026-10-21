@@ -73,7 +73,16 @@ it("crea con revisión explícita, permite explorar, conserva persona y aísla V
     screen.getByLabelText("He revisado el plan y sus limitaciones."),
   );
   await tocar("Crear cliente y publicar plan");
-  await screen.findByText("Cliente creado. Su plan está listo.");
+  /**
+   * Publicar es el paso más pesado de la suite: valida el alta, la guarda, crea
+   * el cliente y navega a su ficha. En aislado pasa siempre (10 de 10) y va
+   * sobrado; con la suite entera en marcha, y sin límite de workers, llega a
+   * agotar los 5 s de `asyncUtilTimeout` por falta de CPU, no porque nada esté
+   * roto. Margen propio para este paso en vez de subir el global de todos.
+   */
+  await screen.findByText("Cliente creado. Su plan está listo.", undefined, {
+    timeout: 15000,
+  });
   await tocar("Probar invitación");
   await screen.findByText(/Simulación: no se crea/);
   const id = window.location.pathname.split("/").at(-1)!;
@@ -102,7 +111,8 @@ it("crea con revisión explícita, permite explorar, conserva persona y aísla V
   expect(red).not.toHaveBeenCalled();
   expect(abrir).not.toHaveBeenCalled();
   expect(persistir).not.toHaveBeenCalled();
-}, 20000);
+  // 30 s: el recorrido entero más el margen propio del paso de publicar.
+}, 30000);
 it("un error de publicación conserva el formulario sin confirmar éxito", async () => {
   const real = ServicioCoach.prototype.crear;
   const crear = vi

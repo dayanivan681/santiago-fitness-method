@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T23:00:49.595Z
+- **Última sincronización:** 2026-10-21T23:10:00.188Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T23:10:00.189Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Arreglado el fallo intermitente de src/RecorridosDemo.test.tsx en el caso 'crea con revision explicita...'. Diagnostico, corregido dos veces sobre la marcha: no era un timeout demasiado justo como dije al principio (asyncUtilTimeout ya estaba en 5 s y testTimeout en 20 s), pero tampoco un fallo real de la aplicacion como sospeche despues. La prueba decisiva: el archivo aislado pasa 10 de 10, y solo falla con la suite entera en marcha, asi que es competencia de CPU entre workers (10 nucleos, sin limite configurado). El paso de publicar es el mas pesado de la suite (valida el alta, la guarda, crea el cliente y navega a su ficha) y bajo carga llega a agotar los 5 s de asyncUtilTimeout. Arreglo quirurgico: margen propio de 15 s en esa unica asercion, con el porque escrito al lado, y el tope del test de 20 s a 30 s para que ese margen quepa. No se subio el asyncUtilTimeout global para no alargar el fallo de los otros 1081 tests. Cambio solo de prueba, sin tocar producto, 12 lineas anadidas y 2 quitadas. Validacion: 8 pasadas completas seguidas en verde, cuando antes fallaban 2 de 7. HONESTIDAD SOBRE LA EVIDENCIA: 8 pasadas limpias no son una prueba definitiva; con la tasa de fallo anterior (~29%) salir limpio 8 veces por azar tiene un 6% de probabilidad. Es evidencia buena, no certeza. Ademas no pude medir cuanto tarda el paso en las pasadas que pasan, porque el reporter solo imprime duracion de los tests lentos. Por ser cambio interno no lleva nota de novedades.
+- **Verificación:** npm test 8 pasadas completas en verde (1082 en 128 archivos cada una); npx vitest run del archivo aislado 10 de 10; npm run lint; npx tsc -b; npm run build
+- **Siguiente:** Si el fallo reapareciera en otra asercion del mismo recorrido, la siguiente palanca es limitar los workers de vitest o subir el asyncUtilTimeout global
+
 
 ### 2026-10-21T23:00:49.596Z | claude-code | CLAIM
 - **Estado:** active
