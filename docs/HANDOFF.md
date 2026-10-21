@@ -312,11 +312,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T14:38:20.675Z
+- **Última sincronización:** 2026-10-21T14:44:15.403Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1464,6 +1464,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T14:44:15.404Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Bug run y QA del refinamiento del coach (PR #12 integrado en e22134a), sin cambios de código. Revisión del diff (CoachHoy, FilaCliente, Coach, EditorPlan, BibliotecaCoach, usePresencia, coach-ios.css): sin bugs funcionales; el fix de StrictMode en usePresencia es correcto. QA en navegador integrado contra dev server (StrictMode activo): Hoy → Revisar programa → ficha → Preparar cambios → prescripción → Listo (hoja cierra, hit test positivo, CTA y=782–832 en 844); Clientes, Biblioteca, hoja Añadir ejercicio abre/cierra; 390, 320 y 1440 sin desborde horizontal; consola sin errores. P3: p.sfm-coach-summary lleva aria-label sin rol (los lectores de pantalla pueden ignorarlo) y el bloque Revisar programa repite el mismo destino en dos enlaces seguidos. No verificado: Safari nativo — el 18 Pro estaba en uso por otra sesión (capturas no coincidían con los toques, no se volvió a tocar) y el QA iPhone SE recién arrancado dio timeout en simctl openurl; QA Safari 16 Pro/SE de Codex sigue siendo la última evidencia. Tampoco HTTP suite (sin cambios de API). docs/cliente intacto.
+- **Verificación:** npm test (1057/1057, 123 archivos); npm run lint; npm run build
+- **Siguiente:** Probar en iPhone físico/Safari nativo antes de nuevas funciones; opcional corregir los dos P3 de accesibilidad
+
 
 ### 2026-10-21T14:38:20.677Z | claude-code | CLAIM
 - **Estado:** active
