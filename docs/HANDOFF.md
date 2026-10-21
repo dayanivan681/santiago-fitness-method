@@ -265,11 +265,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T03:47:51.898Z
+- **Última sincronización:** 2026-10-21T03:48:00.312Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1417,6 +1417,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T03:48:00.313Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Versionadas las ocho capturas Safari y las tres propuestas enlazadas en el diagnóstico iOS
+- **Verificación:** Checks de base en 81fd734: 1054/1054 pruebas, lint y build PASS; copias verificadas byte a byte y enlaces locales existentes; git diff --check PASS
+- **Siguiente:** Elegir propuesta 1, 2 o 3 (o combinación); después implementar todo el cliente en rama con PR y preview, sin merge sin visto bueno nuevo. Vídeo ya enviado por el dueño.
+
 
 ### 2026-10-21T03:47:51.899Z | codex | CLAIM
 - **Estado:** active
