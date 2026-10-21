@@ -3,6 +3,9 @@
 La matriz y los límites están en [HANDOFF](../HANDOFF.md). Capturas reales del
 simulador o fotogramas extraídos de grabaciones de `simctl`; no son mockups.
 
+El [seguimiento de B7](SEGUIMIENTO-B7.md) compara el arranque nuevo de producción
+con un control HTML sin JavaScript. Conserva el PASS físico informado por el dueño.
+
 - `16-fallo-descanso.jpg`, `se-fallo-descanso.jpg`: producción, tarjeta cubierta.
 - `se-fallo-inicio-blanco.jpg`, `se-fallo-inicio-secuencia.jpg`: instalación nueva
   desde `/entrar` de producción; falta de splash y blanco prolongado.

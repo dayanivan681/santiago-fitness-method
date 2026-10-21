@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-20 — Continuidad actual: PR #10 y tutorial — codex
+
+- Sincronizado `main` con `559780a` y reclamado de nuevo en `e4bda5f`, después del relevo de Claude Code. El registro actualizado recoge la **prueba física del dueño: 3, 7, 9 y B7 PASS**. Es la referencia actual; los pendientes de las entradas antiguas inferiores son históricos.
+- [PR #10](https://github.com/dayanivan681/santiago-fitness-method/pull/10), `claude/series-pendientes`, cabeza `f027c570c1584937548282db49e20bdf36356d7c`: abierto en borrador, Pages SUCCESS y sin conflictos al consultar. **Esperar «merge» del dueño**; esta continuación no lo integra.
+- Orden indicado por el dueño: 1) tras «merge», integrar/publicar #10 y verificar producción; 2) regenerar y revisar el vídeo con [las instrucciones](tutorial-bi-series/README.md), comprobando «6–15 reps» en las series pendientes; 3) entregar vídeo y mensaje corto al dueño, sin enviar a Santiago sin visto bueno; 4) QA opcional de bi-series en iPhone físico; 5) tendencias por ejercicio, esfuerzo 1–10, rachas y resumen como imagen siguen fuera del plan actual.
+- El seguimiento anterior de B7 quedó en [este informe](qa-ios-sensacion-nativa/SEGUIMIENTO-B7.md): instalación nueva de producción en SE y comparación con HTML mínimo sin JS. El aclarado también aparece en el control, con menor intensidad; no hay arreglo de producto demostrado y no se reabre el resultado físico. Sin cambios de producto ni datos reales.
+- Para regenerar en este Mac habrá que resolver la instalación local de Playwright/Chromium: los guiones actuales fijan `/opt/pw-browsers/chromium` y `/tmp/claude-0/tuto`. Ajustar esas rutas de ejecución al entorno conservando escenas, cajas, 1080×1920 y 30 fps. La regeneración queda después del merge.
+- Checks de este cierre: **1053/1053 pruebas, 123 archivos**, `npm run lint`, `npm run build` y `git diff --check` PASS. No apareció el fallo intermitente referido por Claude Code; se conservan avisos conocidos de Node/JSDOM. Sin nueva comprobación HTTP del runtime después de sincronizar: esta continuación solo publica documentación y evidencia.
+
 ## 2026-10-20 — PR #8 aprobado, integrado y publicado — codex
 
 - Con el «Hágale» del dueño se sincronizó y reclamó el turno `9531b26`. [PR #8](https://github.com/dayanivan681/santiago-fitness-method/pull/8) integrado mediante merge normal **`cef5e2e`**. El árbol de producto coincide con el código `41a36d5` probado en el simulador; no se añadieron cambios de producto en esta integración.
@@ -237,11 +246,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T01:59:46.794Z
+- **Última sincronización:** 2026-10-21T02:02:52.407Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1389,6 +1398,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T02:02:52.408Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Seguimiento B7 de simulador documentado con control sin JS; se conserva PASS físico del dueño. PR #10 abierto en borrador, verde y pendiente de merge; orden del tutorial y envío registrado. Sin cambios de producto.
+- **Verificación:** npm test -- --maxWorkers=3: 1053/1053, 123 archivos; npm run lint; npm run build; git diff --check; consulta de PR #10 y lectura de tutorial; capturas de SE revisadas
+- **Siguiente:** Esperar merge del dueño para PR #10; después integrar/publicar, regenerar y revisar vídeo con 6–15 reps y entregarlo al dueño. No enviar a Santiago sin visto bueno. QA física opcional de bi-series e ideas fuera del plan después.
+
 
 ### 2026-10-21T01:59:46.795Z | codex | CLAIM
 - **Estado:** active
