@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T22:07:43.635Z
+- **Última sincronización:** 2026-10-21T22:17:55.438Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T22:17:55.439Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Brief de marca para crear las animaciones en Claude Design, en docs/gifs-servicios-costo-2026-10-21/design-system/README.md, con el ejercicio de prueba Pendulum Squat 90 (M02-126). Incluye las restricciones duras leidas del codigo: GIF obligatorio por firma, tope 5 MB, objetivo 250 KB, proporcion 3:4 vertical 360x480 y fondo 0b0c0d segun .hoja__imagen--movimiento, y el detalle de que el primer fotograma se usa como foto fija en listas, sin conexion y con reducir movimiento. Tokens de marca de src/index.css y tipografia Barlow. Propuesta de firma: rojo e5352b reservado al musculo que trabaja. Ademas se probo aqui una animacion propia en SVG del pendulum squat: dos iteraciones, la primera con la mecanica mal (el torso no bajaba) y la segunda con el pendulo resuelto por rotacion rigida sobre el pivote y la rodilla por cinematica inversa. Se guarda como prototipo con su juicio honesto: la mecanica sirve y pesa 78 KB con 16 fotogramas frente a 183 KB de media de los fotograficos de dos, pero la figura es tosca y NO llega a la calidad buscada. Solo documentacion y prototipo: sin cambios de codigo de producto.
+- **Verificación:** npm test (1082 en 128 archivos); npm run lint; npm run build
+- **Siguiente:** El dueno lleva el brief a Claude Design y devuelve el pendulum squat mas el sistema de diseno guardado; comparar aqui contra un GIF fotografico real
+
 
 ### 2026-10-21T22:07:43.636Z | claude-code | CLAIM
 - **Estado:** active
