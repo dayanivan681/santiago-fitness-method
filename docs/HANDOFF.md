@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-20 — Continuidad actual: PR #10 y tutorial — codex
+
+- Sincronizado `main` con `559780a` y reclamado de nuevo en `e4bda5f`, después del relevo de Claude Code. El registro actualizado recoge la **prueba física del dueño: 3, 7, 9 y B7 PASS**. Es la referencia actual; los pendientes de las entradas antiguas inferiores son históricos.
+- [PR #10](https://github.com/dayanivan681/santiago-fitness-method/pull/10), `claude/series-pendientes`, cabeza `f027c570c1584937548282db49e20bdf36356d7c`: abierto en borrador, Pages SUCCESS y sin conflictos al consultar. **Esperar «merge» del dueño**; esta continuación no lo integra.
+- Orden indicado por el dueño: 1) tras «merge», integrar/publicar #10 y verificar producción; 2) regenerar y revisar el vídeo con [las instrucciones](tutorial-bi-series/README.md), comprobando «6–15 reps» en las series pendientes; 3) entregar vídeo y mensaje corto al dueño, sin enviar a Santiago sin visto bueno; 4) QA opcional de bi-series en iPhone físico; 5) tendencias por ejercicio, esfuerzo 1–10, rachas y resumen como imagen siguen fuera del plan actual.
+- El seguimiento anterior de B7 quedó en [este informe](qa-ios-sensacion-nativa/SEGUIMIENTO-B7.md): instalación nueva de producción en SE y comparación con HTML mínimo sin JS. El aclarado también aparece en el control, con menor intensidad; no hay arreglo de producto demostrado y no se reabre el resultado físico. Sin cambios de producto ni datos reales.
+- Para regenerar en este Mac habrá que resolver la instalación local de Playwright/Chromium: los guiones actuales fijan `/opt/pw-browsers/chromium` y `/tmp/claude-0/tuto`. Ajustar esas rutas de ejecución al entorno conservando escenas, cajas, 1080×1920 y 30 fps. La regeneración queda después del merge.
+- Checks de este cierre: **1053/1053 pruebas, 123 archivos**, `npm run lint`, `npm run build` y `git diff --check` PASS. No apareció el fallo intermitente referido por Claude Code; se conservan avisos conocidos de Node/JSDOM. Sin nueva comprobación HTTP del runtime después de sincronizar: esta continuación solo publica documentación y evidencia.
+
 ## 2026-10-20 — PR #8 aprobado, integrado y publicado — codex
 
 - Con el «Hágale» del dueño se sincronizó y reclamó el turno `9531b26`. [PR #8](https://github.com/dayanivan681/santiago-fitness-method/pull/8) integrado mediante merge normal **`cef5e2e`**. El árbol de producto coincide con el código `41a36d5` probado en el simulador; no se añadieron cambios de producto en esta integración.
@@ -237,11 +246,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
+- **Owner:** codex
 - **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T22:52:56.403Z
+- **Última sincronización:** 2026-10-21T03:24:47.970Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1389,6 +1398,38 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T03:24:47.971Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Integrar PR #10 aprobado y verificar producción; vídeo aplazado por el dueño
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
+
+### 2026-10-21T02:02:52.408Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Seguimiento B7 de simulador documentado con control sin JS; se conserva PASS físico del dueño. PR #10 abierto en borrador, verde y pendiente de merge; orden del tutorial y envío registrado. Sin cambios de producto.
+- **Verificación:** npm test -- --maxWorkers=3: 1053/1053, 123 archivos; npm run lint; npm run build; git diff --check; consulta de PR #10 y lectura de tutorial; capturas de SE revisadas
+- **Siguiente:** Esperar merge del dueño para PR #10; después integrar/publicar, regenerar y revisar vídeo con 6–15 reps y entregarlo al dueño. No enviar a Santiago sin visto bueno. QA física opcional de bi-series e ideas fuera del plan después.
+
+
+### 2026-10-21T01:59:46.795Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Documentar seguimiento B7 y preparar continuidad del PR #10 y tutorial
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
+
+### 2026-10-21T01:54:01.357Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Cierre de claude-code y relevo a Codex. HECHO en main: bi-series/tri-series (PR #5 y arreglos), sensación nativa bloques 1-3 (PR #6, #7, #8), puntos de página y pista de deslizar (PR #9); prueba física del dueño PASS en puntos 3, 7, 9 y B7. Tutorial en vídeo HD de bi-series entregado al dueño (1080x1920, 40 s); guion en Claude Design https://claude.ai/artifact/VNkGw7FofoFWg3zeo6CzLC; scripts para regenerarlo en docs/tutorial-bi-series/. PENDIENTE: PR #10 (claude/series-pendientes: series pendientes muestran el objetivo y '1 rep') abierto, verde, sin conflictos, esperando el visto bueno del dueño.
+- **Verificación:** npm test 1053/1053 (una corrida previa tuvo 1 fallo intermitente que pasó al repetir; no se identificó cuál); npm run lint 0 avisos; npm run build; git diff --check
+- **Siguiente:** Codex: 1) con el 'merge' del dueño, unir PR #10 (claude/series-pendientes) y publicar; 2) tras unirlo, regenerar el vídeo con docs/tutorial-bi-series/README.md para que las series pendientes digan '6-15 reps' y entregarlo al dueño; 3) el dueño envía a Santiago el mensaje corto + vídeo (no enviar nada sin su visto bueno); 4) opcional: probar bi-series en iPhone físico (demo: Coach > Alicia > Programa > Upper B); 5) ideas fuera del plan: tendencias por ejercicio, valoración de esfuerzo 1-10, rachas, compartir resumen como imagen. Si aparece el fallo intermitente de tests, identificarlo con npm test -- --maxWorkers=3 y estabilizarlo.
+
 
 ### 2026-10-20T22:52:56.404Z | claude-code | CLAIM
 - **Estado:** active

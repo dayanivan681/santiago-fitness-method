@@ -6,6 +6,13 @@
 - Singular «rep» también en las recomendaciones de `CuerpoEjercicio` («Objetivo: 1 rep…»).
 - Verificado: 1054 pruebas (1 nueva), tsc, lint, build y diff-check. Chromium 375 px: antes «1–5 reps», tras registrar 7.5 lb «7.5 lb/lado · 1–5 reps».
 
+## 2026-10-20 — Seguimiento de simulador y relevo al PR #10 — codex
+
+- Sin cambios de producto. Instalación nueva desde acceso de producción en el SE: nombre, raíz y logo correctos; persiste el aclarado del simulador. Control HTML sin JavaScript y con fondo/color-scheme tempranos también aclara, con menor intensidad. Inferencia limitada sobre composición nativa; informe y capturas en `docs/qa-ios-sensacion-nativa/SEGUIMIENTO-B7.md`.
+- Al sincronizar el relevo `559780a` se confirma que el dueño ya informó PASS físico en 3, 7, 9 y B7. Se conserva ese cierre. No se atribuye a Codex una prueba física.
+- PR #10 sigue en borrador, Pages SUCCESS y sin conflictos, pendiente de «merge». Después: regenerar vídeo con «6–15 reps», entregar al dueño y esperar visto bueno antes de cualquier envío a Santiago. No se ejecuta aún la regeneración ni las ideas fuera del plan.
+- Checks de cierre: 1053/1053 pruebas en 123 archivos, lint, build y diff-check PASS. Avisos conocidos Node/JSDOM; no apareció el fallo intermitente. Sin cambios en `docs/cliente`.
+
 ## 2026-10-20 — Hacer descubrible el deslizar entre ejercicios — claude-code
 
 - Prueba física del dueño en su iPhone: punto 3 (deslizar entre ejercicios) y punto 9 (volver desde el borde, instalada) **PASS**; B7 sin destello. Pero el gesto del 3 no se podía descubrir.
