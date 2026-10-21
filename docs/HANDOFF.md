@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T22:40:27.621Z
+- **Última sincronización:** 2026-10-21T22:42:48.565Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T22:42:48.566Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Encargo de direccion de arte para Claude Design en docs/gifs-servicios-costo-2026-10-21/design-system/ENCARGO-CLAUDE-DESIGN.md. El dueno fija el aspecto alli y yo lo implemento en el esqueleto parametrico, asi que lo que se pide no son animaciones sino arte articulable. Lo primero: pedir el SVG o el codigo (boton </> de Claude Design) en vez de una imagen, porque con vector se leen coordenadas, grosores y colores exactos; si solo hay PNG, minimo 1440 px de alto sobre fondo plano. Cuatro entregas: la figura de perfil en tres laminas (neutra, en flexion con rodilla y cadera a 90 grados, y con brazos arriba) para ver como se resuelven las articulaciones; el kit de equipo con una pieza por cada uno de los 8 tipos mas banco plano e inclinado, sin figura encima; los valores escritos (paleta hex, grosor por segmento, proporciones, y como se marca el musculo que trabaja si se usa la firma de marca); y un fotograma de destino del pendulum squat a la calidad buscada, como referencia de llegada. Incluye las reglas que el arte debe cumplir para ser articulable: segmentos como piezas separadas y no una silueta fundida, articulaciones que aguanten cualquier angulo, sin escorzo ni sombras pintadas que supongan una pose, y mismas longitudes de segmento en las tres laminas. Solo documentacion.
+- **Verificación:** npm test dos pasadas seguidas en verde (1082 en 128 archivos cada una, tras la intermitente del turno anterior); npm run lint; npm run build
+- **Siguiente:** El dueno trae las referencias de Claude Design; yo compruebo que sean articulables, las implemento en el esqueleto, genero los 6 del piloto y los subo a staging
+
 
 ### 2026-10-21T22:40:27.623Z | claude-code | CLAIM
 - **Estado:** active
