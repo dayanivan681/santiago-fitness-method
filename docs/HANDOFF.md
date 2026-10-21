@@ -312,11 +312,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T16:51:22.083Z
+- **Última sincronización:** 2026-10-21T17:00:35.399Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1464,6 +1464,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T17:00:35.400Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Corregidos los dos fallos del bug run, con nota de novedades aprobada por el dueno. (1) Publicar ya no deja la ficha ofreciendo Retomar programacion: el documento del borrador se conserva porque el servidor rechaza eliminar programas, asi que ahora solo se ofrece mientras proponga algo distinto de lo publicado (nuevo src/producto/borrador-plan.ts con borradorPendiente, que compara unicamente el contenido que veria el cliente). La revision usada al guardar sigue siendo la del documento guardado. (2) El filtro de pagos vive en la direccion mediante useSearchParams con replace: al quitarlo desaparece de la URL y no vuelve al recargar ni al reabrir la app instalada; activarlo la vuelve a poner. Al escribir las pruebas aparecio ademas que el filtro se leia de window.location en vez de la ruta de React: tambien corregido. Nota de novedades para coach: 2026-10-21-coach-borrador-publicado, Dos detalles menos, dos puntos. Archivos: Coach.tsx, borrador-plan.ts, BorradorPublicado.test.tsx, notas-novedades.ts. Cuatro pruebas nuevas escritas primero en rojo. Verificado ademas en la demo compilada 375x812: renombrar sesion, guardar borrador, retomar, publicar y la tarjeta desaparece; chip de pagos en ambos sentidos con recarga. Sin errores de consola. Sin telefono fisico ni escrituras remotas.
+- **Verificación:** npm test (1071/1071, 126 archivos); npm run lint; npm run build; git diff --check
+- **Siguiente:** El dueno abre la app y confirma la nota Dos detalles menos; despues comprobar en produccion que el modulo del coach coincide con el build local
+
 
 ### 2026-10-21T16:51:22.084Z | claude-code | CLAIM
 - **Estado:** active

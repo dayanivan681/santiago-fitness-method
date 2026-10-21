@@ -23,6 +23,16 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
+    id: "2026-10-21-coach-borrador-publicado",
+    fecha: "2026-10-21",
+    audiencia: "coach",
+    titulo: "Dos detalles menos",
+    puntos: [
+      "Al publicar un programa, la ficha deja de ofrecerte retomar ese borrador: lo que contenía ya está con tu cliente.",
+      "Si quitas el filtro de pagos pendientes, se queda quitado aunque vuelvas a esa pantalla más tarde.",
+    ],
+  },
+  {
     id: "2026-10-21-coach-hoy",
     fecha: "2026-10-21",
     audiencia: "coach",

@@ -15,6 +15,7 @@ import {
   useLocation,
   useNavigate,
   useParams,
+  useSearchParams,
 } from "react-router";
 import { ClienteApi } from "../nube/cloud";
 import {
@@ -28,6 +29,7 @@ import { ContextoBiblioteca, useBiblioteca } from "./contextoBiblioteca";
 import { useBibliotecaDelCoach } from "./useBibliotecaDelCoach";
 import { BibliotecaCoach } from "./BibliotecaCoach";
 import { ServicioCoach, ultimos, type Cliente } from "./servicio";
+import { borradorPendiente } from "./borrador-plan";
 import {
   Avatar,
   Cabecera,
@@ -215,9 +217,16 @@ function ListaClientes({
 }) {
   const [q, setQ] = useState("");
   const pagos = usePagos();
-  const [soloPagos, setSoloPagos] = useState(
-    () => new URLSearchParams(location.search).get("pagos") === "pendientes",
-  );
+  // El filtro vive en la dirección: al quitarlo no debe volver con la recarga
+  // ni al reabrir la app instalada en esta pantalla.
+  const [parametros, setParametros] = useSearchParams();
+  const soloPagos = parametros.get("pagos") === "pendientes";
+  const setSoloPagos = (activo: boolean) => {
+    const siguientes = new URLSearchParams(parametros);
+    if (activo) siguientes.set("pagos", "pendientes");
+    else siguientes.delete("pagos");
+    setParametros(siguientes, { replace: true });
+  };
   const conPagoPendiente = clientes.filter((c) => pagoPendiente(pagos.porCliente.get(c.perfil.id)));
   const visibles = (pagos.disponibles && soloPagos ? conPagoPendiente : clientes).filter((c) =>
     c.perfil.nombre
@@ -368,7 +377,13 @@ function FichaCliente({
   }, [clienteId, servicio]);
   if (!c) return <Esqueleto etiqueta="Abriendo cliente" />;
   const cliente = c;
-  const borrador = ultimos(cambios, "plan").find((v) => v.id === "borrador");
+  const guardado = ultimos(cambios, "plan").find((v) => v.id === "borrador");
+  // Publicar no borra el documento del borrador: deja de ofrecerse en cuanto su
+  // contenido ya está publicado.
+  const borrador =
+    guardado && borradorPendiente(guardado.datos as Plan, c.plan)
+      ? guardado
+      : undefined;
   const docPerfil = ultimos(cambios, "perfil").find((v) => v.id === clienteId);
   async function guardar(publicar: boolean) {
     if (!plan) return;
@@ -387,7 +402,9 @@ function FichaCliente({
         cliente.perfil.id,
         "plan",
         valor.id,
-        publicar ? cliente.revision : (borrador?.revision ?? 0),
+        // La revisión es la del documento guardado, exista o no un borrador
+        // pendiente: publicar no lo retira del historial.
+        publicar ? cliente.revision : (guardado?.revision ?? 0),
         valor,
       );
       setPlan(null);
