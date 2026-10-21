@@ -312,11 +312,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T15:07:34.020Z
+- **Última sincronización:** 2026-10-21T15:27:40.254Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1464,6 +1464,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T15:27:40.255Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Despliegue de 6df66aa verificado en producción y QA Safari iOS. Incidente: los builds de Pages terminaron fuera de orden (checks GitHub: 73153ff 14:56:49, 6df66aa 14:57:29, 535890e 14:58:11) y producción quedó con el código anterior al arreglo; 7d8cf39 tardó más de 10 min en empezar a construir. Se empujó el commit vacío 84f188d para redesplegar. Ahora /demo/coach sirve index-Z3vZM5kQ.js → Coach-C-pDaPNm.js, idéntico byte a byte al build local, sin el aria-label viejo; sw.js lista el módulo nuevo. Safari QA iPhone 16 Pro (iOS 27): Hoy muestra la tarjeta de Nora sin chevron y un solo CTA; Revisar programa abre la ficha de Nora. No se usó el iPhone 18 Pro ajeno. Se rechazó abrir un acceso sin login en producción: el QA usa la demo pública. Solo GET remotos, sin sesión autenticada ni escrituras. Lección: tras varios pushes seguidos a main, verificar el index servido y no solo sw.js.
+- **Verificación:** npm test (1059/1059); npm run lint; npm run build; comparación byte a byte del módulo Coach en producción
+- **Siguiente:** El dueño revisa Hoy del coach con su login en el teléfono
+
 
 ### 2026-10-21T15:07:34.022Z | claude-code | CLAIM
 - **Estado:** active
