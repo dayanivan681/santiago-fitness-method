@@ -179,6 +179,25 @@ porque son **sus** máquinas.
 - **No se compararon imágenes.** El veredicto es sobre el nombre, el equipo y las
   instrucciones de la fuente, no sobre el fotograma. Al generar los GIF habría que
   revisarlos uno a uno, como se hizo en octubre.
+- **Segunda pasada, por categoría de equipo (2026-10-21).** Como el cruce por
+  nombre puede dejarse fuera un ejercicio que se llama de otra manera, se
+  revisaron además **los 67 ejercicios con `equipment: machine`** uno por uno.
+  Aparecieron tres candidatos que el cruce por nombre no había pescado, y los tres
+  se descartaron al mirar la imagen:
+  - `Dip Machine` → es una máquina **sentado** de tríceps con mango, no la de
+    asistencia de peso corporal (M02-238, M02-035).
+  - `Smith Machine Hip Raise` → es una **elevación de pelvis para abdomen** con los
+    pies contra la barra, no un glute bridge (M02-160).
+  - `Lying Machine Squat` → es una **prensa vertical boca arriba**, no una
+    sentadilla de pie en máquina de discos (M02-129).
+
+  Resultado: ninguna cobertura nueva. **No volver a revisar esta fuente**; está
+  agotada para los 23.
+- **Techo de calidad de esta fuente:** los 876 ejercicios tienen **exactamente dos
+  fotogramas** (873 con dos, 3 sin ninguno). No hay forma de sacar de aquí una
+  animación más fluida que un corte entre dos posiciones. Por eso los 46 GIF
+  actuales y los 10 nuevos son de dos fotogramas, y por eso una animación
+  ilustrada propia puede ser más fina: no depende de cuántas fotos haya.
 - El criterio de «fiel» es el del 2026-10-05: mismo movimiento **y mismo equipo**.
   Por eso un jalón de polea no cubre un jalón convergente, aunque el gesto se
   parezca.

@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T22:26:21.913Z
+- **Última sincronización:** 2026-10-21T22:29:36.711Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T22:29:36.712Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Dos cosas. Primera: barrido por categoria de equipo en free-exercise-db, los 67 ejercicios con equipment=machine revisados uno a uno. Tres candidatos que el cruce por nombre no habia pescado (Dip Machine, Smith Machine Hip Raise, Lying Machine Squat) descartados al ver la imagen: maquina sentado de triceps, elevacion de pelvis para abdomen y prensa vertical boca arriba. Ninguna cobertura nueva; la fuente queda agotada para los 23 y asi queda anotado para no repetirlo. Ademas, techo medido de esa fuente: los 876 ejercicios tienen exactamente dos fotogramas (873 con dos, 3 con ninguno), asi que de ahi no sale nada mas fluido que un corte entre dos posiciones. Segunda: incorporada al informe la investigacion de proveedores del dueno, sin verificar por mi, con dos hallazgos que cambian el calculo: FitExerciseDB vende por unidad a 0,99 el ejercicio (23 fichas serian unos 23 dolares frente a 199 del paquete mas barato) y RepDB entrega fondo transparente, que en una app oscura deja de ser estetica y pasa a ser requisito. Anadida la seccion de decision de estilo: con 236 animaciones fotograficas ya en produccion, comprar un estilo ilustrado para 23 es mezclar dos lenguajes, no rellenar un hueco. Corregido el set de prueba propuesto: no sirve probar con sentadilla o press banca porque ya los tenemos; hay que probar con las maquinas que faltan. Solo documentacion.
+- **Verificación:** npm test (1082 en 128 archivos); npm run lint; npm run build
+- **Siguiente:** Decidir el camino de estilo (todo fotografico, todo ilustrado o mixto declarado) y pedir a los proveedores su lista de ejercicios para buscar las 15 maquinas
+
 
 ### 2026-10-21T22:26:21.914Z | claude-code | CLAIM
 - **Estado:** active

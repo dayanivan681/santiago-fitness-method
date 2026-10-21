@@ -219,6 +219,69 @@ gimnasio; con streaming obligatorio, eso se pierde.
 
 ---
 
+## Ampliación del dueño (2026-10-21) — proveedores que esta investigación no encontró
+
+El dueño aportó una investigación propia con proveedores que no salieron en mi
+búsqueda. **No están verificados por mí**: las cifras son las de su documento, y
+antes de pagar habría que confirmarlas en la página de cada uno.
+
+| Proveedor | Qué ofrece | Precio citado |
+|---|---|---|
+| **FitExerciseDB** | 1.324 GIF sueltos | **$0,99 por ejercicio** |
+| **RepDB** | 650 ejercicios, WebP **transparente**, mapas musculares, ES/EN | $499 Standard |
+| **MyGymDesk / Trainaq** | 623 ejercicios, 1.604 vídeos 3D HD | $299–$499 pago único |
+| **ExerciseClips** | 1.323 clips GIF y MP4, 360×360 | $399 licencia para una app |
+| **MoveKit** | 3D uniforme, MP4 HD, compra por ejercicio o biblioteca | por paquete |
+| **Exercise Animatic** | +2.600 animaciones, hasta 4K, fondo verde | por licencia |
+| **GymVisual / Gym Animations** | animación anatómica; +7.000 en MP4 | por licencia |
+| **WorkoutDB** | API con GIF, MP4 y español | $9,99/mes |
+| **Fitness Visuals** | 81 ejercicios en vídeo real + mapa muscular Rive | $99 Starter |
+
+**Dos cosas cambian el cálculo y conviene no pasarlas por alto:**
+
+1. **FitExerciseDB vende por unidad.** Nosotros no necesitamos una biblioteca:
+   necesitamos **23 fichas**. A $0,99 serían unos **$23**, frente a los $199 del
+   paquete más barato. Si esos 23 están en su catálogo, es la opción más barata
+   con diferencia. Todo depende de la cobertura, no del precio.
+2. **RepDB entrega fondo transparente.** La app es oscura y la ficha pinta
+   `#0b0c0d` detrás de la animación: cualquier proveedor con fondo de estudio
+   blanco o gris dejará un rectángulo claro en una pantalla negra. La
+   transparencia deja de ser un detalle estético y pasa a ser un requisito.
+
+**Lo que sigue sin resolver es lo mismo de siempre:** ningún tamaño de catálogo
+garantiza las **15 máquinas concretas** de la lista C. Antes de pagar a cualquiera
+hay que pedir su lista de ejercicios y buscar esos 15 nombres. Es el único filtro
+que decide.
+
+## La decisión de estilo es más grande que los 23
+
+Hoy hay **236 animaciones fotográficas** en producción: personas reales en un
+gimnasio real. Comprar un estilo 3D o ilustrado para 23 fichas no es rellenar un
+hueco, es **mezclar dos lenguajes visuales** en la misma biblioteca. Hay tres
+caminos coherentes y uno incoherente:
+
+| Camino | Qué implica | Coste | Pega |
+|---|---|---|---|
+| **A. Todo fotográfico** | Santiago graba las 23 | $0 + su tiempo | depende de él |
+| **B. Todo ilustrado** | se reemplazan las 236, no se añaden 23 | hay que verificar cobertura de **286**, no de 23 | caro y mucho trabajo |
+| **C. Mixto declarado** | fotos donde las hay, ilustración en las 23, marcada como tal | el más barato | se nota la mezcla |
+| ~~D. Mixto sin criterio~~ | comprar a varios proveedores | — | **la biblioteca parece un collage** |
+
+El propio documento del dueño lo avisa: elegir **un solo estilo para toda la app**.
+Esa advertencia, aplicada a nuestro caso, es justo la que convierte «comprar 23» en
+«decidir qué quiere ser la biblioteca entera».
+
+### Corrección al plan de prueba
+
+La investigación propone probar 10 movimientos representativos: sentadilla, press
+banca, remo, curls, peso muerto y poleas. **Para nosotros ese set no sirve: ya
+tenemos los seis.** Probar a un proveedor con un press de banca no responde nada.
+
+El set de prueba tiene que ser **los que nos faltan**: pendulum squat, power squat,
+belt squat sumo, hip thrust de pie en máquina, elevación lateral en máquina,
+abductores de pie, jalón convergente y las máquinas de asistencia. Si un proveedor
+no los tiene, su catálogo de 7.000 animaciones vale cero para este problema.
+
 ## Lo que esto no cubre
 
 - **Coste de producción**: cuánto tarda Santiago en grabar 50 ejercicios y cuánto
