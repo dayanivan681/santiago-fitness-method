@@ -1,0 +1,167 @@
+[
+  {
+    "ref": "M02-133",
+    "id_coach": "coach-ej-23293684-8516-5ace-891d-a56ca7433fd2",
+    "nombre": "Bulgarian Split Squat Smith Machine",
+    "equipo": "smith",
+    "archivo": "M02-133-bulgarian-split-squat-smith.gif",
+    "fuente": "Smith_Single-Leg_Split_Squat",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Smith_Single-Leg_Split_Squat/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Smith_Single-Leg_Split_Squat/1.jpg"
+    ],
+    "bytes": 195673,
+    "dimensiones": "480,320,2",
+    "sha256": "1d6f28534cdd40c6d24d17baa7cfd48140662998b170d6034cbf7a0311487b4d"
+  },
+  {
+    "ref": "M02-139",
+    "id_coach": "coach-ej-fc37cc9c-1c9b-5913-8eb5-a83d3f2481df",
+    "nombre": "Walking Lunge",
+    "equipo": "pesoCorporal",
+    "archivo": "M02-139-walking-lunge.gif",
+    "fuente": "Bodyweight_Walking_Lunge",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Walking_Lunge/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Walking_Lunge/1.jpg"
+    ],
+    "bytes": 176030,
+    "dimensiones": "480,320,2",
+    "sha256": "11c0507dc6374274ab3c7c8b05ddbaaa2f4694183c0626ce99c065748a19adea"
+  },
+  {
+    "ref": "M02-039",
+    "id_coach": "coach-ej-10794cc6-7a55-5b47-853e-abd8858c11f1",
+    "nombre": "Arnold Press",
+    "equipo": "mancuernas",
+    "archivo": "M02-039-arnold-press.gif",
+    "fuente": "Arnold_Dumbbell_Press",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Arnold_Dumbbell_Press/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Arnold_Dumbbell_Press/1.jpg"
+    ],
+    "bytes": 171266,
+    "dimensiones": "480,320,2",
+    "sha256": "32245d8dd8fde82a300ae748c1f55f6a3d08d955460a906a4113d4e6ef6780d6"
+  },
+  {
+    "ref": "M02-060",
+    "id_coach": "coach-ej-93fa656d-0c2a-513f-86cc-80674fec21bb",
+    "nombre": "Cable Front Raise",
+    "equipo": "cable",
+    "archivo": "M02-060-cable-front-raise.gif",
+    "fuente": "Front_Cable_Raise",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Cable_Raise/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Cable_Raise/1.jpg"
+    ],
+    "bytes": 178470,
+    "dimensiones": "480,320,2",
+    "sha256": "57d4498d702af5285e2293b1dca43b9fcc548e4e2461a5fde2f0e12030b0ca77"
+  },
+  {
+    "ref": "M02-042",
+    "id_coach": "coach-ej-d909319b-552b-593e-806d-f278c86a6e43",
+    "nombre": "Convergent Shoulder Press",
+    "equipo": "convergente",
+    "archivo": "M02-042-convergent-shoulder-press.gif",
+    "fuente": "Leverage_Shoulder_Press",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leverage_Shoulder_Press/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leverage_Shoulder_Press/1.jpg"
+    ],
+    "bytes": 176610,
+    "dimensiones": "480,320,2",
+    "sha256": "6020711d940b4738cec4263d86c4d5a2e435cd78f7f6bf56b476ac5c63f090e3"
+  },
+  {
+    "ref": "M02-186",
+    "id_coach": "coach-ej-b2c57528-6b3b-51bf-81d1-9e074177db6c",
+    "nombre": "Nordic Hamstring Curl",
+    "equipo": "pesoCorporal",
+    "archivo": "M02-186-nordic-hamstring-curl.gif",
+    "fuente": "Natural_Glute_Ham_Raise",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Natural_Glute_Ham_Raise/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Natural_Glute_Ham_Raise/1.jpg"
+    ],
+    "bytes": 200143,
+    "dimensiones": "480,320,2",
+    "sha256": "ff1123b474f82d4550a5cd4365eb5ad097354807cde491df39f3df2ecc65ce33"
+  },
+  {
+    "ref": "M02-159",
+    "id_coach": "coach-ej-6fe046b5-1fb2-5007-831f-427b7fd9a4fd",
+    "nombre": "Barbell Glute Bridge",
+    "equipo": "barraLibre",
+    "archivo": "M02-159-barbell-glute-bridge.gif",
+    "fuente": "Barbell_Glute_Bridge",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Glute_Bridge/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Glute_Bridge/1.jpg"
+    ],
+    "bytes": 169150,
+    "dimensiones": "480,320,2",
+    "sha256": "983f48c0a6df6bb1c714920d848f4e5114d781f85bbfdddc6e2643a3813eb19c"
+  },
+  {
+    "ref": "M02-162",
+    "id_coach": "coach-ej-4534173b-afdc-5c27-8f9b-448189c15e35",
+    "nombre": "Cable Glute Kickback",
+    "equipo": "cable",
+    "archivo": "M02-162-cable-glute-kickback.gif",
+    "fuente": "One-Legged_Cable_Kickback",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Legged_Cable_Kickback/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Legged_Cable_Kickback/1.jpg"
+    ],
+    "bytes": 192566,
+    "dimensiones": "480,320,2",
+    "sha256": "50b7563cbf9367342099c5634450d5c8419bfe18208ab8dd76f880de0cb192b8"
+  },
+  {
+    "ref": "M02-173",
+    "id_coach": "coach-ej-52b65791-d1bd-5fe7-8e29-61b5ecaad0dd",
+    "nombre": "Hiper extensiones enfoque en el glúteo",
+    "equipo": "pesoCorporal",
+    "archivo": "M02-173-hiperextensiones-gluteo.gif",
+    "fuente": "Hyperextensions_Back_Extensions",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_Back_Extensions/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_Back_Extensions/1.jpg"
+    ],
+    "bytes": 186678,
+    "dimensiones": "480,320,2",
+    "sha256": "1a8383a66b5701b363c1c8e3d1a4497051297a5b4f66d5507f06636380d318d1"
+  },
+  {
+    "ref": "M02-003",
+    "id_coach": "coach-ej-27fdeed5-0b4c-5d2a-89d1-60b539600cb0",
+    "nombre": "Bench Press en Smith Machine",
+    "equipo": "smith",
+    "archivo": "M02-003-bench-press-smith.gif",
+    "fuente": "Smith_Machine_Bench_Press",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Smith_Machine_Bench_Press/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Smith_Machine_Bench_Press/1.jpg"
+    ],
+    "bytes": 188805,
+    "dimensiones": "480,320,2",
+    "sha256": "3ebd02e8a24ed0e525746881003018e1ab635f953830a13efe2c92a11205e78a"
+  },
+  {
+    "ref": "M02-030",
+    "id_coach": "coach-ej-e3d6f3c6-d71c-51f5-8150-2c84501fa1d5",
+    "nombre": "Cable Crossover",
+    "equipo": "cable",
+    "archivo": "M02-030-cable-crossover.gif",
+    "fuente": "Cable_Crossover",
+    "source_frames": [
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/0.jpg",
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/1.jpg"
+    ],
+    "bytes": 190732,
+    "dimensiones": "480,320,2",
+    "sha256": "94ca51387bd01b0b9767be2ba54daa8f7db491a0b85cda79274b24862845413b"
+  }
+]

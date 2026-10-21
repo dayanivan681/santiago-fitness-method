@@ -28,10 +28,21 @@ previo a decidir.
 | **C. Sin fuente libre fiel** | **22** | hay que grabarlo o comprarlo |
 | | **50** | |
 
-**28 de los 50 se cubren sin pagar nada.** De esos 28, **20 son fieles sin
-reservas** y **8 llevan una reserva** que Santiago debería aprobar (el movimiento
+**28 de los 50 se cubren sin pagar nada.** De esos 28, **17 son fieles sin
+reservas** y **11 llevan una reserva** que Santiago debería aprobar (el movimiento
 es el correcto, pero hay un detalle distinto: sentado en vez de de pie, sin
 asistencia, recorrido más largo). Las reservas van marcadas abajo una por una.
+
+> **Corrección (2026-10-21):** al resumir esto en el chat dije «20 fieles y 8 con
+> reserva». El reparto correcto, contando las filas de las tablas de abajo, es
+> **17 y 11**.
+
+> **Estado tras generar el lote** — ver [propuestos/README.md](propuestos/README.md).
+> De los 17 sin reserva, 6 eran archivos que ya existían y 11 había que generar.
+> Generados los 11: **9 aprobados**, **1 pasa a reserva** (M02-060: la fuente es a
+> un brazo) y **1 rechazado** (M02-133: el sujeto queda tapado por la máquina y no
+> se ve el movimiento), que vuelve al grupo sin fuente libre. El reparto queda en
+> **15 listos sin reserva · 12 con reserva · 23 sin fuente libre**.
 
 Los **22 restantes no tienen equivalente libre fiel**, y el motivo es casi siempre
 el mismo que dejó 11 fuera en octubre: **no falta la animación, falta la máquina**.
@@ -124,8 +135,9 @@ con foto y no gastar esfuerzo. Decide el dueño.
 El informe anterior planteaba $199 (ExerciseDB Starter, pago único) como la única
 opción de pago compatible con la app. Con el cruce hecho, la pregunta cambia:
 
-**Los 22 que faltan no son ejercicios raros: son máquinas concretas.** De los 22,
-**14 son un aparato específico de gimnasio** (pendulum squat, power squat, squat
+**Los 23 que faltan no son ejercicios raros: son máquinas concretas.** De ellos,
+**15 son un aparato específico de gimnasio** (los 14 de abajo más el Bulgarian
+split squat en Smith, rechazado al revisar la imagen) (pendulum squat, power squat, squat
 press, leverage squat, belt squat sumo, hip thrust de pie, elevación lateral en
 máquina, abductores de pie, abductor inclinado, jalón convergente, jalón de discos,
 asistencia de dominadas, asistencia de fondos, glute bridge en Smith) y **4 son
@@ -133,19 +145,19 @@ variantes unilaterales en cable o máquina**. Un catálogo genérico de 1.394
 ejercicios se enfrenta exactamente al mismo problema que la fuente gratuita: puede
 tener el movimiento, pero no en esa máquina.
 
-**No puedo afirmar sin comprarlo cuántos de los 22 trae ExerciseDB.** Lo que sí
+**No puedo afirmar sin comprarlo cuántos de los 23 trae ExerciseDB.** Lo que sí
 puedo afirmar, medido, es que las dos fuentes libres revisadas —876 y 917
-ejercicios— no traen ninguno de los 14 aparatos. Pagar $199 para cubrir 22 fichas
+ejercicios— no traen ninguno de los 15 aparatos. Pagar $199 para cubrir 23 fichas
 es una apuesta sin verificar; grabarlas Santiago las cubre todas con seguridad,
 porque son **sus** máquinas.
 
 ### Recomendación
 
-1. **Hacer los 28 gratis.** Primero los 20 fieles; los 8 con reserva, cuando
-   Santiago los apruebe. Eso lleva la biblioteca de 236/286 (83 %) a **264/286
-   (92 %)** sin gastar un dólar. Descontando Plank y Side Plank por isométricos,
-   quedan 26 que valen el esfuerzo.
-2. **Los 22 restantes los graba Santiago** con la herramienta que ya existe en la
+1. **Hacer los 27 gratis que quedan.** Primero los 15 fieles; los 12 con reserva,
+   cuando Santiago los apruebe. Eso lleva la biblioteca de 236/286 (83 %) a
+   **263/286 (92 %)** sin gastar un dólar. Descontando Plank y Side Plank por
+   isométricos, quedan 25 que valen el esfuerzo.
+2. **Los 23 restantes los graba Santiago** con la herramienta que ya existe en la
    app. Son sus máquinas: nadie más tiene esas imágenes.
 3. **No comprar nada todavía.** Si después de grabar sigue faltando mucho, se
    revisa; y antes de pagar $199 habría que pedirle a ExerciseDB la lista de

@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T20:12:56.996Z
+- **Última sincronización:** 2026-10-21T20:17:55.766Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T20:17:55.768Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Generados los GIF gratuitos sin reserva del cruce y dejados para revisar en docs/gifs-servicios-costo-2026-10-21/propuestos/. Correccion: el reparto real del cruce es 17 sin reserva y 11 con reserva, no 20 y 8 como dije al resumir; de los 17, seis ya eran archivos del repositorio y once habia que generar. Generados los once con la receta del 2026-10-05 (dos fotogramas, 0,9 s, bucle, 480 px, 96 colores, ffmpeg palettegen/paletteuse), todos a 480x320. Revision fotograma a fotograma: 9 aprobados, 1 pasa a reserva (M02-060 Cable Front Raise: la fuente es a un brazo, confirmado en las instrucciones) y 1 rechazado (M02-133 Bulgarian Split Squat Smith: el sujeto queda tapado por el bastidor y los discos, no se ve el movimiento), que vuelve al grupo sin fuente libre. Los diez archivos usables suman 1.830.450 bytes. procedencia.json guarda id del coach, URLs de origen, tamano, dimensiones y sha256 de cada uno. NADA APLICADO: subirlos a la biblioteca es un PUT a produccion que necesita el si del dueno. Estado del hueco: 15 listos sin reserva, 12 con reserva, 23 sin fuente libre.
+- **Verificación:** npm test (1082 en 128 archivos); npm run lint; npm run build
+- **Siguiente:** Que el dueno decida si se suben los 9 aprobados a produccion y si aprueba M02-060 a un brazo; los 23 sin fuente libre dependen de que Santiago los grabe
+
 
 ### 2026-10-21T20:12:56.997Z | claude-code | CLAIM
 - **Estado:** active
