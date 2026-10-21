@@ -1,0 +1,115 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Bi-series</title><style>
+@font-face{font-family:BC;src:url(../../public/fuentes/barlow-condensed-700.woff2) format('woff2');font-weight:700}
+@font-face{font-family:BC;src:url(../../public/fuentes/barlow-condensed-600.woff2) format('woff2');font-weight:600}
+@font-face{font-family:B;src:url(../../public/fuentes/barlow-500.woff2) format('woff2');font-weight:500}
+@font-face{font-family:B;src:url(../../public/fuentes/barlow-600.woff2) format('woff2');font-weight:600}
+@font-face{font-family:B;src:url(../../public/fuentes/barlow-400.woff2) format('woff2');font-weight:400}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0b0c0d;color:#f4f3f0}
+#esc{position:absolute;inset:0}
+.marca{position:absolute;left:96px;top:92px;font:700 30px/1 BC;letter-spacing:6px}
+.marca small{display:block;font:500 13px/1 B;letter-spacing:7px;color:#9a9a9e;margin-top:10px}
+.cuenta{position:absolute;right:96px;top:96px;display:flex;gap:10px}
+.cuenta i{display:block;width:34px;height:6px;border-radius:3px;background:#2a2b2e}
+.cuenta i.on{background:#e5352b}
+.textos{position:absolute;left:96px;right:96px;top:196px;height:260px}
+.texto{position:absolute;left:0;right:0;top:0;opacity:0}
+.chip{display:inline-block;font:600 22px/1 B;letter-spacing:4px;text-transform:uppercase;color:#e5352b;margin-bottom:18px}
+.titulo{font:700 92px/0.98 BC;letter-spacing:.5px;margin:0}
+.sub{font:500 36px/1.25 B;color:#b9b9bd;margin-top:18px}
+#tel{position:absolute;left:240px;top:520px;width:600px;height:1298px;border-radius:70px;overflow:hidden;background:#000;
+  box-shadow:0 0 0 12px #1b1c1f,0 0 0 13px #2c2d31,0 60px 120px rgba(0,0,0,.6)}
+.toma{position:absolute;left:0;top:0;width:600px;height:1298px;transform-origin:0 0;opacity:0;will-change:transform,opacity}
+#anillo{position:absolute;border:5px solid #e5352b;border-radius:22px;box-shadow:0 0 0 9px rgba(229,53,43,.18);opacity:0;pointer-events:none}
+#toque{position:absolute;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;background:rgba(255,255,255,.28);border:4px solid #fff;opacity:0}
+#onda{position:absolute;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;border:4px solid #fff;opacity:0}
+#intro,#outro{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 96px;opacity:0}
+#intro .titulo{font-size:150px}
+.raya{height:8px;width:0;background:#e5352b;border-radius:4px;margin:44px 0 40px}
+.regla{display:flex;gap:28px;align-items:center;margin:0 0 30px;font:600 46px/1.2 B;opacity:0}
+.regla b{flex:none;display:grid;place-items:center;width:84px;height:84px;border-radius:24px;background:#1b1c1f;color:#e5352b;font:700 44px/1 BC}
+.pie{font:500 30px/1.4 B;color:#9a9a9e;margin-top:30px;opacity:0}
+</style></head><body><div id="esc">
+<div class="marca">SANTIAGO<small>FITNESS METHOD</small></div>
+<div class="cuenta" id="cuenta"></div>
+<div class="textos" id="textos"></div>
+<div id="tel"><div id="tomas"></div><div id="anillo"></div><div id="onda"></div><div id="toque"></div></div>
+<div id="intro"><div class="chip">Tutorial · 40 segundos</div><h1 class="titulo">Bi-series<br>y tri-series</h1><div class="raya" id="raya1"></div><div class="sub" style="font-size:44px">Cómo armarlas y cómo las entrena tu cliente</div></div>
+<div id="outro"><div class="chip">Lo que tienes que saber</div>
+<div class="regla"><b>1</b>2 o 3 ejercicios seguidos</div>
+<div class="regla"><b>2</b>Cuentan como un solo bloque</div>
+<div class="regla"><b>3</b>El descanso va en el último</div>
+<div class="regla"><b>4</b>Sin descanso dentro de la ronda</div>
+<div class="pie">Cada sesión: mínimo 5 ejercicios y máximo 8 bloques (hasta 12 ejercicios).</div></div>
+</div>
+<script>
+const C=%CAJAS%;
+const K=600/390, W=600, H=1298;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const cl=(x,a,b)=>Math.max(a,Math.min(b,x));
+const fase=(t,a,b)=>cl((t-a)/(b-a),0,1);
+// Escenas: textos + tomas con cámara, anillos y toques.
+const ESC=[
+ {t0:3.2,t1:8.4,chip:'Paso 1 · Coach',tit:'Une dos ejercicios',sub:'Programa › Preparar cambios ›\ntoca «Unir en serie» entre ellos.'},
+ {t0:8.4,t1:12.8,chip:'¿Tres ejercicios?',tit:'Une un tercero',sub:'Vuelve a tocar «Unir en serie»\ny queda en tri-serie.'},
+ {t0:12.8,t1:18.2,chip:'Paso 2 · Coach',tit:'Descanso entre rondas',sub:'Ponlo en el último ejercicio.\nLas series se igualan solas.'},
+ {t0:18.2,t1:22.6,chip:'Paso 3 · Coach',tit:'Publica',sub:'«Revisado · Publicar programa»\ny le llega al cliente.'},
+ {t0:22.6,t1:26.4,chip:'Así lo ve el cliente',tit:'Agrupado en su sesión',sub:'Con su marco y la etiqueta\nBi-serie A.'},
+ {t0:26.4,t1:31.4,chip:'Al entrenar',tit:'A1 → A2, sin pausa',sub:'Completa A1 y la app lo lleva\ndirecto a A2.'},
+ {t0:31.4,t1:35.6,chip:'Fin de la ronda',tit:'Ahora sí, descanso',sub:'Corre el descanso y vuelve a A1\nen la ronda 2.'},
+];
+// Tomas: imagen, intervalo, cámara [[t, caja|null, zoom]], anillo [[a,b,caja]], toque [t,caja]
+const T=[
+ {img:'01-editor',t0:3.2,t1:6.1,cam:[[3.2,null,1],[4.4,'unir',1.55]],anillo:[[4.6,5.6,'unir']],toque:[5.6,'unir']},
+ {img:'02-biserie',t0:5.9,t1:8.6,cam:[[5.9,'grupo',1.5],[8.4,'grupo',1.4]],anillo:[[6.3,8.2,'grupo']]},
+ {img:'02c-unir-tercero',t0:8.4,t1:10.6,cam:[[8.4,'grupo',1.3],[9.3,'unir',1.55]],anillo:[[9.4,10.1,'unir']],toque:[10.1,'unir']},
+ {img:'02d-triserie',t0:10.4,t1:13.0,cam:[[10.4,'grupo',1.45],[12.8,'grupo',1.35]],anillo:[[10.8,12.6,'grupo']]},
+ {img:'02b-biserie-ultimo',t0:12.8,t1:14.4,cam:[[12.8,'grupo',1.3],[13.4,'ultimo',1.5]],anillo:[[13.4,14.0,'ultimo']],toque:[14.0,'ultimo']},
+ {img:'03-descanso',t0:14.2,t1:18.4,cam:[[14.2,null,1],[14.9,'desc',1.6],[16.3,'desc',1.6],[16.9,'aviso',1.55]],anillo:[[15.0,16.3,'desc'],[16.9,18.0,'aviso']]},
+ {img:'04-grupo-90',t0:18.2,t1:19.8,cam:[[18.2,'grupo',1.35]],anillo:[[18.5,19.6,'grupo']]},
+ {img:'05-publicar',t0:19.6,t1:21.2,cam:[[19.6,'pub',1.4]],anillo:[[19.9,20.6,'pub']],toque:[20.6,'pub']},
+ {img:'06-publicado',t0:21.0,t1:22.8,cam:[[21.0,'ok',1.45]],anillo:[[21.3,22.4,'ok']]},
+ {img:'07-hoy',t0:22.6,t1:26.6,cam:[[22.6,null,1],[23.6,'grupo',1.45]],anillo:[[23.8,26.2,'grupo']]},
+ {img:'08-a1',t0:26.4,t1:27.9,cam:[[26.4,'tira',1.55]],anillo:[[26.7,27.7,'tira']]},
+ {img:'09-a1-guardar',t0:27.7,t1:28.9,cam:[[27.7,'boton',1.35]],anillo:[[27.8,28.4,'boton']],toque:[28.4,'boton']},
+ {img:'10-a2',t0:28.7,t1:30.1,cam:[[28.7,'tira',1.55]],anillo:[[28.9,29.9,'tira']]},
+ {img:'11-a2-guardar',t0:29.9,t1:31.6,cam:[[29.9,'boton',1.35]],anillo:[[30.0,30.8,'boton']],toque:[30.8,'boton']},
+ {img:'12-descanso',t0:31.4,t1:35.8,cam:[[31.4,null,1],[32.4,'descanso',1.35],[33.9,'paso',1.6]],anillo:[[32.5,33.7,'descanso'],[34.0,35.4,'paso']]},
+];
+const tomas=document.getElementById('tomas');
+for(const s of T){const im=new Image();im.src=s.img+'.png';im.className='toma';s.el=im;tomas.appendChild(im);}
+const textos=document.getElementById('textos');
+for(const e of ESC){const d=document.createElement('div');d.className='texto';d.innerHTML=`<div class="chip">${e.chip}</div><h2 class="titulo">${e.tit}</h2><div class="sub">${e.sub.replace('\n','<br>')}</div>`;e.el=d;textos.appendChild(d);}
+const cuenta=document.getElementById('cuenta');ESC.forEach(()=>{const i=document.createElement('i');cuenta.appendChild(i)});
+function camara(s,t){const k=s.cam;let a=k[0],b=k[0];for(let i=0;i<k.length;i++){if(k[i][0]<=t)a=k[i];if(k[i][0]<=t)b=k[i+1]||k[i];}
+ const dur=Math.max(.001,(b[0]-a[0])),u=ease(cl((t-a[0])/Math.min(dur,1.1),0,1));
+ const pos=(c,z)=>{if(!c||!C[s.img][c])return [W/2/K,H/2/K,1];const x=C[s.img][c];const cabe=Math.min(z,0.9*W/(x.width*K),0.82*H/(x.height*K));return [x.x+x.width/2,x.y+x.height/2,Math.max(1,cabe)]};
+ const p0=pos(a[1],a[2]),p1=pos(b[1],b[2]);const cx=p0[0]+(p1[0]-p0[0])*u,cy=p0[1]+(p1[1]-p0[1])*u,z=p0[2]+(p1[2]-p0[2])*u;
+ const tx=cl(W/2-cx*K*z,W-W*z,0),ty=cl(H/2-cy*K*z,H-H*z,0);return {tx,ty,z};}
+function enPantalla(s,cam,c){const x=C[s.img][c];return {x:cam.tx+x.x*K*cam.z,y:cam.ty+x.y*K*cam.z,w:x.width*K*cam.z,h:x.height*K*cam.z};}
+window.pintar=function(t){
+ // intro / outro
+ const iA=fase(t,0.2,0.9)-fase(t,2.7,3.3); const intro=document.getElementById('intro');intro.style.opacity=iA;intro.style.transform=`translateY(${(1-ease(fase(t,0.2,1)))*40}px)`;
+ document.getElementById('raya1').style.width=(ease(fase(t,0.6,1.6))*260)+'px';
+ const oA=fase(t,35.7,36.3); const outro=document.getElementById('outro');outro.style.opacity=oA;
+ [...outro.querySelectorAll('.regla')].forEach((r,i)=>{const f=ease(fase(t,36.1+i*0.35,36.6+i*0.35));r.style.opacity=f;r.style.transform=`translateX(${(1-f)*-40}px)`});
+ outro.querySelector('.pie').style.opacity=fase(t,37.8,38.4);
+ const vis=fase(t,2.9,3.5)-fase(t,35.4,35.9);
+ for(const id of ['tel','textos','cuenta']){const e=document.getElementById(id);e.style.opacity=vis;}
+ document.getElementById('tel').style.transform=`translateY(${(1-ease(fase(t,2.9,3.7)))*120}px)`;
+ // textos de escena
+ ESC.forEach((e,i)=>{const a=fase(t,e.t0,e.t0+0.45)-(i<ESC.length-1?fase(t,e.t1-0.25,e.t1+0.2):0);e.el.style.opacity=cl(a,0,1);e.el.style.transform=`translateY(${(1-ease(fase(t,e.t0,e.t0+0.5)))*26}px)`;cuenta.children[i].className=(t>=e.t0-0.01)?'on':'';});
+ // tomas
+ let activa=null;
+ for(const s of T){const o=fase(t,s.t0,s.t0+0.2)*(1-fase(t,s.t1-0.01,s.t1));s.el.style.opacity=o;
+   if(o>0){const cam=camara(s,t);s.el.style.transform=`translate(${cam.tx}px,${cam.ty}px) scale(${cam.z})`;if(t>=s.t0&&t<s.t1)activa={s,cam};}}
+ const an=document.getElementById('anillo'),to=document.getElementById('toque'),on=document.getElementById('onda');
+ an.style.opacity=0;to.style.opacity=0;on.style.opacity=0;
+ if(activa){const {s,cam}=activa;
+   for(const [a,b,c] of (s.anillo||[])){if(t>=a&&t<=b&&C[s.img][c]){const r=enPantalla(s,cam,c),pad=10,f=fase(t,a,a+0.25)*(1-fase(t,b-0.2,b));
+     const x0=Math.max(8,r.x-pad),y0=Math.max(8,r.y-pad),x1=Math.min(W-8,r.x+r.w+pad),y1=Math.min(H-8,r.y+r.h+pad);an.style.opacity=f;an.style.left=x0+'px';an.style.top=y0+'px';an.style.width=(x1-x0)+'px';an.style.height=(y1-y0)+'px';an.style.transform=`scale(${1.06-0.06*ease(fase(t,a,a+0.35))})`;}}
+   if(s.toque&&C[s.img][s.toque[1]]){const [tt,c]=s.toque,r=enPantalla(s,cam,c),x=r.x+r.w/2,y=r.y+r.h/2;
+     if(t>=tt-0.45&&t<=tt+0.35){to.style.left=x+'px';to.style.top=y+'px';const ap=fase(t,tt-0.45,tt-0.2),pr=fase(t,tt-0.12,tt);to.style.opacity=ap*(1-fase(t,tt+0.1,tt+0.35));to.style.transform=`scale(${1.3-0.3*ap-0.15*pr+0.15*fase(t,tt,tt+0.1)})`;}
+     if(t>=tt&&t<=tt+0.55){on.style.left=x+'px';on.style.top=y+'px';const f=fase(t,tt,tt+0.55);on.style.opacity=1-f;on.style.transform=`scale(${1+f*1.6})`;}}}
+};
+window.listo=Promise.all([document.fonts.ready,...T.map(s=>s.el.decode())]);
+</script></body></html>

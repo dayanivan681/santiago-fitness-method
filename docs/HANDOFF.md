@@ -237,11 +237,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-20T22:52:56.403Z
+- **Última sincronización:** 2026-10-21T01:54:01.355Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1389,6 +1389,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T01:54:01.357Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Cierre de claude-code y relevo a Codex. HECHO en main: bi-series/tri-series (PR #5 y arreglos), sensación nativa bloques 1-3 (PR #6, #7, #8), puntos de página y pista de deslizar (PR #9); prueba física del dueño PASS en puntos 3, 7, 9 y B7. Tutorial en vídeo HD de bi-series entregado al dueño (1080x1920, 40 s); guion en Claude Design https://claude.ai/artifact/VNkGw7FofoFWg3zeo6CzLC; scripts para regenerarlo en docs/tutorial-bi-series/. PENDIENTE: PR #10 (claude/series-pendientes: series pendientes muestran el objetivo y '1 rep') abierto, verde, sin conflictos, esperando el visto bueno del dueño.
+- **Verificación:** npm test 1053/1053 (una corrida previa tuvo 1 fallo intermitente que pasó al repetir; no se identificó cuál); npm run lint 0 avisos; npm run build; git diff --check
+- **Siguiente:** Codex: 1) con el 'merge' del dueño, unir PR #10 (claude/series-pendientes) y publicar; 2) tras unirlo, regenerar el vídeo con docs/tutorial-bi-series/README.md para que las series pendientes digan '6-15 reps' y entregarlo al dueño; 3) el dueño envía a Santiago el mensaje corto + vídeo (no enviar nada sin su visto bueno); 4) opcional: probar bi-series en iPhone físico (demo: Coach > Alicia > Programa > Upper B); 5) ideas fuera del plan: tendencias por ejercicio, valoración de esfuerzo 1-10, rachas, compartir resumen como imagen. Si aparece el fallo intermitente de tests, identificarlo con npm test -- --maxWorkers=3 y estabilizarlo.
+
 
 ### 2026-10-20T22:52:56.404Z | claude-code | CLAIM
 - **Estado:** active
