@@ -17,6 +17,7 @@ import {
   Link2,
   LogOut,
   Plus,
+  Play,
   Search,
   Timer,
   Users,
@@ -45,6 +46,7 @@ const ICONOS = {
   opciones: Ellipsis,
   abrir: ArrowUpRight,
   buscar: Search,
+  comenzar: Play,
 } as const;
 export type NombreIcono = keyof typeof ICONOS;
 export function Icono({

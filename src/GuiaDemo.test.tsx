@@ -33,8 +33,8 @@ it("ofrece una bienvenida por rol, ayuda opcional y no escribe fuera de la demo"
   fireEvent.click(
     await screen.findByRole("button", { name: "Ver mi entrenamiento" }),
   );
-  await screen.findByRole("heading", { name: "Vamos, Alicia." });
-  fireEvent.click(screen.getByRole("button", { name: "Cerrar consejo" }));
+  await screen.findByText(/Vamos, Alicia\./);
+  fireEvent.click(await screen.findByRole("button", { name: "Cerrar consejo" }));
   fireEvent.click(screen.getByRole("link", { name: "Ver Coach" }));
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Abrir ayuda" }));

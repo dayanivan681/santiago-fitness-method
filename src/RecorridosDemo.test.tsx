@@ -90,14 +90,14 @@ it("crea con revisión explícita, permite explorar, conserva persona y aísla V
   expect(screen.queryByText(/Completado ·/)).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("link", { name: "Ver Cliente" }));
   await tocar("Ver mi entrenamiento");
-  await screen.findByRole("heading", { name: "Vamos, Elena." });
+  await screen.findByText(/Vamos, Elena\./);
   expect(
-    screen.getByText("Aquí tienes el entrenamiento de hoy."),
+    await screen.findByText("Aquí tienes el entrenamiento de hoy."),
   ).toBeInTheDocument();
   const s = vi.spyOn(ServicioCoach.prototype, "repoDemo");
   fireEvent.click(screen.getByRole("link", { name: "Ver Coach" }));
   fireEvent.click(screen.getByRole("link", { name: "Ver Cliente" }));
-  await screen.findByRole("heading", { name: "Vamos, Elena." });
+  await screen.findByText(/Vamos, Elena\./);
   expect(s).toHaveBeenCalledWith(id);
   expect(red).not.toHaveBeenCalled();
   expect(abrir).not.toHaveBeenCalled();
@@ -147,7 +147,7 @@ it("sólo confirma la primera serie guardada y cerrar ayuda no borra ni repite l
   fireEvent.click(screen.getByRole("link", { name: "Ver Coach" }));
   await tocar("Explorar");
   fireEvent.click(screen.getByRole("link", { name: "Ver Cliente" }));
-  await screen.findByRole("heading", { name: "Vamos, Alicia." });
+  await screen.findByText(/Vamos, Alicia\./);
   expect(
     screen.queryByText("Aquí tienes el entrenamiento de hoy."),
   ).not.toBeInTheDocument();

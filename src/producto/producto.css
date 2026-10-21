@@ -1174,7 +1174,7 @@ a.sfm-primary:active {
 .sfm-today-title {
   font:
     500 48px/1 "Barlow Condensed",
-    sans-serif !important;
+    sans-serif;
   margin: 10px 0 12px;
 }
 .sfm-main--client .pantalla__sub {

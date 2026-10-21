@@ -13,7 +13,7 @@
  */
 
 import { Esqueleto } from '../../componentes/Esqueleto'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useEntrenamiento } from '../../aplicacion/useEntrenamiento'
 import { bloquesDe, nombreDeGrupo } from '../../../shared/superseries'
 import { HojaEjercicio } from '../Biblioteca/HojaEjercicio'
@@ -29,12 +29,14 @@ interface Props {
   readonly memoriaDia?: Memoria<string | null>
   /** Entrar al modo entrenamiento. */
   readonly onComenzar?: () => void
+  readonly consejo?: ReactNode
 }
 
 export function EntrenamientoHoy({
   repositorio = repositorioPorDefecto,
   memoriaDia,
   onComenzar,
+  consejo,
 }: Props = {}) {
   const { datos, elegirPlantilla, cargando } = useEntrenamiento(repositorio, memoriaDia)
   const [fichaDe, setFichaDe] = useState<Ejercicio | null>(null)
@@ -54,30 +56,7 @@ export function EntrenamientoHoy({
 
   return (
     <>
-      <div className="contenido">
-        <header data-tour="sesion-hoy" className="pantalla">
-          <p className="sfm-eyebrow">Tu próxima sesión</p>
-          <h2 className="sfm-today-title">{plantilla.nombre}</h2>
-          <p className="pantalla__sub">
-            {ejerciciosDelDia.length > 0 && (
-              <>
-                {ejerciciosDelDia.length} ejercicios · {seriesObjetivo} series
-              </>
-            )}
-          </p>
-        </header>
-
-        <div className="semana-sesiones">
-          <p>Semana: {datos.sesionesSemana} de {participante.frecuenciaEntrenamiento} sesiones</p>
-          <div role="progressbar" aria-label="Sesiones de la semana" aria-valuemin={0}
-            aria-valuemax={participante.frecuenciaEntrenamiento}
-            aria-valuenow={Math.min(datos.sesionesSemana, participante.frecuenciaEntrenamiento)}
-            aria-valuetext={`${datos.sesionesSemana} de ${participante.frecuenciaEntrenamiento} sesiones`}>
-            <span style={{ transform: `scaleX(${Math.min(1, datos.sesionesSemana / Math.max(1, participante.frecuenciaEntrenamiento))})` }} />
-          </div>
-        </div>
-
-        {ejerciciosDelDia.length>0&&<div className="sfm-session-visual" aria-hidden="true">{ejerciciosDelDia.slice(0,3).map(e=><img key={e.ejercicio.id} src={e.ejercicio.imagen} alt=""/>)}</div>}
+      <div className="contenido sfm-today">
         {/* Hasta 5 días caben todos a la vista (no hay que descubrir que la fila se desliza); con 6 o 7 se desplaza. */}
         <nav className="filtros filtros--dias" data-dias={plantillas.length} aria-label="Día de entrenamiento">
           {plantillas.map((opcion) => (
@@ -93,24 +72,34 @@ export function EntrenamientoHoy({
           ))}
         </nav>
 
-        {ejerciciosDelDia.length === 0 ? (
-          // Si el coach aún no ha publicado ese día desde /admin, el participante
-          // recibe un estado vacío explícito en vez de controles de programación.
-          <p className="aviso">
-            {plantilla.nombre} todavía no tiene ejercicios definidos. Tu coach está preparando esta sesión.
-          </p>
-        ) : (
-          <>
-            {/* La única acción de la pantalla. Con una sesión abierta cambia de
-                verbo y lleva el progreso: entrar y seguir es lo mismo. */}
-            <button type="button" data-tour="comenzar" className="accion accion--principal" onClick={onComenzar}>
-              {enCurso
-                ? `Continuar · ${seriesHechas} de ${seriesObjetivo} series`
-                : terminada
-                  ? 'Volver al entrenamiento'
-                  : 'Comenzar entrenamiento'}
-            </button>
+        <section className="sfm-routine-card" data-tour="sesion-hoy" aria-labelledby="sesion-hoy-titulo">
+          {ejerciciosDelDia.length > 0 && <img className="sfm-routine-photo" src={ejerciciosDelDia[0].ejercicio.imagen} alt="" />}
+          <div className="sfm-routine-body">
+            <header className="pantalla">
+              <h2 id="sesion-hoy-titulo" className="sfm-today-title">{plantilla.nombre}</h2>
+              {ejerciciosDelDia.length > 0 && <p className="pantalla__sub">{ejerciciosDelDia.length} ejercicios · {seriesObjetivo} series</p>}
+            </header>
+            {ejerciciosDelDia.length === 0 ? <p className="aviso">
+              {plantilla.nombre} todavía no tiene ejercicios definidos. Tu coach está preparando esta sesión.
+            </p> : <button type="button" data-tour="comenzar" className="accion accion--principal sfm-routine-start" onClick={onComenzar}>
+              <Icono nombre="comenzar" size={20} />
+              <span>{enCurso ? `Continuar · ${seriesHechas} de ${seriesObjetivo} series`
+                : terminada ? 'Volver al entrenamiento' : 'Comenzar entrenamiento'}</span>
+            </button>}
+          </div>
+        </section>
+        <div className="semana-sesiones">
+          <p><span>Semana</span><span>{datos.sesionesSemana} de {participante.frecuenciaEntrenamiento} sesiones</span></p>
+          <div role="progressbar" aria-label="Sesiones de la semana" aria-valuemin={0}
+            aria-valuemax={participante.frecuenciaEntrenamiento}
+            aria-valuenow={Math.min(datos.sesionesSemana, participante.frecuenciaEntrenamiento)}
+            aria-valuetext={`${datos.sesionesSemana} de ${participante.frecuenciaEntrenamiento} sesiones`}>
+            <span style={{ transform: `scaleX(${Math.min(1, datos.sesionesSemana / Math.max(1, participante.frecuenciaEntrenamiento))})` }} />
+          </div>
+        </div>
 
+        {ejerciciosDelDia.length > 0 && (
+          <>
             {terminada && (
               <p className="nota nota--hecho" style={{ marginTop: 12 }}>
                 Sesión terminada. Lo registrado ya está en el historial.
@@ -165,6 +154,7 @@ export function EntrenamientoHoy({
             </div>
           </>
         )}
+        {consejo && <div className="sfm-client-advice">{consejo}</div>}
       </div>
       {fichaDe && (
         <HojaEjercicio

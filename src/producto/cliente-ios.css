@@ -1,0 +1,313 @@
+/* Cliente · propuesta 2. Las superficies del coach conservan su sistema.
+   La tipografía de sistema deja la marca Barlow para la firma SFM. */
+.sfm-shell--client {
+  --sfm-width: 720px;
+  --sfm-ui-font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --sfm-action-red: #db3027;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+.sfm-client-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 16px 4px;
+}
+.sfm-client-header > div:first-child { min-width: 0; }
+.sfm-shell--client:has(.entreno__barra) > .sfm-client-header { display: none; }
+.sfm-client-header h1 {
+  margin: 0;
+  font: 700 34px/1.1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -1.2px;
+  overflow-wrap: anywhere;
+}
+.sfm-client-wordmark {
+  margin: 4px 0 0;
+  font: 500 11px/1.2 Barlow, sans-serif;
+  letter-spacing: 2.8px;
+  color: var(--sfm-muted);
+}
+.sfm-shell--client .sfm-brand-actions { gap: 4px; }
+.sfm-client-header .sfm-demo-help { font-size: 0; width: 44px; min-width: 44px; padding: 0; gap: 0; }
+.sfm-client-header .sfm-demo-help span { font-size: 16px; }
+.sfm-shell--client .sfm-avatar {
+  font: 500 14px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.sfm-main--client {
+  padding: 0 16px calc(104px + env(safe-area-inset-bottom) + var(--alto-cronometro, 0px));
+}
+.sfm-main--client .contenido { padding: 0; max-width: none; }
+.sfm-client-greeting {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--sfm-muted);
+  margin: 0 0 12px;
+}
+.sfm-client-greeting::first-letter { text-transform: uppercase; }
+.sfm-shell--client .sfm-sync-state--compact {
+  width: 48px;
+  min-height: 48px;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  border: 0;
+  background: none;
+  color: var(--sfm-muted);
+}
+.sfm-sync-state--compact > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.sfm-shell--client .sfm-sync-state--notice {
+  width: calc(100% - 32px);
+  padding: 8px 12px;
+  margin: 4px 16px 12px;
+  border: 1px solid var(--sfm-line);
+  border-radius: 12px;
+  font-size: 13px;
+  text-align: left;
+}
+
+/* Hoy: elegir día → sesión y acción → semana → lista agrupada. */
+.sfm-main--client .filtros--dias {
+  margin: 0 0 12px;
+  padding: 2px;
+  gap: 2px;
+  border: 1px solid var(--sfm-line);
+  border-radius: 14px;
+  background: var(--sfm-surface);
+}
+.sfm-main--client .filtros--dias .filtro {
+  min-height: 44px;
+  border-radius: 11px;
+  border: 0;
+  background: none;
+  padding: 8px;
+  font: 500 13px/1.3 var(--sfm-ui-font);
+  letter-spacing: 0;
+  color: #b7b7bc;
+  white-space: normal;
+  text-transform: none;
+}
+.sfm-main--client .filtros--dias .filtro--activo {
+  background: var(--sfm-action-red);
+  color: #fff;
+  font-weight: 650;
+}
+.sfm-routine-card {
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--sfm-surface);
+}
+.sfm-routine-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.9;
+  object-fit: cover;
+  object-position: center top;
+}
+.sfm-routine-body { padding: 12px; }
+.sfm-routine-body .pantalla { padding: 0; margin: 0 0 8px; }
+.sfm-main--client .sfm-today-title {
+  margin: 0 0 3px;
+  font: 700 32px/1.12 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -1px;
+}
+.sfm-main--client .pantalla__sub { font-size: 14px; color: var(--sfm-muted); margin: 0; }
+.sfm-shell--client .accion--principal,
+.sfm-shell--client .boton-guardar:not(.boton-guardar--secundario),
+.sfm-shell--client .sfm-primary {
+  background: var(--sfm-action-red);
+  color: #fff;
+  font-family: var(--sfm-ui-font);
+  font-weight: 650;
+  font-size: 16px;
+  letter-spacing: -.2px;
+  text-transform: none;
+  border: 0;
+  border-radius: 12px;
+  min-height: 50px;
+  text-align: center;
+  justify-content: center;
+}
+.sfm-shell--client .sfm-routine-start { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin: 0; }
+.sfm-routine-start svg { fill: currentColor; stroke-width: 0; flex: none; }
+.sfm-main--client .semana-sesiones { margin: 20px 0 24px; }
+.sfm-main--client .semana-sesiones p { font-size: 15px; font-weight: 600; color: var(--sfm-white); }
+.sfm-main--client .semana-sesiones p { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.sfm-main--client .semana-sesiones p > span:first-child { font-size: 18px; font-weight: 700; }
+.sfm-main--client .semana-sesiones p > span:last-child { font-size: 13px; font-weight: 400; color: var(--sfm-muted); }
+.sfm-main--client .semana-sesiones > div { height: 6px; background: #292a2e; }
+.sfm-main--client .semana-sesiones > div > span { background: var(--sfm-red); }
+.sfm-main--client .grupo__titulo { font-size: 19px; font-weight: 700; letter-spacing: -.5px; margin: 24px 0 12px; text-transform: none; color: var(--sfm-white); }
+.sfm-main--client .grupo--pleno,
+.sfm-main--client .biblioteca__grupo .grupo { border: 0; border-radius: 18px; background: var(--sfm-surface); padding: 0 12px; overflow: hidden; }
+.sfm-main--client .grupo--pleno { margin-left: 0; margin-right: 0; }
+.sfm-main--client .fila { gap: 12px; padding: 14px 0; }
+.sfm-main--client .fila__titulo { font: 600 15px/1.35 var(--sfm-ui-font); letter-spacing: -.2px; }
+.sfm-main--client .fila__detalle { font-size: 13px; margin-top: 4px; }
+.sfm-main--client .sfm-exercise-thumb,
+.sfm-main--client .fila__miniatura { width: 62px; height: 62px; border-radius: 10px; filter: none; }
+.sfm-main--client .sfm-exercise-thumb img { filter: none; }
+.sfm-main--client .sfm-today .fila { min-height: 72px; padding: 10px 0; }
+.sfm-main--client .sfm-today .sfm-exercise-thumb { height: 50px; width: 60px; }
+.sfm-main--client .sfm-exercise-thumb > span { right: 2px; bottom: 2px; }
+.sfm-shell--client .sfm-client-advice:has(.sfm-context-help) { margin: 10px 0; }
+.sfm-shell--client .sfm-context-help {
+  padding: 0 0 0 10px;
+  margin: 0;
+  border: 0;
+  border-left: 2px solid var(--sfm-line);
+  border-radius: 0;
+  background: none;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.sfm-shell--client .sfm-context-help p { margin: 0; }
+
+/* Entrenar: identidad compacta y registro como tarea central. */
+.sfm-main--client:has(.entreno__barra) { padding-top: 0; }
+.sfm-main--client .entreno__barra { padding: 4px 0 8px; min-height: 60px; }
+.sfm-main--client .entreno__dia { font-size: 15px; font-weight: 650; }
+.sfm-main--client .entreno__paso { font: 400 12px/1.4 var(--sfm-ui-font); }
+.sfm-main--client .entreno__ejercicio { gap: 8px; }
+.sfm-main--client .entreno__identidad {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 3px 12px;
+  align-items: start;
+  margin-top: 6px;
+}
+.sfm-main--client .sfm-workout-image {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  width: 76px;
+  height: 76px;
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+}
+.sfm-main--client .sfm-workout-image img { filter: none; }
+.sfm-main--client .sfm-workout-image span { bottom: 4px; right: 4px; font-size: 0; padding: 4px; border-radius: 6px; }
+.sfm-main--client .sfm-workout-image span svg { width: 14px; height: 14px; }
+.sfm-main--client .ejercicio__tag { grid-column: 2; font: 500 11px/1.3 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; }
+.sfm-main--client .entreno__nombre { grid-column: 2; font: 700 21px/1.15 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -.6px; margin: 0; }
+.sfm-main--client .entreno__plan { grid-column: 2; font-size: 12px; line-height: 1.4; }
+.sfm-main--client .referencias { display: flex; flex-wrap: wrap; padding: 2px 0 6px; gap: 5px 16px; }
+.sfm-main--client .referencia { display: flex; flex-direction: row; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.sfm-main--client .etiqueta-campo { font: 500 12px/1.4 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; color: var(--sfm-muted); }
+.sfm-main--client .referencia__valor { font-size: 12px; }
+.sfm-main--client .entreno__objetivo { margin: 0 0 2px; font-size: 13px; gap: 4px 8px; }
+.sfm-main--client .recomendacion { font: 500 12px/1.4 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; }
+.sfm-main--client .recomendacion__detalle { font-size: 12px; }
+.sfm-main--client .serie { padding: 10px 12px 12px; border-radius: 18px; background: var(--sfm-surface); border-color: var(--sfm-line); gap: 0; }
+.sfm-main--client .serie__cabecera { margin: 0 0 8px; min-height: 36px; }
+.sfm-main--client .serie__titulo { font: 650 14px/1.4 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; }
+.sfm-main--client .serie__opciones { font-size: 12px; }
+.sfm-main--client .serie__opciones summary { min-height: 44px; }
+.sfm-main--client .serie__campos { gap: 12px; }
+.sfm-main--client .campo .valor { font: 650 34px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; min-height: 48px; border-radius: 10px; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+.sfm-main--client .campo .etiqueta-campo { display: block; margin-bottom: 6px; }
+.sfm-main--client .paso { min-width: 0; gap: 0; }
+.sfm-main--client .paso__boton { width: 44px; min-width: 44px; min-height: 48px; height: 48px; border-radius: 10px; }
+.sfm-main--client .campo input.valor { min-height: 48px; }
+.sfm-main--client .campo--rir { border-top: 1px solid var(--sfm-line); padding-top: 10px; }
+.sfm-main--client .sfm-rir-help { font: 400 12px/1.4 var(--sfm-ui-font); color: var(--sfm-muted); max-width: none; margin: 0; }
+.sfm-main--client .sfm-rir-segments { margin-top: 8px; gap: 4px; }
+.sfm-main--client .sfm-rir-segments button { font: 500 15px/1 var(--sfm-ui-font); min-height: 44px; padding: 8px 0; border-radius: 10px; }
+.sfm-main--client .sfm-rir-segments button[aria-pressed="true"] { background: #e5352b25; border-color: var(--sfm-red); color: var(--sfm-white); }
+.sfm-main--client .serie__pie { gap: 10px; margin-top: 10px; }
+.sfm-main--client .serie__anterior { font-size: 12px; }
+.sfm-main--client .serie--pendiente { min-height: 48px; border: 0; border-bottom: 1px solid var(--sfm-line); border-radius: 0; background: none; padding: 8px 4px; }
+.sfm-main--client .serie--hecha { background: none; border: 0; border-bottom: 1px solid var(--sfm-line); border-radius: 0; }
+.sfm-main--client .serie--hecha .campo .valor { font-size: 20px; min-height: 0; }
+.sfm-main--client .serie--hecha .campo--rir { border: 0; padding: 0; }
+.sfm-main--client .entreno__acciones { gap: 4px 16px; }
+.sfm-main--client .entreno__acciones .enlace { font: 500 13px/1.4 var(--sfm-ui-font); text-transform: none; letter-spacing: 0; }
+
+/* Biblioteca, progreso, cuenta y hojas comparten densidad y superficies. */
+.sfm-main--client .biblioteca__barra { top: env(safe-area-inset-top, 0px); padding: 8px 0; margin-left: 0; margin-right: 0; background: var(--sfm-bg); }
+.sfm-main--client section > h2.biblioteca__grupo { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; background: var(--sfm-bg); font-family: var(--sfm-ui-font); }
+.sfm-main--client .busca input { border-radius: 12px; font-size: 16px; }
+.sfm-main--client .sfm-metrics { padding: 16px; gap: 16px; border: 0; background: var(--sfm-surface); border-radius: 18px; margin: 8px 0 20px; }
+.sfm-main--client .sfm-metrics strong { font: 700 32px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -1px; }
+.sfm-main--client .sfm-metrics span { font-size: 12px; line-height: 1.4; max-width: none; }
+.sfm-shell--client .sfm-segmentos { border-radius: 12px; padding: 3px; background: var(--sfm-surface); gap: 2px; }
+.sfm-shell--client .sfm-segmentos button { font-size: 13px; border-radius: 10px; }
+.sfm-main--client .sfm-section-heading h2 { font-weight: 700; font-size: 19px; }
+.sfm-main--client .sfm-history-row { padding: 14px 12px; }
+.sfm-shell--client .sfm-date-tile strong { font-family: var(--sfm-ui-font); font-weight: 650; font-size: 23px; }
+.sfm-client-profile { display: flex; gap: 12px; align-items: center; margin: 12px 0 20px; }
+.sfm-client-profile h2 { font-size: 22px; font-weight: 700; margin: 0; overflow-wrap: anywhere; }
+.sfm-shell--client .sfm-profile-data { border-radius: 18px; background: var(--sfm-surface); padding: 0 16px; }
+.sfm-shell--client .sfm-profile-data > div { padding: 16px 0; }
+.sfm-shell--client .sfm-profile-data > div:last-child { border: 0; }
+.sfm-shell--client .sfm-profile-data dt { font-size: 13px; letter-spacing: 0; margin: 0 0 4px; }
+.sfm-shell--client .sfm-profile-data dd { font-size: 16px; line-height: 1.45; }
+.sfm-shell--client .sfm-hoja,
+.sfm-shell--client .hoja__panel { border-radius: 24px 24px 0 0; }
+.sfm-shell--client .hoja__titulo,
+.sfm-shell--client .sfm-hoja > header h2 { font: 700 21px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -.5px; text-transform: none; }
+.sfm-shell--client .hoja__cerrar { font: 500 13px/1.3 var(--sfm-ui-font); text-transform: none; letter-spacing: 0; }
+.sfm-shell--client .resumen-sesion__cifras { margin: 20px 0; padding: 16px 0; }
+.sfm-shell--client .resumen-sesion__cifras strong { font: 700 36px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.sfm-shell--client .resumen-sesion__cifras span { font-size: 12px; }
+
+/* Se conserva la huella de 76 px + safe area para no romper descanso/progreso. */
+.sfm-shell--client .sfm-tabbar {
+  bottom: calc(8px + env(safe-area-inset-bottom));
+  width: min(calc(100% - 24px), 696px);
+  height: 68px;
+  padding: 6px 10px;
+  border: 1px solid #ffffff1c;
+  border-radius: 36px;
+  background: #1b1c1fea;
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+.sfm-shell--client .sfm-tabbar a { font: 500 11px/1.2 var(--sfm-ui-font); gap: 4px; color: #aaaab0; border-radius: 28px; }
+.sfm-shell--client .sfm-tabbar a.active { color: #ff645a; }
+.sfm-shell--client .sfm-tabbar svg { width: 24px; height: 24px; }
+.sfm-main--client .progreso-sesion { padding: 8px 12px; border-radius: 16px; width: min(calc(100% - 24px), 696px); }
+.sfm-main--client .progreso-sesion__texto { font: 500 12px/1.3 var(--sfm-ui-font); text-transform: none; letter-spacing: 0; color: #dedee3; }
+.sfm-main--client .progreso-sesion__relleno { top: auto; bottom: 2px; height: 3px; border-radius: 3px; background: var(--sfm-red); }
+.sfm-main--client .progreso-sesion__terminar { font: 500 13px/1.3 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; min-height: 44px; }
+.sfm-shell--client .descanso { width: min(calc(100% - 24px), 696px); border: 1px solid var(--sfm-line); border-radius: 16px; padding: 6px 12px; bottom: calc(80px + env(safe-area-inset-bottom)); }
+.sfm-shell--client .descanso__rotulo { font: 600 12px/1.3 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; }
+.sfm-shell--client .descanso__tiempo { font: 650 22px/1 var(--sfm-ui-font); font-variant-numeric: tabular-nums; }
+.sfm-shell--client .descanso__boton { font: 500 13px/1.3 var(--sfm-ui-font); border-radius: 10px; text-transform: none; letter-spacing: 0; }
+
+@media (min-width: 700px) {
+  .sfm-client-header { padding: 32px 28px 12px; }
+  .sfm-main--client { padding-left: 28px; padding-right: 28px; }
+  .sfm-routine-photo { aspect-ratio: 2.4; }
+  .sfm-routine-body { padding: 20px; }
+  .sfm-routine-card .pantalla { margin-bottom: 16px; }
+  .sfm-main--client .entreno__identidad { grid-template-columns: 100px minmax(0, 1fr); }
+  .sfm-main--client .sfm-workout-image { width: 100px; height: 100px; }
+  .sfm-shell--client .sfm-hoja { border-radius: 24px; }
+}
+@media (max-height: 700px) and (max-width: 699px) {
+  .sfm-client-header { padding-top: 14px; }
+  .sfm-client-header h1 { font-size: 30px; }
+  .sfm-client-wordmark { margin-top: 4px; }
+  .sfm-client-greeting { margin-bottom: 12px; }
+  .sfm-routine-photo { height: clamp(110px, 23svh, 160px); aspect-ratio: auto; }
+  .sfm-routine-body { padding: 12px; }
+  .sfm-main--client .sfm-today-title { font-size: 28px; }
+}
+@media (max-width: 359px) {
+  .sfm-client-header { padding-left: 12px; padding-right: 12px; }
+  .sfm-client-header h1 { font-size: 28px; }
+  .sfm-main--client { padding-left: 12px; padding-right: 12px; }
+  .sfm-main--client .entreno__nombre { font-size: 19px; }
+  .sfm-main--client .serie:not(.serie--hecha) .serie__campos { grid-template-columns: 1fr; }
+  .sfm-main--client .serie:not(.serie--hecha) .paso { min-width: 156px; }
+  .sfm-main--client .sfm-rir-segments { grid-template-columns: repeat(3, 1fr); }
+}
