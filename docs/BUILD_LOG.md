@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+## 2026-10-21 — Cliente centrado en la rutina: propuesta 2, PR #11 — codex
+
+- Código `528ebbf`, rama `codex/cliente-rutina-ios`: Hoy con sesión/CTA continuo; registro compacto; sistema visual común para Biblioteca, Progreso, Perfil, hojas, descanso y resumen. Tipografía de sistema y firma Barlow, fotos reales, rojo SFM y pestañas flotantes. Sin cambios de lógica de entrenamiento, API o datos remotos.
+- [PR #11](https://github.com/dayanivan681/santiago-fitness-method/pull/11), [preview](https://9b5c6324.santiago-fitness-method.pages.dev/demo/cliente), Pages `9b5c6324` SUCCESS. Access conserva Google/email; prueba remota autenticada no realizada. [QA visual, historial de ajustes, comparaciones y límites](../design-qa.md).
+- 1054/1054 tests (123 archivos), lint, build/TypeScript y diff-check PASS. IAB 320/390/1024, Safari 16 Pro/SE, registro/descanso/resumen/semana, bi-serie y movimiento reducido comprobados localmente. Avisos conocidos Node/JSDOM. Nueva instalación PWA y teléfono físico pendientes de revisión del dueño.
+- **Sin merge**: main recibe solo este registro y evidencia; producto permanece como antes. No vídeo ni envío. Siguiente: revisión del dueño y ajustes antes de aprobar la integración.
+
 ## 2026-10-20 — Diagnóstico visual iOS y propuestas; sin implementación — codex
 
 - Revisión del cliente completo en Safari del simulador iPhone 16 Pro sobre demo local sintética. Se guardan ocho capturas actuales y tres conceptos independientes en [refinamiento-ios-2026-10-20](refinamiento-ios-2026-10-20/README.md), con fuentes Apple, límites y correcciones de contenido necesarias antes de construir.

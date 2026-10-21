@@ -1,5 +1,16 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-21 — Propuesta 2 implementada; PR #11 y preview, sin merge — codex
+
+- El dueño eligió **la propuesta 2** y priorizó mantener al cliente enfocado en la rutina. Turno reclamado `a0496c6`; implementación en `codex/cliente-rutina-ios`, **`528ebbf`**. [PR #11 en borrador](https://github.com/dayanivan681/santiago-fitness-method/pull/11), sin integrar. La elección visual autoriza esta implementación, no un merge nuevo.
+- Hoy: cabecera breve, selector, foto real/sesión/Comenzar dentro de una tarjeta, semana y lista agrupada. Entrenar: identidad en fila y registro próximo, campos de sistema y CTA centrado; ayuda después de la tarea. Biblioteca, Progreso, Perfil, hojas y resumen comparten tipografía, densidad y superficies. Pestañas flotantes con la misma huella inferior de 76 px + área segura. Sincronización correcta como icono accesible; pendientes/offline/conflictos con texto visible.
+- Conservados repositorio, datos, rutinas/prescripciones, lb/lado, RIR, fotos/GIF, variantes, borradores, bi-series, descanso y cierre. Sin dependencias, endpoints, migraciones, cuentas remotas ni cambios en `docs/cliente`. La app sigue siendo React/PWA. No se ha hecho vídeo ni enviado nada.
+- [Preview publicada](https://9b5c6324.santiago-fitness-method.pages.dev/demo/cliente), deployment **`9b5c6324-b78f-4fbe-ae08-58b3a40cb594`**, source `528ebbf`, Cloudflare Pages **SUCCESS**. Access conservado: IAB remoto llega al login de Google/email. No se certifica un recorrido remoto autenticado; la comprobación funcional usa el build compilado local. No se modifica Access ni se crean cuentas remotas.
+- QA: **1054/1054 pruebas, 123 archivos**, lint, build/TypeScript y diff-check PASS; avisos conocidos Node/JSDOM. IAB 320/390/1024 sin desborde; Safari iOS 27, **16 Pro 402×714 y SE 375×549**. Comenzar visible en ambos; registrar/cerrar en SE con hit tests positivos. Barras SE: progreso 341–403, descanso 407–469, pestañas 473–541; separación de 4 px. Demo 25 lb/lado × 4, RIR 3 → descanso → Biblioteca/regreso → resumen 1/1/6 → semana 1/4. Bi-serie A1→A2 sin descanso y vuelta a ronda 2 con 2:00 PASS. Movimiento reducido en IAB: transición 0s y guardado/resumen operativos, emulación restaurada.
+- [Informe de comparación visual y límites](../design-qa.md), [capturas y comparaciones](refinamiento-ios-2026-10-20/implementacion/README.md). Comprobación final 16 Pro: [Hoy](refinamiento-ios-2026-10-20/implementacion/ios-16-hoy.png) y [registro](refinamiento-ios-2026-10-20/implementacion/ios-16-registro.png), cero diálogos y hit tests positivos en ambos CTA; el archivo anterior `ios-16-pantalla.png` muestra la bienvenida. Se comparan juntos propuesta y render, incluidos tipografía, composición, color, medios y texto. El JPEG de IAB altera el rojo frente al CSS; PNG del simulador coincide con `#db3027`. Se conservan fotos y prescripciones reales en lugar de las invenciones del mock. Nueva instalación PWA y tacto/rendimiento físico **no repetidos**; no confundir el QA físico anterior con prueba de esta rama. P3 registrado: voz en tercera persona del vacío heredado de Progreso.
+- Este cierre publica **solo documentación/evidencia en main**; el código del diseño queda en #11. Preview local del build: http://127.0.0.1:5173/demo/cliente; sirve `dist` compilado, independiente del checkout. Los procesos de QA y simuladores creados para la prueba se detienen; no se toca el 18 Pro ajeno que ya estaba abierto.
+- **Siguiente:** el dueño revisa #11/preview, preferiblemente en su iPhone instalada. Resolver cualquier ajuste y **esperar visto bueno explícito antes de merge/publicación del diseño en producción**. Vídeo ya enviado por el dueño, no regenerar. Ideas fuera del plan siguen fuera.
+
 ## 2026-10-20 — Refinamiento visual iOS: diagnóstico y tres propuestas — codex
 
 - El dueño pide refinar **todas** las áreas del cliente hacia la experiencia de Apple Fitness, conservando las funciones. Sincronizado y reclamado en `34e74d9`. Se aplica Build iOS Apps para revisar Safari del simulador y las guías de diseño para preparar una referencia visual antes de implementar.
@@ -265,11 +276,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T03:53:40.426Z
+- **Última sincronización:** 2026-10-21T12:07:36.408Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1417,6 +1428,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T12:07:36.409Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Propuesta 2 implementada en PR #11 y preview; evidencia y QA publicados, sin merge del diseño
+- **Verificación:** 1054/1054 pruebas en 123 archivos; lint y build/TypeScript PASS; diff-check PASS; IAB 320/390/1024; Safari iPhone 16 Pro y SE; registro, descanso, resumen, semana y bi-serie PASS
+- **Siguiente:** El dueño revisa PR #11 y preview, preferiblemente instalada en su iPhone. Esperar visto bueno explícito antes de merge. No regenerar vídeo ni enviar nada a Santiago.
+
 
 ### 2026-10-21T03:53:40.427Z | codex | CLAIM
 - **Estado:** active
