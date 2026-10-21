@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-21 — PR #12 integrado por autorización; relevo a Claude — codex
+
+- El dueño indicó «integralo» y que usará Claude para el bug run y test. [PR #12](https://github.com/dayanivan681/santiago-fitness-method/pull/12) integrado mediante merge normal **`e22134a0026357006d6e9f80c66664ce47d7a984`**, cabeza aprobada `20fd8d1`. Sin conflictos; producto idéntico al `9c18cc1` probado y al PR aprobado. Turno sincronizado y reclamado `ddbfd8a`.
+- Se integra el refinamiento del coach: revisión primero, Clientes/ficha/editor/Biblioteca compactos, Listo visible, filtro Ver todos corregido y cierre StrictMode reparado. Sin cambios adicionales de código durante la integración.
+- Checks de cierre sobre el merge: **1057/1057 pruebas, 123 archivos**, lint, build/TypeScript y diff-check PASS. Avisos conocidos Node MaxListeners/JSDOM. Esta integración no repite la auditoría ampliada de bugs ni Safari: el dueño la delega a Claude. QA Safari 16 Pro/SE anterior y límites siguen en [design-qa.md](../design-qa.md).
+- Producción https://santiago-fitness-method.pages.dev: Pages **`d75845d3-c9bd-42fc-ad49-4f574bd012d8`**, source `e22134a`, check **SUCCESS**. `/demo/coach` 200; los seis archivos enlazados, módulo Coach y sw.js coinciden byte por byte con el build local del merge (8 archivos). API cliente anónima 401. [Mediciones](refinamiento-coach-2026-10-21/implementacion/produccion-merge.json). Solo GET, sin sesión remota autenticada ni escrituras reales. El intento anterior a terminar el despliegue recibió todavía los assets de la versión previa; al finalizar coincide el artefacto nuevo.
+- **Siguiente: Claude Code hace el bug run y test solicitado por el dueño.** Leer CLAUDE.md y esta entrada; sincronizar y reclamar como claude-code. Priorizar Hoy → revisar programa → ficha → preparar cambios → Prescripción/Listo → guardar/retomar/publicar solo con datos sintéticos, pagos/búsqueda/vacíos, Biblioteca y regresión del cliente. Revisar movimiento reducido, scroll/áreas táctiles y cierre/foco; reportar fallos reproducibles con evidencia. Producción de solo lectura; usar demo/local o staging para escrituras. Teléfono físico, nueva instalación PWA, VoiceOver y teclado nativo siguen sin certificar en este refinamiento. No se ha contactado ni iniciado Claude desde este chat.
+- Sin vídeo ni mensajes a Santiago, sin nuevas funciones o cambios en docs/cliente. Turno liberado mediante handoff:publish.
+
 ## 2026-10-21 — Coach implementado: claridad, enfoque y acción; PR #12 sin merge — codex
 
 - El dueño considera buenas las tres propuestas y delega continuar con claridad, enfoque y acción. Se comunicó la propuesta 1 como base antes de construir. Turno `acc9ac6`; código en `codex/coach-claridad-ios`, commit **`9c18cc185fb1bd1ce00293c1e16e664dafe0c8b7`**. [PR #12 en borrador](https://github.com/dayanivan681/santiago-fitness-method/pull/12), sin integrar. La aprobación anterior de merge correspondía a #11.
@@ -303,11 +312,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T14:26:14.749Z
+- **Última sincronización:** 2026-10-21T14:31:12.825Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1455,6 +1464,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T14:31:12.826Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #12 integrado en e22134a y producción verificada; documentación de relevo para bug run y test con Claude.
+- **Verificación:** Sobre el merge: 1057/1057 pruebas (123 archivos), npm run lint, npm run build y diff-check PASS. Pages SUCCESS; demo coach 200, ocho assets coinciden con build local; API anónima 401.
+- **Siguiente:** Claude Code sincroniza y reclama para el bug run y test solicitado. Mantener producción de solo lectura, probar escrituras en demo/local/staging. Sin vídeo ni mensajes a Santiago.
+
 
 ### 2026-10-21T14:26:14.750Z | codex | CLAIM
 - **Estado:** active

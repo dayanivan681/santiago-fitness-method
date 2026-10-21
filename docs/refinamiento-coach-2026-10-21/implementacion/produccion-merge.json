@@ -1,0 +1,58 @@
+{
+  "commit": "e22134a0026357006d6e9f80c66664ce47d7a984",
+  "demo_status": 200,
+  "assets": {
+    "/assets/almacenamiento-DhbQmMzc.js": {
+      "status": 200,
+      "bytes": 96496,
+      "equals_local_build": true,
+      "sha256": "e16c6943c724635e6e77fe0a6b0c71c8960f12dd22052a6ef4b78cf32f064569"
+    },
+    "/assets/contratos-Bf5_00o2.js": {
+      "status": 200,
+      "bytes": 86550,
+      "equals_local_build": true,
+      "sha256": "3cd5250e27a3e5a6534b2653be017f18ee383761e40a1fda93a72695f93a1e4f"
+    },
+    "/assets/index-D7G8pEUA.js": {
+      "status": 200,
+      "bytes": 142545,
+      "equals_local_build": true,
+      "sha256": "cbb255b3e6fe092174e2f445e9e1d5c0b1cb26428de50d389663048acee92b4d"
+    },
+    "/assets/index-D_8fqSF9.css": {
+      "status": 200,
+      "bytes": 92101,
+      "equals_local_build": true,
+      "sha256": "bc475da8744a3b6d8eeb318fd0ef11aaf43aae6374a4eea6854495724cd65243"
+    },
+    "/assets/interfaz-Bt-ex7k9.js": {
+      "status": 200,
+      "bytes": 228983,
+      "equals_local_build": true,
+      "sha256": "68eabcf17948e3842104af3cf58a7c136daa858b7cad089ce73ccc3e8684b10e"
+    },
+    "/assets/rolldown-runtime-CbXtAM7H.js": {
+      "status": 200,
+      "bytes": 589,
+      "equals_local_build": true,
+      "sha256": "bbf7c5086ae414dc3f33777e3eebf16ea8631325b8bb4690d25091c03567f31a"
+    },
+    "/assets/Coach-CbOIVz56.js": {
+      "status": 200,
+      "bytes": 92122,
+      "equals_local_build": true,
+      "sha256": "9487c1c24a434f1ae3ed240919db9f5afdf0a7a9048dc5ff9c3de6f4f132cc34"
+    },
+    "/sw.js": {
+      "status": 200,
+      "bytes": 2537,
+      "equals_local_build": true,
+      "sha256": "9cbf10715cf8fd6b2a50b7b21f6b506f982df085eb7df068a634afdcafd4c47e"
+    }
+  },
+  "anonymous_api_status": 401,
+  "scope": "GET only; no authenticated UI or real-data mutations",
+  "deployment": "d75845d3-c9bd-42fc-ad49-4f574bd012d8",
+  "pages_check": "SUCCESS"
+}

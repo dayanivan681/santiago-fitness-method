@@ -2,14 +2,15 @@
 
 ## Estado actual
 
-Implementación terminada en `codex/coach-claridad-ios`, turno `acc9ac6`.
-El dueño aprobó continuar con claridad, enfoque y acción; se tomó la propuesta 1
-como base. Hoy prioriza revisar programas, con listas, ficha, editor y Biblioteca
-más compactos y coherentes con el cliente aprobado.
+El dueño autorizó integrar el refinamiento. [PR #12](https://github.com/dayanivan681/santiago-fitness-method/pull/12)
+**integrado** en `main` mediante `e22134a0026357006d6e9f80c66664ce47d7a984`.
+Se tomó la propuesta 1 como base: Hoy prioriza revisar programas, con listas,
+ficha, editor y Biblioteca más compactos y coherentes con el cliente aprobado.
 
 [Inventario de implementación](IMPLEMENTACION.md) · [QA y comparación visual](../../design-qa.md).
-1057/1057 pruebas, lint y build PASS. Safari del simulador 16 Pro y SE verificados;
-instalación y teléfono físico pendientes. Entrega en [PR #12](https://github.com/dayanivan681/santiago-fitness-method/pull/12) y [preview Pages](https://f5bd9e07.santiago-fitness-method.pages.dev/demo/coach) SUCCESS (`9c18cc1`), protegida por Access; sin merge nuevo.
+1057/1057 pruebas, lint y build repetidos sobre el merge: PASS. Safari del simulador
+16 Pro y SE corresponde a la implementación previa; instalación y teléfono físico
+siguen pendientes. El dueño hará el bug run y test con Claude; [relevo y estado de publicación](../HANDOFF.md).
 
 ## Diagnóstico previo y alternativas
 
@@ -77,6 +78,7 @@ Base actual: `npm test -- --maxWorkers=3` **1054/1054, 123 archivos**;
 Avisos conocidos Node MaxListeners/JSDOM; consola de la app sin errores en lo revisado.
 Estos checks validan la base, no un rediseño implementado.
 
-**Siguiente actual:** revisar la implementación en PR/preview y esperar visto
-bueno antes de merge. Las alternativas siguientes quedan como historial de diseño. Sin vídeo,
+**Siguiente actual:** revisión de bugs y pruebas por Claude, tras sincronizar y
+reclamar el turno. El merge ya fue autorizado y realizado. Las alternativas quedan
+como historial de diseño. Sin vídeo,
 mensajes a Santiago, funciones fuera del plan ni cambios en `docs/cliente`.
