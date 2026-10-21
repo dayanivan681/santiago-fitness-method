@@ -1,5 +1,15 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-21 — PR #14 aprobado, integrado y publicado — codex
+
+- El dueño indicó «está bien, merge ahora» tras revisar la preview. Turno `a4985bf`. [PR #14](https://github.com/dayanivan681/santiago-fitness-method/pull/14) integrado mediante merge normal **`1bf0404e7a5a69f82ff961ee6578864100e2b380`**; cabeza final **`50f9551cdc69e49a80f19e35de3687ecf90ff9ee`**. Sin conflictos. Producto del merge idéntico a la cabeza verificada.
+- Adaptación exclusiva coach/admin en laptop aprobada previamente: más ancho, formularios distribuidos, filas compactas y acciones/pestañas accesibles al desplazar. Se añadió la nota coach «Más espacio para trabajar en tu laptop» con los dos puntos ya propuestos en el PR revisado; texto mostrado también en el chat antes de publicar conforme a CLAUDE.md. Ningún otro cambio de comportamiento.
+- Checks frescos sobre el producto final: **1082/1082 pruebas en 128 archivos**, npm test -- --maxWorkers=3; npm run lint, npm run build/TypeScript/PWA y git diff --check PASS. Avisos conocidos Node/JSDOM. No se repite la suite HTTP ni el QA completo de la implementación: solo adaptación CSS/markup más nota, sin cambios API.
+- Preview de cabeza final: Pages **d98f2f7e-3e7e-4b70-9a0f-9cd9ac57ee90**, source 50f9551, SUCCESS. Producción **989cf209-1e4f-4ed7-82c2-400a27322dae**, source 1bf0404, SUCCESS en https://santiago-fitness-method.pages.dev. HTML de /demo/coach y **9 archivos** (6 assets enlazados, JS/CSS Coach, sw.js) coinciden byte a byte con el compilado probado. API /api/v2/inicio sin sesión devuelve 401. Comprobaciones iniciales durante propagación seguían leyendo el build anterior; después del despliegue todos coinciden.
+- Verificación en demo pública de producción: Hoy → Clientes → Alicia → Preparar cambios; editor nuevo activo, barra sticky, sin desborde a viewport efectivo 1242×924, consola sin errores/avisos. Solo datos sintéticos, sin publicar/guardar programas reales. Las novedades se desactivan deliberadamente en demo; su estructura/audiencia se verifica por suite existente y artefacto publicado. No se certifica una sesión remota privada ni Windows/Edge, Safari, hardware o QA nativo nuevo.
+- Evidencia temporal fuera de Git: /tmp/sfm-coach-laptop/merge-tests.log, merge-lint.log, merge-build.log, produccion-merge.json y produccion-merge.jpg. Servidor local de preview detenido al cerrar; pestaña de producción disponible como entrega. Sin vídeo, mensajes a Santiago, cambios Access, datos reales ni docs/cliente. Cliente sin fuentes/estilos modificados; la nota nueva tiene audiencia coach.
+- **Siguiente:** ninguno para integrar/publicar este PR. El dueño puede recargar el portal del coach en la laptop de Santiago. El posible AbortError por navegación rápida registrado en el QA anterior queda como observación para un bug run si aparece en uso normal; no se amplía alcance aquí.
+
 ## 2026-10-21 — Coach/admin en laptop: PR #14 y preview, sin merge — codex
 
 - El dueño pidió mejorar la interfaz en navegador de laptop y delimitó **solo coach/admin; no cliente**. Turno reclamado en `e02a706`; código **`05b0b748f97c7f0fb1512eb5d7f253a5fa20a1bf`**, rama `codex/coach-laptop-browser`, [PR #14 en borrador](https://github.com/dayanivan681/santiago-fitness-method/pull/14). Sin merge ni publicación del producto nuevo en producción.
@@ -358,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T18:47:59.099Z
+- **Última sincronización:** 2026-10-21T18:53:01.168Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1510,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T18:53:01.169Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #14 aprobado, integrado en 1bf0404 y producción verificada; adaptación coach/admin laptop con novedad coach
+- **Verificación:** 1082/1082 pruebas; lint; build/TypeScript/PWA; diff-check; Pages SUCCESS; 9 archivos idénticos; API anónima 401; demo publicada sin desborde ni errores
+- **Siguiente:** Ninguno para este PR. Dueño puede recargar el portal del coach en la laptop de Santiago.
+
 
 ### 2026-10-21T18:47:59.100Z | codex | CLAIM
 - **Estado:** active
