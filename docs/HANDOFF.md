@@ -1,5 +1,20 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-21 — Avisos de sesiones corregidos, full test y producción — codex
+
+- El dueño autorizó **arreglar en test y producción, correr full test y preparar el mensaje para Santiago**. Después aprobó expresamente el texto de la novedad: «Publicar tu programa, más claro». Turno `4324b2a`; implementación **`602b49a414b016f84721abb1b6f5592f99181a4d`**; [PR #13](https://github.com/dayanivan681/santiago-fitness-method/pull/13) integrado mediante merge normal **`07dd8f403916cf304e14a149c505ae9167bf3782`**. Árbol de producto del merge idéntico al verificado; sin cambios adicionales.
+- Contrato: conserva mínimo de 5 ejercicios/máximo de 8 bloques y la rotación elegida. Cada error de sesión identifica nombre/recuento y ruta concreta; [7,7,7,4] rechaza Lower B y [7,7,7] / [7,7,7,5] aceptan. No se eliminan sesiones ni se cambia frecuencia automáticamente.
+- Editor: aviso contenido con título y texto comprensible, marca discreta de pendiente, Revisar Lower B cambia de sesión y pone foco en el nombre. Intentar publicar lleva al aviso existente sin duplicarlo. Alta distingue días por semana y sesiones del programa; conserva borrador/nombre/ejercicios al corregir. Onboarding usa safeParse; ErrorVisible común y tarjeta de suscripción presentan errores de validación/red/respuestas internas sin JSON, rutas ni claves, con indicaciones humanas. Avisos existentes ya comprensibles se conservan. No se afirma una auditoría manual de todos los mensajes posibles de la app.
+- Regresiones: alta real del componente 3×7 con cuarta incompleta → explicación → quitar cuarta → alta correcta; botón de revisión no modifica el plan, foco correcto; contrato y mensajes compartidos, incluidas respuestas internas, conexión, duplicados y mezcla de errores. **1082/1082 pruebas, 128 archivos**, lint, build/TypeScript y diff-check PASS. Avisos conocidos Node/JSDOM.
+- **117 comprobaciones HTTP PASS** tras preparar base/runtime local aislados. Ensayo adicional contra API local: guarda borrador 7/7/7/4, rechaza publicarlo con 400 «Lower B: tiene 4 ejercicios y necesita al menos 5.», conserva la revisión, acepta corrección a 7/7/7 y crea con 201; lectura confirma publicado. El primer intento del guion trató de crear un plan aún en estado borrador y recibió correctamente el aviso de revisarlo/publicarlo; se corrigió el guion al flujo real antes de medir el caso. Sin cambios de producto por ese ajuste del ensayo.
+- Preview Pages **SUCCESS**: `e0796070-a2d5-4836-98f8-a48744036a55`, source `602b49a`, https://e0796070.santiago-fitness-method.pages.dev/demo/coach, 302 a Access; protección conservada. IAB compilado local 1280×720 y 320×568: tres sesiones de siete, error de cuarta incompleta, navegación/foco, aviso único y alta correcta sin pérdida. Sin desborde a 320; viewport restaurado. No se repite Safari nativo/instalación/VoiceOver/teléfono físico en este arreglo.
+- **Producción verificada** en https://santiago-fitness-method.pages.dev: Pages `9f6d489d-4146-479b-8d7c-01067769ba69`, source `07dd8f4`, SUCCESS. `/demo/coach` 200; seis assets enlazados, módulo Coach y sw.js (8 archivos) idénticos al build probado. API cliente anónima 401. Repetición de la UI en la **demo sintética de producción**: 7/7/7/4 → aviso comprensible único → Revisar Lower B/foco → quitar cuarta en Organizar → remarcar revisión → alta 7/7/7 publicada. Consola sin errores/avisos. No es una publicación de un cliente real ni una sesión privada del coach.
+- Capturas y mediciones temporales fuera de Git: `/tmp/sfm-avisos/aviso-320-final.jpg`, `produccion-aviso.jpg`, `produccion-publicado.jpg`, `alta-http.json`, `produccion.json`; logs completos de pruebas/lint/build/HTTP en esa carpeta. Sin dependencias, migraciones, cuentas o datos reales nuevos, vídeos, envíos a Santiago ni cambios en docs/cliente. No se inspeccionó el borrador privado recibido en el audio: confirmar su contenido sigue correspondiendo al coach. Servidores de QA propios detenidos; demo pública mantenida como entrega.
+- **Siguiente:** dueño envía a Santiago el mensaje preparado abajo para volver a intentar desde su borrador. Si persiste el bloqueo, pedir captura del nuevo aviso y recuentos de Organizar sesiones. La investigación de GIF/costes anterior de Claude sigue fuera de este turno.
+
+Mensaje preparado, **no enviado**:
+> Santiago, ya está actualizado. Vuelve a abrir el borrador de la clienta y revisa «Organizar sesiones»: si vas a usar solo tres sesiones, quita la cuarta que no usarás. Después marca «He revisado…» y publica. Ahora, si falta completar alguna sesión, la app te dirá cuál y te llevará directo a ella. Si te vuelve a bloquear, mándame una captura.
+
 ## 2026-10-21 — Repetición del caso de Santiago con tres sesiones de siete — codex
 
 - El dueño pidió corregir el mensaje, remarcó que todos los avisos deben ser elegantes y comprensibles, y después indicó **hacer primero la misma prueba y traer soluciones**. Se respeta esa última secuencia: no se implementó ningún cambio. Turno `6f14b70`; rama `codex/alta-sesiones-claras` creada pero sin commits propios ni cambios de producto; sin PR nuevo. El cierre vuelve a main y publica solo documentación.
@@ -332,11 +347,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T17:52:46.774Z
+- **Última sincronización:** 2026-10-21T18:08:43.018Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1484,6 +1499,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T18:08:43.019Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #13 integrado y publicado: sesiones pendientes identificadas, avisos humanos, foco directo y borrador conservado. Nota aprobada, prueba 3x7 en producción y mensaje a Santiago preparado, sin enviar.
+- **Verificación:** 1082/1082 pruebas, 128 archivos; lint/build/diff-check PASS. 117 HTTP + caso API 400→201 local. Preview/producción Pages SUCCESS, 8 assets idénticos; demo producción aviso claro→alta 7/7/7, consola limpia; API anónima 401.
+- **Siguiente:** Dueño envía mensaje preparado a Santiago para repetir desde su borrador. Si persiste, recoger captura del nuevo aviso y recuentos; no se enviaron mensajes ni se alteró la clienta real.
+
 
 ### 2026-10-21T17:52:46.775Z | codex | CLAIM
 - **Estado:** active
