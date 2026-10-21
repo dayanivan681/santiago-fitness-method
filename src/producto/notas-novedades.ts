@@ -23,6 +23,16 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
+    id: "2026-10-21-coach-laptop",
+    fecha: "2026-10-21",
+    audiencia: "coach",
+    titulo: "Más espacio para trabajar en tu laptop",
+    puntos: [
+      "Revisa el programa con más ejercicios a la vista.",
+      "Guardar, publicar y cambiar de sesión quedan a mano mientras ajustas la rutina.",
+    ],
+  },
+  {
     id: "2026-10-21-coach-revision-sesiones",
     fecha: "2026-10-21",
     audiencia: "coach",
