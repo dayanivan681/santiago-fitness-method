@@ -1,0 +1,94 @@
+/* Ajustes de trabajo para coach/admin. El cliente conserva sus estilos. */
+@media (min-width: 960px) {
+  .sfm-shell--coach {
+    --sfm-width: 1440px;
+    max-width: min(1440px, calc(100% - 48px));
+    display: grid;
+    grid-template-columns: 148px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 24px;
+  }
+  .sfm-shell--coach .sfm-brandbar,
+  .sfm-shell--coach .sfm-main { grid-column: 2; padding-inline: 0; }
+  .sfm-shell--coach .sfm-brandbar { padding-top: 20px; }
+  .sfm-shell--coach .sfm-main { padding-bottom: 32px; min-width: 0; }
+  .sfm-shell--coach .sfm-cabecera { padding: 14px 0 18px; }
+  .sfm-shell--coach .sfm-cabecera h1 { font-size: 32px; letter-spacing: -0.9px; }
+  .sfm-shell--coach .sfm-tabbar {
+    position: sticky;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: start;
+    top: 20px;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    padding: 6px;
+    border-radius: 16px;
+  }
+  .sfm-shell--coach .sfm-tabbar a { flex-direction: row; justify-content: flex-start; gap: 10px; padding: 12px 10px; font-size: 14px; }
+  .sfm-shell--coach .sfm-tabbar a.active { background: #ffffff06; }
+  .sfm-shell--coach .sfm-client-detail-layout { grid-template-columns: 190px minmax(0, 1fr); gap: 24px; }
+  .sfm-shell--coach .sfm-client-sidebar { position: sticky; top: 20px; align-self: start; max-height: calc(100dvh - 40px); overflow-y: auto; padding-right: 16px; }
+  .sfm-shell--coach .sfm-client-sidebar .sfm-row { padding-block: 12px; }
+  .sfm-shell--coach .sfm-onboarding,
+  .sfm-shell--coach .sfm-editor,
+  .sfm-shell--coach .sfm-form { max-width: none; }
+  .sfm-shell--coach .sfm-onboarding .sfm-stepper { padding-block: 12px; margin-bottom: 16px; }
+  .sfm-shell--coach .sfm-onboarding-summary { padding: 16px; margin-bottom: 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 20px; }
+  .sfm-shell--coach .sfm-onboarding-summary strong { font-size: 20px; }
+  .sfm-shell--coach .sfm-onboarding-summary p { margin: 0; }
+  .sfm-shell--coach .sfm-onboarding-summary span { grid-column: 2; grid-row: 1 / 3; align-self: center; max-width: 220px; }
+  .sfm-shell--coach .sfm-form[data-tour="alta-persona"],
+  .sfm-shell--coach .sfm-form[data-tour="alta-contexto"] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 24px; }
+  .sfm-shell--coach .sfm-form[data-tour="alta-persona"] > :is(aside, p),
+  .sfm-shell--coach .sfm-form[data-tour="alta-contexto"] > :is(h2, .sfm-frecuencia),
+  .sfm-shell--coach .sfm-form[data-tour="alta-contexto"] > .sfm-field:has([data-tour="alta-notas"]) { grid-column: 1 / -1; }
+  .sfm-shell--coach .sfm-onboarding .sfm-form > .sfm-field { margin: 0; }
+  .sfm-shell--coach .sfm-onboarding .sfm-details { margin: 0; align-self: start; }
+  .sfm-shell--coach .sfm-onboarding .sfm-details[open] { max-height: 300px; overflow-y: auto; }
+  .sfm-shell--coach .sfm-editor > .sfm-segmentos { position: sticky; top: 12px; z-index: 5; margin-top: 0; background: var(--sfm-raised); box-shadow: 0 6px 18px #0003; }
+  .sfm-shell--coach .sfm-editor-exercise { display: grid; grid-template-columns: minmax(0, 1fr) 112px; align-items: center; border-bottom: 1px solid var(--sfm-line); }
+  .sfm-shell--coach .sfm-editor-exercise > .sfm-plan-row { min-width: 0; }
+  .sfm-shell--coach .sfm-editor-exercise .sfm-row { padding: 10px 8px; min-width: 0; }
+  .sfm-shell--coach .sfm-editor-exercise .sfm-row-body { min-width: 0; }
+  .sfm-shell--coach .sfm-editor-exercise .sfm-order { flex-direction: row; }
+  .sfm-shell--coach .sfm-editor-exercise .sfm-order button { width: 44px; height: 44px; }
+  .sfm-shell--coach .sfm-editor-exercise > .sfm-unir { margin: 0; padding: 0 8px; min-height: 44px; justify-self: end; font-size: 12px; }
+  .sfm-shell--coach .sfm-form-footer {
+    position: sticky;
+    bottom: 16px;
+    z-index: 8;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 4px 20px;
+    padding: 12px 16px;
+    margin-top: 24px;
+    border: 1px solid var(--sfm-line);
+    border-radius: 14px;
+    background: #1b1c1ff5;
+    box-shadow: 0 8px 32px #0004;
+  }
+  .sfm-shell--coach .sfm-form-footer > .sfm-primary { grid-column: 3; grid-row: 1; width: auto; min-width: 240px; }
+  .sfm-shell--coach .sfm-form-footer > :is(.sfm-secondary, .sfm-text-button) { grid-column: 1; grid-row: 1; justify-self: start; width: auto; min-width: 0; text-align: left; }
+  .sfm-shell--coach .sfm-form-footer > .sfm-save-state { grid-column: 2; grid-row: 1; text-align: left; max-width: 220px; }
+}
+@media (min-width: 960px) and (max-width: 1279px) {
+  .sfm-shell--coach .sfm-client-detail-layout:has(.sfm-client-detail--editing) { grid-template-columns: minmax(0, 1fr); }
+  .sfm-shell--coach .sfm-client-detail-layout:has(.sfm-client-detail--editing) > .sfm-client-sidebar { display: none; }
+}
+@media (min-width: 1200px) {
+  .sfm-shell--coach .sfm-onboarding[data-paso="3"] { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 0 24px; align-items: start; }
+  .sfm-shell--coach .sfm-onboarding[data-paso="3"] > :is(.sfm-cabecera, .sfm-stepper, .sfm-form-footer, .sfm-error) { grid-column: 1 / -1; }
+  .sfm-shell--coach .sfm-onboarding[data-paso="3"] > .sfm-onboarding-summary { grid-column: 1; grid-row: 3; display: block; }
+  .sfm-shell--coach .sfm-onboarding[data-paso="3"] > .sfm-onboarding-summary p { margin: 8px 0; }
+  .sfm-shell--coach .sfm-onboarding[data-paso="3"] > .sfm-hint { grid-column: 1; grid-row: 4; margin-top: 0; }
+  .sfm-shell--coach .sfm-onboarding[data-paso="3"] > .sfm-onboarding-editor { grid-column: 2; grid-row: 3 / 7; min-width: 0; }
+  .sfm-shell--coach .sfm-onboarding[data-paso="3"] > [data-tour="alta-revision"] { grid-column: 1; grid-row: 5; align-self: start; position: sticky; top: 12px; z-index: 6; background: var(--sfm-bg); }
+}

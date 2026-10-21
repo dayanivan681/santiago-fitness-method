@@ -125,7 +125,7 @@ export function EditorPlan({
             const pos = b.grupo && b.indices.length > 1 ? b.indices.indexOf(i) + 1 : 0;
             const ultimoDelGrupo = pos === b.indices.length;
             return (
-              <div key={`${s.ejercicioId}-${i}`}>
+              <div key={`${s.ejercicioId}-${i}`} className="sfm-editor-exercise">
                 <div className="sfm-plan-row">
                   <button
                     data-tour={i===0?"editar-ejercicio":undefined} data-tour-action="editar-ejercicio" className="sfm-row sfm-row--grow"

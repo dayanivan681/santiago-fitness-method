@@ -44,6 +44,7 @@ import { AvisoNovedades } from "./Novedades";
 import { useNovedades } from "./useNovedades";
 import { FilaCliente } from "./FilaCliente";
 import "./coach-ios.css";
+import "./coach-laptop.css";
 import { Onboarding } from "./Onboarding";
 import { ResumenSesiones } from "./Progreso";
 /**
