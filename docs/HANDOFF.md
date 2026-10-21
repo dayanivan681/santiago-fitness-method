@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-21T22:34:08.216Z
+- **Última sincronización:** 2026-10-21T22:38:26.086Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-21T22:38:26.088Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Plan del camino B en docs/gifs-servicios-costo-2026-10-21/PLAN-B-BIBLIOTECA-ILUSTRADA.md, decidido por el dueno: biblioteca entera ilustrada, un solo estilo, cada ejercicio con su GIF. Alcance medido: 286 ejercicios activos, pero solo 31 familias de movimiento y 8 tipos de equipo, y eso es lo que lo hace viable (se construye un esqueleto por familia y una pieza por equipo, y se compone). Argumento central: comprar no sirve para ESTE plan, no por precio sino porque una biblioteca comprada es un conjunto cerrado y Santiago sigue anadiendo ejercicios desde la app; el dia que anada el 287 no habria forma de producirlo en el mismo estilo. El plan exige tener la capacidad de producir. Recomendacion: generarlo en codigo (esqueleto con cinematica inversa ya prototipado) y usar Claude Design para la direccion de arte, no para producir 286 archivos. Riesgo nombrado: la mecanica esta resuelta y el arte no; es un problema de una vez, no por ejercicio. Piloto de 6 ejercicios deliberadamente distintos en staging (env.preview ya apunta a santiago-staging y sfm-fotos-staging), nada toca produccion sin aprobacion. Registrada una pregunta abierta: que hacer con los 46 GIF fotograficos del catalogo de arranque que viajan en la app para uso sin conexion. Solo documentacion.
+- **Verificación:** npm test: una pasada fallo 1 de 1082 sin que pudiera capturar cual, dos pasadas posteriores en verde 1082/1082; se reporta como intermitente, no como verde limpio. npm run lint; npm run build
+- **Siguiente:** El dueno elige quien fija el aspecto de la figura: Claude Design primero y yo implemento, o yo intento primero el arte sobre el esqueleto existente
+
 
 ### 2026-10-21T22:34:08.217Z | claude-code | CLAIM
 - **Estado:** active
