@@ -1,5 +1,5 @@
 {
-  "aceptado": true,
+  "aceptado": false,
   "comprobaciones": {
     "pies_fijos": true,
     "manos_y_dedos": true,
@@ -61,5 +61,6 @@
     "bytes": 236083,
     "sha256": "1e0d04c603eb487bfe988c09308a8b27ea8b2e28f4d9e46411ad60141ab61e70"
   },
-  "gif_nuevo": "Se verifica por separado despu\u00e9s de aceptar postura"
+  "gif_nuevo": "Se verifica por separado después de aceptar postura",
+  "invalidado_por_revision_visual": "Dueño rechaza la primera entrega: extremidades deformadas. PASS geométricos insuficientes."
 }

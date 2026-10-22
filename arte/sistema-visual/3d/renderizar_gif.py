@@ -1,7 +1,8 @@
 """Mismo render; alfa para componer el fondo exacto sin cambiar luces."""
-import bpy
+import bpy,os
 from pathlib import Path
 BASE=Path(__file__).resolve().parent
+BASE=BASE/os.environ.get('PS_RESULTADO_DIR','')
 s=bpy.context.scene
 assert (s.render.resolution_x,s.render.resolution_y,s.render.resolution_percentage)==(360,480,100)
 out=BASE/'fotogramas';out.mkdir(exist_ok=True)

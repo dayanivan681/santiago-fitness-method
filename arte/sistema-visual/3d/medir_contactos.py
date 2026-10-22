@@ -1,6 +1,7 @@
-import bpy, json, math
+import bpy, json, math, os
 from pathlib import Path
 BASE=Path(__file__).resolve().parent
+BASE=BASE/os.environ.get('PS_RESULTADO_DIR','')
 s=bpy.context.scene
 h=bpy.data.objects['Human'];r=bpy.data.objects['Human.rig'];pad=bpy.data.objects['Maq_respaldo'];platform=bpy.data.objects['Maq_plataforma']
 groups={g.name:g.index for g in h.vertex_groups}

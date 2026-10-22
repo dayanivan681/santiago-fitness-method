@@ -7,10 +7,13 @@ import bpy
 import bmesh
 import json
 import math
+import os
 from pathlib import Path
 from mathutils import Vector, Matrix
 
 BASE=Path(__file__).resolve().parent
+BASE=BASE/os.environ.get('PS_RESULTADO_DIR','')
+BASE.mkdir(parents=True,exist_ok=True)
 s=bpy.context.scene
 rig=bpy.data.objects['Human.rig']
 human=bpy.data.objects['Human']
@@ -185,6 +188,37 @@ d=root.driver_add('rotation_euler',0).driver
 v=d.variables.new();v.name='a';v.type='SINGLE_PROP'
 v.targets[0].id=pivot;v.targets[0].data_path='rotation_euler[0]'
 d.expression=f'-0.10*(a-({top}))'
+
+def calibrar_plano(c, bone_name):
+    """Compensar el roll de la cadena alineando su flexión con el polo.
+
+    El cero del pole_angle no equivale al plano anatómico. Se calibra un
+    plano geométrico, sin teclear ángulos de articulación ni poses.
+    """
+    def score(a):
+        c.pole_angle=a;bpy.context.view_layer.update()
+        er=rig.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        lower=er.pose.bones[bone_name];upper=lower.parent
+        A=er.matrix_world@upper.head; B=er.matrix_world@lower.head
+        C=er.matrix_world@lower.tail; P=c.pole_target.matrix_world.translation
+        axis=(C-A).normalized()
+        b=B-A; b-=axis*b.dot(axis)
+        p=P-A; p-=axis*p.dot(axis)
+        return b.normalized().dot(p.normalized())
+    best=max([math.radians(a) for a in range(-180,180,5)],key=score)
+    lo,hi=best-math.radians(5),best+math.radians(5)
+    for _ in range(24):
+        left=lo+(hi-lo)/3;right=hi-(hi-lo)/3
+        if score(left)>score(right):hi=right
+        else:lo=left
+    c.pole_angle=(lo+hi)/2;bpy.context.view_layer.update()
+
+pivot.rotation_euler.x=top;bpy.context.view_layer.update()
+for side in ['L','R']:
+    for limb in ['pierna','brazo']:
+        name=f'PS_{limb}_dist.{side}'
+        c=next(c for c in rig.pose.bones[name].constraints if c.type=='IK')
+        calibrar_plano(c,name)
 
 pivot.animation_data_clear()
 # Calibración sobre la cadena evaluada (incluye offsets anatómicos de MPFB),

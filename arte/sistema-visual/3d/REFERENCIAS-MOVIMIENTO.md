@@ -1,5 +1,10 @@
 # Pendulum squat — referencias de movimiento
 
+> La primera entrega fue rechazada por deformación visible. Se retira la
+> conclusión anterior de que su secuencia era coherente: se habían revisado
+> contactos sin detectar torsiones graves. Las fuentes siguen siendo útiles;
+> no avalan aquella entrega. La corrección está en `revision-v2/`.
+
 Revisión visual de Codex, 2026-10-21, solicitada por el dueño. Complementa las
 mediciones del rig; no convierte sus pruebas de contacto en una validación
 biomecánica ni acredita el prototipo como réplica de una marca.
@@ -44,9 +49,11 @@ encargo: rodilla de aproximadamente 170° internos arriba y 90° abajo. Esos
 valores son objetivos de este prototipo, no una prescripción universal extraída
 del vídeo.
 
-La secuencia actual es coherente con las relaciones generales observadas:
-cuerpo respaldado, pies estables y flexión acoplada. Sigue siendo un prototipo
-de máquina genérica. Para afirmar fidelidad a una máquina concreta harían falta
+La coincidencia de contactos no basta para acreditar una secuencia humana.
+La primera entrega es un ejemplo del fallo de ese criterio: tenía articulaciones
+retorcidas aunque alcanzaban sus objetivos. La versión corregida debe revisarse
+también de frente y de lado. Sigue siendo un prototipo de máquina genérica.
+Para afirmar fidelidad a una máquina concreta harían falta
 marca/modelo y referencias laterales de su plataforma, pivote y apoyos. No se
 han medido fuerzas, presiones reales, velocidad humana ni límites individuales.
 

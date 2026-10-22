@@ -1,8 +1,9 @@
 """Composición alfa y GIF: 9 fps, paleta global de 40 colores, 360x480."""
-import json,struct,subprocess,hashlib,math
+import json,struct,subprocess,hashlib,math,os
 from pathlib import Path
 from PIL import Image,ImageChops,ImageStat
 BASE=Path(__file__).resolve().parent
+BASE=BASE/os.environ.get('PS_RESULTADO_DIR','')
 composed=BASE/'composicion';composed.mkdir(exist_ok=True)
 for p in sorted((BASE/'fotogramas').glob('frame-*.png')):
     im=Image.open(p).convert('RGBA')

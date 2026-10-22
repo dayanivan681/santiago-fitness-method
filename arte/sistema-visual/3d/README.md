@@ -1,10 +1,47 @@
 # Pendulum squat — rig de contacto MPFB
 
+> **ENTREGA RECHAZADA POR EL DUEÑO (2026-10-21).** El GIF y el blend de la
+> primera entrega deforman las extremidades. Los PASS históricos de abajo
+> sólo acreditan las comprobaciones geométricas que se implementaron; no
+> acreditan una figura ni un movimiento humano aceptables. La corrección está
+> en revisión. No usar esta versión en la app.
+
 Trabajo de Codex en `diseno/sistema-visual`, limitado a esta carpeta. El dueño
 autorizó después del diagnóstico **recalibrar los apoyos del carro**, manteniendo
 plataforma, proporciones y MPFB. No se reclama ni publica turno en main.
 
-## Entrega
+## Corrección v2 — candidata a revisión visual
+
+Salidas nuevas en **revision-v2/**; la primera entrega no se sobrescribe.
+El fallo era asignar `pole_angle=0` a las cuatro cadenas IK, sin compensar
+la orientación local de sus huesos. Esto giraba el plano de rodillas y codos:
+las posiciones objetivo se alcanzaban aun con las extremidades retorcidas.
+Ahora se calibra cada plano de flexión hacia su polo mediante la geometría
+evaluada. No se teclean posturas ni se modifican las proporciones de MPFB.
+
+- [GIF corregido](revision-v2/pendulum-squat-rig.gif): 229 693 bytes, GIF89a,
+  360×480, 17 fotogramas, 9 fps de exportación, 40 colores y fondo `#0b0c0d`.
+- [Escena corregida](revision-v2/pendulum-squat-rig.blend): restricciones y
+  drivers nativos, sin handlers. Sigue gobernada sólo por Pivote.
+- [Prueba de orientación](revision-v2/orientacion.json): 23 fotogramas y
+  cuatro posiciones sin clave. Torsión máxima de piernas 6.84°, antebrazos
+  7.98° y diferencia de simetría <0.043 mm. Son guardas de regresión de este
+  prototipo, no límites biomecánicos universales.
+- [Geometría](revision-v2/aceptacion.json): contactos y demás criterios
+  geométricos pasan. **`aceptado` permanece `false`**: la revisión visual y la
+  aceptación del dueño no se sustituyen por estos números.
+
+La revisión incluye el cuerpo sin máquina, de frente y de lado, en reposo,
+arriba y abajo; además de la secuencia con máquina. Se conserva evidencia en
+`revision-v2/anatomia-*.png`. No se retocan imágenes para ocultar deformaciones.
+El rostro y el acabado del maniquí siguen fuera del alcance original.
+
+La prueba nueva se ejecutó también contra el blend rechazado: falla por
+torsión, asimetría, orientación de flexión y posición de codos. Blender se
+ejecuta ahora con `--python-exit-code 1` para que una excepción Python detenga
+realmente la regeneración. El script no declara aceptación visual automática.
+
+## Primera entrega — rechazada, conservada como historial
 
 - **pendulum-squat-rig.blend**: escena de salida. Rig MPFB original más 16 huesos
   auxiliares no deformantes. No usa Rigify ni necesita handlers de Python para
@@ -34,7 +71,9 @@ Requiere Blender 5.2.2 LTS, `python3` con Pillow y `ffmpeg`, ya disponibles en
 esta máquina. Para otra instalación, definir `PS_BLENDER` con la ruta del
 ejecutable. No instala dependencias. Todas las salidas quedan aquí; las carpetas
 `fotogramas/`, `composicion/` y los logs son intermedios ignorados por Git.
-El comando falla si la postura o el GIF no pasan sus comprobaciones.
+La salida por defecto es `revision-v2/`; `PS_RESULTADO_DIR` permite elegir otra
+subcarpeta. El comando falla si la geometría, la regresión de orientación o el
+GIF no pasan sus comprobaciones. Superarlas no equivale a aprobación visual.
 
 ## Cómo se mueve
 
@@ -66,7 +105,7 @@ y muestras no se modifican. El render del GIF usa alfa y composición de fondo;
 esto conserva la iluminación y garantiza el RGB requerido. El v1 tenía esquina
 RGB `(26,29,31)`, aunque el encargo indicaba `(11,12,13)`.
 
-## Aceptación medida
+## Mediciones históricas de la primera entrega (no aceptación visual)
 
 Se comprueban los 23 fotogramas y cuatro ángulos no clavados moviendo sólo el
 pivote. El archivo se vuelve a abrir en procesos independientes de Blender para
