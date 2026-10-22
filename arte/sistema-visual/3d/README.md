@@ -18,6 +18,10 @@ plataforma, proporciones y MPFB. No se reclama ni publica turno en main.
 
 ![Arriba, bajada, abajo, subida y arriba](revision-secuencia.png)
 
+La comparación con demostraciones reales, sus fuentes y las diferencias de
+geometría están en [REFERENCIAS-MOVIMIENTO.md](REFERENCIAS-MOVIMIENTO.md).
+Las pruebas de contacto de abajo no equivalen a una validación biomecánica.
+
 ## Regenerar desde cero con un comando
 
 Desde la raíz de esta copia de diseño:
