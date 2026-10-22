@@ -368,11 +368,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-22T01:21:58.874Z
+- **Última sincronización:** 2026-10-22T01:39:13.221Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1520,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-22T01:39:13.224Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Dos entregas. Primera: guardado el prototipo 3D del pendulum squat en la rama diseno/sistema-visual (commit 57ba6b7), en arte/sistema-visual/3d/: pendulum-squat.blend con la escena completa (cuerpo MPFB, maquina, luz, camara, animacion) y pendulum-squat-v1.gif. El GIF cumple las cuatro reglas duras de la app, verificadas: GIF89a, 360x480 en 3:4 exacto, 236 KB y fotograma 1 en la posicion inicial; se logro la resolucion completa bajando a 9 fps y 40 colores en vez de encoger la imagen. Segunda: escrito el encargo para Codex en docs/gifs-servicios-costo-2026-10-21/ENCARGO-CODEX-RIG-3D.md. El encargo NO es de render sino de POSTURA: la figura queda colocada al lado de la maquina en vez de apoyada en ella, porque la pose se hizo con cinematica directa tecleando angulos, sin restricciones de contacto; hay que construir un rig donde los pies, la espalda y las manos esten fijados y el movimiento lo gobierne una sola variable, el angulo del carro sobre su pivote. Incluye las cuatro trampas que ya pague: doble transformacion por malla emparentada al rig ademas del modificador Armature, animation_data_clear borrando tambien la pose, frame_set pisando la pose recien aplicada si se llama antes de posar, y la API de acciones cambiada en Blender 5 (action.fcurves ya no existe). Nota: active el acceso a internet de Blender para poder instalar MPFB desde el repositorio oficial de extensiones; es reversible en Preferencias/Sistema.
+- **Verificación:** npm run lint OK; npm run build OK. npm test NO CONCLUYENTE: 15 de 1082 fallaron con duraciones de 20-25 s, pero la carga del sistema estaba en 246 sobre 10 nucleos (diskimagesiod al 179%, Spotlight y runtimes del simulador iOS). El cambio de este turno es solo documentacion y no puede afectar a las pruebas; no declaro verde lo que no pude comprobar en condiciones. Repetir la suite con la maquina en reposo.
+- **Siguiente:** Codex toma el encargo del rig con restricciones en la rama diseno/sistema-visual; repetir npm test con la maquina descargada para confirmar que el fallo era ambiental
+
 
 ### 2026-10-22T01:21:58.878Z | claude-code | CLAIM
 - **Estado:** active
