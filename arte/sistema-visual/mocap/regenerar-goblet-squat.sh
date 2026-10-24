@@ -15,11 +15,14 @@ G_F0=1456 G_F1=1700 G_NF=24 G_BLEND=3 run 1_retarget_mocap.py "$BASE" "$BVH" "$W
 # 2. Pies fijos y extensión completa arriba (rodilla 168°), solución analítica de dos huesos.
 run 2_pies_fijos.py "$W/1-retarget.blend" "$W/2-pies.blend"
 # 3. Mancuerna hexagonal en contacto con el pecho y brazos IK en agarre goblet.
-run 3_brazos_mancuerna_pecho.py "$W/2-pies.blend" "$W/3-brazos.blend" '{"alto":-0.02,"lat":0.055,"bajo":0.025,"atras":0.0,"polo":[0.2,0.1,-0.35],"curl":0.6,"holgura":0.0005}'
+#    alto=0.10: cabeza superior bajo la barbilla y la inferior sobre el esternón (con -0.02 quedaba en el abdomen).
+run 3_brazos_mancuerna_pecho.py "$W/2-pies.blend" "$W/3-brazos.blend" '{"alto":0.10,"lat":0.055,"bajo":0.025,"atras":0.0,"polo":[0.2,0.1,-0.35],"curl":0.6,"holgura":0.0005}'
 # 4. Estilo: bordes suaves de short, cuádriceps y glúteos resaltados.
 run 4_estilo.py "$W/3-brazos.blend" "$W/4-estilo.blend"
-# 5. Render EEVEE 360x480, 128 muestras, alfa.
-run 5_render.py "$W/4-estilo.blend" "$O/fotogramas" 128
+# 5. Render EEVEE 360x480, 128 muestras, alfa. Dos repeticiones: 3/4 frontal (rodillas y mancuerna)
+#    y 3/4 trasera a 125° (glúteos), misma distancia, altura y lente; el corte cae de pie.
+rm -rf "$O/fotogramas" "$O/composicion"
+run 5_render.py "$W/4-estilo.blend" "$O/fotogramas" 128 '[[[1.25,-2.75,1.05],[0,0.08,0.8],50],[[2.531,1.852,1.05],[0,0.08,0.8],50]]'
 cp "$W/4-estilo-final.blend" "$O/goblet-squat.blend"
 # 6. Composición sobre #0b0c0d y GIF 12 fps, 48 colores.
 "$PYIMG" -I "$H/6_codificar_gif.py" "$O/fotogramas" "$O/goblet-squat.gif" 12 48

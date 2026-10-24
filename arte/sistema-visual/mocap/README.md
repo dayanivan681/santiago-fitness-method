@@ -9,9 +9,16 @@ Primer ejercicio: **Goblet Squat** → [`ejercicios/goblet-squat/goblet-squat.gi
 
 ![Secuencia](ejercicios/goblet-squat/goblet-squat-secuencia.png)
 
-Glúteos visibles desde atrás: [`revision/espalda-y-lado.png`](ejercicios/goblet-squat/revision/espalda-y-lado.png).
+El GIF tiene dos repeticiones: la primera en 3/4 frontal (rodillas, pies y mancuerna)
+y la segunda en 3/4 trasera (glúteos). La app reproduce un solo GIF por ejercicio,
+así que la vista trasera va dentro del mismo archivo en vez de en otro.
 
 Estado: **pendiente de aprobación visual del dueño**. No se ha subido a la app.
+
+Correcciones del dueño (2026-10-24): la mancuerna iba sujeta demasiado baja (cabeza
+superior en el esternón, la inferior en el abdomen) y en la bajada acababa frente al
+vientre; ahora la cabeza superior queda bajo la barbilla durante todo el movimiento.
+Se añadió la vista trasera para que se vean los glúteos.
 
 ## Estándar visual (igual para todos los ejercicios)
 
@@ -20,10 +27,10 @@ Estado: **pendiente de aprobación visual del dueño**. No se ha subido a la app
 | Figura | Maniquí MPFB de `../3d/pendulum-squat.blend` (objeto `Human` + `Human.rig`), sin cambiar proporciones |
 | Colores | Piel gris claro (material `Maniqui`, color base lineal 0.60/0.60/0.61), short gris oscuro, músculos trabajados en rojo (`Musculo`) con borde suave |
 | Fondo | `#0b0c0d` (composición sobre render con alfa) |
-| Cámara | 3/4 frontal: posición `(1.25, -2.75, 1.05)`, mira a `(0, 0.08, 0.8)`, 50 mm |
+| Cámara | Una repetición por vista, misma distancia (3,09 m), altura 1,05 m y lente 50 mm, mirando a `(0, 0.08, 0.8)`. 3/4 frontal en `(1.25, -2.75, 1.05)`; 3/4 trasera a 125° en `(2.531, 1.852, 1.05)` cuando los músculos trabajados están detrás |
 | Luces | Las tres del blend base (`Clave`, `Contra`, `Relleno`) |
 | Render | EEVEE, 128 muestras (con menos aparece grano en el pecho) |
-| GIF | 360×480, 24 fotogramas, 12 fps (≈2 s), 48 colores, ≤ 250 KB, bucle sin salto |
+| GIF | 360×480, 24 fotogramas por vista, 12 fps (≈2 s por vista), 48 colores, ≤ 250 KB por vista (la app acepta hasta 5 MB), primer fotograma de pie, corte de vista en la posición de pie |
 
 ## Pipeline (`herramientas/`)
 
@@ -40,7 +47,8 @@ Estado: **pendiente de aprobación visual del dueño**. No se ha subido a la app
    cada patrón de agarre tendrá su script.
 4. `4_estilo.py` — máscaras por vértice suavizadas para short, cuádriceps y glúteos
    (sin bordes dentados por caras).
-5. `5_render.py` y 6. `6_codificar_gif.py` — render con alfa, composición y GIF.
+5. `5_render.py` y 6. `6_codificar_gif.py` — render con alfa (una repetición por
+   cámara de la lista JSON), composición y GIF.
 
 Revisión: `revisar.py` (renders de cualquier cámara/fotograma), `hoja.py` (hoja de
 contacto), `buscar_repeticiones.py` y `curva_repeticion.py` (encontrar una
@@ -58,7 +66,10 @@ tarda ≈ 30 s por fotograma a 128 muestras.
 - Error del plano de rodilla frente al mocap: **0°**.
 - Rodillas por fuera de los tobillos en toda la flexión (sin valgo); abajo 0,70 m entre rodillas.
 - Rodilla: 163°/161° arriba, 39°/42° abajo (sentadilla profunda).
-- Muñecas en la mancuerna: 0 mm; mancuerna a 2 mm del torso de pie.
+- Muñecas en la mancuerna: 0 mm; mancuerna entre 0 y 8 mm del torso en los 24 fotogramas.
+- Centro de la mancuerna 21 mm por debajo de los hombros de pie y 99 mm abajo (antes 138 y 194 mm).
+- `verificar_piernas.py` lista los fotogramas de pie (1–3, 20–24) en `valgo_frames`: con las
+  piernas casi rectas las rodillas quedan algo más juntas que los tobillos; no es valgo bajo carga.
 
 ## Fuente del movimiento
 
