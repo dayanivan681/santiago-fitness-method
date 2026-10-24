@@ -1,0 +1,68 @@
+{
+  "aceptado": false,
+  "geometria_comprobada": true,
+  "revision_visual": "Obligatoria e independiente de las medidas; no automatizada.",
+  "comprobaciones": {
+    "regresion_orientacion": true,
+    "pies_fijos": true,
+    "manos_y_dedos": true,
+    "rodilla": true,
+    "apoyo_pelvis_lumbar_torax": true,
+    "hombreras": true,
+    "proporciones_intactas": true,
+    "plataforma_y_resto_maquina_intactos": true,
+    "solo_pivote_con_keyframes": true,
+    "columna_distribuida": true
+  },
+  "pies_objetivo_error_max_m": 6.701136694939636e-05,
+  "pies_z_f1_f12_m": 6.599999999998274e-05,
+  "munecas_objetivo_error_max_m": 6.12298577371475e-06,
+  "dedos_objetivo_error_max_m": 9.947172467099087e-06,
+  "rodilla_arriba_grados": 170.00000700741072,
+  "rodilla_abajo_grados": 90.40589332609534,
+  "espalda_separacion_rango_m": [
+    -8.34235853360532e-05,
+    0.21382052402358703
+  ],
+  "hombro_hombrera_distancia_centros_rango_m": [
+    0.11410513482775118,
+    0.11469040467905423
+  ],
+  "contacto_por_zona_m": {
+    "pelvis": [
+      -0.002566096528196149,
+      0.0006466634645662417
+    ],
+    "lumbar": [
+      0.0001928405487601559,
+      0.00033155837313017967
+    ],
+    "torax": [
+      0.0008649026957352824,
+      0.000980669301715542
+    ]
+  },
+  "hombreras_contacto_superficie_rango_m": [
+    -0.0009177417693248258,
+    -0.00011126812283260984
+  ],
+  "columna_cambio_vertebral_grados": {
+    "spine05": 1.129649191931765,
+    "spine04": 1.693426079186832,
+    "spine03": 0.6323397779047428,
+    "spine02": 0.5811311427111593,
+    "spine01": 1.5202985878576052
+  },
+  "sin_cambiar_geometria_maquina": false,
+  "sin_cambiar_proporciones_huesos_originales": true,
+  "gif_v1_intacto": {
+    "firma": "GIF89a",
+    "medida": [
+      360,
+      480
+    ],
+    "bytes": 236083,
+    "sha256": "1e0d04c603eb487bfe988c09308a8b27ea8b2e28f4d9e46411ad60141ab61e70"
+  },
+  "gif_nuevo": "Se verifica por separado despu\u00e9s de aceptar postura"
+}
