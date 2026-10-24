@@ -1,0 +1,28 @@
+#!/bin/bash
+# Regenera el Goblet Squat desde cero: mocap CMU -> rig MPFB -> GIF de la app.
+# Modo A (Linux/nube): BPY=python con el paquete bpy 5.2.2 (pip install bpy==5.2.2 pillow, Python 3.13).
+# Modo B (Mac): PS_BLENDER=/Applications/Blender.app/Contents/MacOS/Blender y python3 con Pillow.
+set -euo pipefail
+D="$(cd "$(dirname "$0")" && pwd)"; H="$D/herramientas"; O="$D/ejercicios/goblet-squat"
+BASE="$D/../3d/pendulum-squat.blend"; BVH="$D/fuentes/13_30.bvh"
+mkdir -p "$O/trabajo"; W="$O/trabajo"
+run() { local s="$1"; shift
+  if [ -n "${PS_BLENDER:-}" ]; then "$PS_BLENDER" --background --python-exit-code 1 --python "$H/$s" -- "$@"
+  else "${BPY:?define BPY o PS_BLENDER}" "$H/$s" -- "$@"; fi; }
+PYIMG="${PYIMG:-${BPY:-python3}}"
+# 1. Repetición 1 de CMU 13_30 (frames 1456-1700, 120 fps) en 24 fotogramas; cierre del bucle en 3.
+G_F0=1456 G_F1=1700 G_NF=24 G_BLEND=3 run 1_retarget_mocap.py "$BASE" "$BVH" "$W/1-retarget.blend"
+# 2. Pies fijos y extensión completa arriba (rodilla 168°), solución analítica de dos huesos.
+run 2_pies_fijos.py "$W/1-retarget.blend" "$W/2-pies.blend"
+# 3. Mancuerna hexagonal en contacto con el pecho y brazos IK en agarre goblet.
+run 3_brazos_mancuerna_pecho.py "$W/2-pies.blend" "$W/3-brazos.blend" '{"alto":-0.02,"lat":0.055,"bajo":0.025,"atras":0.0,"polo":[0.2,0.1,-0.35],"curl":0.6,"holgura":0.0005}'
+# 4. Estilo: bordes suaves de short, cuádriceps y glúteos resaltados.
+run 4_estilo.py "$W/3-brazos.blend" "$W/4-estilo.blend"
+# 5. Render EEVEE 360x480, 128 muestras, alfa.
+run 5_render.py "$W/4-estilo.blend" "$O/fotogramas" 128
+cp "$W/4-estilo-final.blend" "$O/goblet-squat.blend"
+# 6. Composición sobre #0b0c0d y GIF 12 fps, 48 colores.
+"$PYIMG" -I "$H/6_codificar_gif.py" "$O/fotogramas" "$O/goblet-squat.gif" 12 48
+# Verificaciones medibles (no sustituyen la revisión visual).
+run verificar_piernas.py "$O/goblet-squat.blend" | grep -E '^\{"deriva'
+run verificar_contacto.py "$O/goblet-squat.blend" | grep frame
