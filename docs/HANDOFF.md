@@ -1,5 +1,14 @@
 # Handoff de Santiago Fitness Method
 
+## 2026-10-24 — Puntero: GIFs de ejercicios por mocap (rama de diseño) — claude-code
+
+- **Dónde:** rama `diseno/sistema-visual`, carpeta `arte/sistema-visual/mocap/`. Leer primero su `README.md` (pipeline, estándar visual y cómo añadir ejercicios). [PR #15 en borrador](https://github.com/dayanivan681/santiago-fitness-method/pull/15): **no fusionar sin aprobación del dueño**.
+- **Método:** Blender + mocap real de CMU (licencia comercial libre) sobre la figura MPFB, mismo estilo en todos. Sustituye la vía de pose a mano del pendulum squat.
+- **Hecho:** Goblet Squat en `ejercicios/goblet-squat/goblet-squat.gif`. Comprobado sobre `7e9dfc1`: GIF89a, 360×480, 24 fotogramas a 12 fps, fondo #0b0c0d, 226 KB. Pies fijos, sin valgo, cuádriceps y glúteos resaltados (los glúteos no se ven en la vista frontal).
+- **Regenerar en Mac:** `git fetch` y `PS_BLENDER=/Applications/Blender.app/Contents/MacOS/Blender bash arte/sistema-visual/mocap/regenerar-goblet-squat.sh` desde esa rama; necesita python3 con Pillow y ffmpeg.
+- **Reglas:** en esa rama solo se toca `arte/sistema-visual/`. Llevar algo a main requiere turno de handoff y `npm test`, `npm run lint`, `npm run build`.
+- **Pendiente del dueño:** aprobar el Goblet Squat; elegir el siguiente ejercicio o familia; decidir si el cuerpo debe ser más atlético.
+
 ## 2026-10-21 — PR #14 aprobado, integrado y publicado — codex
 
 - El dueño indicó «está bien, merge ahora» tras revisar la preview. Turno `a4985bf`. [PR #14](https://github.com/dayanivan681/santiago-fitness-method/pull/14) integrado mediante merge normal **`1bf0404e7a5a69f82ff961ee6578864100e2b380`**; cabeza final **`50f9551cdc69e49a80f19e35de3687ecf90ff9ee`**. Sin conflictos. Producto del merge idéntico a la cabeza verificada.
@@ -368,11 +377,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-24T13:48:47.077Z
+- **Última sincronización:** 2026-10-24T13:54:20.512Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1520,6 +1529,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-24T13:54:20.514Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Confirmado que los 15 fallos de npm test del turno anterior eran ambientales: la suite completa pasa 1082/1082 en 128 archivos con codigo 0, en 217 s, incluso con carga 16-33 durante la corrida (antes 246). Sin cambios de codigo. Ademas, puntero en la cabecera de docs/HANDOFF.md hacia los GIFs por mocap de la rama diseno/sistema-visual (arte/sistema-visual/mocap/, PR #15 en borrador): metodo, Goblet Squat hecho con especificaciones verificadas sobre 7e9dfc1 (GIF89a, 360x480, 24 fotogramas a 12 fps, fondo #0b0c0d, 226 KB), comando de regeneracion, reglas de la rama y decisiones pendientes del dueno
+- **Verificación:** npm test (1082/1082, 128 archivos); npm run lint; npm run build; git diff --check
+- **Siguiente:** El dueno aprueba o corrige el Goblet Squat del PR #15, elige el siguiente ejercicio o familia y decide si el cuerpo debe ser mas atletico; no fusionar #15 sin su visto bueno
+
 
 ### 2026-10-24T13:48:47.078Z | claude-code | CLAIM
 - **Estado:** active
