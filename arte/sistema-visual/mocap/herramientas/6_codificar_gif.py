@@ -1,14 +1,15 @@
-"""Compone sobre #0b0c0d y codifica GIF con paleta global. Uso: dir_fotogramas salida.gif fps colores"""
+"""Compone sobre #0b0c0d y codifica GIF con paleta global. Uso: dir_fotogramas salida.gif fps colores [tramado]"""
 import sys,subprocess,json,struct
 from pathlib import Path
 from PIL import Image
 fr=Path(sys.argv[1]); gif=Path(sys.argv[2]); fps=int(sys.argv[3]); cols=int(sys.argv[4])
+DITHER=sys.argv[5] if len(sys.argv)>5 else 'bayer:bayer_scale=4'  # 'none': rojo liso sin trama
 comp=fr.parent/'composicion'; comp.mkdir(exist_ok=True)
 for p in sorted(fr.glob('frame-*.png')):
     im=Image.open(p).convert('RGBA'); bg=Image.new('RGBA',im.size,(11,12,13,255))
     Image.alpha_composite(bg,im).convert('RGB').save(comp/p.name)
 subprocess.run(['ffmpeg','-y','-loglevel','error','-framerate',str(fps),'-start_number','1','-i',str(comp/'frame-%04d.png'),
- '-filter_complex',f'split[a][b];[a]palettegen=max_colors={cols}:reserve_transparent=0:stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=4',
+ '-filter_complex',f'split[a][b];[a]palettegen=max_colors={cols}:reserve_transparent=0:stats_mode=full[p];[b][p]paletteuse=dither={DITHER}',
  '-loop','0',str(gif)],check=True)
 d=gif.read_bytes(); im=Image.open(gif)
 corn=[]; 

@@ -29,8 +29,8 @@ run 4_estilo.py "$W/3-brazos.blend" "$W/4-estilo.blend" '{"anatomia":["cuadricep
 rm -rf "$O/fotogramas" "$O/composicion"
 run 5_render.py "$W/4-estilo.blend" "$O/fotogramas" 128 '[[[1.25,-2.75,1.05],[0,0.08,0.8],50],[[2.531,1.852,1.05],[0,0.08,0.8],50]]'
 cp "$W/4-estilo-final.blend" "$O/goblet-squat.blend"
-# 6. Composición sobre #0b0c0d y GIF 12 fps, 48 colores.
-"$PYIMG" -I "$H/6_codificar_gif.py" "$O/fotogramas" "$O/goblet-squat.gif" 12 48
+# 6. Composición sobre #0b0c0d y GIF 12 fps, 96 colores sin tramado (con trama el rojo se veía punteado).
+"$PYIMG" -I "$H/6_codificar_gif.py" "$O/fotogramas" "$O/goblet-squat.gif" 12 96 none
 # Verificaciones medibles (no sustituyen la revisión visual).
 run verificar_piernas.py "$O/goblet-squat.blend" | grep -E '^\{"deriva'
 run verificar_contacto.py "$O/goblet-squat.blend" | grep frame
