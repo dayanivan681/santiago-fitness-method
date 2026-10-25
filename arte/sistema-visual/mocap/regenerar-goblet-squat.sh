@@ -15,8 +15,9 @@ run 0_cuerpo_atletico.py "$BASE" "$W/0-cuerpo.blend" '{"musculo":1.0,"peso":0.3}
 # 1. Repetición 1 de CMU 13_30 (frames 1456-1700, 120 fps) en 24 fotogramas; cierre del bucle en 3.
 G_F0=1456 G_F1=1700 G_NF=24 G_BLEND=3 run 1_retarget_mocap.py "$W/0-cuerpo.blend" "$BVH" "$W/1-retarget.blend"
 # 2. Pies fijos (solución analítica de dos huesos) y técnica: rodilla 175° y tronco a 7° arriba (el de
-#    reposo), extendidos a la vez; pies abiertos 17° los dos; rodillas en la línea de los pies.
-run 2_pies_fijos.py "$W/1-retarget.blend" "$W/2-pies.blend" '{"tronco_arriba":7,"apertura_pies":17,"rodilla_pie":1,"rodilla_arriba":175}'
+#    reposo), extendidos a la vez; pies planos (orientación de reposo) abiertos 17° los dos;
+#    rodillas en la línea de los pies.
+run 2_pies_fijos.py "$W/1-retarget.blend" "$W/2-pies.blend" '{"tronco_arriba":7,"apertura_pies":17,"rodilla_pie":1,"rodilla_arriba":175,"pies_planos":true}'
 # 3. Mancuerna hexagonal en contacto con el pecho y brazos IK en agarre goblet.
 #    alto=0.10: cabeza superior bajo la barbilla y la inferior sobre el esternón (con -0.02 quedaba en el abdomen).
 run 3_brazos_mancuerna_pecho.py "$W/2-pies.blend" "$W/3-brazos.blend" '{"alto":0.10,"lat":0.055,"bajo":0.025,"atras":0.0,"polo":[0.2,0.1,-0.35],"curl":0.6,"holgura":0.0005}'

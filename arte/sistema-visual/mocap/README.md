@@ -28,6 +28,9 @@ estirar las rodillas y la musculatura se veía plana.
   la pelvis se endereza en proporción a la altura (tronco a 7° arriba, el de reposo), cadera
   y rodilla se extienden a la vez (rodilla 175°), los dos pies abren 17° y las rodillas
   avanzan sobre la línea del pie.
+- Pies (segunda revisión): heredaban del mocap una inclinación de 26° y 20° y no apoyaban la
+  planta. Ahora usan la orientación de reposo de la figura (planta plana) con la apertura
+  pedida y el tobillo a la altura de reposo.
 - Cuerpo atlético (macros de MakeHuman) y atlas de músculos: recto femoral, vasto lateral,
   vasto medial, glúteo mayor y medio con vientre, surcos y dirección de fibra.
 
@@ -66,7 +69,8 @@ bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por 
    168° y centra la pelvis (el sujeto de CMU se queda con rodillas blandas).
    Opciones de técnica: `tronco_arriba` (inclinación del tronco arriba; la pelvis gira hacia
    atrás sobre el eje de las caderas en proporción a la altura), `apertura_pies` (misma
-   apertura en los dos pies), `rodilla_pie` (1 = rodilla sobre la línea del pie) y
+   apertura en los dos pies), `pies_planos` (planta apoyada con la orientación de reposo),
+   `rodilla_pie` (1 = rodilla sobre la línea del pie) y
    `rodilla_arriba`.
 3. `3_brazos_mancuerna_pecho.py` — mancuerna hexagonal en contacto con el pecho
    (raycast) y brazos IK con polo calibrado numéricamente. Específico del goblet;
@@ -93,6 +97,7 @@ tarda ≈ 30 s por fotograma a 128 muestras.
 ## Verificaciones del Goblet Squat (medidas, no sustituyen la revisión visual)
 
 - Deriva de los tobillos: **0 mm** en los 24 fotogramas.
+- Pies: inclinación respecto a la planta de reposo **0°** en los 24 fotogramas; planta en el suelo.
 - Técnica (`verificar_tecnica.py`): arriba tronco a 7° (el de reposo), cadera 164–169° (reposo
   167°) y rodilla 175°; cadera y rodilla se extienden en los mismos fotogramas (21: 145°/149°,
   22: 162°/170°). Abajo tronco a 47° y rodilla 40°/42° (sentadilla profunda, talones apoyados).

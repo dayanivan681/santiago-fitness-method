@@ -30,6 +30,14 @@ for f in fr:
     fk[f]={x:dict(hip=W(f'upperleg01.{x}'),knee=W(f'lowerleg01.{x}'),ank=W(f'foot.{x}'),toe=W(f'toe1-1.{x}'),
               footM=(RW@pb[f'foot.{x}'].matrix).copy(),toeM=(RW@pb[f'toe1-1.{x}'].matrix).copy()) for x in 'LR'}
     fk[f]['root']=W('root')
+def suelo_reposo():
+    """Altura (mundo) de la planta en la malla de reposo: claves de forma sin armadura."""
+    import numpy as np
+    h=bpy.data.objects['Human']; kb=h.data.shape_keys.key_blocks; n=len(h.data.vertices)
+    def co(k): a=np.zeros(n*3); k.data.foreach_get('co',a); return a.reshape(-1,3)
+    B=co(kb['Basis']); R=B+sum(k.value*(co(k)-B) for k in kb if k.name!='Basis' and not k.mute)
+    bi=h.vertex_groups['body'].index; cuerpo=[v.index for v in h.data.vertices if any(g.group==bi for g in v.groups)]
+    return (h.matrix_world@Vector((0,0,float(R[cuerpo,2].min())))).z
 def ang(h,k,a): return math.degrees((h-k).angle(a-k))
 # longitudes del destino
 lens={x:((fk[1][x]['knee']-fk[1][x]['hip']).length,(fk[1][x]['ank']-fk[1][x]['knee']).length) for x in 'LR'}
@@ -45,6 +53,12 @@ for x in 'LR':
     if AP is not None:
         al=math.radians(AP*(1 if x=='L' else -1))-math.atan2(td.x,-td.y)
         Rz=Matrix.Rotation(al,4,'Z'); footR[x]=(Rz@footR[x][0],Rz@footR[x][1]); fdir[x]=(Rz.to_3x3()@td).normalized()
+    if P.get('pies_planos'):  # planta apoyada: orientación de reposo del pie (plano) con la apertura pedida
+        Mr=RW@rb[f'foot.{x}'].matrix_local; tr=(RW@rb[f'toe1-1.{x}'].head_local)-Mr.to_translation(); tr.z=0; tr.normalize()
+        obj=math.radians(AP*(1 if x=='L' else -1)) if AP is not None else math.atan2(td.x,-td.y)
+        Rz=Matrix.Rotation(obj-math.atan2(tr.x,-tr.y),4,'Z')
+        footR[x]=(Rz@Mr,None); fdir[x]=(Rz.to_3x3()@tr).normalized()
+        ank[x].z=Mr.to_translation().z-suelo_reposo()
 thmax=max(min(ang(fk[f][x]['hip'],fk[f][x]['knee'],fk[f][x]['ank']) for x in 'LR') for f in fr)
 dzs={}
 for f in fr:
