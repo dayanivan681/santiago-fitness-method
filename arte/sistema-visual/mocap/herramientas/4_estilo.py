@@ -70,7 +70,7 @@ if GR:
     RES=P.get('res',2048)
     POS=MU.rasterizar(me,R,RES,lambda c:(c[:,2]>0.3)&(c[:,2]<1.15)&(np.abs(c[:,0])<0.3))
     ok=~np.isnan(POS[...,0]); img=np.zeros((RES,RES,3),np.float32)
-    img[ok]=np.stack(MU.campos(POS[ok].astype(float),hb,GR,fibra=P.get('fibra',0.010)),1)
+    img[ok]=np.stack(MU.campos(POS[ok].astype(float),hb,GR,fibra=P.get('fibra',0.010),surco=P.get('surco',0.010)),1)
     img=MU.dilatar(img,ok,6)
     im=bpy.data.images.new('MapaMusculos',RES,RES,alpha=True)
     im.pixels.foreach_set(np.dstack([img,np.ones((RES,RES,1),np.float32)]).ravel()); im.pack(); im.colorspace_settings.name='Non-Color'
@@ -96,7 +96,7 @@ if GR:
     cur_c=mix('RGBA',sp.outputs['Red'],cur_c,cm)
     cur_r=mix('FLOAT',sp.outputs['Red'],cur_r,mus.inputs['Roughness'].default_value)
     bp=nt.nodes.new('ShaderNodeBump'); bp.inputs['Strength'].default_value=P.get('relieve',0.8); bp.inputs['Distance'].default_value=P.get('relieve_m',0.004)
-    nt.links.new(op('MULTIPLY',sp.outputs['Red'],op('ADD',sp.outputs['Green'],op('MULTIPLY',sp.outputs['Blue'],0.12))),bp.inputs['Height'])
+    nt.links.new(op('MULTIPLY',sp.outputs['Red'],op('ADD',sp.outputs['Green'],op('MULTIPLY',sp.outputs['Blue'],P.get('fibra_relieve',0.12)))),bp.inputs['Height'])
     nt.links.new(bp.outputs['Normal'],bs.inputs['Normal'])
 nt.links.new(cur_c,bs.inputs['Base Color']); nt.links.new(cur_r,bs.inputs['Roughness'])
 for m in bpy.data.materials:

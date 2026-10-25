@@ -21,8 +21,9 @@ run 2_pies_fijos.py "$W/1-retarget.blend" "$W/2-pies.blend" '{"tronco_arriba":7,
 # 3. Mancuerna hexagonal en contacto con el pecho y brazos IK en agarre goblet.
 #    alto=0.10: cabeza superior bajo la barbilla y la inferior sobre el esternón (con -0.02 quedaba en el abdomen).
 run 3_brazos_mancuerna_pecho.py "$W/2-pies.blend" "$W/3-brazos.blend" '{"alto":0.10,"lat":0.055,"bajo":0.025,"atras":0.0,"polo":[0.2,0.1,-0.35],"curl":0.6,"holgura":0.0005}'
-# 4. Estilo: short y atlas de músculos (cuádriceps y glúteos) con vientres, surcos y fibras.
-run 4_estilo.py "$W/3-brazos.blend" "$W/4-estilo.blend" '{"anatomia":["cuadriceps","gluteos"]}'
+# 4. Estilo: short y atlas de músculos (cuádriceps y glúteos) en rojo liso con volumen y separación
+#    suave entre músculos; sin fibras (decisión del dueño, 2026-10-25).
+run 4_estilo.py "$W/3-brazos.blend" "$W/4-estilo.blend" '{"anatomia":["cuadriceps","gluteos"],"fibra_osc":0,"fibra_relieve":0,"rojo_surco":[0.55,0.035,0.03,1],"relieve":0.35}'
 # 5. Render EEVEE 360x480, 128 muestras, alfa. Dos repeticiones: 3/4 frontal (rodillas y mancuerna)
 #    y 3/4 trasera a 125° (glúteos), misma distancia, altura y lente; el corte cae de pie.
 rm -rf "$O/fotogramas" "$O/composicion"

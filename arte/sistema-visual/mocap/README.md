@@ -32,7 +32,8 @@ estirar las rodillas y la musculatura se veía plana.
   planta. Ahora usan la orientación de reposo de la figura (planta plana) con la apertura
   pedida y el tobillo a la altura de reposo.
 - Cuerpo atlético (macros de MakeHuman) y atlas de músculos: recto femoral, vasto lateral,
-  vasto medial, glúteo mayor y medio con vientre, surcos y dirección de fibra.
+  vasto medial, glúteo mayor y medio. Tercera revisión: solo rojo, sin fibras ni surcos
+  marcados, para que se vea realista (`fibra_osc` y `fibra_relieve` a 0).
 
 Referencias de técnica (coinciden en lo esencial): pies al ancho de cadera u hombros con las
 puntas algo abiertas, peso al pecho, torso erguido, rodillas en la dirección de los pies,
@@ -47,7 +48,7 @@ bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por 
 | | Valor |
 |---|---|
 | Figura | Maniquí MPFB de `../3d/pendulum-squat.blend` (objeto `Human` + `Human.rig`) con cuerpo atlético: macros MakeHuman músculo 1.0 y peso 0.3 (paso 0); género, edad y proporciones sin cambiar |
-| Colores | Piel gris claro (material `Maniqui`, color base lineal 0.60/0.60/0.61), short gris oscuro, músculos trabajados en rojo (`Musculo`): vientre en el rojo de `Musculo`, surcos en rojo oscuro, fibras y relieve (bump) desde el atlas `musculos.py` |
+| Colores | Piel gris claro (material `Maniqui`, color base lineal 0.60/0.60/0.61), short gris oscuro, músculos trabajados en rojo liso (`Musculo`) con forma anatómica del atlas `musculos.py`, volumen suave (bump) y separación tenue entre músculos (rojo 0.55/0.035/0.03); sin fibras |
 | Fondo | `#0b0c0d` (composición sobre render con alfa) |
 | Cámara | Una repetición por vista, misma distancia (3,09 m), altura 1,05 m y lente 50 mm, mirando a `(0, 0.08, 0.8)`. 3/4 frontal en `(1.25, -2.75, 1.05)`; 3/4 trasera a 125° en `(2.531, 1.852, 1.05)` cuando los músculos trabajados están detrás |
 | Luces | Las tres del blend base (`Clave`, `Contra`, `Relleno`) |
