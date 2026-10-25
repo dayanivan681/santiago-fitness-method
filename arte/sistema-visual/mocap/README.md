@@ -106,7 +106,7 @@ tarda ≈ 30 s por fotograma a 128 muestras.
 - `verificar_piernas.py` lista los fotogramas de pie (1, 22–24) en `valgo_frames`: con las piernas
   rectas y los pies más abiertos que la cadera, las rodillas quedan algo más juntas que los
   tobillos por geometría; no es valgo.
-- GIF: 48 fotogramas, 410 KB.
+- GIF: 48 fotogramas, 413 KB.
 
 ## Fuente del cuerpo
 
