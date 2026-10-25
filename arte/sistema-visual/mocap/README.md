@@ -32,7 +32,8 @@ estirar las rodillas y la musculatura se veía plana.
   planta. Ahora usan la orientación de reposo de la figura (planta plana) con la apertura
   pedida y el tobillo a la altura de reposo.
 - Cuerpo atlético (macros de MakeHuman) y atlas de músculos: recto femoral, vasto lateral,
-  vasto medial, glúteo mayor y medio. Tercera revisión: solo rojo, sin fibras ni surcos
+  vasto medial, glúteo mayor y medio. Cuarta revisión: profundidad hasta paralelo
+  (`G_MUSLO=80`). Tercera revisión: solo rojo, sin fibras ni surcos
   marcados, para que se vea realista (`fibra_osc` y `fibra_relieve` a 0).
 
 Referencias de técnica (coinciden en lo esencial): pies al ancho de cadera u hombros con las
@@ -63,7 +64,9 @@ bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por 
 1. `1_retarget_mocap.py` — importa el BVH, orienta al sujeto hacia −Y y transfiere
    pelvis, columna, cuello, piernas y pies al rig MPFB (delta de rotación del
    mocap + alineación de reposo por hueso). Escala la traslación por longitud de
-   pierna. `G_F0/G_F1` = tramo del BVH, `G_NF` = fotogramas, `G_BLEND` = cierre del bucle.
+   pierna. `G_F0/G_F1` = tramo del BVH, `G_NF` = fotogramas, `G_BLEND` = cierre del bucle,
+   `G_MUSLO` = profundidad máxima (ángulo del muslo del sujeto con la vertical): conserva el
+   ritmo del mocap y toma en cada fotograma el instante de bajada o subida con esa profundidad.
 2. `2_pies_fijos.py` — pies clavados al suelo con solución **analítica** de dos
    huesos (el IK de Blender giraba la rodilla izquierda 30° en flexión profunda).
    El plano de la rodilla sale del mocap. Cerca de arriba extiende la rodilla a
@@ -101,9 +104,9 @@ tarda ≈ 30 s por fotograma a 128 muestras.
 - Pies: inclinación respecto a la planta de reposo **0°** en los 24 fotogramas; planta en el suelo.
 - Técnica (`verificar_tecnica.py`): arriba tronco a 7° (el de reposo), cadera 164–169° (reposo
   167°) y rodilla 175°; cadera y rodilla se extienden en los mismos fotogramas (21: 145°/149°,
-  22: 162°/170°). Abajo tronco a 47° y rodilla 40°/42° (sentadilla profunda, talones apoyados).
+  22: 162°/170°). Abajo muslo a 0°/−2° de la horizontal (paralelo), rodilla 59°/60°, tronco a 46°.
 - Rodillas sobre la línea del pie en toda la flexión: desviación máxima **0,1 cm**. Pies abiertos 17°/17°.
-- Mancuerna entre 0,5 y 5,8 mm del torso en los 24 fotogramas.
+- Mancuerna entre 0,5 y 5,2 mm del torso en los 24 fotogramas.
 - `verificar_piernas.py` lista los fotogramas de pie (1, 22–24) en `valgo_frames`: con las piernas
   rectas y los pies más abiertos que la cadera, las rodillas quedan algo más juntas que los
   tobillos por geometría; no es valgo.

@@ -13,7 +13,9 @@ PYIMG="${PYIMG:-${BPY:-python3}}"
 # 0. Cuerpo atlético: macros MakeHuman (CC0) de músculo 1.0 y peso 0.3; esqueleto reajustado.
 run 0_cuerpo_atletico.py "$BASE" "$W/0-cuerpo.blend" '{"musculo":1.0,"peso":0.3}'
 # 1. Repetición 1 de CMU 13_30 (frames 1456-1700, 120 fps) en 24 fotogramas; cierre del bucle en 3.
-G_F0=1456 G_F1=1700 G_NF=24 G_BLEND=3 run 1_retarget_mocap.py "$W/0-cuerpo.blend" "$BVH" "$W/1-retarget.blend"
+#    Profundidad hasta paralelo (decisión del dueño): G_MUSLO=80 en el sujeto CMU deja el muslo de la
+#    figura a 0°/-2° de la horizontal abajo tras el ajuste de piernas del paso 2.
+G_MUSLO=80 G_F0=1456 G_F1=1700 G_NF=24 G_BLEND=3 run 1_retarget_mocap.py "$W/0-cuerpo.blend" "$BVH" "$W/1-retarget.blend"
 # 2. Pies fijos (solución analítica de dos huesos) y técnica: rodilla 175° y tronco a 7° arriba (el de
 #    reposo), extendidos a la vez; pies planos (orientación de reposo) abiertos 17° los dos;
 #    rodillas en la línea de los pies.

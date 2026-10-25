@@ -61,6 +61,28 @@ def local_from_arm(n,M,Mp):
     rel=b.parent.matrix_local.inverted()@b.matrix_local
     return rel.inverted()@Mp.inverted()@M
 frames=[F0+(F1-F0)*i/NF for i in range(NF)]  # bucle: el último no repite el primero
+# Profundidad máxima (G_MUSLO: ángulo del muslo con la vertical, 90 = paralelo al suelo). Se conserva el
+# ritmo del mocap con la profundidad escalada: cada fotograma toma el instante de bajada (o de subida)
+# en que el muslo del sujeto tiene el ángulo deseado.
+GM=os.environ.get('G_MUSLO')
+if GM:
+    GM=float(GM)
+    def muslo(f):
+        s.frame_set(int(f),subframe=f-int(f)); a=0
+        for L in ('Left','Right'): a+=math.degrees((sw(f'{L}Leg')-sw(f'{L}UpLeg')).angle(Vector((0,0,-1))))
+        return a/2
+    ss=[F0+k*0.5 for k in range(int((F1-F0)*2)+1)]; th=[muslo(x) for x in ss]
+    kb=max(range(len(ss)),key=lambda k:th[k]); t0=th[0]
+    if th[kb]>GM:
+        def cruce(obj,rango):
+            k=min(rango,key=lambda k:abs(th[k]-obj)); return ss[k]
+        nuevo=[]
+        for ff in frames:
+            k=min(range(len(ss)),key=lambda k:abs(ss[k]-ff))
+            obj=t0+(GM-t0)*max(0.0,(th[k]-t0)/(th[kb]-t0))
+            nuevo.append(cruce(obj,range(0,kb+1)) if k<=kb else cruce(obj,range(kb,len(ss))))
+        frames=nuevo
+        print('profundidad',round(th[kb],1),'->',GM)
 keys=[]
 for i,ff in enumerate(frames):
     s.frame_set(int(ff),subframe=ff-int(ff))

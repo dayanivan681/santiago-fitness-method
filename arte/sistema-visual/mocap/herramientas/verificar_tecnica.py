@@ -12,6 +12,7 @@ for f in range(s.frame_start,s.frame_end+1):
     tr=W('neck01')-W('root'); r['tronco']=round(math.degrees(math.atan2(-tr.y,tr.z)))  # + = inclinado adelante
     for x in 'LR':
         h,k,a,t=W(f'upperleg01.{x}'),W(f'lowerleg01.{x}'),W(f'foot.{x}'),W(f'toe1-1.{x}')
+        m=k-h; r['muslo'+x]=round(math.degrees(math.atan2(-m.z,math.hypot(m.x,m.y))))  # 0 = paralelo al suelo, <0 = por debajo
         r['rod'+x]=round(math.degrees((h-k).angle(a-k)))
         r['cad'+x]=round(math.degrees(tr.angle(k-h)))  # 180 = cadera extendida
         fd=plano(t-a).normalized(); d=plano(k-a); lat=fd.x*d.y-fd.y*d.x
@@ -23,7 +24,7 @@ for f in range(s.frame_start,s.frame_end+1):
 top=max(rows,key=lambda r:r['rodL']+r['rodR']); bot=min(rows,key=lambda r:r['rodL']+r['rodR'])
 dobl=[r for r in rows if min(r['rodL'],r['rodR'])<120]
 res={'arriba':{k:top[k] for k in ('f','tronco','cadL','cadR','rodL','rodR')},
- 'abajo':{k:bot[k] for k in ('f','tronco','rodL','rodR','desvL','desvR')},
+ 'abajo':{k:bot[k] for k in ('f','tronco','rodL','rodR','musloL','musloR','desvL','desvR')},
  'desv_rodilla_max_cm':max(max(abs(r['desvL']),abs(r['desvR'])) for r in dobl) if dobl else 0,
  'apertura_pies':[rows[0]['pieL'],rows[0]['pieR']],
  'inclinacion_pies_max':max(max(r['inclL'],r['inclR']) for r in rows)}
