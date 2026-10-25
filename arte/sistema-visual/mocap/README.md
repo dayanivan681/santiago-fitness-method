@@ -54,7 +54,7 @@ bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por 
 | Cámara | Una repetición por vista, misma distancia (3,09 m), altura 1,05 m y lente 50 mm, mirando a `(0, 0.08, 0.8)`. 3/4 frontal en `(1.25, -2.75, 1.05)`; 3/4 trasera a 125° en `(2.531, 1.852, 1.05)` cuando los músculos trabajados están detrás |
 | Luces | Las tres del blend base (`Clave`, `Contra`, `Relleno`) |
 | Render | EEVEE, 128 muestras (con menos aparece grano en el pecho) |
-| GIF | 360×480, 24 fotogramas por vista, 12 fps (≈2 s por vista), 96 colores sin tramado, ≈ 250 KB por vista (la app acepta hasta 5 MB), primer fotograma de pie, corte de vista en la posición de pie |
+| GIF | 360×480, 24 fotogramas por vista, 12 fps (≈2 s por vista), 96 colores sin tramado, ≈ 260 KB por vista (la app acepta hasta 5 MB), primer fotograma de pie, corte de vista en la posición de pie |
 
 ## Pipeline (`herramientas/`)
 
@@ -110,7 +110,7 @@ tarda ≈ 30 s por fotograma a 128 muestras.
 - `verificar_piernas.py` lista los fotogramas de pie (1, 22–24) en `valgo_frames`: con las piernas
   rectas y los pies más abiertos que la cadera, las rodillas quedan algo más juntas que los
   tobillos por geometría; no es valgo.
-- GIF: 48 fotogramas, 476 KB (96 colores sin tramado).
+- GIF: 48 fotogramas, 514 KB (96 colores sin tramado).
 
 ## Fuente del cuerpo
 
