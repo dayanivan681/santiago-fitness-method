@@ -1,4 +1,5 @@
-"""Pies fijos al suelo (IK de piernas con polo por frame desde el mocap) y extensión completa arriba."""
+"""Pies fijos al suelo (IK analítico de piernas) y técnica: extensión completa arriba, tronco erguido,
+pies simétricos y rodillas en la línea de los pies (opciones tronco_arriba, apertura_pies, rodilla_pie)."""
 import bpy,sys,math,json
 from mathutils import Vector,Matrix
 A=sys.argv[sys.argv.index('--')+1:]
@@ -8,6 +9,21 @@ s=bpy.context.scene; rig=bpy.data.objects['Human.rig']; pb=rig.pose.bones; rb=ri
 RW=rig.matrix_world
 W=lambda n,t=False: rig.matrix_world@(pb[n].tail if t else pb[n].head)
 fr=range(s.frame_start,s.frame_end+1)
+def suave(e0,e1,x): t=max(0.0,min(1.0,(x-e0)/(e1-e0))); return t*t*(3-2*t)
+# tronco: la cadera termina extendida. La pelvis gira hacia atrás sobre el eje de las caderas en
+# proporción a la altura, así cadera y rodilla se extienden juntas (el sujeto CMU acaba inclinado ~20°).
+TR=P.get('tronco_arriba')
+if TR is not None:
+    zs={};lean={}
+    for f in fr:
+        s.frame_set(f); t=W('neck01')-W('root'); zs[f]=W('root').z; lean[f]=math.degrees(math.atan2(-t.y,t.z))
+    z0,z1=min(zs.values()),max(zs.values()); C=lean[max(fr,key=lambda f:zs[f])]-TR
+    for f in fr:
+        s.frame_set(f); bpy.context.view_layer.update()
+        c=(W('upperleg01.L')+W('upperleg01.R'))/2; w=suave(P.get('tronco_desde',0.3),1.0,(zs[f]-z0)/(z1-z0))
+        Mw=Matrix.Translation(c)@Matrix.Rotation(-math.radians(C*w),4,'X')@Matrix.Translation(-c)@(RW@pb['root'].matrix)
+        pb['root'].matrix=RW.inverted()@Mw
+        pb['root'].keyframe_insert('rotation_quaternion',frame=f); pb['root'].keyframe_insert('location',frame=f)
 fk={}
 for f in fr:
     s.frame_set(f); bpy.context.view_layer.update()
@@ -17,13 +33,18 @@ for f in fr:
 def ang(h,k,a): return math.degrees((h-k).angle(a-k))
 # longitudes del destino
 lens={x:((fk[1][x]['knee']-fk[1][x]['hip']).length,(fk[1][x]['ank']-fk[1][x]['knee']).length) for x in 'LR'}
-ank={}; footR={}
+ank={}; footR={}; fdir={}
 for x in 'LR':
     xs=[fk[f][x]['ank'] for f in fr]
     m=sum(xs,Vector())/len(xs); m.z=min(v.z for v in xs); ank[x]=m
     # orientación del pie: la del frame con el pie más plano (dedo más bajo relativo al tobillo)
     fbest=min(fr,key=lambda f:abs((fk[f][x]['toe']-fk[f][x]['ank']).normalized().z-(fk[1][x]['toe']-fk[1][x]['ank']).normalized().z))
     footR[x]=(fk[fbest][x]['footM'],fk[fbest][x]['toeM'])
+    td=fk[fbest][x]['toe']-fk[fbest][x]['ank']; td.z=0; td.normalize(); fdir[x]=td
+    AP=P.get('apertura_pies')  # grados hacia fuera, igual en los dos pies
+    if AP is not None:
+        al=math.radians(AP*(1 if x=='L' else -1))-math.atan2(td.x,-td.y)
+        Rz=Matrix.Rotation(al,4,'Z'); footR[x]=(Rz@footR[x][0],Rz@footR[x][1]); fdir[x]=(Rz.to_3x3()@td).normalized()
 thmax=max(min(ang(fk[f][x]['hip'],fk[f][x]['knee'],fk[f][x]['ank']) for x in 'LR') for f in fr)
 dzs={}
 for f in fr:
@@ -61,11 +82,19 @@ for f in fr:
         h=W(ul); k=W(ll); a0=W(ft)
         a=(k-h).length; b=(a0-k).length; T=ank[x]
         ax0=(a0-h).normalized(); nd=(k-h)-((k-h).dot(ax0))*ax0
-        toe=fk[f][x]['toe']-fk[f][x]['ank']; toe.z=0; toe.normalize()
+        toe=fdir[x]
         if nd.length<0.01: nd=nd+toe*(0.01-nd.length)
         d=min((T-h).length,a+b-1e-4); ax=(T-h).normalized()
         n=nd-(nd.dot(ax))*ax; n.normalize()
         ca=(a*a+d*d-b*b)/(2*a*d); sa=math.sqrt(max(0,1-ca*ca))
+        KP=P.get('rodilla_pie',0.0)  # 1 = la rodilla avanza sobre la línea del pie
+        if KP>0:
+            e1=toe-(toe.dot(ax))*ax; e1.normalize(); e2=ax.cross(e1)
+            def lat(p):
+                q=(h+ax*a*ca+(math.cos(p)*e1+math.sin(p)*e2)*a*sa)-T; return toe.x*q.y-toe.y*q.x
+            ph=min((math.radians(g/2) for g in range(-140,141)),key=lambda p:abs(lat(p)))
+            npie=math.cos(ph)*e1+math.sin(ph)*e2
+            n=((1-KP)*n+KP*npie).normalized()
         knee=h+ax*a*ca+n*a*sa
         q1=(k-h).normalized().rotation_difference((knee-h).normalized())
         Rul=q1@Mul.to_quaternion()

@@ -20,12 +20,31 @@ superior en el esternón, la inferior en el abdomen) y en la bajada acababa fren
 vientre; ahora la cabeza superior queda bajo la barbilla durante todo el movimiento.
 Se añadió la vista trasera para que se vean los glúteos.
 
+Correcciones del dueño (2026-10-25): al final de la subida la cadera «se abría» después de
+estirar las rodillas y la musculatura se veía plana.
+- Técnica (medido con `verificar_tecnica.py`): el sujeto de CMU terminaba con el tronco a 20°
+  y la cadera sin extender (156°), estiraba las rodillas antes que la cadera, tenía los pies
+  asimétricos (28° y 5°) y la rodilla derecha se abría 13 cm por fuera del pie abajo. Ahora
+  la pelvis se endereza en proporción a la altura (tronco a 7° arriba, el de reposo), cadera
+  y rodilla se extienden a la vez (rodilla 175°), los dos pies abren 17° y las rodillas
+  avanzan sobre la línea del pie.
+- Cuerpo atlético (macros de MakeHuman) y atlas de músculos: recto femoral, vasto lateral,
+  vasto medial, glúteo mayor y medio con vientre, surcos y dirección de fibra.
+
+Referencias de técnica (coinciden en lo esencial): pies al ancho de cadera u hombros con las
+puntas algo abiertas, peso al pecho, torso erguido, rodillas en la dirección de los pies,
+bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por completo.
+[NASM](https://www.nasm.org/resource-center/exercise-library/goblet-squat),
+[Healthline](https://healthline.com/health/fitness-exercise/dumbbell-goblet-squat),
+[MasterClass](https://www.masterclass.com/articles/goblet-squat-guide),
+[O2 Fitness](https://blog.o2fitnessclubs.com/goblet-squats).
+
 ## Estándar visual (igual para todos los ejercicios)
 
 | | Valor |
 |---|---|
-| Figura | Maniquí MPFB de `../3d/pendulum-squat.blend` (objeto `Human` + `Human.rig`), sin cambiar proporciones |
-| Colores | Piel gris claro (material `Maniqui`, color base lineal 0.60/0.60/0.61), short gris oscuro, músculos trabajados en rojo (`Musculo`) con borde suave |
+| Figura | Maniquí MPFB de `../3d/pendulum-squat.blend` (objeto `Human` + `Human.rig`) con cuerpo atlético: macros MakeHuman músculo 1.0 y peso 0.3 (paso 0); género, edad y proporciones sin cambiar |
+| Colores | Piel gris claro (material `Maniqui`, color base lineal 0.60/0.60/0.61), short gris oscuro, músculos trabajados en rojo (`Musculo`): vientre en el rojo de `Musculo`, surcos en rojo oscuro, fibras y relieve (bump) desde el atlas `musculos.py` |
 | Fondo | `#0b0c0d` (composición sobre render con alfa) |
 | Cámara | Una repetición por vista, misma distancia (3,09 m), altura 1,05 m y lente 50 mm, mirando a `(0, 0.08, 0.8)`. 3/4 frontal en `(1.25, -2.75, 1.05)`; 3/4 trasera a 125° en `(2.531, 1.852, 1.05)` cuando los músculos trabajados están detrás |
 | Luces | Las tres del blend base (`Clave`, `Contra`, `Relleno`) |
@@ -34,6 +53,9 @@ Se añadió la vista trasera para que se vean los glúteos.
 
 ## Pipeline (`herramientas/`)
 
+0. `0_cuerpo_atletico.py` — sustituye las claves de forma de músculo y peso medios por sus
+   variantes MakeHuman (`fuentes/makehuman/`, CC0) y mueve cada hueso con los cubos de
+   articulación MPFB más cercanos (≤ 5 mm).
 1. `1_retarget_mocap.py` — importa el BVH, orienta al sujeto hacia −Y y transfiere
    pelvis, columna, cuello, piernas y pies al rig MPFB (delta de rotación del
    mocap + alineación de reposo por hueso). Escala la traslación por longitud de
@@ -42,15 +64,23 @@ Se añadió la vista trasera para que se vean los glúteos.
    huesos (el IK de Blender giraba la rodilla izquierda 30° en flexión profunda).
    El plano de la rodilla sale del mocap. Cerca de arriba extiende la rodilla a
    168° y centra la pelvis (el sujeto de CMU se queda con rodillas blandas).
+   Opciones de técnica: `tronco_arriba` (inclinación del tronco arriba; la pelvis gira hacia
+   atrás sobre el eje de las caderas en proporción a la altura), `apertura_pies` (misma
+   apertura en los dos pies), `rodilla_pie` (1 = rodilla sobre la línea del pie) y
+   `rodilla_arriba`.
 3. `3_brazos_mancuerna_pecho.py` — mancuerna hexagonal en contacto con el pecho
    (raycast) y brazos IK con polo calibrado numéricamente. Específico del goblet;
    cada patrón de agarre tendrá su script.
-4. `4_estilo.py` — máscaras por vértice suavizadas para short, cuádriceps y glúteos
-   (sin bordes dentados por caras).
+4. `4_estilo.py` — máscara suavizada del short y, con `anatomia`, los músculos del atlas
+   `musculos.py` horneados en una textura UV de 2048 px (empaquetada en el blend). Cada
+   músculo es una región anatómica en reposo (muslo en coordenadas cilíndricas cadera→rodilla;
+   glúteos como polígonos en la cara posterior) con ancho de vientre y dirección de fibra.
+   Para otro ejercicio se añaden sus músculos al atlas y se nombran en `anatomia`.
 5. `5_render.py` y 6. `6_codificar_gif.py` — render con alfa (una repetición por
    cámara de la lista JSON), composición y GIF.
 
-Revisión: `revisar.py` (renders de cualquier cámara/fotograma), `hoja.py` (hoja de
+Revisión: `verificar_tecnica.py` (tronco, cadera, rodilla, desviación de la rodilla frente
+a la línea del pie y apertura de pies por fotograma), `revisar.py` (renders de cualquier cámara/fotograma), `hoja.py` (hoja de
 contacto), `buscar_repeticiones.py` y `curva_repeticion.py` (encontrar una
 repetición limpia en un BVH: rodilla, altura de cadera, talón, valgo).
 
@@ -70,6 +100,13 @@ tarda ≈ 30 s por fotograma a 128 muestras.
 - Centro de la mancuerna 21 mm por debajo de los hombros de pie y 99 mm abajo (antes 138 y 194 mm).
 - `verificar_piernas.py` lista los fotogramas de pie (1–3, 20–24) en `valgo_frames`: con las
   piernas casi rectas las rodillas quedan algo más juntas que los tobillos; no es valgo bajo carga.
+
+## Fuente del cuerpo
+
+`fuentes/makehuman/*.target.gz` — targets de macros de MakeHuman
+(`makehumancommunity/makehuman`, commit `a8bc2d5`, `makehuman/data/targets/`), liberados
+como CC0 en 2020. Solo los 16 necesarios (universal y pecho, joven, músculo y peso medios
+o extremos), comprimidos.
 
 ## Fuente del movimiento
 
@@ -95,5 +132,5 @@ EIA-0196217.* Tramo usado: frames 1456–1700 (repetición 1 de las sentadillas)
 - CMU no cubre la mayoría de ejercicios de gimnasio. Para el resto: otras bases
   libres o mocap desde vídeo con licencia; las máquinas específicas (pendulum,
   belt squat, convergentes) hay que modelarlas.
-- La figura sigue siendo un maniquí; un cuerpo más atlético cambiaría el estilo de
-  toda la biblioteca y lo decide el dueño.
+- El atlas de músculos solo tiene cuádriceps y glúteos; cada ejercicio nuevo añade los suyos.
+- El cuerpo atlético se aplica a toda la biblioteca (decisión del dueño, 2026-10-25).
