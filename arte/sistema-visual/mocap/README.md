@@ -49,7 +49,7 @@ bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por 
 | Cámara | Una repetición por vista, misma distancia (3,09 m), altura 1,05 m y lente 50 mm, mirando a `(0, 0.08, 0.8)`. 3/4 frontal en `(1.25, -2.75, 1.05)`; 3/4 trasera a 125° en `(2.531, 1.852, 1.05)` cuando los músculos trabajados están detrás |
 | Luces | Las tres del blend base (`Clave`, `Contra`, `Relleno`) |
 | Render | EEVEE, 128 muestras (con menos aparece grano en el pecho) |
-| GIF | 360×480, 24 fotogramas por vista, 12 fps (≈2 s por vista), 48 colores, ≤ 250 KB por vista (la app acepta hasta 5 MB), primer fotograma de pie, corte de vista en la posición de pie |
+| GIF | 360×480, 24 fotogramas por vista, 12 fps (≈2 s por vista), 48 colores, ≈ 200–250 KB por vista (la app acepta hasta 5 MB), primer fotograma de pie, corte de vista en la posición de pie |
 
 ## Pipeline (`herramientas/`)
 
@@ -93,13 +93,15 @@ tarda ≈ 30 s por fotograma a 128 muestras.
 ## Verificaciones del Goblet Squat (medidas, no sustituyen la revisión visual)
 
 - Deriva de los tobillos: **0 mm** en los 24 fotogramas.
-- Error del plano de rodilla frente al mocap: **0°**.
-- Rodillas por fuera de los tobillos en toda la flexión (sin valgo); abajo 0,70 m entre rodillas.
-- Rodilla: 163°/161° arriba, 39°/42° abajo (sentadilla profunda).
-- Muñecas en la mancuerna: 0 mm; mancuerna entre 0 y 8 mm del torso en los 24 fotogramas.
-- Centro de la mancuerna 21 mm por debajo de los hombros de pie y 99 mm abajo (antes 138 y 194 mm).
-- `verificar_piernas.py` lista los fotogramas de pie (1–3, 20–24) en `valgo_frames`: con las
-  piernas casi rectas las rodillas quedan algo más juntas que los tobillos; no es valgo bajo carga.
+- Técnica (`verificar_tecnica.py`): arriba tronco a 7° (el de reposo), cadera 164–169° (reposo
+  167°) y rodilla 175°; cadera y rodilla se extienden en los mismos fotogramas (21: 145°/149°,
+  22: 162°/170°). Abajo tronco a 47° y rodilla 40°/42° (sentadilla profunda, talones apoyados).
+- Rodillas sobre la línea del pie en toda la flexión: desviación máxima **0,1 cm**. Pies abiertos 17°/17°.
+- Mancuerna entre 0,5 y 5,8 mm del torso en los 24 fotogramas.
+- `verificar_piernas.py` lista los fotogramas de pie (1, 22–24) en `valgo_frames`: con las piernas
+  rectas y los pies más abiertos que la cadera, las rodillas quedan algo más juntas que los
+  tobillos por geometría; no es valgo.
+- GIF: 48 fotogramas, 410 KB.
 
 ## Fuente del cuerpo
 
