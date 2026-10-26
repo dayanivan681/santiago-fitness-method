@@ -33,8 +33,9 @@ for k in [k for k in kb if '$av$mu-$av$wg' in k.name]:
     for m,a in wm.items():
         for w,b in ww.items():
             nombre=base.replace('averagemuscle-averageweight',f'{m}muscle-{w}weight')
+            if a*b==0: continue
             D=target(nombre)
-            if not D.any() or a*b==0: continue
+            if not D.any(): continue
             nk=h.shape_key_add(name='$md-'+nombre,from_mix=False); nk.data.foreach_set('co',(B+D).ravel()); nk.value=v*a*b
     k.value=0.0
 GE=P.get('genero')

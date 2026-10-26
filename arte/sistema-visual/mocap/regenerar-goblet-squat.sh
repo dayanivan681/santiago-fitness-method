@@ -11,8 +11,9 @@ run() { local s="$1"; shift
   else "${BPY:?define BPY o PS_BLENDER}" "$H/$s" -- "$@"; fi; }
 PYIMG="${PYIMG:-${BPY:-python3}}"
 # 0. Cuerpo: hombre musculado y definido (decisión del dueño, 2026-10-26). Macros MakeHuman (CC0):
-#    género 1, músculo 1.0 y peso 0.1, reforzados ×1.8; esqueleto reajustado.
-run 0_cuerpo_atletico.py "$BASE" "$W/0-cuerpo.blend" '{"musculo":1.0,"peso":0.1,"genero":1.0,"refuerzo":1.8}'
+#    género 1, músculo 1.0 reforzado ×2.5 y peso medio (con peso bajo perdía volumen; ×3 deforma
+#    pecho y cintura); esqueleto reajustado.
+run 0_cuerpo_atletico.py "$BASE" "$W/0-cuerpo.blend" '{"musculo":1.0,"peso":0.5,"genero":1.0,"refuerzo":2.5}'
 # 1. Repetición 1 de CMU 13_30 (frames 1456-1700, 120 fps) en 24 fotogramas; cierre del bucle en 3.
 #    Profundidad hasta paralelo (decisión del dueño): G_MUSLO=80 en el sujeto CMU deja el muslo de la
 #    figura a 0°/-2° de la horizontal abajo tras el ajuste de piernas del paso 2.
