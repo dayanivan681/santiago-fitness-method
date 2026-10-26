@@ -1,5 +1,6 @@
 """Cuerpo atlético: macros de músculo y peso de MakeHuman (CC0) sobre el maniquí MPFB y esqueleto reajustado.
-Uso: blend_base salida.blend '{"musculo":0.9,"peso":0.4}'  (escala MakeHuman: 0.5 = medio, 1 = máximo)."""
+Uso: blend_base salida.blend '{"musculo":0.9,"peso":0.4,"genero":1.0}'  (escala MakeHuman: 0.5 = medio,
+1 = máximo; genero 0 = mujer, 1 = hombre, sin él se conserva el del maniquí)."""
 import bpy,sys,os,json,gzip,re
 import numpy as np
 A=sys.argv[sys.argv.index('--')+1:]
@@ -36,6 +37,20 @@ for k in [k for k in kb if '$av$mu-$av$wg' in k.name]:
             if not D.any() or a*b==0: continue
             nk=h.shape_key_add(name='$md-'+nombre,from_mix=False); nk.data.foreach_set('co',(B+D).ravel()); nk.value=v*a*b
     k.value=0.0
+GE=P.get('genero')
+if GE is not None:  # cada clave lleva el peso de su sexo: se reescala del género actual al pedido
+    def sexo(nm):
+        t=set(nm.split('-')); return 'f' if t&{'$fe','female'} else ('m' if t&{'$ma','male'} else None)
+    et=[k for k in kb if k.name.startswith('$md-$') and k.name.count('-')==3]  # etnia-sexo-edad
+    g0=sum(k.value for k in et if sexo(k.name)=='m')/sum(k.value for k in et)
+    for k in kb:
+        sx=sexo(k.name)
+        if sx=='f': k.value*=(1-GE)/(1-g0)
+        elif sx=='m': k.value*=GE/g0
+RF=P.get('refuerzo',1.0)  # >1 lleva músculo y delgadez más allá del máximo de MakeHuman
+if RF!=1.0:
+    for k in kb:
+        if 'maxmuscle' in k.name or 'minweight' in k.name: k.slider_max=max(k.slider_max,RF); k.value*=RF
 despues=mezcla()
 # esqueleto: cada extremo de hueso se mueve con los cubos de articulación MPFB más cercanos
 jg={g.index for g in h.vertex_groups if g.name.startswith('joint-')}
@@ -52,7 +67,7 @@ for eb in rig.data.edit_bones:
 bpy.ops.object.mode_set(mode='OBJECT')
 # apoyo: la planta del pie vuelve al suelo
 z0=antes[:,2].min(); z1=despues[:,2].min()
-print(json.dumps({'musculo':MU,'peso':WG,'claves':[k.name for k in kb if k.value>0 and k.name!='Basis'],
+print(json.dumps({'musculo':MU,'peso':WG,'genero':GE,'refuerzo':RF,'claves':[k.name for k in kb if k.value>0 and k.name!='Basis'],
   'superficie_max_mm':round(float(np.linalg.norm(despues-antes,axis=1).max())*1000,1),
   'huesos_max_mm':round(float(max(mov))*1000,1),'suelo_mm':round(float(z1-z0)*1000,1)}))
 bpy.ops.wm.save_as_mainfile(filepath=OUT)

@@ -51,8 +51,12 @@ def _poligono(q,poly):
         dentro^=cruza
     return np.where(dentro,dmin,-dmin)
 
-def gluteos(P,escala=1.0):
-    q=np.c_[np.abs(P[:,0]),P[:,2]]/[1,escala]
+def gluteos(P,huesos=None):
+    # polígonos medidos en el maniquí con la cadera a (±0.101, 0.865): se escalan a la cadera de la figura
+    sx,sz=1.0,1.0
+    if huesos:
+        H=[huesos[x][0] for x in 'LR']; sx=np.mean([abs(h[0]) for h in H])/0.101; sz=np.mean([h[2] for h in H])/0.865
+    q=np.c_[np.abs(P[:,0])/sx,P[:,2]/sz]
     gm=np.minimum(_poligono(q,GMAX),(P[:,1]-0.0))
     gd=np.minimum(_poligono(q,GMED),(P[:,1]+0.05))
     d=np.array([0.8,1.0]); d/=np.linalg.norm(d)
@@ -70,7 +74,7 @@ def campos(P,huesos,grupos,borde=0.006,fibra=0.010,surco=0.010):
                 lado=(P[:,0]>0) if x=='L' else (P[:,0]<0)
                 for sd,w,f in cuadriceps(P,*huesos[x]): capas.append((np.where(lado,sd,-1),w,f))
         elif g=='gluteos':
-            capas+=gluteos(P)
+            capas+=gluteos(P,huesos)
     mask=np.zeros(len(P)); belly=np.zeros(len(P)); fib=np.zeros(len(P))
     # surco: donde dos músculos se tocan la máscara sigue llena (rojo oscuro, no piel)
     sds=np.sort(np.stack([c[0] for c in capas]),0)

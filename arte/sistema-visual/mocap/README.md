@@ -33,7 +33,8 @@ estirar las rodillas y la musculatura se veía plana.
   pedida y el tobillo a la altura de reposo.
 - Cuerpo atlético (macros de MakeHuman) y atlas de músculos: recto femoral, vasto lateral,
   vasto medial, glúteo mayor y medio. Cuarta revisión: profundidad hasta paralelo
-  (`G_MUSLO=80`). Tercera revisión: solo rojo, sin fibras ni surcos
+  (`G_MUSLO=80`). Quinta revisión: hombre más musculado y definido (género 1, peso 0.1,
+  refuerzo ×1.8); los polígonos de glúteos se escalan a la cadera de la figura. Tercera revisión: solo rojo, sin fibras ni surcos
   marcados, para que se vea realista (`fibra_osc` y `fibra_relieve` a 0).
 
 Referencias de técnica (coinciden en lo esencial): pies al ancho de cadera u hombros con las
@@ -48,7 +49,7 @@ bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por 
 
 | | Valor |
 |---|---|
-| Figura | Maniquí MPFB de `../3d/pendulum-squat.blend` (objeto `Human` + `Human.rig`) con cuerpo atlético: macros MakeHuman músculo 1.0 y peso 0.3 (paso 0); género, edad y proporciones sin cambiar |
+| Figura | Maniquí MPFB de `../3d/pendulum-squat.blend` (objeto `Human` + `Human.rig`) convertido en hombre musculado y definido (paso 0): macros MakeHuman género 1, músculo 1.0, peso 0.1, reforzados ×1.8; edad y proporciones sin cambiar |
 | Colores | Piel gris claro (material `Maniqui`, color base lineal 0.60/0.60/0.61), short gris oscuro, músculos trabajados en rojo liso (`Musculo`) con forma anatómica del atlas `musculos.py`, volumen suave (bump) y separación tenue entre músculos (rojo 0.55/0.035/0.03); sin fibras |
 | Fondo | `#0b0c0d` (composición sobre render con alfa) |
 | Cámara | Una repetición por vista, misma distancia (3,09 m), altura 1,05 m y lente 50 mm, mirando a `(0, 0.08, 0.8)`. 3/4 frontal en `(1.25, -2.75, 1.05)`; 3/4 trasera a 125° en `(2.531, 1.852, 1.05)` cuando los músculos trabajados están detrás |
@@ -59,8 +60,10 @@ bajar al menos hasta muslos paralelos y subir extendiendo cadera y rodillas por 
 ## Pipeline (`herramientas/`)
 
 0. `0_cuerpo_atletico.py` — sustituye las claves de forma de músculo y peso medios por sus
-   variantes MakeHuman (`fuentes/makehuman/`, CC0) y mueve cada hueso con los cubos de
-   articulación MPFB más cercanos (≤ 5 mm).
+   variantes MakeHuman (`fuentes/makehuman/`, CC0), reescala las claves de cada sexo al
+   `genero` pedido, multiplica las de músculo máximo y peso mínimo por `refuerzo` y mueve cada
+   hueso con los cubos de articulación MPFB más cercanos (hasta 72 mm al pasar a hombre,
+   que es más alto).
 1. `1_retarget_mocap.py` — importa el BVH, orienta al sujeto hacia −Y y transfiere
    pelvis, columna, cuello, piernas y pies al rig MPFB (delta de rotación del
    mocap + alineación de reposo por hueso). Escala la traslación por longitud de
@@ -106,7 +109,7 @@ tarda ≈ 30 s por fotograma a 128 muestras.
   167°) y rodilla 175°; cadera y rodilla se extienden en los mismos fotogramas (21: 145°/149°,
   22: 162°/170°). Abajo muslo a 0°/−2° de la horizontal (paralelo), rodilla 59°/60°, tronco a 46°.
 - Rodillas sobre la línea del pie en toda la flexión: desviación máxima **0,1 cm**. Pies abiertos 17°/17°.
-- Mancuerna entre 0,5 y 5,2 mm del torso en los 24 fotogramas.
+- Mancuerna entre 0,7 y 3,6 mm del torso en los 24 fotogramas.
 - `verificar_piernas.py` lista los fotogramas de pie (1, 22–24) en `valgo_frames`: con las piernas
   rectas y los pies más abiertos que la cadera, las rodillas quedan algo más juntas que los
   tobillos por geometría; no es valgo.
