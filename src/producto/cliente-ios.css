@@ -171,6 +171,21 @@
 }
 .sfm-shell--client .sfm-context-help p { margin: 0; }
 
+/* Guía para instalar la app en la pantalla de inicio. */
+.sfm-instalar {
+  margin: 12px 0 20px;
+  padding: 16px;
+  border: 1px solid #ffffff20;
+  border-radius: 16px;
+  background: #ffffff06;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.sfm-instalar p, .sfm-instalar ol { margin: 6px 0 0; color: #bdbdc2; }
+.sfm-instalar ol { padding-left: 20px; }
+.sfm-instalar .sfm-instalar-nota { font-size: 12px; }
+.sfm-instalar-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
 /* Entrenar: identidad compacta y registro como tarea central. */
 .sfm-main--client:has(.entreno__barra) { padding-top: 0; }
 .sfm-main--client .entreno__barra { padding: 4px 0 8px; min-height: 60px; }

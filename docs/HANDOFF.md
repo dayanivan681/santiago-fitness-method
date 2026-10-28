@@ -377,11 +377,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-10-28T18:12:19.524Z
+- **Última sincronización:** 2026-10-28T18:19:51.300Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1529,6 +1529,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-10-28T18:19:51.301Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Guía para instalar la app en la pantalla de inicio del cliente (iPhone y Android): aviso en Hoy, se oculta si ya está instalada o tras «Ahora no»; botón Instalar en Android cuando Chrome lo permite. Nota de novedades para clientes aprobada por el dueño. Archivos: src/aplicacion/instalacion.ts, src/producto/InstalarApp.tsx (+test), Cliente.tsx, main.tsx, gestos.ts, cliente-ios.css, notas-novedades.ts. Verificado con cliente QA local en viewport Android; iPhone solo por pruebas.
+- **Verificación:** npm test (1089 PASS); npm run lint; npm run build
+- **Siguiente:** Desplegar a producción si no es automático; Dayan envía a Santiago el mensaje de cómo invitar e instalar
+
 
 ### 2026-10-28T18:12:19.525Z | claude-code | CLAIM
 - **Estado:** active

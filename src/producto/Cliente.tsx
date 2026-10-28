@@ -4,6 +4,7 @@ import { AvisoNovedades } from "./Novedades";
 import { useNovedades } from "./useNovedades";
 import { ProveedorAyudaReal } from "./Ayuda";
 import { ConsejoCliente } from "./Ayuda";
+import { InstalarApp } from "./InstalarApp";
 import { useMemo, useState } from "react";
 import {
   Link,
@@ -167,6 +168,7 @@ function ContenidoCliente({
                       month: "long",
                     })} · Vamos, {participante.nombre.split(" ")[0]}.
                   </p>
+                  {modo === "real" && <InstalarApp />}
                   <EntrenamientoHoy
                     repositorio={repo}
                     memoriaDia={dia}

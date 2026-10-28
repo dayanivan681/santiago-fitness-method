@@ -6,6 +6,7 @@
  * permite quedarse con el gesto. Con ratón no hacen nada: en escritorio se
  * cierra y se navega con clics.
  */
+import { enPantallaCompleta } from './instalacion'
 import { useEffect, type RefObject } from 'react'
 import { movimientoReducido } from './transiciones'
 
@@ -132,13 +133,6 @@ export function useDeslizarHorizontal(
       zona.removeEventListener('touchend', alSoltar)
     }
   }, [ref, anterior, siguiente])
-}
-
-function enPantallaCompleta(): boolean {
-  return (
-    (typeof matchMedia === 'function' && matchMedia('(display-mode: standalone)').matches) ||
-    (navigator as Navigator & { standalone?: boolean }).standalone === true
-  )
 }
 
 /**

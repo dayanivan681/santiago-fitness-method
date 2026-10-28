@@ -23,6 +23,16 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
+    id: "2026-10-28-cliente-instalar-app",
+    fecha: "2026-10-28",
+    audiencia: "cliente",
+    titulo: "Lleva la app en tu pantalla de inicio",
+    puntos: [
+      "En Hoy verás cómo añadir Santiago FM a la pantalla de inicio de tu teléfono.",
+      "Así entras directo con un toque, sin buscar el enlace.",
+    ],
+  },
+  {
     id: "2026-10-21-coach-laptop",
     fecha: "2026-10-21",
     audiencia: "coach",
