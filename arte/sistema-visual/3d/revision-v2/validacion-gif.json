@@ -1,0 +1,18 @@
+{
+  "firma": "GIF89a",
+  "medida": [
+    360,
+    480
+  ],
+  "bytes": 229693,
+  "fotogramas": 17,
+  "colores_usados": 40,
+  "duracion_ms": 1890,
+  "fps_exportacion": 9,
+  "fondo_esquina_en_todos_los_frames": true,
+  "primer_frame_rms_frente_a_inicio": 1.9973912384055508,
+  "primer_frame_rms_frente_a_abajo": 39.58627069998005,
+  "primer_frame_es_inicio": true,
+  "sha256": "9aabb8447fd6678d0d1a4b1ad3500ae73f915a6f93249f82ab7c2536eaa3fb43",
+  "pass": true
+}

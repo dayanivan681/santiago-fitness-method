@@ -1,0 +1,435 @@
+{
+  "origen": "/Users/dayanmacbookpro/sfm-diseno/arte/sistema-visual/3d/pendulum-squat.blend",
+  "no_se_guarda_ni_cambia_geometria": true,
+  "supuesto": "Pelvis anclada a un punto del respaldo; tobillo fijo en plataforma; inicio con rodilla a 170 grados. Es una prueba de alcance necesaria, no una validaci\u00f3n final de piel ni IK.",
+  "muslo_m": 0.39470693614611624,
+  "pierna_m": 0.40733094188766467,
+  "longitud_maxima_4_huesos_m": 0.8050926849246025,
+  "profundidad_posterior_pelvis_m": 0.10654409043490887,
+  "tobillo_fijo": [
+    0.180973,
+    0.018666,
+    0.187852
+  ],
+  "desplazamiento_respaldo_1_a_12_m": [
+    0.0,
+    0.197516,
+    0.02076
+  ],
+  "muestras": [
+    {
+      "frame": 1,
+      "pivote_grados": -7.0,
+      "respaldo_centro": [
+        0.0,
+        0.62,
+        1.1
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.49432,
+        0.824886
+      ],
+      "distancia_cadera_tobillo_m": 0.798987,
+      "alcanzable_sin_estirar": true,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0,
+      "angulo_interno_rodilla_2_segmentos_grados": 170.0
+    },
+    {
+      "frame": 2,
+      "pivote_grados": -6.720511,
+      "respaldo_centro": [
+        0.0,
+        0.624634,
+        1.100011
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.500297,
+        0.824287
+      ],
+      "distancia_cadera_tobillo_m": 0.802085,
+      "alcanzable_sin_estirar": true,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 3,
+      "pivote_grados": -5.95417,
+      "respaldo_centro": [
+        0.0,
+        0.63734,
+        1.100158
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.516702,
+        0.822796
+      ],
+      "distancia_cadera_tobillo_m": 0.810873,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.00578,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 4,
+      "pivote_grados": -4.809167,
+      "respaldo_centro": [
+        0.0,
+        0.656317,
+        1.100695
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.541245,
+        0.820977
+      ],
+      "distancia_cadera_tobillo_m": 0.824777,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.019684,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 5,
+      "pivote_grados": -3.39369,
+      "respaldo_centro": [
+        0.0,
+        0.679755,
+        1.101881
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.571629,
+        0.819407
+      ],
+      "distancia_cadera_tobillo_m": 0.843179,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.038086,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 6,
+      "pivote_grados": -1.815928,
+      "respaldo_centro": [
+        0.0,
+        0.705838,
+        1.103886
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.60553,
+        0.818541
+      ],
+      "distancia_cadera_tobillo_m": 0.865158,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.060066,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 7,
+      "pivote_grados": -0.184072,
+      "respaldo_centro": [
+        0.0,
+        0.732746,
+        1.106714
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.640604,
+        0.818629
+      ],
+      "distancia_cadera_tobillo_m": 0.889386,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.084294,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 8,
+      "pivote_grados": 1.39369,
+      "respaldo_centro": [
+        0.0,
+        0.758675,
+        1.110176
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.674501,
+        0.819663
+      ],
+      "distancia_cadera_tobillo_m": 0.914125,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.109033,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 9,
+      "pivote_grados": 2.809167,
+      "respaldo_centro": [
+        0.0,
+        0.781849,
+        1.113889
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.704876,
+        0.821384
+      ],
+      "distancia_cadera_tobillo_m": 0.93732,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.132227,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 10,
+      "pivote_grados": 3.954171,
+      "respaldo_centro": [
+        0.0,
+        0.800523,
+        1.11731
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.72941,
+        0.823326
+      ],
+      "distancia_cadera_tobillo_m": 0.956716,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.151624,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 11,
+      "pivote_grados": 4.720511,
+      "respaldo_centro": [
+        0.0,
+        0.812981,
+        1.119808
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.745807,
+        0.824899
+      ],
+      "distancia_cadera_tobillo_m": 0.969992,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.164899,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 12,
+      "pivote_grados": 5.0,
+      "respaldo_centro": [
+        0.0,
+        0.817516,
+        1.12076
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.751782,
+        0.825527
+      ],
+      "distancia_cadera_tobillo_m": 0.97489,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.169797,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 13,
+      "pivote_grados": 4.720511,
+      "respaldo_centro": [
+        0.0,
+        0.812981,
+        1.119808
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.745807,
+        0.824899
+      ],
+      "distancia_cadera_tobillo_m": 0.969992,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.164899,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 14,
+      "pivote_grados": 3.95417,
+      "respaldo_centro": [
+        0.0,
+        0.800522,
+        1.11731
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.72941,
+        0.823326
+      ],
+      "distancia_cadera_tobillo_m": 0.956716,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.151623,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 15,
+      "pivote_grados": 2.809166,
+      "respaldo_centro": [
+        0.0,
+        0.781849,
+        1.113889
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.704876,
+        0.821384
+      ],
+      "distancia_cadera_tobillo_m": 0.93732,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.132227,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 16,
+      "pivote_grados": 1.393689,
+      "respaldo_centro": [
+        0.0,
+        0.758675,
+        1.110176
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.674501,
+        0.819663
+      ],
+      "distancia_cadera_tobillo_m": 0.914125,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.109033,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 17,
+      "pivote_grados": -0.184072,
+      "respaldo_centro": [
+        0.0,
+        0.732746,
+        1.106714
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.640604,
+        0.818629
+      ],
+      "distancia_cadera_tobillo_m": 0.889386,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.084294,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 18,
+      "pivote_grados": -1.815927,
+      "respaldo_centro": [
+        0.0,
+        0.705838,
+        1.103886
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.60553,
+        0.818541
+      ],
+      "distancia_cadera_tobillo_m": 0.865159,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.060066,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 19,
+      "pivote_grados": -3.39369,
+      "respaldo_centro": [
+        0.0,
+        0.679755,
+        1.101881
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.571629,
+        0.819407
+      ],
+      "distancia_cadera_tobillo_m": 0.843179,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.038086,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 20,
+      "pivote_grados": -4.809165,
+      "respaldo_centro": [
+        0.0,
+        0.656317,
+        1.100695
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.541245,
+        0.820977
+      ],
+      "distancia_cadera_tobillo_m": 0.824777,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.019684,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 21,
+      "pivote_grados": -5.954171,
+      "respaldo_centro": [
+        0.0,
+        0.63734,
+        1.100158
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.516702,
+        0.822796
+      ],
+      "distancia_cadera_tobillo_m": 0.810873,
+      "alcanzable_sin_estirar": false,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0.00578,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 22,
+      "pivote_grados": -6.720512,
+      "respaldo_centro": [
+        0.0,
+        0.624634,
+        1.100011
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.500297,
+        0.824287
+      ],
+      "distancia_cadera_tobillo_m": 0.802085,
+      "alcanzable_sin_estirar": true,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0,
+      "angulo_interno_rodilla_2_segmentos_grados": null
+    },
+    {
+      "frame": 23,
+      "pivote_grados": -7.0,
+      "respaldo_centro": [
+        0.0,
+        0.62,
+        1.1
+      ],
+      "cadera_anclada": [
+        0.101472,
+        0.49432,
+        0.824886
+      ],
+      "distancia_cadera_tobillo_m": 0.798987,
+      "alcanzable_sin_estirar": true,
+      "deficit_minimo_incluso_con_4_huesos_rectos_m": 0,
+      "angulo_interno_rodilla_2_segmentos_grados": 170.0
+    }
+  ]
+}
