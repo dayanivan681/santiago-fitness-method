@@ -30,5 +30,5 @@ it("el resumen del coaching no usa aria-label sobre un párrafo sin rol", async 
   const resumen = (await screen.findByText(/clientes?$/, { selector: "span" })).closest("p")!;
   expect(resumen).toHaveClass("sfm-coach-summary");
   expect(resumen).not.toHaveAttribute("aria-label");
-  expect(resumen).toHaveTextContent(/sesiones? esta semana/);
+  expect(resumen).toHaveTextContent(/sesi(?:ón|ones) esta semana/);
 });

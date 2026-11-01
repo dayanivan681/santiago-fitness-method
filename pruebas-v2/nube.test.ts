@@ -98,6 +98,20 @@ describe("persistencia real con SQL transaccional", () => {
     expect(local.consultas).toBeLessThanOrEqual(3);
   });
 
+  it("tras la primera vuelta sólo lee del historial las filas nuevas", async () => {
+    await aplicar(local.db, "test-a", ctx, op("entrenamiento", entrenamiento.id, entrenamiento));
+    const inicial = await clientesActuales(local.db);
+    expect(inicial.find((c) => c.perfil.id === "test-a")?.actividad.ultima?.id).toBe(entrenamiento.id);
+    local.reiniciarConsultas();
+    await clientesActuales(local.db);
+    const sinCambios = local.filasDevueltas;
+    await aplicar(local.db, "test-a", ctx, op("entrenamiento", entrenamiento.id, { ...entrenamiento, completadaEn: "2026-09-07T10:00:00.000Z" }, 1));
+    local.reiniciarConsultas();
+    const tras = await clientesActuales(local.db);
+    expect(local.filasDevueltas - sinCambios).toBe(1);
+    expect(tras.find((c) => c.perfil.id === "test-a")?.actividad.total).toBe(1);
+  });
+
   it("la huella de la cartera sólo cambia cuando cambian sus datos, y cuesta una consulta", async () => {
     local.reiniciarConsultas();
     const antes = await etiquetaDeClientes(local.db);

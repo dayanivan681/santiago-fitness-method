@@ -117,16 +117,43 @@ export async function etiquetaDeClientes(db: D1Database): Promise<string> {
     .first<{ cambios: number; clientes: string; rutinas: string }>();
   return `"cl-${f?.cambios ?? 0}-${f?.clientes ?? ""}-${f?.rutinas ?? ""}-${inicioDeSemana()}"`;
 }
+/**
+ * Última revisión de cada documento, mantenida por base. `cambios` es de sólo
+ * anexado y `cursor` es su clave primaria, así que cada vuelta lee únicamente
+ * las filas posteriores al último cursor visto. Releer el historial entero en
+ * cada guardado agotó dos veces el límite diario de filas leídas de D1.
+ */
+const vigentesPorBase = new WeakMap<D1Database, { cursor: number; docs: Map<string, FilaCambio> }>();
+const TIPOS_DE_CARTERA = new Set<string>(["perfil", "plan", "entrenamiento"]);
+async function versionesVigentes(db: D1Database): Promise<FilaCambio[]> {
+  let estado = vigentesPorBase.get(db);
+  if (!estado) {
+    estado = { cursor: 0, docs: new Map() };
+    vigentesPorBase.set(db, estado);
+  }
+  const { results } = await db
+    .prepare("SELECT * FROM cambios WHERE cursor>? ORDER BY cursor")
+    .bind(estado.cursor)
+    .all<FilaCambio>();
+  for (const f of results) {
+    estado.cursor = Math.max(estado.cursor, f.cursor);
+    if (!TIPOS_DE_CARTERA.has(f.tipo)) continue;
+    const clave = `${f.cliente_id}\u0000${f.tipo}\u0000${f.documento_id}`;
+    const previa = estado.docs.get(clave);
+    if (!previa || f.revision > previa.revision) estado.docs.set(clave, f);
+  }
+  return [...estado.docs.values()].filter((f) => !f.eliminado);
+}
 export async function clientesActuales(db: D1Database) {
-  // Tres consultas para toda la cartera: el coste no crece por cada cliente.
+  // El historial se lee de forma incremental; perfiles y rutinas son tablas pequeñas.
   const [perfiles, versiones, rutinas] = await Promise.all([
     listarPerfiles(db),
-    db.prepare("SELECT * FROM cambios c WHERE tipo IN ('perfil','plan','entrenamiento') AND revision=(SELECT MAX(revision) FROM cambios v WHERE v.cliente_id=c.cliente_id AND v.tipo=c.tipo AND v.documento_id=c.documento_id) AND eliminado=0").all<FilaCambio>(),
+    versionesVigentes(db),
     db.prepare("SELECT id,cliente_id,nombre,orden,slots_json FROM rutinas ORDER BY orden").all<{id:string;cliente_id:string;nombre:string;orden:number;slots_json:string}>(),
   ]);
   const desde = inicioDeSemana();
   return perfiles.filter(p=>p.id!=="dayan-test").map(p=>{
-    const registros=versiones.results.filter(v=>v.cliente_id===p.id);
+    const registros=versiones.filter(v=>v.cliente_id===p.id);
     const pv=registros.find(v=>v.tipo==="perfil"&&v.documento_id===p.id);
     const plan=registros.find(v=>v.tipo==="plan"&&v.documento_id==="programa");
     const sesiones=registros.filter(v=>v.tipo==="entrenamiento").map(v=>Entrenamiento.parse(JSON.parse(v.datos_json))).sort((a,b)=>b.fecha.localeCompare(a.fecha));

@@ -29,7 +29,10 @@ export function AvatarCuenta({
       }
     };
     void cargar();
-    const timer = setInterval(cargar, 4000);
+    // Sólo con la app visible: en segundo plano cada vuelta era una lectura de D1.
+    const timer = setInterval(() => {
+      if (!document.hidden) void cargar();
+    }, 4000);
     return () => {
       vivo = false;
       clearInterval(timer);

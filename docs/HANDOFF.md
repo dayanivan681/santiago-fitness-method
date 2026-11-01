@@ -377,11 +377,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-01T15:22:25.788Z
+- **Última sincronización:** 2026-11-01T17:22:30.710Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1529,6 +1529,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-01T17:22:30.712Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** D1 al 90% del límite diario: clientesActuales lee cambios de forma incremental (sólo cursor > último) en vez de recorrer todo el historial en cada recálculo; AvatarCuenta y Progreso dejan de pedir /medios en segundo plano; test de CoachHoy corregido (sesión con tilde)
+- **Verificación:** npm test (1090); npm run lint; npm run build
+- **Siguiente:** Desde el Mac: npx wrangler d1 insights santiago-acceso --sort-by=reads --timePeriod=1d para confirmar la bajada; si otra consulta domina, atacarla
+
 
 ### 2026-11-01T15:22:25.789Z | claude-code | CLAIM
 - **Estado:** active

@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+## 2026-11-01 — D1 otra vez al 90 % del límite diario: el panel del coach lee el historial de forma incremental — claude-code
+
+- Aviso de Cloudflare: 90 % de los 5 M de filas leídas diarias. Sin acceso a `wrangler d1 insights` (credenciales sólo en el Mac del dueño); diagnóstico por código y plan de consultas.
+- Causa principal: `clientesActuales` recorría **toda** la tabla `cambios` (cada revisión de cada cliente, más una subconsulta por fila) cada vez que cambiaba la huella del panel, es decir, con cada serie guardada por cualquier cliente. El 304 del 18-oct evitaba repetirla sin cambios, pero el coste por recálculo crecía con cada entrenamiento.
+- Servidor (`functions/lib/v2/datos.ts`): `versionesVigentes` guarda por base la última revisión de cada documento y sólo lee `cambios WHERE cursor > último` (rango de clave primaria). `cambios` es de sólo anexado (únicamente hay INSERT), así que el resultado es idéntico. Si el isolate se recicla, la primera vuelta relee todo una vez.
+- Cliente: `AvatarCuenta` y `Progreso` no comprobaban `document.hidden` y pedían `/medios` cada 4 s también en segundo plano; ahora sólo con la app visible.
+- Prueba nueva en `pruebas-v2/nube.test.ts` (el arnés cuenta filas devueltas): tras la primera vuelta, un guardado nuevo cuesta 1 fila. Corregida `CoachHoy.test.tsx`, que fallaba con exactamente 1 sesión en la semana («sesión» con tilde).
+- Verificado: 1090 pruebas, lint, build. Pendiente: confirmar con `npx wrangler d1 insights santiago-acceso --sort-by=reads --timePeriod=1d` desde el Mac.
+
 ## 2026-10-21 — PR #14 aprobado, integrado y publicado — codex
 
 - El dueño indicó «está bien, merge ahora» tras revisar la preview. Turno `a4985bf`. [PR #14](https://github.com/dayanivan681/santiago-fitness-method/pull/14) integrado mediante merge normal **`1bf0404e7a5a69f82ff961ee6578864100e2b380`**; cabeza final **`50f9551cdc69e49a80f19e35de3687ecf90ff9ee`**. Sin conflictos. Producto del merge idéntico a la cabeza verificada.

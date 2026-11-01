@@ -9,6 +9,7 @@ function literal(v: unknown) {
 }
 export function sqliteD1() {
   let consultas = 0;
+  let filasDevueltas = 0;
   const directorio = mkdtempSync(join(tmpdir(), "sfm-v2-"));
   const archivo = join(directorio, "test.sqlite");
   function ejecutar(sql: string) {
@@ -40,8 +41,10 @@ export function sqliteD1() {
     }
     async all() {
       consultas++;
+      const results = JSON.parse(ejecutar(this.final()) || "[]");
+      filasDevueltas += results.length;
       return {
-        results: JSON.parse(ejecutar(this.final()) || "[]"),
+        results,
         success: true,
         meta: {},
       };
@@ -80,7 +83,8 @@ export function sqliteD1() {
   ejecutar("INSERT INTO entorno_sfm VALUES(1,'local')");
   return {
     get consultas() { return consultas; },
-    reiniciarConsultas: () => { consultas = 0; },
+    get filasDevueltas() { return filasDevueltas; },
+    reiniciarConsultas: () => { consultas = 0; filasDevueltas = 0; },
     db: db as unknown as D1Database,
     ejecutar,
     cerrar: () => rmSync(directorio, { recursive: true, force: true }),
