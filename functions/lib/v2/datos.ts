@@ -122,9 +122,11 @@ export async function etiquetaDeClientes(db: D1Database): Promise<string> {
  * anexado y `cursor` es su clave primaria, así que cada vuelta lee únicamente
  * las filas posteriores al último cursor visto. Releer el historial entero en
  * cada guardado agotó dos veces el límite diario de filas leídas de D1.
+ * Sólo pide los tipos de la cartera (índice `cambios_tipo_cursor`): los
+ * borradores y altas autoguardados son la mayoría del historial y, sin el
+ * filtro, cada isolate nuevo los recorría todos.
  */
 const vigentesPorBase = new WeakMap<D1Database, { cursor: number; docs: Map<string, FilaCambio> }>();
-const TIPOS_DE_CARTERA = new Set<string>(["perfil", "plan", "entrenamiento"]);
 async function versionesVigentes(db: D1Database): Promise<FilaCambio[]> {
   let estado = vigentesPorBase.get(db);
   if (!estado) {
@@ -132,12 +134,13 @@ async function versionesVigentes(db: D1Database): Promise<FilaCambio[]> {
     vigentesPorBase.set(db, estado);
   }
   const { results } = await db
-    .prepare("SELECT * FROM cambios WHERE cursor>? ORDER BY cursor")
+    .prepare(
+      "SELECT * FROM cambios WHERE tipo IN ('perfil','plan','entrenamiento') AND cursor>? ORDER BY cursor",
+    )
     .bind(estado.cursor)
     .all<FilaCambio>();
   for (const f of results) {
     estado.cursor = Math.max(estado.cursor, f.cursor);
-    if (!TIPOS_DE_CARTERA.has(f.tipo)) continue;
     const clave = `${f.cliente_id}\u0000${f.tipo}\u0000${f.documento_id}`;
     const previa = estado.docs.get(clave);
     if (!previa || f.revision > previa.revision) estado.docs.set(clave, f);

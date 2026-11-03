@@ -31,6 +31,9 @@ import type { Repositorio } from '../../datos/repositorio'
 import type { NuevaSerie } from '../../aplicacion/useEntrenamiento'
 import { Icono } from '../../producto/ui'
 
+/** Pausa sin tocar la serie antes de guardar su borrador. */
+export const ESPERA_BORRADOR_MS = 2000
+
 interface Props {
   readonly numeroSerie: number
   readonly ejercicio: Ejercicio
@@ -258,12 +261,30 @@ export function FilaSerie({
 
   // Autosave: cada ajuste se guarda sin esperar a Guardar. El borrador vive
   // aparte del historial, así que esto no registra nada en §19 antes de tiempo.
+  // Espera a que el cliente deje de tocar: cada guardado es una fila en la
+  // nube y subir el peso de 5 en 5 escribía una por toque. Salir de la fila o
+  // pasar la app a segundo plano guarda lo pendiente al momento.
+  const borradorPendiente = useRef<(() => void) | null>(null)
   useEffect(() => {
+    const guardarYa = () => {
+      const pendiente = borradorPendiente.current
+      borradorPendiente.current = null
+      pendiente?.()
+    }
+    const alOcultar = () => { if (document.hidden) guardarYa() }
+    document.addEventListener('visibilitychange', alOcultar)
+    return () => {
+      document.removeEventListener('visibilitychange', alOcultar)
+      guardarYa()
+    }
+  }, [])
+  useEffect(() => {
+    borradorPendiente.current = null
     if (!idDelBorrador || !repositorio || !participanteBorrador || !fechaBorrador || !plantillaBorrador || ordenBorrador === undefined || registrada) return
     // No guardar antes de haber intentado recuperar, ni si nadie tocó nada.
     if (!recuperado.current || !tocado) return
 
-    repositorio.guardarBorrador({
+    const guardar = () => repositorio.guardarBorrador({
       id: idDelBorrador,
       participanteId: participanteBorrador,
       fecha: fechaBorrador,
@@ -278,6 +299,12 @@ export function FilaSerie({
       ...(nota.trim()?{nota:nota.trim()}:{}),
       guardadoEn: new Date().toISOString(),
     }).catch(e=>setError(e instanceof Error?e.message:'No se pudo conservar el borrador.'))
+    borradorPendiente.current = guardar
+    const t = setTimeout(() => {
+      borradorPendiente.current = null
+      guardar()
+    }, ESPERA_BORRADOR_MS)
+    return () => clearTimeout(t)
   }, [
     nota,
     idDelBorrador,

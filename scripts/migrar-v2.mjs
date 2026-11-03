@@ -100,7 +100,7 @@ const antes = inventario();
 const sql =
   (
     await Promise.all(
-      ["0008_coaching_cloud.sql", "0009_versiones_originales.sql", "0010_cuentas.sql", "0011_suscripciones.sql", "0012_biblioteca_coach.sql", "0013_biblioteca_animacion.sql"].map((f) =>
+      ["0008_coaching_cloud.sql", "0009_versiones_originales.sql", "0010_cuentas.sql", "0011_suscripciones.sql", "0012_biblioteca_coach.sql", "0013_biblioteca_animacion.sql", "0014_cambios_por_tipo.sql"].map((f) =>
         readFile(`migrations/${f}`, "utf8"),
       ),
     )
@@ -181,6 +181,11 @@ if (process.argv.includes("--aplicar")) {
     consulta("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('ejercicios_coach','ejercicios_coach_animacion')").length,
     2,
     "Falta la tabla de biblioteca del coach tras la migración.",
+  );
+  assert.equal(
+    consulta("SELECT name FROM sqlite_master WHERE type='index' AND name='cambios_tipo_cursor'").length,
+    1,
+    "Falta el índice del historial por tipo tras la migración.",
   );
   manifest.aplicado = true;
   await writeFile(

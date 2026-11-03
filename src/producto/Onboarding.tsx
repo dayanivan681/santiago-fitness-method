@@ -7,6 +7,9 @@ import { useBiblioteca } from "./contextoBiblioteca";
 import { Cabecera, ErrorVisible, Icono } from "./ui";
 import { EditorPlan } from "./EditorPlan";
 import { planBase, ServicioCoach, ultimos } from "./servicio";
+
+/** Pausa al escribir antes de autoguardar el alta: cada guardado es una fila en la nube. */
+const ESPERA_ALTA_MS = 2000;
 export function Onboarding({
   servicio,
   base,
@@ -103,13 +106,14 @@ export function Onboarding({
   useEffect(()=>{ultimoBorrador.current={alta,guardar};},[alta,guardar]);
   useEffect(()=>()=>{
     const ultimo=ultimoBorrador.current;
-    if(servicio.demo&&ultimo.alta&&!publicando.current)void ultimo.guardar(ultimo.alta).catch(()=>{});
+    // Al salir guarda lo que la pausa del autoguardado aún no envió.
+    if(ultimo.alta&&!publicando.current)void ultimo.guardar(ultimo.alta).catch(()=>{});
   },[servicio]);
   useEffect(() => {
     if (!alta) return;
     const t = setTimeout(() => {
       if (!publicando.current) void guardar(alta).catch(() => {});
-    }, 900);
+    }, ESPERA_ALTA_MS);
     return () => clearTimeout(t);
   }, [alta, guardar]);
   if (!alta)

@@ -112,6 +112,19 @@ describe("persistencia real con SQL transaccional", () => {
     expect(tras.find((c) => c.perfil.id === "test-a")?.actividad.total).toBe(1);
   });
 
+  it("los borradores autoguardados no se leen al calcular la cartera", async () => {
+    const BORRADORES = 200;
+    for (let i = 1; i <= BORRADORES; i++)
+      local.ejecutar(
+        `INSERT INTO cambios(cliente_id,tipo,documento_id,revision,datos_json,operacion_id,hash,actor,creado_en) VALUES('test-a','borrador','b1',${i},'{}','b${i}','h','coach',0)`,
+      );
+    local.reiniciarConsultas();
+    // Primera vuelta (en frío): recorre el historial desde el cursor 0.
+    const clientes = await clientesActuales(local.db);
+    expect(clientes.find((c) => c.perfil.id === "test-a")?.plan.dias).toHaveLength(4);
+    expect(local.filasDevueltas).toBeLessThan(BORRADORES);
+  });
+
   it("la huella de la cartera sólo cambia cuando cambian sus datos, y cuesta una consulta", async () => {
     local.reiniciarConsultas();
     const antes = await etiquetaDeClientes(local.db);

@@ -59,6 +59,7 @@ for (const archivo of [
   "migrations/0011_suscripciones.sql",
   "migrations/0012_biblioteca_coach.sql",
   "migrations/0013_biblioteca_animacion.sql",
+  "migrations/0014_cambios_por_tipo.sql",
 ])
   ejecutar(["--file", archivo]);
 const entorno = remoto ? "staging" : "local";

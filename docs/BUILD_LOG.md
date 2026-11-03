@@ -1,5 +1,13 @@
 # Build log — Santiago Fitness Method
 
+## 2026-11-03 — D1: el panel lee sólo los tipos que usa y los borradores se agrupan — claude-code
+
+- Medido con `wrangler d1 insights` (24 h, tras el arreglo del 1-nov): 1,46 M filas leídas (29 % del límite gratis). El 61 % venía de `versionesVigentes` en frío (~400 isolates/día × todo `cambios`). `cambios` tenía 11.833 filas, 8.090 de la última semana, casi todas `borrador` (series de clientes, una fila por toque) y `alta` (autoguardado del coach). El coste en frío crecía con cada borrador.
+- Migración `0014_cambios_por_tipo.sql`: índice `cambios(tipo, cursor)`. `versionesVigentes` filtra `tipo IN ('perfil','plan','entrenamiento')` (plan: SEARCH USING INDEX). Aplicada con respaldo y ensayo en staging y en producción (evidencia en `.recovery/`). Registrada en `pruebas-v2/d1.ts`, `preparar-qa-v2` y `migrar-v2` (que ahora comprueba el índice).
+- `FilaSerie`: el borrador de la serie se guarda tras 2 s sin tocar (`ESPERA_BORRADOR_MS`); al desmontar la fila o pasar la app a segundo plano guarda lo pendiente. `Onboarding`: autoguardado del alta a 2 s (antes 0,9 s) y guardado de lo pendiente al salir también fuera de la demo.
+- Pruebas nuevas: 200 borradores no se leen en la vuelta en frío (`nube.test.ts`; sin el arreglo, 213 filas); 4 toques seguidos = 1 guardado y guardado al salir (`FilaSerie.borrador.test.tsx`; sin el arreglo, 4). 1092 pruebas, lint, build y `git diff --check`.
+- Plan B acordado con el dueño si no basta: pausa por inactividad del refresco con aviso «toca para seguir». Medir antes en unos días.
+
 ## 2026-11-01 — D1 otra vez al 90 % del límite diario: el panel del coach lee el historial de forma incremental — claude-code
 
 - Aviso de Cloudflare: 90 % de los 5 M de filas leídas diarias. Sin acceso a `wrangler d1 insights` (credenciales sólo en el Mac del dueño); diagnóstico por código y plan de consultas.

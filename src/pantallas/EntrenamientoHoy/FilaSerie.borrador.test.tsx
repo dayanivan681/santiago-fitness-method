@@ -6,7 +6,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
-import { FilaSerie } from "./FilaSerie";
+import { ESPERA_BORRADOR_MS, FilaSerie } from "./FilaSerie";
 import { RepositorioMemoria } from "../../nube/memoria";
 import { BIBLIOTECA_INICIAL } from "../../datos/semilla/biblioteca";
 afterEach(cleanup);
@@ -49,4 +49,30 @@ it("no reescribe el borrador por refrescos cloud con una clave equivalente", asy
     }),
   );
   await waitFor(() => expect(guardar).toHaveBeenCalledTimes(2));
+});
+
+it("agrupa los toques seguidos en un solo guardado y guarda lo pendiente al salir", async () => {
+  const repo = new RepositorioMemoria();
+  const guardar = vi.spyOn(repo, "guardarBorrador");
+  const ejercicio = BIBLIOTECA_INICIAL[0];
+  const recuperar = vi.spyOn(repo, "obtenerBorrador");
+  const { unmount } = render(
+    <FilaSerie
+      numeroSerie={1}
+      ejercicio={ejercicio}
+      repMin={1}
+      conEtiquetas
+      repositorio={repo}
+      onGuardar={vi.fn()}
+      onCorregir={vi.fn()}
+      claveDeBorrador={{ participanteId: "qa-borrador", fecha: "2026-09-09", plantillaDiaId: "upper-a", orden: 1 }}
+    />,
+  );
+  await waitFor(() => expect(recuperar).toHaveBeenCalled());
+  const subir = screen.getByRole("button", { name: `Subir peso de la serie 1 de ${ejercicio.nombre}` });
+  for (let i = 0; i < 4; i++) fireEvent.click(subir);
+  await waitFor(() => expect(guardar).toHaveBeenCalledTimes(1), { timeout: ESPERA_BORRADOR_MS + 1000 });
+  fireEvent.click(subir);
+  unmount();
+  expect(guardar).toHaveBeenCalledTimes(2);
 });
