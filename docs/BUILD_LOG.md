@@ -1,5 +1,12 @@
 # Build log — Santiago Fitness Method
 
+
+## 2026-11-04 — Revisión de código: borrador huérfano o duplicado y huella del panel sin borradores — claude-code
+
+- `FilaSerie.tsx`: Guardar descarta el borrador pendiente antes de registrar. Antes, si el cliente tocaba el peso y guardaba en menos de 2 s, el borrador se escribía después de `borrarBorrador` (temporizador, segundo plano o al desmontarse la fila en la última serie): quedaba un borrador huérfano y una fila más en D1. Si el registro falla, el borrador se vuelve a escribir. El temporizador ya no reescribe lo que guardó el paso a segundo plano.
+- `datos.ts`: `etiquetaDeClientes` sólo mira el cursor de perfil, plan y entrenamiento (un MAX por tipo sobre el índice `cambios_tipo_cursor`). Cada borrador autoguardado cambiaba la huella y el panel del coach recalculaba la cartera completa mientras los clientes entrenaban. Los tipos viven en `TIPOS_DE_CARTERA`; se quitó un `ORDER BY` innecesario.
+- Pruebas nuevas (fallan sin el cambio): Guardar no deja borrador pendiente y un borrador no cambia la huella.
+- Verificado: 1094 pruebas, lint sin avisos, tsc, build.
 ## 2026-11-03 — D1: el panel lee sólo los tipos que usa y los borradores se agrupan — claude-code
 
 - Medido con `wrangler d1 insights` (24 h, tras el arreglo del 1-nov): 1,46 M filas leídas (29 % del límite gratis). El 61 % venía de `versionesVigentes` en frío (~400 isolates/día × todo `cambios`). `cambios` tenía 11.833 filas, 8.090 de la última semana, casi todas `borrador` (series de clientes, una fila por toque) y `alta` (autoguardado del coach). El coste en frío crecía con cada borrador.

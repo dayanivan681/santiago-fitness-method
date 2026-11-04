@@ -217,10 +217,17 @@ export function FilaSerie({
       ? evaluarSerie(aComparable(registrada, ejercicio), referencia)
       : undefined
 
+  // Escritura del borrador que espera a que el cliente deje de tocar.
+  const borradorPendiente = useRef<(() => void) | null>(null)
   async function guardar() {
     if (guardandoRef.current) return
     altoAntesDeGuardar.current = filaRef.current?.getBoundingClientRect().height ?? 0
     guardandoRef.current=true
+    // El borrador pendiente ya no debe escribirse: lo que se registra ahora lo
+    // sustituye. Si escribiera tarde (temporizador, segundo plano o al salir de
+    // la fila) dejaría un borrador huérfano tras borrarBorrador.
+    const borradorSinEscribir = borradorPendiente.current
+    borradorPendiente.current = null
     setError('')
     setGuardadoFallido(false)
     setGuardando(true)
@@ -245,7 +252,11 @@ export function FilaSerie({
         ayuda?.confirmarSerie();
 
       }
-    } catch(e){setError(e instanceof Error?e.message:'No se pudo guardar. Tus valores siguen aquí.');setGuardadoFallido(true)} finally {
+    } catch(e){
+      // Si el registro falla, el borrador vuelve a proteger los valores.
+      borradorSinEscribir?.()
+      setError(e instanceof Error?e.message:'No se pudo guardar. Tus valores siguen aquí.');setGuardadoFallido(true)
+    } finally {
       guardandoRef.current=false
       setGuardando(false)
     }
@@ -264,7 +275,6 @@ export function FilaSerie({
   // Espera a que el cliente deje de tocar: cada guardado es una fila en la
   // nube y subir el peso de 5 en 5 escribía una por toque. Salir de la fila o
   // pasar la app a segundo plano guarda lo pendiente al momento.
-  const borradorPendiente = useRef<(() => void) | null>(null)
   useEffect(() => {
     const guardarYa = () => {
       const pendiente = borradorPendiente.current
@@ -301,6 +311,8 @@ export function FilaSerie({
     }).catch(e=>setError(e instanceof Error?e.message:'No se pudo conservar el borrador.'))
     borradorPendiente.current = guardar
     const t = setTimeout(() => {
+      // Ya lo escribió el paso a segundo plano o lo descartó Guardar.
+      if (borradorPendiente.current !== guardar) return
       borradorPendiente.current = null
       guardar()
     }, ESPERA_BORRADOR_MS)

@@ -104,13 +104,16 @@ function inicioDeSemana() {
 /**
  * Huella de la cartera en una sola consulta barata. El panel del coach
  * pregunta a menudo; si nada cambió responde 304 sin releer el historial.
- * `cambios.cursor` es la clave primaria (MAX en una fila); clientes y rutinas
- * son tablas pequeñas y su `actualizado_en` cambia al editar o archivar.
+ * Sólo cuentan los tipos de la cartera: los borradores autoguardados son la
+ * mayoría de `cambios` y no cambian el panel. Un MAX por tipo es una búsqueda
+ * en el índice (tipo, cursor); clientes y rutinas son tablas pequeñas y su
+ * `actualizado_en` cambia al editar o archivar.
  */
+const TIPOS_DE_CARTERA = ["perfil", "plan", "entrenamiento"] as const;
 export async function etiquetaDeClientes(db: D1Database): Promise<string> {
   const f = await db
     .prepare(
-      `SELECT (SELECT COALESCE(MAX(cursor),0) FROM cambios) AS cambios,
+      `SELECT MAX(${TIPOS_DE_CARTERA.map((tipo) => `(SELECT COALESCE(MAX(cursor),0) FROM cambios WHERE tipo='${tipo}')`).join(",")}) AS cambios,
               (SELECT COUNT(*) || '.' || COALESCE(SUM(activo),0) || '.' || COALESCE(MAX(actualizado_en),0) FROM clientes) AS clientes,
               (SELECT COUNT(*) || '.' || COALESCE(MAX(actualizado_en),0) FROM rutinas) AS rutinas`,
     )
@@ -135,7 +138,7 @@ async function versionesVigentes(db: D1Database): Promise<FilaCambio[]> {
   }
   const { results } = await db
     .prepare(
-      "SELECT * FROM cambios WHERE tipo IN ('perfil','plan','entrenamiento') AND cursor>? ORDER BY cursor",
+      `SELECT * FROM cambios WHERE tipo IN (${TIPOS_DE_CARTERA.map((tipo) => `'${tipo}'`).join(",")}) AND cursor>?`,
     )
     .bind(estado.cursor)
     .all<FilaCambio>();

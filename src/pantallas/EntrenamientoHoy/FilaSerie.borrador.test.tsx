@@ -76,3 +76,29 @@ it("agrupa los toques seguidos en un solo guardado y guarda lo pendiente al sali
   unmount();
   expect(guardar).toHaveBeenCalledTimes(2);
 });
+it("Guardar descarta el borrador pendiente: ni el temporizador ni salir de la fila lo reescriben", async () => {
+  const repo = new RepositorioMemoria();
+  const recuperar = vi.spyOn(repo, "obtenerBorrador");
+  const guardar = vi.spyOn(repo, "guardarBorrador");
+  const borrar = vi.spyOn(repo, "borrarBorrador");
+  const ejercicio = BIBLIOTECA_INICIAL[0];
+  const { unmount } = render(
+    <FilaSerie
+      numeroSerie={1}
+      ejercicio={ejercicio}
+      repMin={1}
+      conEtiquetas
+      repositorio={repo}
+      onGuardar={vi.fn().mockResolvedValue(undefined)}
+      onCorregir={vi.fn()}
+      claveDeBorrador={{ participanteId: "qa-borrador", fecha: "2026-09-09", plantillaDiaId: "upper-a", orden: 1 }}
+    />,
+  );
+  await waitFor(() => expect(recuperar).toHaveBeenCalled());
+  fireEvent.click(screen.getByRole("button", { name: `Subir peso de la serie 1 de ${ejercicio.nombre}` }));
+  fireEvent.click(screen.getByRole("button", { name: `Guardar la serie 1 de ${ejercicio.nombre}` }));
+  await waitFor(() => expect(borrar).toHaveBeenCalledTimes(1));
+  unmount();
+  await new Promise((r) => setTimeout(r, ESPERA_BORRADOR_MS + 200));
+  expect(guardar).not.toHaveBeenCalled();
+});

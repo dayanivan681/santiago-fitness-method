@@ -125,6 +125,15 @@ describe("persistencia real con SQL transaccional", () => {
     expect(local.filasDevueltas).toBeLessThan(BORRADORES);
   });
 
+  it("un borrador autoguardado no cambia la huella de la cartera", async () => {
+    const antes = await etiquetaDeClientes(local.db);
+    await aplicar(local.db, "test-a", ctx, op("borrador", "test-borrador", {
+      id: "test-borrador", participanteId: "test-a", fecha: "2026-09-07", plantillaDiaId: plan.dias[0].id,
+      orden: 1, numeroSerie: 1, pesoRegistradoLb: 25, repsRealizadas: 5, rir: 2, guardadoEn: "2026-09-07T10:00:00.000Z",
+    }));
+    expect(await etiquetaDeClientes(local.db)).toBe(antes);
+  });
+
   it("la huella de la cartera sólo cambia cuando cambian sus datos, y cuesta una consulta", async () => {
     local.reiniciarConsultas();
     const antes = await etiquetaDeClientes(local.db);
