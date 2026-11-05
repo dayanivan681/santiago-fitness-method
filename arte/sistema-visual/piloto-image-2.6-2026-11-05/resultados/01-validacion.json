@@ -1,0 +1,18 @@
+{
+  "method": "built-in image_gen.imagegen",
+  "requested_output": "animated GIF, 16 frames, 150ms/frame",
+  "actual_format": "PNG",
+  "actual_size": [
+    1086,
+    1448
+  ],
+  "actual_frames": 1,
+  "actual_animated": false,
+  "bytes": 1203274,
+  "sha256": "1c4fe806853b07132e9487981e53050c5541d5d62c978bcf40bbba50f6318216",
+  "signature_hex": "89504e470d0a1a0a0000000d",
+  "result": "FAIL: native animated GIF not delivered; no temporal or biomechanical validation possible",
+  "actual_model": "not exposed by tool",
+  "cost": "not exposed by tool",
+  "source_generated_path": "/Users/dayanmacbookpro/.codex/generated_images/01a1ade1-4cd3-7f33-97d4-f4ef4a265473/exec-0142366e-4ecb-4c26-a180-4b2ee3a5741a.png"
+}

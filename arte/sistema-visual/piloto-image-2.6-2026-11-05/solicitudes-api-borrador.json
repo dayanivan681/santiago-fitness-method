@@ -1,0 +1,79 @@
+[
+  {
+    "ref": "M02-111",
+    "name": "Goblet Squat",
+    "id_coach": "coach-ej-266c5e43-bed0-5b20-83f7-42f879ee2072",
+    "status": "attempted_integrated_tool_static_result",
+    "draft_request_only": true,
+    "method": "POST",
+    "endpoint": "https://api.openai.com/v1/images/edits",
+    "content_type": "multipart/form-data",
+    "fields": {
+      "model": "gpt-image-2.6-sunburst",
+      "output_format": "gif",
+      "n": 1,
+      "frame_count": 16,
+      "frame_duration_ms": 150,
+      "size": "384x512",
+      "quality": "high",
+      "prompt_file": "prompts/01-goblet-squat.txt"
+    },
+    "image_files": [
+      "referencias/goblet-squat-f00.png",
+      "referencias/goblet-squat-f12.png"
+    ],
+    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits."
+  },
+  {
+    "ref": "M02-162",
+    "name": "Cable Glute Kickback",
+    "id_coach": "coach-ej-4534173b-afdc-5c27-8f9b-448189c15e35",
+    "status": "not_generated",
+    "draft_request_only": true,
+    "method": "POST",
+    "endpoint": "https://api.openai.com/v1/images/edits",
+    "content_type": "multipart/form-data",
+    "fields": {
+      "model": "gpt-image-2.6-sunburst",
+      "output_format": "gif",
+      "n": 1,
+      "frame_count": 16,
+      "frame_duration_ms": 150,
+      "size": "384x512",
+      "quality": "high",
+      "prompt_file": "prompts/02-cable-glute-kickback.txt"
+    },
+    "image_files": [
+      "referencias/cable-glute-kickback-f00.png",
+      "referencias/cable-glute-kickback-f01.png",
+      "referencias/goblet-squat-f00.png"
+    ],
+    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits."
+  },
+  {
+    "ref": "M02-126",
+    "name": "Pendulum Squat 90°",
+    "id_coach": "coach-ej-abed07d2-5ea1-59fe-8ef9-e9339d8076a4",
+    "status": "not_generated",
+    "draft_request_only": true,
+    "method": "POST",
+    "endpoint": "https://api.openai.com/v1/images/edits",
+    "content_type": "multipart/form-data",
+    "fields": {
+      "model": "gpt-image-2.6-sunburst",
+      "output_format": "gif",
+      "n": 1,
+      "frame_count": 16,
+      "frame_duration_ms": 150,
+      "size": "384x512",
+      "quality": "high",
+      "prompt_file": "prompts/03-pendulum-squat-90.txt"
+    },
+    "image_files": [
+      "referencias/pendulum-aparato-arriba-no-aprobado.png",
+      "referencias/pendulum-aparato-abajo-no-aprobado.png",
+      "referencias/goblet-squat-f00.png"
+    ],
+    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits."
+  }
+]

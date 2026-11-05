@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-05",
+  "design_branch": "diseno/sistema-visual",
+  "design_commit": "e8436e5f4a54169d2f787bbe539c0bf1c8a649f9",
+  "references": {
+    "cable-glute-kickback-f00.png": {
+      "bytes": 197752,
+      "sha256": "473cb1e5605ae8e76588ec52f95fe771452810a6fd1854f003910bdb03a8f337"
+    },
+    "cable-glute-kickback-f01.png": {
+      "bytes": 199800,
+      "sha256": "650a318c7668c0d223e24947410543d919993dc1ac4e92e2aa1cc13b4bf60bab"
+    },
+    "goblet-squat-f00.png": {
+      "bytes": 21902,
+      "sha256": "12b83fd78c94159c1be5a86d0caca2ed2b194e63029babea1abccaa66696eafa"
+    },
+    "goblet-squat-f12.png": {
+      "bytes": 18250,
+      "sha256": "b6b5889e1f6b7405192f944d6245d46810fde1ddf7a51289a9633af30502ff47"
+    },
+    "goblet-squat-mocap.gif": {
+      "bytes": 427459,
+      "sha256": "d8e4373151bed1e7d3f9386b89b1b2c5aae6edbf3bc79a54810dc7f58ba03b04"
+    },
+    "goblet-squat-secuencia.png": {
+      "bytes": 93520,
+      "sha256": "51a1b59bb70e1ff3f1e88182f16066f3d29df7ffd1763a28456dd7f76a1e2eec"
+    },
+    "pendulum-aparato-abajo-no-aprobado.png": {
+      "bytes": 588510,
+      "sha256": "1203013b8c44b8d18f14936c409b4173d7190388e9be562e2d5db7ec9d2ec0a0"
+    },
+    "pendulum-aparato-arriba-no-aprobado.png": {
+      "bytes": 587201,
+      "sha256": "34c27699cbc749559f2adc93504a3ab9d4c5ff7696baf17e0b1c952da7109ba8"
+    }
+  },
+  "sources": {
+    "goblet": {
+      "git_paths": [
+        "arte/sistema-visual/mocap/ejercicios/goblet-squat/goblet-squat.gif",
+        "arte/sistema-visual/mocap/ejercicios/goblet-squat/goblet-squat-secuencia.png"
+      ],
+      "status": "Unapproved project prototype, 48 frames / two views at current design head; not certified anatomy.",
+      "motion_provenance": "CMU 13_30.bvh, cgspeed/una-dinosauria conversion; CMU commercial-use permission and NSF credit are recorded in design branch README."
+    },
+    "cable_glute_kickback": {
+      "local_source": "docs/gifs-servicios-costo-2026-10-21/propuestos/M02-162-cable-glute-kickback.gif",
+      "record": "docs/gifs-servicios-costo-2026-10-21/propuestos/procedencia.json",
+      "registered_license": "Unlicense/public domain; public/ejercicios/UNLICENSE-free-exercise-db.txt",
+      "source_frames": [
+        "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Legged_Cable_Kickback/0.jpg",
+        "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Legged_Cable_Kickback/1.jpg"
+      ],
+      "scope": "Two source endpoints only, no verified intermediate movement."
+    },
+    "pendulum": {
+      "git_paths": [
+        "arte/sistema-visual/3d/revision-v2/anatomia-arriba-lado.png",
+        "arte/sistema-visual/3d/revision-v2/anatomia-abajo-lado.png"
+      ],
+      "status": "Unapproved generic machine prototype; machine arrangement reference only, not anatomy/movement truth.",
+      "manufacturer_reference_record": "arte/sistema-visual/3d/REFERENCIAS-MOVIMIENTO.md on design branch",
+      "manufacturer_reference_url": "https://www.myarsenalstrength.com/strength-equipment/reloaded/featured-reloaded/reloaded-pendulum-squat",
+      "rights": "No external video or manufacturer image incorporated into bundle. Model of Santiago actual machine remains unconfirmed."
+    }
+  }
+}
