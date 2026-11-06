@@ -60,7 +60,7 @@
         "arte/sistema-visual/3d/revision-v2/anatomia-arriba-lado.png",
         "arte/sistema-visual/3d/revision-v2/anatomia-abajo-lado.png"
       ],
-      "status": "Unapproved generic machine prototype; machine arrangement reference only, not anatomy/movement truth.",
+      "status": "Unapproved anatomy-only renders; machine is not visible. Unsuitable as an apparatus or certified movement reference; discarded in the native pilot.",
       "manufacturer_reference_record": "arte/sistema-visual/3d/REFERENCIAS-MOVIMIENTO.md on design branch",
       "manufacturer_reference_url": "https://www.myarsenalstrength.com/strength-equipment/reloaded/featured-reloaded/reloaded-pendulum-squat",
       "rights": "No external video or manufacturer image incorporated into bundle. Model of Santiago actual machine remains unconfirmed."

@@ -1,0 +1,447 @@
+{
+  "target_size": [
+    360,
+    480
+  ],
+  "target_max_bytes": 250000,
+  "records": [
+    {
+      "name": "goblet-squat-frontal",
+      "source_file": "resultados-chatgpt/goblet-squat-frontal.gif",
+      "source_size": [
+        267,
+        358
+      ],
+      "source_bytes": 456121,
+      "source_sha256": "f77a21a87bef73c6c7ac942d6f3e3606889dafa445d612433d1c8208a3087645",
+      "transform": "uniform contain resize with LANCZOS, centered padding #0b0c0d, no cropping, no interpolation, no frame deletion",
+      "content_size": [
+        358,
+        480
+      ],
+      "padding_xy": [
+        1,
+        0
+      ],
+      "source_frame_count": 16,
+      "source_durations_ms": [
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "global_palette": true,
+      "dither": "none",
+      "disposal": 1,
+      "attempts": [
+        {
+          "file": "goblet-squat-frontal-c64.gif",
+          "colors_requested": 64,
+          "bytes": 793007,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "cc67255ca356067f756f9dd52ded53ac296f36c1457cf0c99a84ce655b934f7f"
+        },
+        {
+          "file": "goblet-squat-frontal-c48.gif",
+          "colors_requested": 48,
+          "bytes": 748515,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "ab764fa243e179ad6709b1c849af1beeea1d6adb8a91964d7ed921b159e3e20e"
+        },
+        {
+          "file": "goblet-squat-frontal-c32.gif",
+          "colors_requested": 32,
+          "bytes": 686675,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "96ad236c7a5c71c64e07b284e55e7b12681b9c240f6d04f1cd772b571d6f20a7"
+        }
+      ],
+      "selected_file": "goblet-squat-frontal.gif",
+      "selected_sha256": "96ad236c7a5c71c64e07b284e55e7b12681b9c240f6d04f1cd772b571d6f20a7",
+      "selected_colors": 32,
+      "selected_bytes": 686675,
+      "under_250000_bytes": false,
+      "contact_sheet": "goblet-squat-frontal-hoja.png",
+      "quality_tradeoff": "Limited global palette without dithering reduces file size but can cause banding and loss of subtle gradients; resizing cannot recover detail absent from source. Motion and biomechanical correctness remain subject to visual review."
+    },
+    {
+      "name": "goblet-squat-perfil",
+      "source_file": "resultados-chatgpt/goblet-squat-perfil.gif",
+      "source_size": [
+        267,
+        357
+      ],
+      "source_bytes": 264891,
+      "source_sha256": "8e986f08a2564202e39c86c602efe74d13f6b39d82770fcf897ac5892e33d39c",
+      "transform": "uniform contain resize with LANCZOS, centered padding #0b0c0d, no cropping, no interpolation, no frame deletion",
+      "content_size": [
+        359,
+        480
+      ],
+      "padding_xy": [
+        0,
+        0
+      ],
+      "source_frame_count": 16,
+      "source_durations_ms": [
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "global_palette": true,
+      "dither": "none",
+      "disposal": 1,
+      "attempts": [
+        {
+          "file": "goblet-squat-perfil-c64.gif",
+          "colors_requested": 64,
+          "bytes": 424146,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "274fe2ffe9ff208f26ad7a3a4836f7536b6f21a316c85470fc29575e05442572"
+        },
+        {
+          "file": "goblet-squat-perfil-c48.gif",
+          "colors_requested": 48,
+          "bytes": 418028,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "497dc2cc0aac121f60ab0c388e92f98cc77ced1b0941c66e7bdd37a6d4ec2d99"
+        },
+        {
+          "file": "goblet-squat-perfil-c32.gif",
+          "colors_requested": 32,
+          "bytes": 354641,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "e2053f258d3a8fd0f3b35c3c5f409d0a898386d6b8c1d622061e177f8b171cc5"
+        }
+      ],
+      "selected_file": "goblet-squat-perfil.gif",
+      "selected_sha256": "e2053f258d3a8fd0f3b35c3c5f409d0a898386d6b8c1d622061e177f8b171cc5",
+      "selected_colors": 32,
+      "selected_bytes": 354641,
+      "under_250000_bytes": false,
+      "contact_sheet": "goblet-squat-perfil-hoja.png",
+      "quality_tradeoff": "Limited global palette without dithering reduces file size but can cause banding and loss of subtle gradients; resizing cannot recover detail absent from source. Motion and biomechanical correctness remain subject to visual review."
+    },
+    {
+      "name": "cable-glute-kickback",
+      "source_file": "resultados-chatgpt/cable-glute-kickback.gif",
+      "source_size": [
+        480,
+        640
+      ],
+      "source_bytes": 911433,
+      "source_sha256": "055ab9b2c4d46fcd845423384a0a885484855b9e32bb34046a40f61eb92dea35",
+      "transform": "uniform contain resize with LANCZOS, centered padding #0b0c0d, no cropping, no interpolation, no frame deletion",
+      "content_size": [
+        360,
+        480
+      ],
+      "padding_xy": [
+        0,
+        0
+      ],
+      "source_frame_count": 16,
+      "source_durations_ms": [
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ],
+      "global_palette": true,
+      "dither": "none",
+      "disposal": 1,
+      "attempts": [
+        {
+          "file": "cable-glute-kickback-c64.gif",
+          "colors_requested": 64,
+          "bytes": 332403,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "73376833011c656ca62532e5595ed2a3ca7c19ad0ddc12f154fbd8ef12d03227"
+        },
+        {
+          "file": "cable-glute-kickback-c48.gif",
+          "colors_requested": 48,
+          "bytes": 294346,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "b77ab3e4b56caf630d50c527760c17d89eebbb2684d73316f5fb1ff826b4c6dc"
+        },
+        {
+          "file": "cable-glute-kickback-c32.gif",
+          "colors_requested": 32,
+          "bytes": 243288,
+          "format": "GIF",
+          "signature": "GIF89a",
+          "size": [
+            360,
+            480
+          ],
+          "frames": 16,
+          "durations_ms": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "loop": 0,
+          "sha256": "fff58454994f2194ac47033a8212d48318b660878418f8372cb7daf284ff8870"
+        }
+      ],
+      "selected_file": "cable-glute-kickback.gif",
+      "selected_sha256": "fff58454994f2194ac47033a8212d48318b660878418f8372cb7daf284ff8870",
+      "selected_colors": 32,
+      "selected_bytes": 243288,
+      "under_250000_bytes": true,
+      "contact_sheet": "cable-glute-kickback-hoja.png",
+      "quality_tradeoff": "Limited global palette without dithering reduces file size but can cause banding and loss of subtle gradients; resizing cannot recover detail absent from source. Motion and biomechanical correctness remain subject to visual review."
+    }
+  ]
+}

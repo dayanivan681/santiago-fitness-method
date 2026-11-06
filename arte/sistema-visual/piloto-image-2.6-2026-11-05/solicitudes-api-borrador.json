@@ -22,7 +22,10 @@
       "referencias/goblet-squat-f00.png",
       "referencias/goblet-squat-f12.png"
     ],
-    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits."
+    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits.",
+    "obsolete_do_not_execute": true,
+    "api_execution_status": "not executed; owner chose native ChatGPT workflow",
+    "superseded_by": "README.md and resultados-chatgpt/procedencia.json"
   },
   {
     "ref": "M02-162",
@@ -48,7 +51,10 @@
       "referencias/cable-glute-kickback-f01.png",
       "referencias/goblet-squat-f00.png"
     ],
-    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits."
+    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits.",
+    "obsolete_do_not_execute": true,
+    "api_execution_status": "not executed; owner chose native ChatGPT workflow",
+    "superseded_by": "README.md and resultados-chatgpt/procedencia.json"
   },
   {
     "ref": "M02-126",
@@ -74,6 +80,10 @@
       "referencias/pendulum-aparato-abajo-no-aprobado.png",
       "referencias/goblet-squat-f00.png"
     ],
-    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits."
+    "note": "No API request executed. Requires GIF preview access, secure API setup, explicit API/custom-runner opt-in under imagegen skill, and validation of model pixel limits.",
+    "obsolete_do_not_execute": true,
+    "api_execution_status": "not executed; owner chose native ChatGPT workflow",
+    "superseded_by": "README.md and resultados-chatgpt/procedencia.json",
+    "reference_warning": "Legacy anatomy PNGs show body only, with no apparatus; unsuitable as a machine reference. Native pilot used the manufacturer URL instead."
   }
 ]

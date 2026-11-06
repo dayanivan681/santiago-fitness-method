@@ -377,11 +377,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-06T18:07:25.023Z
+- **Última sincronización:** 2026-11-06T18:26:13.547Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1529,6 +1529,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-06T18:26:13.548Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Piloto de tres ejercicios evaluado mediante ChatGPT y descarga por Chrome. Goblet frontal/perfil y Cable Kickback conservados como candidatos visuales; Pendulum90 rechazado por enlace superior de longitud variable y lectura de guía de hack squat. Guardados originales, hojas extraídas, metadatos/hashes, prompt exacto y registro de referencia. Conversiones técnicas360x480: Kickback243288B cumple250k; Goblet no cumple peso y32colores atenúan gradientes/rojo. Originales intactos. Sin integración de medios, fuentes producto, datos reales, novedades ni docs/cliente.
+- **Verificación:** npm test -- --maxWorkers=3: 1094/1094 en129archivos PASS; npm run lint PASS; npm run build PASS; git diff --check PASS; hashes/16frames/150ms/bucle de4originales y3derivados PASS; visual Pendulum FAIL; objetivo250k solo Kickback PASS
+- **Siguiente:** Aceptación visual del dueño y técnica de Santiago de Goblet/Kickback antes de preview; revisar calidad/optimización. Pendulum requiere vídeo lateral y marca/modelo de su máquina o rig Blender con contactos. No hay lote completo ni integración autorizados.
+
 
 ### 2026-11-06T18:07:25.024Z | codex | CLAIM
 - **Estado:** active
