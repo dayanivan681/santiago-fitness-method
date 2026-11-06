@@ -377,11 +377,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** unassigned
-- **Status:** blocked
+- **Owner:** codex
+- **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-05T23:04:19.699Z
+- **Última sincronización:** 2026-11-06T18:07:25.023Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1529,6 +1529,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-06T18:07:25.024Z | codex | CLAIM
+- **Estado:** active
+- **Tarea:** Cerrar piloto de GIF generativos por ChatGPT: registrar Goblet y Cable Kickback verificados, evaluar Pendulum 90 y actualizar evidencias sin integrar medios en la app
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
 
 ### 2026-11-05T23:04:19.700Z | codex | PUBLISH
 - **Estado:** blocked
