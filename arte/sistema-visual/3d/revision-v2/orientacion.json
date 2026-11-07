@@ -1,0 +1,519 @@
+{
+  "regresion_torsion_superada": true,
+  "es_certificacion_biomecanica": false,
+  "muestras": [
+    {
+      "muestra": 1,
+      "torsion_piernas_max_grados": 6.055652121435652,
+      "torsion_antebrazos_max_grados": 7.895385345606566,
+      "simetria_error_m": 4.1077601626093934e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999739229679,
+        "brazo.L": 1.000000107102096,
+        "pierna.R": 0.9999999403953552,
+        "brazo.R": 0.9999999962747097
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 2,
+      "torsion_piernas_max_grados": 5.83061617130395,
+      "torsion_antebrazos_max_grados": 7.897567591046385,
+      "simetria_error_m": 4.103279810514605e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000782310963,
+        "brazo.L": 0.9999999685678631,
+        "pierna.R": 1.0,
+        "brazo.R": 1.0000000740401447
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 3,
+      "torsion_piernas_max_grados": 6.329917513783868,
+      "torsion_antebrazos_max_grados": 7.903614869782785,
+      "simetria_error_m": 4.116815190655588e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000149011612,
+        "brazo.L": 0.9999999795109034,
+        "pierna.R": 0.9999998919665813,
+        "brazo.R": 0.9999999878928065
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 4,
+      "torsion_piernas_max_grados": 6.689253766018238,
+      "torsion_antebrazos_max_grados": 7.912430936453979,
+      "simetria_error_m": 4.10687708073639e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999143183231,
+        "brazo.L": 1.0000001705484465,
+        "pierna.R": 1.000000011175871,
+        "brazo.R": 0.9999999740975909
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 5,
+      "torsion_piernas_max_grados": 6.837007833238539,
+      "torsion_antebrazos_max_grados": 7.922916984377241,
+      "simetria_error_m": 4.101090047096295e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999515712261,
+        "brazo.L": 1.0000000080253812,
+        "pierna.R": 0.9999999478459358,
+        "brazo.R": 0.9999999341744115
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 6,
+      "torsion_piernas_max_grados": 6.76052252113909,
+      "torsion_antebrazos_max_grados": 7.933982744606308,
+      "simetria_error_m": 4.0969460272059676e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999776482582,
+        "brazo.L": 0.9999999632127583,
+        "pierna.R": 0.9999998770654202,
+        "brazo.R": 0.9999999674037099
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 7,
+      "torsion_piernas_max_grados": 6.49659077811828,
+      "torsion_antebrazos_max_grados": 7.945032283136096,
+      "simetria_error_m": 4.089474037339522e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000479631126,
+        "brazo.L": 0.999999962747097,
+        "pierna.R": 0.999999993480742,
+        "brazo.R": 0.9999999743886292
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 8,
+      "torsion_piernas_max_grados": 6.1218840389304425,
+      "torsion_antebrazos_max_grados": 7.954983868756805,
+      "simetria_error_m": 4.10383633456551e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000210420694,
+        "brazo.L": 0.9999998677521944,
+        "pierna.R": 1.0000000218569767,
+        "brazo.R": 0.999999912455678
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 9,
+      "torsion_piernas_max_grados": 5.726139890212142,
+      "torsion_antebrazos_max_grados": 7.963742732593699,
+      "simetria_error_m": 4.100626287569976e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999299179763,
+        "brazo.L": 0.9999998454004526,
+        "pierna.R": 0.9999999394640326,
+        "brazo.R": 0.9999999795109034
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 10,
+      "torsion_piernas_max_grados": 5.387689502686023,
+      "torsion_antebrazos_max_grados": 7.970526817986815,
+      "simetria_error_m": 4.1825064367939933e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999878928065,
+        "brazo.L": 1.0000000074505806,
+        "pierna.R": 0.9999998472630978,
+        "brazo.R": 1.0000000949949026
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 11,
+      "torsion_piernas_max_grados": 5.160101196238852,
+      "torsion_antebrazos_max_grados": 7.974751289988467,
+      "simetria_error_m": 4.240439283565611e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999832361937,
+        "brazo.L": 1.0000000596046448,
+        "pierna.R": 0.9999999459832907,
+        "brazo.R": 1.0000000782310963
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 12,
+      "torsion_piernas_max_grados": 5.077814492213124,
+      "torsion_antebrazos_max_grados": 7.976421271240536,
+      "simetria_error_m": 4.257150918711508e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999906867743,
+        "brazo.L": 0.9999999143183231,
+        "pierna.R": 1.000000013038516,
+        "brazo.R": 0.9999999552965164
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 13,
+      "torsion_piernas_max_grados": 5.160101196238852,
+      "torsion_antebrazos_max_grados": 7.974653106019149,
+      "simetria_error_m": 4.237274032571087e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000167638063,
+        "brazo.L": 1.0000000558793545,
+        "pierna.R": 1.0000000279396772,
+        "brazo.R": 1.0000000298023224
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 14,
+      "torsion_piernas_max_grados": 5.387543934279337,
+      "torsion_antebrazos_max_grados": 7.9704286340174955,
+      "simetria_error_m": 4.1876961064390366e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.000000050291419,
+        "brazo.L": 0.9999999664723873,
+        "pierna.R": 0.99999990593642,
+        "brazo.R": 1.0000000279396772
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 15,
+      "torsion_piernas_max_grados": 5.726276493995542,
+      "torsion_antebrazos_max_grados": 7.963840916563019,
+      "simetria_error_m": 4.09736684988704e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999806750566,
+        "brazo.L": 0.9999999962747097,
+        "pierna.R": 1.0000000523868948,
+        "brazo.R": 1.0000000186264515
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 16,
+      "torsion_piernas_max_grados": 6.1218840389304425,
+      "torsion_antebrazos_max_grados": 7.954983868756805,
+      "simetria_error_m": 4.10383633456551e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000210420694,
+        "brazo.L": 0.9999998677521944,
+        "pierna.R": 1.0000000218569767,
+        "brazo.R": 0.999999912455678
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 17,
+      "torsion_piernas_max_grados": 6.49659077811828,
+      "torsion_antebrazos_max_grados": 7.945032283136096,
+      "simetria_error_m": 4.089474037339522e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000479631126,
+        "brazo.L": 0.999999962747097,
+        "pierna.R": 0.999999993480742,
+        "brazo.R": 0.9999999743886292
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 18,
+      "torsion_piernas_max_grados": 6.76052252113909,
+      "torsion_antebrazos_max_grados": 7.933982744606308,
+      "simetria_error_m": 4.0969460272059676e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999776482582,
+        "brazo.L": 0.9999999632127583,
+        "pierna.R": 0.9999998770654202,
+        "brazo.R": 0.9999999674037099
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 19,
+      "torsion_piernas_max_grados": 6.837007833238539,
+      "torsion_antebrazos_max_grados": 7.922916984377241,
+      "simetria_error_m": 4.101090047096295e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999515712261,
+        "brazo.L": 1.0000000080253812,
+        "pierna.R": 0.9999999478459358,
+        "brazo.R": 0.9999999341744115
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 20,
+      "torsion_piernas_max_grados": 6.689370733007775,
+      "torsion_antebrazos_max_grados": 7.912430936453979,
+      "simetria_error_m": 4.105206084923568e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999739229679,
+        "brazo.L": 1.000000044441549,
+        "pierna.R": 0.9999999739229679,
+        "brazo.R": 0.999999966530595
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 21,
+      "torsion_piernas_max_grados": 6.329793716605161,
+      "torsion_antebrazos_max_grados": 7.903416794296855,
+      "simetria_error_m": 4.105570895918608e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000037252903,
+        "brazo.L": 1.000000103842467,
+        "pierna.R": 0.9999999664723873,
+        "brazo.R": 1.0000000302679837
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 22,
+      "torsion_piernas_max_grados": 5.83061617130395,
+      "torsion_antebrazos_max_grados": 7.897567591046385,
+      "simetria_error_m": 4.1056138922621245e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.000000011175871,
+        "brazo.L": 1.0000000221189111,
+        "pierna.R": 0.9999999664723873,
+        "brazo.R": 1.0000000563450158
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": 23,
+      "torsion_piernas_max_grados": 6.055652121435652,
+      "torsion_antebrazos_max_grados": 7.895385345606566,
+      "simetria_error_m": 4.1077601626093934e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999739229679,
+        "brazo.L": 1.000000107102096,
+        "pierna.R": 0.9999999403953552,
+        "brazo.R": 0.9999999962747097
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": "sin_clave_0.13",
+      "torsion_piernas_max_grados": 6.527496103452119,
+      "torsion_antebrazos_max_grados": 7.907578087048685,
+      "simetria_error_m": 4.0982053856628116e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 0.9999999850988388,
+        "brazo.L": 1.0000000139698386,
+        "pierna.R": 1.0000000037252903,
+        "brazo.R": 0.9999999664723873
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": "sin_clave_0.37",
+      "torsion_piernas_max_grados": 6.822789513820688,
+      "torsion_antebrazos_max_grados": 7.92894633386707,
+      "simetria_error_m": 4.107502312597008e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.000000050291419,
+        "brazo.L": 1.0000001167063601,
+        "pierna.R": 1.0000001080334187,
+        "brazo.R": 0.9999999657738954
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": "sin_clave_0.73",
+      "torsion_piernas_max_grados": 6.023498579030994,
+      "torsion_antebrazos_max_grados": 7.957347114209629,
+      "simetria_error_m": 4.1017448523019354e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.0000000419140633,
+        "brazo.L": 1.0000000651925802,
+        "pierna.R": 0.9999999966212272,
+        "brazo.R": 0.9999999748542905
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    },
+    {
+      "muestra": "sin_clave_0.89",
+      "torsion_piernas_max_grados": 5.469325631193309,
+      "torsion_antebrazos_max_grados": 7.9688559829611005,
+      "simetria_error_m": 4.1651069946460704e-05,
+      "alineacion_plano_polo": {
+        "pierna.L": 1.000000050291419,
+        "brazo.L": 1.0000000912696123,
+        "pierna.R": 0.9999999469146132,
+        "brazo.R": 0.999999912455678
+      },
+      "checks": {
+        "torsion_piernas_menor_25": true,
+        "torsion_antebrazos_menor_45": true,
+        "codos_debajo_de_hombros": true,
+        "simetria_menor_1mm": true,
+        "flexion_hacia_polo": true
+      }
+    }
+  ]
+}
