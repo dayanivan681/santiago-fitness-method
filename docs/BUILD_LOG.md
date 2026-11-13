@@ -1,5 +1,26 @@
 # Build log — Santiago Fitness Method
 
+## 2026-11-13 — Relevo para Claude Code verificado en GitHub — codex
+
+- El dueño pidió asegurar la continuidad con Claude Code.
+  Se añadió un punto de entrada al principio de HANDOFF y se
+  sustituyó el README de plantilla por instalación, demos, checks y referencias.
+- `handoff:sync` y `git fetch origin` confirman el código publicado; no hay commits
+  locales exclusivos de ramas sin publicar. Los 44 archivos del piloto son
+  idénticos a `origin/main`, incluidos los cuatro originales y sus hashes.
+  La revisión no depende de Downloads, `/tmp` ni la sesión de ChatGPT.
+- Relevo explícito: Goblet y Kickback pendientes de aceptación; Pendulum rechazado;
+  nada integrado ni lote aprobado. Rama alternativa Blender/mocap separada.
+  Borradores API obsoletos, secretos y respaldos privados fuera de la entrega.
+- Checks frescos: `npm test -- --maxWorkers=3`, 1094/1094 en 129 archivos PASS;
+  `npm run lint` y `npm run build` PASS; `git diff --check` PASS. Marcador de
+  handoff único, enlaces nuevos y hashes verificados. Revisión independiente PASS.
+  Avisos conocidos AbortSignal/JSDOM en tests; resultados resumidos aquí para
+  que los logs temporales no sean una dependencia del relevo.
+- Solo documentación: README, HANDOFF y este registro. Sin cambios de producto,
+  medios, datos reales, credenciales, novedades ni `docs/cliente`.
+- Siguiente: Claude lee CLAUDE/HANDOFF, sincroniza y reclama como `claude-code`
+  antes de continuar la revisión visual con el dueño, un ejercicio a la vez.
 
 ## 2026-11-04 — Revisión de código: borrador huérfano o duplicado y huella del panel sin borradores — claude-code
 

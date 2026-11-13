@@ -1,5 +1,68 @@
 # Handoff de Santiago Fitness Method
 
+## Relevo para Claude Code — 13 de noviembre de 2026
+
+Punto de entrada para continuar desde GitHub con Claude Code. Consultar el
+propietario del turno en **Estado actual** y el cierre más reciente en el
+historial automatizado de este documento.
+
+### Estado y archivos
+
+- Código coordinado en `main`:
+  https://github.com/dayanivan681/santiago-fitness-method. El piloto quedó
+  publicado en `d41b5af`; este relevo añade documentación.
+- Últimos cambios de producto registrados: correcciones de lecturas D1 y
+  autoguardado del 1–4 de noviembre, al inicio de [BUILD_LOG.md](BUILD_LOG.md).
+- Trabajo actual de medios:
+  [piloto generativo del 5–6 de noviembre](../arte/sistema-visual/piloto-image-2.6-2026-11-05/README.md).
+  Originales, hojas de cuadros, referencias, prompts, metadatos y hashes están
+  versionados en `main`; la revisión no depende de Downloads ni de `/tmp`.
+- La alternativa Blender/mocap permanece en `diseno/sistema-visual`, fuera del
+  producto de `main`. Consultar su rama remota actual antes de retomarla; el
+  puntero histórico del 24 de octubre queda debajo. No integrar prototipos
+  automáticamente.
+
+### Resultado vigente del piloto de GIF
+
+| Ejercicio | Evidencia versionada | Estado y próximo paso |
+| --- | --- | --- |
+| Goblet Squat | [Frontal](../arte/sistema-visual/piloto-image-2.6-2026-11-05/resultados-chatgpt/goblet-squat-frontal.gif) y [perfil](../arte/sistema-visual/piloto-image-2.6-2026-11-05/resultados-chatgpt/goblet-squat-perfil.gif) | Candidatos visuales; revisar con el dueño, uno a la vez, y validar la técnica con Santiago. |
+| Cable Glute Kickback | [GIF corregido](../arte/sistema-visual/piloto-image-2.6-2026-11-05/resultados-chatgpt/cable-glute-kickback.gif) | Candidato visual; pie y tobillera ya completos. Pendiente de aceptación. |
+| Pendulum Squat 90° | [Cuadros del intento rechazado](../arte/sistema-visual/piloto-image-2.6-2026-11-05/resultados-chatgpt/rechazados/pendulum-squat-90-secuencia.png) | Rechazado: el enlace de la máquina cambia de longitud. Obtener marca/modelo y vídeo lateral real antes de otro intento; considerar rig de Blender. |
+
+Los cuatro GIF originales contienen 16 cuadros, ciclo de 2,4 s y bucle infinito.
+Los checks técnicos no equivalen a aprobación visual o biomecánica. **Ninguno de
+estos GIF se integró en la app y no se ha aprobado generar toda la biblioteca.**
+Las conversiones de 360×480 son pruebas: 32 colores atenúan gradientes y rojo;
+solo Kickback alcanza el objetivo de 250 KB. Conservar los originales y revisar
+calidad antes de usar derivados. El límite de subida real es 5 MB.
+
+Para revisar, usar los archivos del repositorio y
+[su procedencia](../arte/sistema-visual/piloto-image-2.6-2026-11-05/resultados-chatgpt/procedencia.json).
+Allí están la conversación de origen, la URL de referencia del fabricante y los
+hashes. La sesión autenticada y la foto externa no se trasladan a Git; los logs
+antiguos de `/tmp` son evidencia local resumida, no requisitos para retomar.
+`solicitudes-api-borrador.json` está obsoleto: no ejecutarlo. El modelo exacto de
+las generaciones en ChatGPT no se verificó.
+
+### Cómo tomar el turno en Claude Code
+
+Leer `CLAUDE.md`, esta sección y el README del piloto. En un árbol limpio:
+
+```sh
+npm run handoff:status
+npm run handoff:sync
+npm run handoff:claim -- --agent claude-code --task "Describe la tarea concreta"
+```
+
+Respetar al propietario que muestre el estado y revisar cambios preexistentes
+antes de adoptarlos. La instalación, las demos y los checks están en el
+[README del proyecto](../README.md). Al cerrar, ejecutar tests, lint y build,
+y publicar con `handoff:publish --agent claude-code` conforme a `CLAUDE.md`.
+Los cambios visibles requieren una nota de novedades aprobada por el dueño;
+`docs/cliente` permanece de solo lectura. Este relevo no autoriza contactar a
+Santiago ni integrar los GIF pendientes de revisión.
+
 ## 2026-10-24 — Puntero: GIFs de ejercicios por mocap (rama de diseño) — claude-code
 
 - **Dónde:** rama `diseno/sistema-visual`, carpeta `arte/sistema-visual/mocap/`. Leer primero su `README.md` (pipeline, estándar visual y cómo añadir ejercicios). [PR #15 en borrador](https://github.com/dayanivan681/santiago-fitness-method/pull/15): **no fusionar sin aprobación del dueño**.
@@ -377,11 +440,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-13T14:04:27.103Z
+- **Última sincronización:** 2026-11-13T14:10:18.953Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1529,6 +1592,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-13T14:10:18.954Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Relevo para Claude Code al inicio de HANDOFF y README del proyecto actualizado. Código y 44 archivos del piloto verificados en GitHub, hashes originales coinciden y sin commits locales exclusivos sin publicar. Documentados candidatos, rechazo Pendulum, decisiones pendientes, rama mocap separada y protocolo Claude. Solo documentación; producto y docs/cliente intactos.
+- **Verificación:** npm test -- --maxWorkers=3: 1094/1094 PASS; npm run lint PASS; npm run build PASS; git diff --check PASS; 44 archivos idénticos a origin/main y 4 hashes PASS; enlaces y marcador handoff PASS; revisión independiente PASS. Avisos conocidos AbortSignal/JSDOM.
+- **Siguiente:** Claude Code lee CLAUDE.md y la sección inicial de docs/HANDOFF.md; sincroniza y reclama como claude-code. Revisar Goblet con el dueño primero, luego Kickback; no integrar candidatos ni generar lote completo sin aceptación.
+
 
 ### 2026-11-13T14:04:27.104Z | codex | CLAIM
 - **Estado:** active
