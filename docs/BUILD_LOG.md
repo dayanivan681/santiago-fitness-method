@@ -1,5 +1,25 @@
 # Build log — Santiago Fitness Method
 
+## 2026-11-13 — Estimación de Higgsfield para GIF — codex
+
+- Consulta hipotética del dueño: costes por resultado y biblioteca. Registrada en
+  [HIGGSFIELD-2026-11-13.md](gifs-servicios-costo-2026-10-21/HIGGSFIELD-2026-11-13.md)
+  y enlazada desde el relevo para Claude. 57 base verificados en código; 286 del
+  coach como escenario del inventario del 21 de octubre, sin consulta nueva a D1.
+- Fuentes oficiales de planes/créditos, Kling y Genjutsu. Documentadas tarifas
+  contradictorias de páginas antiguas, precio final en Generate y diferencia
+  entre generación corta y retoque avanzado. CUA no ofreció navegador local;
+  no se comprobó una cuenta autenticada ni el checkout.
+- Cálculo propio con 3–5 intentos por GIF y una imagen de referencia: consumo
+  prorrateado Plus, desembolso por ciclos Plus/Ultra y margen para 720p/1080p.
+  Fórmulas y redondeos revisados independientemente. No es tasa de éxito medida.
+- Checks frescos: 1094/1094 pruebas en 129 archivos PASS, lint PASS, build PASS,
+  diff-check y enlaces locales PASS. Avisos conocidos AbortSignal/JSDOM.
+- Solo documentación. Sin contratación, generación, integración, datos reales,
+  credenciales, novedades ni cambios en `docs/cliente`.
+- Siguiente: si el dueño opta por probar, definir presupuesto antes de contratar
+  y validar primero Goblet, uno a la vez. Ninguna compra o lote autorizados.
+
 ## 2026-11-13 — Relevo para Claude Code verificado en GitHub — codex
 
 - El dueño pidió asegurar la continuidad con Claude Code.

@@ -17,6 +17,10 @@ historial automatizado de este documento.
   [piloto generativo del 5–6 de noviembre](../arte/sistema-visual/piloto-image-2.6-2026-11-05/README.md).
   Originales, hojas de cuadros, referencias, prompts, metadatos y hashes están
   versionados en `main`; la revisión no depende de Downloads ni de `/tmp`.
+- Investigación posterior:
+  [coste de Higgsfield por GIF y biblioteca, 13 de noviembre](gifs-servicios-costo-2026-10-21/HIGGSFIELD-2026-11-13.md).
+  Distingue 57 base de 286 en el último inventario, consumo de créditos y
+  desembolso de planes; no se ha contratado ni generado en Higgsfield.
 - La alternativa Blender/mocap permanece en `diseno/sistema-visual`, fuera del
   producto de `main`. Consultar su rama remota actual antes de retomarla; el
   puntero histórico del 24 de octubre queda debajo. No integrar prototipos
@@ -440,11 +444,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-13T14:14:53.694Z
+- **Última sincronización:** 2026-11-13T14:17:04.862Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1592,6 +1596,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-13T14:17:04.863Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Documentada estimación Higgsfield con fuentes oficiales para crear/regenerar GIF y retoque avanzado: 57 base y escenario286coach del inventario21oct. Separados consumo prorrateado, desembolso mensual, supuestos3-5intentos y tarifas provisionales. Cálculos revisados y enlace en relevoClaude. Sin compra, generación ni cambios de producto/datos.
+- **Verificación:** npm test -- --maxWorkers=3:1094/1094 en129archivos PASS; npm run lint PASS; npm run build PASS; git diff --check PASS; enlaces, fórmulas y revisión independiente PASS. Avisos conocidos AbortSignal/JSDOM.
+- **Siguiente:** El dueño evalúa presupuesto; si opta por probar, cotizar plan/modelo en la cuenta y definir límite antes de contratar. PilotoGoblet primero; no hay autorización para compra, generación ni lote.
+
 
 ### 2026-11-13T14:14:53.695Z | codex | CLAIM
 - **Estado:** active
