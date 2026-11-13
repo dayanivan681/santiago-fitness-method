@@ -6,6 +6,13 @@ Punto de entrada para continuar desde GitHub con Claude Code. Consultar el
 propietario del turno en **Estado actual** y el cierre más reciente en el
 historial automatizado de este documento.
 
+**Requisito obligatorio del dueño:** anatomía correcta y mecánica correcta del
+ejercicio y del equipo, además de calidad visual. Leer
+[los criterios de aceptación de GIF](CRITERIOS-ACEPTACION-GIFS.md).
+Cualquier fallo bloquea la aprobación; lo no verificable queda pendiente.
+Los candidatos existentes no están aprobados y el coste de alcanzar este
+estándar todavía no se ha medido.
+
 ### Estado y archivos
 
 - Código coordinado en `main`:
@@ -444,11 +451,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** codex
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-13T14:18:48.388Z
+- **Última sincronización:** 2026-11-13T14:22:45.383Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1596,6 +1603,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-13T14:22:45.384Z | codex | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Fijados criterios obligatorios de anatomía y mecánica del ejercicio/equipo para todos los GIF, además de acabado. Evidencia por cuadro/bucle y versión final, referencias y aprobación técnica/dueño. Enlazados desde HANDOFF y piloto; Goblet/Kickback pendientes y Pendulum rechazado. Presupuesto Higgsfield corregido a consumo por ejercicio, coste conforme sin medir. Solo documentación.
+- **Verificación:** Lint PASS; build PASS; primera suite1093/1094 con fallo de demo por estado undefined; caso aislado5/5 PASS y repetición completa1094/1094 en129archivos PASS sin cambios de código. Incidencia intermitente documentada, no corregida. Diff-check, enlaces y revisión independiente PASS; avisos conocidos AbortSignal/JSDOM.
+- **Siguiente:** Aplicar criterios al primer GIF y obtener revisión técnica de Santiago y aceptación del dueño antes de integrar o ampliar. Medir coste conforme; no compra ni lote autorizados. Investigar incidencia demo si reaparece.
+
 
 ### 2026-11-13T14:18:48.390Z | codex | CLAIM
 - **Estado:** active

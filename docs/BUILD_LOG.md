@@ -1,5 +1,27 @@
 # Build log — Santiago Fitness Method
 
+## 2026-11-13 — Anatomía y mecánica obligatorias para aceptar GIF — codex
+
+- El dueño fijó ambas como no negociables, además del acabado visual. Registrado
+  en [CRITERIOS-ACEPTACION-GIFS.md](CRITERIOS-ACEPTACION-GIFS.md), con revisión
+  separada del cuerpo, ejercicio y equipo, todos los cuadros y unión del bucle,
+  referencia validada, aprobación de Santiago/dueño y archivo final identificado.
+  Perspectiva o escorzo no se confunden automáticamente con deformación.
+- Enlaces y condición explícita al inicio de HANDOFF y README del piloto.
+  Goblet/Kickback siguen pendientes; Pendulum rechazado. Estimación Higgsfield
+  corregida: 3–5 intentos modelan gasto por ejercicio, no garantizan un GIF
+  conforme. El coste de cumplir el estándar todavía debe medirse en un piloto.
+- Revisión independiente de criterios/enlaces PASS; diff-check PASS. Lint y
+  build PASS. Primera suite: 1093/1094, fallo en RecorridosDemo por
+  `InsigniaSuscripcion` leyendo `estado` de undefined; caso aislado 5/5 PASS y
+  repetición completa **1094/1094 en 129 archivos PASS**, sin cambios de código.
+  Se conserva como observación intermitente, no como bug corregido. Avisos
+  conocidos AbortSignal/JSDOM; logs temporales `/tmp/sfm-gif-criterios-*20261113.log`.
+- Solo documentación; sin cambios de producto, medios, datos reales o
+  `docs/cliente`. Sin compra, generación ni mensajes a Santiago.
+- Siguiente: revisar el primer GIF con estos criterios y obtener validación
+  antes de integrar o ampliar. Investigar la incidencia de demo si reaparece.
+
 ## 2026-11-13 — Estimación de Higgsfield para GIF — codex
 
 - Consulta hipotética del dueño: costes por resultado y biblioteca. Registrada en

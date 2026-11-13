@@ -4,6 +4,12 @@ Consulta de costes; no se contrató un plan, conectó una cuenta ni ejecutó una
 generación. Moneda USD, antes de impuestos. El cálculo cubre herramientas;
 excluye horas de preparación, grabación, revisión técnica e integración.
 
+**Condición obligatoria del dueño:** cada GIF debe cumplir
+[anatomía y mecánica correctas](../CRITERIOS-ACEPTACION-GIFS.md), además de calidad
+visual. Los importes siguientes simulan consumo; **no constituyen un presupuesto
+cerrado por archivo aprobado ni por biblioteca conforme**. Ese coste requiere
+un piloto que supere la validación técnica.
+
 ## Alcance
 
 - **57 ejercicios base**, contados en `shared/ejercicios-base.ts`.
@@ -11,7 +17,7 @@ excluye horas de preparación, grabación, revisión técnica e integración.
   inventario de producción del 21 de octubre en [README.md](README.md).
   No se consultó D1 hoy para actualizar ese número.
 - Un GIF por ejercicio. Dos vistas por ejercicio duplican aproximadamente el
-  consumo de vídeo. Los resultados aceptables del piloto siguen pendientes de
+  consumo de vídeo. Los candidatos visuales del piloto siguen pendientes de
   aprobación; el cálculo no establece una tasa de éxito comprobada en Higgsfield.
 
 ## Tarifas de referencia
@@ -33,14 +39,15 @@ automatización consumen créditos.
 
 ## Consumo estimado para crear o regenerar
 
-Supuestos nuestros: **3–5 intentos por resultado aceptable**, un vídeo de 5 s por
+Supuestos nuestros: **3–5 intentos por ejercicio para explorar candidatos**, un vídeo de 5 s por
 intento y una imagen de referencia de 2 créditos por ejercicio. Si la imagen ya
 existe, ese coste puede omitirse. Es un supuesto presupuestario, no garantía de
-fidelidad. Las máquinas concretas pueden requerir más intentos o no resolverse.
+fidelidad ni de aprobación anatómica/mecánica. Las máquinas concretas pueden
+requerir más intentos o no resolverse; el coste de un resultado conforme no se ha medido.
 
 Se prorratea Plus: $59 / 1.200 = **$0,04917 por crédito**.
 
-| Escenario | Créditos por GIF aceptable | Consumo equivalente por GIF | 57 ejercicios | 286 ejercicios |
+| Escenario | Créditos por ejercicio, con 3–5 intentos | Consumo equivalente por ejercicio | 57 ejercicios | 286 ejercicios |
 | --- | ---: | ---: | ---: | ---: |
 | 720p, 7 créditos por intento | 23–37 | $1,13–$1,82 | $64–$104 | $323–$520 |
 | Motion Control 1080p, 12 por intento | 38–62 | $1,87–$3,05 | $106–$174 | $534–$872 |
@@ -82,7 +89,9 @@ nativa ni resuelve por sí sola una técnica o una máquina incorrectas.
 
 Probar primero Goblet Squat con un mes de Plus como techo de suscripción de
 referencia ($59 antes de impuestos), manteniendo un límite de intentos y sin
-contratar automáticamente. Medir calidad, créditos y repeticiones antes de
-escalar. Como reserva provisional para la biblioteca de 286, prever **$600 a
-720p** o **$900 con margen para 1080p**, solo herramientas y bajo los supuestos
-anteriores. El retoque avanzado masivo requiere otro presupuesto.
+contratar automáticamente. Medir anatomía, mecánica, calidad, créditos y
+repeticiones antes de escalar. Las reservas anteriores de **$600 a 720p** o
+**$900 con margen para 1080p** son simulaciones de gasto para 286, solo
+herramientas y bajo esos supuestos. El presupuesto de una biblioteca que cumpla
+los criterios deberá recalcularse tras validar el piloto. El retoque avanzado
+masivo requiere otro presupuesto.

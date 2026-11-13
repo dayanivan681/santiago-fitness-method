@@ -2,6 +2,12 @@
 
 **Vía de ChatGPT comprobada. Piloto de tres ejercicios cerrado: dos con candidatos visuales y Pendulum Squat 90° rechazado por el mecanismo. Ningún medio integrado en la app.**
 
+**Requisito del dueño actualizado el 13 de noviembre:** anatomía y mecánica del
+ejercicio/equipo correctas son condiciones obligatorias de aprobación, además
+del acabado visual. Aplicar [los criterios del proyecto](../../../docs/CRITERIOS-ACEPTACION-GIFS.md)
+a todos los cuadros y al GIF final. Goblet y Kickback siguen pendientes de esa
+validación; el cierre del piloto no los convierte en archivos aprobados.
+
 El dueño pidió comprobar si la nueva generación de imágenes permite recrear la biblioteca y autorizó un piloto de tres ejercicios, uno a la vez. Después autorizó gestionar los mensajes del otro chat y descargar sus resultados, evitando copiar prompts o archivos a mano.
 
 ## Resultado del flujo
