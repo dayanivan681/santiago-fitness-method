@@ -1188,7 +1188,7 @@ button,
   display: block;
 }
 
-/* Animación del catálogo base (casi todas 3:2): completa, sin recorte y sin pasar de la altura del GIF del coach. */
+/* Animación apaisada (catálogo base, casi todas 3:2, o GIF horizontal del coach): completa, sin recorte y sin pasar de la altura del GIF del coach. */
 .hoja__imagen--movimiento-horizontal {
   width: auto;
   max-width: 100%;
