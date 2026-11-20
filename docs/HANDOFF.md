@@ -451,11 +451,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-20T02:55:33.465Z
+- **Última sincronización:** 2026-11-20T03:03:38.637Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1603,6 +1603,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-20T03:03:38.638Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Animaciones en MP4 además de GIF implementadas en PR #17 (rama claude/animacion-mp4, borrador). Archivos: functions/lib/v2/{medios,bibliotecaDatos,bibliotecaApi}.ts, shared/v2/biblioteca.ts, src/componentes/ImagenConMovimiento.tsx, src/producto/{HojaEjercicio,BibliotecaCoach,servicioBiblioteca,notas-novedades}.ts(x), src/datos/videoAGif.ts, src/dominio/tipos.ts, src/nube/biblioteca.ts y pruebas. Riesgos: falta prueba manual en iPhone/Android (autoplay y 206); nota de novedades pendiente de aprobación; RecorridosDemo intermitente bajo carga.
+- **Verificación:** npm test (1104) en la rama; npm run lint; npx tsc -b; npm run build
+- **Siguiente:** Dueño prueba el preview de PR #17 en iPhone y Android y aprueba la nota; luego fusionar
+
 
 ### 2026-11-20T02:55:33.466Z | claude-code | CLAIM
 - **Estado:** active
