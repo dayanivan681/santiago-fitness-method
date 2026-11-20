@@ -451,11 +451,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-20T13:20:10.062Z
+- **Última sincronización:** 2026-11-20T13:22:12.087Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1603,6 +1603,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-20T13:22:12.089Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #17 (animaciones MP4 además de GIF) fusionado a main en 189e753 y desplegado en producción por Cloudflare Pages. Antes del merge: rama al día con main; 1104 pruebas, lint, tsc, build; prueba en Chromium con la demo del coach y los 3 MP4 oficiales (Goblet, RDL mancuernas, Elevación lateral): se suben tal cual sin recorte, insignia Vídeo, y en la ficha se reproducen solos, mudos, en bucle e inline con póster. Nota de novedades del coach aprobada por el dueño al pedir la publicación. Riesgos: no hubo prueba manual en iPhone/Android (el 206 por rangos está cubierto por pruebas); los 3 MP4 no se subieron a staging ni producción (sin credenciales de Cloudflare).
+- **Verificación:** npm test (1104); npm run lint; npx tsc -b; npm run build; e2e Chromium demo con 3 MP4
+- **Siguiente:** El coach sube los 3 MP4 en Biblioteca > ejercicio > Editar y lo comprueba en iPhone
+
 
 ### 2026-11-20T13:20:10.063Z | claude-code | CLAIM
 - **Estado:** active
