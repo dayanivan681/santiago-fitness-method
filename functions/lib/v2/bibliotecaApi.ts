@@ -56,7 +56,7 @@ async function atender(request: Request, env: EntornoV2, ctx: Contexto, ruta: st
 
   if (!id && metodo === "GET") return listar(request, env);
   if (id && subruta === "foto" && metodo === "GET") return servirFoto(env, id);
-  if (id && subruta === "animacion" && metodo === "GET") return servirAnimacion(env, id);
+  if (id && subruta === "animacion" && metodo === "GET") return servirAnimacion(request, env, id);
 
   const permitido =
     (!id && metodo === "POST") ||
@@ -93,22 +93,42 @@ async function servirFoto(env: EntornoV2, id: string): Promise<Response> {
   return servirImagen(env, await claveDeFotoGuardada(env.ACCESO, id), "Foto no disponible");
 }
 
-async function servirAnimacion(env: EntornoV2, id: string): Promise<Response> {
-  return servirImagen(env, await claveDeAnimacionGuardada(env.ACCESO, id), "Animación no disponible");
+async function servirAnimacion(request: Request, env: EntornoV2, id: string): Promise<Response> {
+  return servirImagen(env, await claveDeAnimacionGuardada(env.ACCESO, id), "Animación no disponible", request);
 }
 
-async function servirImagen(env: EntornoV2, clave: string | null, noDisponible: string): Promise<Response> {
+/**
+ * Con `request` responde a peticiones por rangos: Safari de iOS no reproduce
+ * un vídeo sin un 206 a `Range: bytes=0-1`.
+ */
+async function servirImagen(env: EntornoV2, clave: string | null, noDisponible: string, request?: Request): Promise<Response> {
   if (!env.FOTOS) return json({ error: "El almacenamiento de fotos aún no está habilitado." }, 503);
-  const objeto = clave ? await env.FOTOS.get(clave) : null;
+  const conRango = !!request?.headers.get("Range");
+  const objeto = clave ? await env.FOTOS.get(clave, conRango ? { range: request!.headers } : undefined) : null;
   if (!objeto) return json({ error: noDisponible }, 404);
-  return new Response(objeto.body, {
-    headers: {
-      "Content-Type": objeto.httpMetadata?.contentType ?? "application/octet-stream",
-      "Cache-Control": CACHE_DE_FOTO,
-      "X-Content-Type-Options": "nosniff",
-      "Content-Security-Policy": "default-src 'none'",
-    },
+  const cabeceras = new Headers({
+    "Content-Type": objeto.httpMetadata?.contentType ?? "application/octet-stream",
+    "Cache-Control": CACHE_DE_FOTO,
+    "X-Content-Type-Options": "nosniff",
+    "Content-Security-Policy": "default-src 'none'",
   });
+  if (request) cabeceras.set("Accept-Ranges", "bytes");
+  const tramo = conRango ? tramoDe(objeto.range, objeto.size) : null;
+  if (!tramo) return new Response(objeto.body, { headers: cabeceras });
+  cabeceras.set("Content-Range", `bytes ${tramo.inicio}-${tramo.fin}/${objeto.size}`);
+  cabeceras.set("Content-Length", String(tramo.fin - tramo.inicio + 1));
+  return new Response(objeto.body, { status: 206, headers: cabeceras });
+}
+
+function tramoDe(rango: R2Range | undefined, total: number): { inicio: number; fin: number } | null {
+  if (!rango || total <= 0) return null;
+  if ("suffix" in rango && rango.suffix !== undefined) {
+    const inicio = Math.max(0, total - rango.suffix);
+    return { inicio, fin: total - 1 };
+  }
+  const inicio = "offset" in rango && rango.offset !== undefined ? rango.offset : 0;
+  const largo = "length" in rango && rango.length !== undefined ? rango.length : total - inicio;
+  return { inicio, fin: Math.min(total, inicio + largo) - 1 };
 }
 
 async function subirFoto(request: Request, env: EntornoV2, id: string): Promise<Response> {
@@ -120,19 +140,24 @@ async function subirFoto(request: Request, env: EntornoV2, id: string): Promise<
   return json({ ejercicio: await leerEjercicio(env.ACCESO, id) });
 }
 
-/** El GIF se reproduce sólo en la ficha; listas y miniaturas siguen con la foto fija. */
+/** La animación (GIF o MP4) se reproduce sólo en la ficha; listas y miniaturas siguen con la foto fija. */
 async function subirAnimacion(request: Request, env: EntornoV2, id: string): Promise<Response> {
   if (!env.FOTOS) return json({ error: "El almacenamiento de fotos aún no está habilitado." }, 503);
   rechazarSiDeclaraDemasiado(request);
   const { bytes, mime } = await leerAnimacionValidada(request);
-  await env.FOTOS.put(claveDeAnimacion(id), bytes, { httpMetadata: { contentType: mime } });
-  await guardarClaveDeAnimacion(env.ACCESO, id, Date.now());
+  const clave = claveDeAnimacion(id, mime === "video/mp4" ? "mp4" : "gif");
+  const anterior = await claveDeAnimacionGuardada(env.ACCESO, id);
+  await env.FOTOS.put(clave, bytes, { httpMetadata: { contentType: mime } });
+  await guardarClaveDeAnimacion(env.ACCESO, id, Date.now(), clave);
+  // Un GIF sustituido por un MP4 (o al revés) no debe quedar huérfano en R2.
+  if (anterior && anterior !== clave) await env.FOTOS.delete(anterior);
   return json({ ejercicio: await leerEjercicio(env.ACCESO, id) });
 }
 
 async function quitarAnimacion(env: EntornoV2, id: string): Promise<Response> {
   if (!env.FOTOS) return json({ error: "El almacenamiento de fotos aún no está habilitado." }, 503);
-  await env.FOTOS.delete(claveDeAnimacion(id));
+  const clave = await claveDeAnimacionGuardada(env.ACCESO, id);
+  if (clave) await env.FOTOS.delete(clave);
   await quitarClaveDeAnimacion(env.ACCESO, id, Date.now());
   return json({ ejercicio: await leerEjercicio(env.ACCESO, id) });
 }

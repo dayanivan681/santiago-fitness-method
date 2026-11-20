@@ -76,6 +76,7 @@ export const EjercicioCoach = EjercicioCoachNuevo.extend({
   tieneFoto: z.boolean(),
   /** `true` cuando además tiene un GIF en `/biblioteca/<id>/animacion`; la foto sigue siendo la fija. */
   tieneAnimacion: z.boolean().default(false),
+  formatoAnimacion: z.enum(["gif", "mp4"]).default("gif"),
   activo: z.boolean(),
   creadoEn: z.number().int(),
   actualizadoEn: z.number().int(),

@@ -28,8 +28,12 @@ type Fila = {
 const SELECCION = `SELECT e.*, a.clave AS animacion_clave FROM ejercicios_coach e
   LEFT JOIN ejercicios_coach_animacion a ON a.ejercicio_id = e.id`;
 
-export function claveDeAnimacion(id: string) {
-  return `biblioteca/${id}/animacion`;
+/**
+ * El formato vive en la clave, sin columna nueva: el GIF conserva la clave de
+ * siempre (lo ya subido sigue valiendo) y el MP4 termina en `.mp4`.
+ */
+export function claveDeAnimacion(id: string, formato: "gif" | "mp4" = "gif") {
+  return formato === "mp4" ? `biblioteca/${id}/animacion.mp4` : `biblioteca/${id}/animacion`;
 }
 
 export function claveDeFoto(id: string) {
@@ -51,6 +55,7 @@ function aEjercicio(f: Fila): EjercicioCoach {
     explicacionCorta: f.explicacion,
     tieneFoto: f.foto_clave !== null,
     tieneAnimacion: f.animacion_clave !== null,
+    formatoAnimacion: f.animacion_clave?.endsWith(".mp4") ? "mp4" : "gif",
     activo: f.activo === 1,
     creadoEn: f.creado_en,
     actualizadoEn: f.actualizado_en,
@@ -186,13 +191,13 @@ export async function claveDeAnimacionGuardada(db: D1Database, id: string): Prom
 }
 
 /** Guarda o quita la animación y toca `actualizado_en`: cambia el ETag y la `?v=` de las URLs. */
-export async function guardarClaveDeAnimacion(db: D1Database, id: string, ahora: number): Promise<void> {
+export async function guardarClaveDeAnimacion(db: D1Database, id: string, ahora: number, clave: string): Promise<void> {
   await db.batch([
     db
       .prepare(
         "INSERT INTO ejercicios_coach_animacion (ejercicio_id, clave, actualizado_en) VALUES (?1, ?2, ?3) ON CONFLICT(ejercicio_id) DO UPDATE SET clave=?2, actualizado_en=?3",
       )
-      .bind(id, claveDeAnimacion(id), ahora),
+      .bind(id, clave, ahora),
     db.prepare("UPDATE ejercicios_coach SET actualizado_en=?2 WHERE id=?1").bind(id, ahora),
   ]);
 }

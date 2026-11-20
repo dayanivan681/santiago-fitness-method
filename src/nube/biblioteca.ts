@@ -20,7 +20,7 @@ export function aEjercicioDominio(
     equipo: e.equipo,
     movimiento: e.movimiento,
     imagen: (e.tieneFoto ? urlDeFoto(e) : null) ?? FOTO_PENDIENTE,
-    ...(animacion ? { animacion } : {}),
+    ...(animacion ? { animacion, formatoAnimacion: e.formatoAnimacion } : {}),
     explicacionCorta: e.explicacionCorta,
     musculoPrimario: e.musculoPrimario,
     musculosSecundarios: e.musculosSecundarios,

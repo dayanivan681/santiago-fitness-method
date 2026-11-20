@@ -23,6 +23,15 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
+    id: "2026-11-20-coach-animacion-video",
+    fecha: "2026-11-20",
+    audiencia: "coach",
+    titulo: "Movimientos en vídeo",
+    puntos: [
+      "Ahora puedes subir el movimiento de un ejercicio como vídeo corto (MP4): se ve más nítido y carga más rápido.",
+    ],
+  },
+  {
     id: "2026-10-28-cliente-instalar-app",
     fecha: "2026-10-28",
     audiencia: "cliente",

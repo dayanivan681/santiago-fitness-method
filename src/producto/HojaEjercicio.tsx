@@ -11,7 +11,7 @@ import {
 } from "../../shared/v2/biblioteca";
 import { CATALOGO_PDF, type FichaCatalogoPdf } from "../../shared/catalogo-pdf";
 import { reducirImagen } from "../datos/imagen";
-import { VIDEO_MAX_BYTES } from "../datos/videoAGif";
+import { leerMp4Preparado, MP4_DURACION_MAX_S, VIDEO_MAX_BYTES } from "../datos/videoAGif";
 import { RecortarVideo } from "./RecortarVideo";
 import { useBiblioteca } from "./contextoBiblioteca";
 import { ETIQUETA_EQUIPO, ETIQUETA_MUSCULO, OPCION_CARGA } from "./etiquetasBiblioteca";
@@ -179,11 +179,11 @@ function Formulario({
   const [b, setB] = useState(inicial);
   const [foto, setFoto] = useState<Blob | null>(null);
   const [vista, setVista] = useState("");
-  // GIF elegido: se sube aparte; `foto` guarda su primer cuadro como imagen fija.
-  const [gif, setGif] = useState<Blob | null>(null);
+  // GIF o MP4 elegido: se sube aparte; `foto` guarda su primer cuadro como imagen fija.
+  const [animacion, setAnimacion] = useState<Blob | null>(null);
   // Vídeo elegido y aún sin convertir: se muestra el recorte en lugar del botón.
   const [video, setVideo] = useState<Blob | null>(null);
-  const [vistaGif, setVistaGif] = useState("");
+  const [vistaAnimacion, setVistaAnimacion] = useState("");
   const [error, setError] = useState("");
   const [guardando, setGuardando] = useState(false);
   // Si el ejercicio ya se creó y sólo falló la foto, un reintento no lo duplica.
@@ -203,12 +203,12 @@ function Formulario({
   }, [foto]);
 
   useEffect(() => {
-    if (!gif) return;
-    const url = URL.createObjectURL(gif);
+    if (!animacion) return;
+    const url = URL.createObjectURL(animacion);
     // oxlint-disable-next-line react/set-state-in-effect
-    setVistaGif(url);
+    setVistaAnimacion(url);
     return () => URL.revokeObjectURL(url);
-  }, [gif]);
+  }, [animacion]);
 
   async function elegirFoto(e: ChangeEvent<HTMLInputElement>) {
     const archivo = e.target.files?.[0];
@@ -217,6 +217,7 @@ function Formulario({
     if (archivo.type === "image/gif") return elegirGif(archivo);
     if (archivo.type.startsWith("video/")) {
       if (archivo.size > VIDEO_MAX_BYTES) return setError("El vídeo es demasiado grande. Graba solo unos segundos del ejercicio.");
+      if (archivo.type === "video/mp4" && (await elegirMp4(archivo))) return;
       setError("");
       return setVideo(archivo);
     }
@@ -229,8 +230,30 @@ function Formulario({
     if (lista.size > FOTO_MAX_BYTES) return setError("La foto pesa más de 5 MB. Elige otra.");
     setError("");
     setFoto(lista);
-    setGif(null);
-    setVistaGif("");
+    setAnimacion(null);
+    setVistaAnimacion("");
+  }
+
+  /**
+   * Un MP4 corto ya preparado se sube tal cual (más nítido y ligero que un GIF).
+   * Devuelve false si no es corto o no se pudo leer: pasa por el recorte a GIF.
+   */
+  async function elegirMp4(archivo: Blob): Promise<boolean> {
+    let leido: { duracion: number; fija: Blob };
+    try {
+      leido = await leerMp4Preparado(archivo);
+    } catch {
+      return false;
+    }
+    if (leido.duracion > MP4_DURACION_MAX_S) return false;
+    if (archivo.size > FOTO_MAX_BYTES) {
+      setError("El vídeo pesa más de 5 MB. Recórtalo o súbelo más corto.");
+      return true;
+    }
+    setError("");
+    setFoto(leido.fija);
+    setAnimacion(archivo);
+    return true;
   }
 
   /** Un GIF animado: el primer cuadro es la imagen fija de listas y miniaturas; el GIF, sólo para la ficha. */
@@ -242,7 +265,7 @@ function Formulario({
       return setError("No pudimos sacar una imagen fija de ese GIF. Prueba con otro.");
     setError("");
     setFoto(fija);
-    setGif(archivo);
+    setAnimacion(archivo);
   }
 
   async function guardar() {
@@ -283,8 +306,8 @@ function Formulario({
       yaGuardado = true;
       if (!editando) setCreado(actual);
       if (foto) actual = await servicio.subirFoto(actual.id, foto);
-      // El GIF va después de su imagen fija; una foto nueva sin GIF reemplaza a la animación anterior.
-      if (gif) await servicio.subirAnimacion(actual.id, gif);
+      // La animación va después de su imagen fija; una foto nueva sin animación reemplaza a la anterior.
+      if (animacion) await servicio.subirAnimacion(actual.id, animacion);
       else if (foto && actual.tieneAnimacion) await servicio.quitarAnimacion(actual.id);
       await recargar();
       terminar();
@@ -298,8 +321,9 @@ function Formulario({
   }
 
   const fotoActual = vista || (existente?.tieneFoto && servicio ? servicio.urlDeFoto(existente) : null);
-  // Una foto nueva sin GIF deja la animación anterior fuera de la vista previa: se quitará al guardar.
-  const animacionActual = vistaGif || (!foto && existente && servicio ? servicio.urlDeAnimacion(existente) : null);
+  // Una foto nueva sin animación deja la anterior fuera de la vista previa: se quitará al guardar.
+  const animacionActual = vistaAnimacion || (!foto && existente && servicio ? servicio.urlDeAnimacion(existente) : null);
+  const animacionEsVideo = animacion ? animacion.type === "video/mp4" : existente?.formatoAnimacion === "mp4";
   return (
     <form
       className="sfm-form"
@@ -409,7 +433,11 @@ function Formulario({
         <small className="sfm-hint">Puede ser una foto, un GIF o un vídeo corto: la app lo convierte en movimiento.</small>
         {animacionActual ? (
           <span className="sfm-vista-animacion">
-            <img className="sfm-exercise-thumb" src={animacionActual} alt="Animación elegida" />
+            {animacionEsVideo ? (
+              <video className="sfm-exercise-thumb" src={animacionActual} aria-label="Animación elegida" autoPlay muted loop playsInline />
+            ) : (
+              <img className="sfm-exercise-thumb" src={animacionActual} alt="Animación elegida" />
+            )}
             <span className="sfm-insignia-gif">Animación</span>
           </span>
         ) : (
@@ -428,7 +456,7 @@ function Formulario({
           cancelar={() => setVideo(null)}
           listo={({ gif: nuevoGif, fija }) => {
             setFoto(fija);
-            setGif(nuevoGif);
+            setAnimacion(nuevoGif);
             setVideo(null);
           }}
         />

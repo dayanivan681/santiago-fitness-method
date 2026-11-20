@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Ejercicio } from '../dominio/tipos'
 import { esAnimacionBase } from '../datos/semilla/biblioteca/animaciones'
 
@@ -10,8 +10,8 @@ const prefiereSinMovimiento = () =>
     : false
 
 /**
- * Imagen grande de la ficha. Si el ejercicio tiene GIF (del coach o del catálogo
- * base), se reproduce aquí (y sólo aquí). Si no carga (sin conexión), se vuelve a
+ * Imagen grande de la ficha. Si el ejercicio tiene GIF o vídeo MP4 (del coach o
+ * GIF del catálogo base), se reproduce aquí (y sólo aquí). Si no carga (sin conexión), se vuelve a
  * la foto fija. Con «reducir movimiento» se muestra la foto y un botón para verlo
  * a demanda.
  *
@@ -32,7 +32,11 @@ export function ImagenConMovimiento({ ejercicio, className }: { readonly ejercic
   return (
     <>
       {seAnima ? (
-        <img className={clase} src={ejercicio.animacion} alt="" onError={() => setFallo(true)} />
+        ejercicio.formatoAnimacion === 'mp4' ? (
+          <VideoEnBucle className={clase} src={ejercicio.animacion!} poster={ejercicio.imagen} alFallar={() => setFallo(true)} />
+        ) : (
+          <img className={clase} src={ejercicio.animacion} alt="" onError={() => setFallo(true)} />
+        )
       ) : (
         <img className={clase} src={ejercicio.imagen} alt="" />
       )}
@@ -43,5 +47,39 @@ export function ImagenConMovimiento({ ejercicio, className }: { readonly ejercic
       )}
       {nota && <p className="hoja__texto">{nota}</p>}
     </>
+  )
+}
+
+/**
+ * Vídeo mudo en bucle dentro de la página. React no siempre escribe `muted` en
+ * el HTML y sin él Safari de iOS no arranca solo: se fija por ref y se pide
+ * `play()`. Si el navegador lo impide, queda el póster (la foto fija).
+ */
+function VideoEnBucle({ className, src, poster, alFallar }: { readonly className: string; readonly src: string; readonly poster?: string; readonly alFallar: () => void }) {
+  const ref = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const video = ref.current
+    if (!video) return
+    video.muted = true
+    try {
+      void video.play()?.catch(() => {})
+    } catch {
+      /* Sin reproducción automática se ve el póster. */
+    }
+  }, [src])
+  return (
+    <video
+      ref={ref}
+      className={className}
+      src={src}
+      poster={poster}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      aria-hidden="true"
+      onError={alFallar}
+    />
   )
 }

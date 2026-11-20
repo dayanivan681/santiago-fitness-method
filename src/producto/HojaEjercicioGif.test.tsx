@@ -10,6 +10,15 @@ vi.mock('../datos/imagen', () => ({
   reducirImagen: async (b: Blob) => (b.type === 'image/gif' ? new Blob(['cuadro'], { type: 'image/jpeg' }) : b),
 }))
 
+// En jsdom no hay vídeo: la duración y el primer cuadro del MP4 se simulan.
+const mp4Leido = vi.hoisted(() => ({ duracion: 3 }))
+vi.mock('../datos/videoAGif', async (importar) => ({
+  ...(await importar<typeof import('../datos/videoAGif')>()),
+  leerMp4Preparado: async () => ({ duracion: mp4Leido.duracion, fija: new Blob(['cuadro'], { type: 'image/jpeg' }) }),
+}))
+// El recorte necesita un <video> real: aquí basta con saber que se abrió.
+vi.mock('./RecortarVideo', () => ({ RecortarVideo: () => <p>Recorte del vídeo</p> }))
+
 afterEach(cleanup)
 beforeEach(() => {
   let n = 0
@@ -93,4 +102,36 @@ it('cambiar el GIF por una foto normal quita la animación', async () => {
   fireEvent.click(within(f).getByRole('button', { name: 'Guardar cambios' }))
   await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Editar ejercicio' })).toBeNull())
   expect((await servicio.biblioteca.listar())[0]).toMatchObject({ tieneFoto: true, tieneAnimacion: false })
+})
+
+const mp4 = (bytes = 10) => new File([new Uint8Array(bytes)], 'mov.mp4', { type: 'video/mp4' })
+
+it('un MP4 corto se sube tal cual, con su primer cuadro como foto fija, y la lista dice «Vídeo»', async () => {
+  mp4Leido.duracion = 3
+  const servicio = new ServicioCoach(true)
+  const subirFoto = vi.spyOn(servicio.biblioteca, 'subirFoto')
+  const subirAnimacion = vi.spyOn(servicio.biblioteca, 'subirAnimacion')
+  const f = await nuevoConGif(servicio, mp4())
+  expect(await within(f).findByLabelText('Animación elegida')).toBeInstanceOf(HTMLVideoElement)
+  expect(within(f).queryByText('Recorte del vídeo')).toBeNull()
+  fireEvent.click(within(f).getByRole('button', { name: 'Añadir a mi biblioteca' }))
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  expect((subirFoto.mock.calls[0][1] as Blob).type).toBe('image/jpeg')
+  expect((subirAnimacion.mock.calls[0][1] as Blob).type).toBe('video/mp4')
+  const fila = (await screen.findByText('Remo con movimiento')).closest('button')!
+  expect(within(fila).getByText('Vídeo')).toBeInTheDocument()
+})
+
+it('un MP4 largo sigue pasando por el recorte a GIF', async () => {
+  mp4Leido.duracion = 12
+  const f = await nuevoConGif(new ServicioCoach(true), mp4())
+  expect(await within(f).findByText('Recorte del vídeo')).toBeInTheDocument()
+  expect(within(f).queryByLabelText('Animación elegida')).toBeNull()
+})
+
+it('un MP4 corto de más de 5 MB pide recortarlo', async () => {
+  mp4Leido.duracion = 3
+  const f = await nuevoConGif(new ServicioCoach(true), mp4(5 * 1024 * 1024 + 1))
+  expect(await within(f).findByText('El vídeo pesa más de 5 MB. Recórtalo o súbelo más corto.')).toBeInTheDocument()
+  expect(within(f).queryByLabelText('Animación elegida')).toBeNull()
 })
