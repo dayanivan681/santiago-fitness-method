@@ -43,6 +43,21 @@ it('un ejercicio con GIF se muestra en cuadro vertical; la foto normal no cambia
   expect(container.querySelector('img')!.className).toBe('hoja__imagen')
 })
 
+it('un GIF del coach más ancho que alto pasa al cuadro horizontal al cargar; uno vertical se queda como está', () => {
+  movimientoReducido(false)
+  const medidas = (img: HTMLImageElement, ancho: number, alto: number) => {
+    Object.defineProperty(img, 'naturalWidth', { configurable: true, value: ancho })
+    Object.defineProperty(img, 'naturalHeight', { configurable: true, value: alto })
+    fireEvent.load(img)
+  }
+  const { container } = render(<ImagenConMovimiento ejercicio={conGif} className="hoja__imagen" />)
+  const img = container.querySelector('img')!
+  medidas(img, 360, 480)
+  expect(img.className).toBe('hoja__imagen hoja__imagen--movimiento')
+  medidas(img, 480, 320)
+  expect(img.className).toBe('hoja__imagen hoja__imagen--movimiento-horizontal')
+})
+
 it('la animación del catálogo base sale horizontal y, sin conexión, vuelve a la foto', () => {
   movimientoReducido(false)
   const base = BIBLIOTECA_INICIAL.find((e) => e.id === PRESS_BANCA_15_SMITH.id)!

@@ -21,18 +21,28 @@ const prefiereSinMovimiento = () =>
 export function ImagenConMovimiento({ ejercicio, className }: { readonly ejercicio: Ejercicio; readonly className: string }) {
   const [fallo, setFallo] = useState(false)
   const [verMovimiento, setVerMovimiento] = useState(() => !prefiereSinMovimiento())
+  // Sólo se sabe al cargarla: el coach puede subir una animación apaisada.
+  const [apaisada, setApaisada] = useState(false)
   const animar = !!ejercicio.animacion && !fallo
   if (!ejercicio.imagen && !animar) return null
-  // El GIF del coach y su foto fija salen en vertical 3:4; los del catálogo son
-  // horizontales. Los dos se ven completos, sin recorte.
-  const formato = ejercicio.animacion && esAnimacionBase(ejercicio.animacion) ? 'movimiento-horizontal' : 'movimiento'
-  const clase = ejercicio.animacion ? `${className} ${className}--${formato}` : className
   const seAnima = animar && verMovimiento
+  // El GIF del coach y su foto fija salen en vertical 3:4; los del catálogo son
+  // horizontales, igual que un GIF del coach más ancho que alto. Todos se ven
+  // completos, sin recorte ni bandas.
+  const horizontal = !!ejercicio.animacion && (esAnimacionBase(ejercicio.animacion) || (seAnima && apaisada))
+  const formato = horizontal ? 'movimiento-horizontal' : 'movimiento'
+  const clase = ejercicio.animacion ? `${className} ${className}--${formato}` : className
   const nota = seAnima ? ejercicio.notaAnimacion : ejercicio.imagenGenerada ? NOTA_IMAGEN_IA : undefined
   return (
     <>
       {seAnima ? (
-        <img className={clase} src={ejercicio.animacion} alt="" onError={() => setFallo(true)} />
+        <img
+          className={clase}
+          src={ejercicio.animacion}
+          alt=""
+          onError={() => setFallo(true)}
+          onLoad={(e) => setApaisada(e.currentTarget.naturalWidth > e.currentTarget.naturalHeight)}
+        />
       ) : (
         <img className={clase} src={ejercicio.imagen} alt="" />
       )}
