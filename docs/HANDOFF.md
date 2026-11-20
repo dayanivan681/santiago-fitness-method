@@ -56,6 +56,38 @@ antiguos de `/tmp` son evidencia local resumida, no requisitos para retomar.
 `solicitudes-api-borrador.json` está obsoleto: no ejecutarlo. El modelo exacto de
 las generaciones en ChatGPT no se verificó.
 
+### Biblioteca de producción: 3 MP4 sustituyen sus GIF — 20 de noviembre de 2026
+
+El chat Gifs subió con el sí del dueño tres vídeos a la biblioteca del coach en
+producción, después de publicarse el PR #17 (soporte MP4). No hubo cambios de
+código ni commits en esa subida; esta entrada solo la documenta.
+
+| Ejercicio del coach | Archivo subido |
+| --- | --- |
+| M02-111 Goblet Squat | `goblet-squat-60fps.mp4` |
+| M02-177 Romanian Deadlift con mancuernas | `romanian-deadlift-dumbbells-60fps.mp4` |
+| M02-049 Dumbbell Lateral Raise | `dumbbell-lateral-raise-60fps.mp4` |
+
+- **Método, igual que el editor de la app:** vídeo en R2 en
+  `biblioteca/<id>/animacion.mp4`; foto fija = primer cuadro (JPEG 834×1112);
+  fila de `ejercicios_coach_animacion` y `actualizado_en` actualizados en D1; el
+  GIF anterior se borró de R2.
+- **Comprobaciones:** SHA-256 de los objetos en R2 idéntico a los originales. D1
+  cuenta 3 MP4 y 241 GIF (244 ejercicios activos con animación).
+- **Respaldo de lo sustituido** (foto, GIF y filas D1):
+  `~/code/sfm-assets/respaldo-biblioteca-2026-11-20/`, fuera del repositorio.
+- **QA:** simulador iPhone 18 Pro (iOS 27.2, Safari, sesión de coach): se ve la
+  nota «Movimientos en vídeo», aparecen las insignias «Tuyo» y «Vídeo», y los
+  vídeos arrancan solos y en bucle. El dueño lo comprobó también en su iPhone
+  real. **Sin comprobar:** app instalada (PWA), modo sin conexión y «reducir
+  movimiento».
+- **Aclaración:** la ficha fija «Elevación lateral con mancuernas» conserva su
+  GIF; la sustituida es la del coach, «Dumbbell Lateral Raise».
+- **Mejora pendiente, no urgente:** mientras el vídeo carga se ve negro 2–5 s;
+  se podría mostrar la foto fija como póster.
+- Estos MP4 no son los candidatos del piloto de arriba: aquellos GIF siguen sin
+  integrarse.
+
 ### Cómo tomar el turno en Claude Code
 
 Leer `CLAUDE.md`, esta sección y el README del piloto. En un árbol limpio:
@@ -451,11 +483,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-20T22:44:31.998Z
+- **Última sincronización:** 2026-11-20T22:45:39.048Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1603,6 +1635,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-20T22:45:39.049Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** Registrada en docs/HANDOFF.md la subida del 20 de noviembre de 3 MP4 a la biblioteca de producción (M02-111 Goblet Squat, M02-177 Romanian Deadlift con mancuernas, M02-049 Dumbbell Lateral Raise), que sustituyen sus GIF: método R2/D1, SHA-256 verificado, D1 con 3 MP4 y 241 GIF, respaldo fuera del repo, QA en simulador iPhone 18 Pro e iPhone real del dueño. Solo documentación.
+- **Verificación:** npm test (1104/1104); npm run lint; npm run build
+- **Siguiente:** Sin comprobar: PWA instalada, modo sin conexión y reducir movimiento. Mejora no urgente: mostrar la foto fija como póster mientras carga el vídeo (2-5 s en negro).
+
 
 ### 2026-11-20T22:44:31.999Z | claude-code | CLAIM
 - **Estado:** active
