@@ -60,7 +60,7 @@ export function BibliotecaCoach() {
           return (
             <>
               <span className="sfm-insignia-tuyo">Tuyo</span>
-              {propio.tieneAnimacion && <span className="sfm-insignia-gif">GIF</span>}
+              {propio.tieneAnimacion && <span className="sfm-insignia-gif">{propio.formatoAnimacion === "mp4" ? "Vídeo" : "GIF"}</span>}
             </>
           );
         }}

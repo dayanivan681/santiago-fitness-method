@@ -96,11 +96,13 @@ export interface Ejercicio extends PerfilCarga {
   /** §15: la biblioteca es visual, sirve para identificar el ejercicio. */
   readonly imagen: string
   /**
-   * GIF con el movimiento (sólo ejercicios del coach). Se reproduce únicamente
-   * en la ficha; listas, miniaturas y Hoy siguen con `imagen`, que es fija y
-   * funciona sin conexión.
+   * GIF o vídeo con el movimiento (sólo ejercicios del coach). Se reproduce
+   * únicamente en la ficha; listas, miniaturas y Hoy siguen con `imagen`, que
+   * es fija y funciona sin conexión.
    */
   readonly animacion?: string
+  /** Formato de `animacion`; sin él es un GIF. */
+  readonly formatoAnimacion?: 'gif' | 'mp4'
   /** Aviso bajo la animación cuando enseña algo distinto de la ficha (p. ej. otro equipo). */
   readonly notaAnimacion?: string
   /** Distingue una representación sintética de una fotografía real. */

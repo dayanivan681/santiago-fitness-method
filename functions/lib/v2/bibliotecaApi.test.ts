@@ -12,6 +12,8 @@ const JPEG = new Uint8Array([255, 216, 255, 224, 0, 16, 74, 70, 73, 70])
 const PNG = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])
 const GIF = new Uint8Array([71, 73, 70, 56, 57, 97, 1, 0])
 const GIF87 = new Uint8Array([71, 73, 70, 56, 55, 97, 1, 0])
+// Caja ftyp de un MP4 (bytes 4–7) seguida de relleno: 20 bytes en total.
+const MP4 = new Uint8Array([0, 0, 0, 20, 102, 116, 121, 112, 105, 115, 111, 109, 0, 0, 2, 0, 105, 115, 111, 109])
 
 const ctx = (rol: 'coach' | 'cliente'): Contexto => ({
   rol,
@@ -33,9 +35,16 @@ function fakeR2() {
     async delete(clave: string) {
       objetos.delete(clave)
     },
-    async get(clave: string) {
+    // Como R2: con `range` (cabeceras de la petición) devuelve sólo el tramo y `range`.
+    async get(clave: string, o2?: { range?: Headers }) {
       const o = objetos.get(clave)
-      return o ? { body: o.bytes, httpMetadata: { contentType: o.contentType } } : null
+      if (!o) return null
+      const size = o.bytes.byteLength
+      const m = /^bytes=(\d+)-(\d*)$/.exec(o2?.range?.get('Range') ?? '')
+      if (!m) return { body: o.bytes, size, httpMetadata: { contentType: o.contentType } }
+      const offset = Number(m[1])
+      const fin = m[2] === '' ? size - 1 : Math.min(Number(m[2]), size - 1)
+      return { body: o.bytes.slice(offset, fin + 1), size, range: { offset, length: fin - offset + 1 }, httpMetadata: { contentType: o.contentType } }
     },
   }
 }
@@ -208,7 +217,7 @@ describe('planes con ejercicios del coach', () => {
 
 describe('animación (GIF) del ejercicio', () => {
   const lista = async () =>
-    ((await (await pedir('cliente', 'GET', '/biblioteca'))!.json()) as { ejercicios: { id: string; tieneAnimacion: boolean; tieneFoto: boolean }[] }).ejercicios
+    ((await (await pedir('cliente', 'GET', '/biblioteca'))!.json()) as { ejercicios: { id: string; tieneAnimacion: boolean; tieneFoto: boolean; formatoAnimacion: string }[] }).ejercicios
 
   it('el coach sube un GIF, ambos roles lo reciben como image/gif y la lista lo marca', async () => {
     const id = await crear()
@@ -245,6 +254,48 @@ describe('animación (GIF) del ejercicio', () => {
     expect(r2.objetos.has(`biblioteca/${id}/animacion`)).toBe(false)
     expect((await lista())[0].tieneAnimacion).toBe(false)
     expect((await pedir('cliente', 'GET', `/biblioteca/${id}/animacion`))!.status).toBe(404)
+  })
+
+  it('acepta un MP4: se guarda con su clave, la lista lo marca como mp4 y se sirve como video/mp4', async () => {
+    const id = await crear()
+    expect((await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, MP4))!.status).toBe(200)
+    expect(r2.objetos.get(`biblioteca/${id}/animacion.mp4`)?.contentType).toBe('video/mp4')
+    expect((await lista())[0]).toMatchObject({ id, tieneAnimacion: true, formatoAnimacion: 'mp4' })
+    const video = (await pedir('cliente', 'GET', `/biblioteca/${id}/animacion`))!
+    expect(video.status).toBe(200)
+    expect(video.headers.get('Content-Type')).toBe('video/mp4')
+    expect(video.headers.get('Accept-Ranges')).toBe('bytes')
+  })
+
+  it('rechaza lo que no es GIF ni MP4 con un mensaje claro', async () => {
+    const id = await crear()
+    const r = (await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, PNG))!
+    expect(r.status).toBe(400)
+    expect(((await r.json()) as { error: string }).error).toBe('La animación tiene que ser un GIF o un vídeo MP4.')
+  })
+
+  it('responde 206 con Content-Range a una petición por rangos (Safari de iOS)', async () => {
+    const id = await crear()
+    await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, MP4)
+    const r = (await rutaDeBiblioteca(
+      new Request(ORIGEN + `/biblioteca/${id}/animacion`, { headers: { Range: 'bytes=0-1' } }),
+      env, ctx('cliente'), `/biblioteca/${id}/animacion`,
+    ))!
+    expect(r.status).toBe(206)
+    expect(r.headers.get('Content-Range')).toBe(`bytes 0-1/${MP4.byteLength}`)
+    expect(r.headers.get('Content-Length')).toBe('2')
+    expect(r.headers.get('Content-Type')).toBe('video/mp4')
+    expect(new Uint8Array(await r.arrayBuffer())).toEqual(MP4.slice(0, 2))
+  })
+
+  it('sustituir un GIF por un MP4 borra el GIF de R2, y quitar la animación borra la clave guardada', async () => {
+    const id = await crear()
+    await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, GIF)
+    await pedir('coach', 'PUT', `/biblioteca/${id}/animacion`, MP4)
+    expect([...r2.objetos.keys()].filter((k) => k.includes('/animacion'))).toEqual([`biblioteca/${id}/animacion.mp4`])
+    expect((await pedir('coach', 'DELETE', `/biblioteca/${id}/animacion`))!.status).toBe(200)
+    expect(r2.objetos.has(`biblioteca/${id}/animacion.mp4`)).toBe(false)
+    expect((await lista())[0]).toMatchObject({ tieneAnimacion: false, formatoAnimacion: 'gif' })
   })
 
   it('cambiar la animación cambia la etiqueta de la lista (ETag)', async () => {

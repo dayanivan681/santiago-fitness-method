@@ -24,7 +24,7 @@ export class ServicioBiblioteca {
   async crear(datos: EjercicioCoachNuevo): Promise<EjercicioCoach> {
     if (this.demo) {
       const ahora = Date.now();
-      const nuevo: EjercicioCoach = { ...datos, id: `coach-ej-${crypto.randomUUID()}`, tieneFoto: false, tieneAnimacion: false, activo: true, creadoEn: ahora, actualizadoEn: ahora };
+      const nuevo: EjercicioCoach = { ...datos, id: `coach-ej-${crypto.randomUUID()}`, tieneFoto: false, tieneAnimacion: false, formatoAnimacion: "gif", activo: true, creadoEn: ahora, actualizadoEn: ahora };
       this.demoLista = [...this.demoLista, nuevo];
       return nuevo;
     }
@@ -49,19 +49,23 @@ export class ServicioBiblioteca {
     return (await subirArchivo<{ ejercicio: EjercicioCoach }>(`/biblioteca/${id}/foto`, foto, true)).ejercicio;
   }
 
-  /** El GIF va aparte de la foto fija: la foto sirve para listas y miniaturas, el GIF sólo para la ficha. */
-  async subirAnimacion(id: string, gif: Blob): Promise<EjercicioCoach> {
+  /**
+   * La animación (GIF o vídeo MP4) va aparte de la foto fija: la foto sirve
+   * para listas y miniaturas, la animación sólo para la ficha.
+   */
+  async subirAnimacion(id: string, animacion: Blob): Promise<EjercicioCoach> {
     if (this.demo) {
-      this.demoAnimaciones.set(id, URL.createObjectURL(gif));
-      return this.cambiarDemo(id, (e) => ({ ...e, tieneAnimacion: true }));
+      this.demoAnimaciones.set(id, URL.createObjectURL(animacion));
+      const formatoAnimacion = animacion.type === "video/mp4" ? "mp4" : "gif";
+      return this.cambiarDemo(id, (e) => ({ ...e, tieneAnimacion: true, formatoAnimacion }));
     }
-    return (await subirArchivo<{ ejercicio: EjercicioCoach }>(`/biblioteca/${id}/animacion`, gif, true)).ejercicio;
+    return (await subirArchivo<{ ejercicio: EjercicioCoach }>(`/biblioteca/${id}/animacion`, animacion, true)).ejercicio;
   }
 
   async quitarAnimacion(id: string): Promise<EjercicioCoach> {
     if (this.demo) {
       this.demoAnimaciones.delete(id);
-      return this.cambiarDemo(id, (e) => ({ ...e, tieneAnimacion: false }));
+      return this.cambiarDemo(id, (e) => ({ ...e, tieneAnimacion: false, formatoAnimacion: "gif" }));
     }
     return (await new ClienteApi(true).pedir<{ ejercicio: EjercicioCoach }>(`/biblioteca/${id}/animacion`, undefined, "DELETE")).ejercicio;
   }

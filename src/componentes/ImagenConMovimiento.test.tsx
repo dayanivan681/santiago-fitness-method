@@ -96,3 +96,42 @@ describe('notas bajo la imagen', () => {
     expect(container.querySelector('p')).toBeNull()
   })
 })
+
+describe('animación en vídeo MP4', () => {
+  const conVideo = { ...conGif, animacion: '/api/v2/biblioteca/coach-ej-x/animacion?v=2', formatoAnimacion: 'mp4' as const }
+  const play = vi.fn(() => Promise.resolve())
+  const conPlay = () => vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(play)
+
+  it('se reproduce en un <video> mudo, en bucle y dentro de la página, con la foto como póster', () => {
+    movimientoReducido(false)
+    conPlay()
+    const { container } = render(<ImagenConMovimiento ejercicio={conVideo} className="hoja__imagen" />)
+    const video = container.querySelector('video')!
+    expect(video.getAttribute('src')).toBe(conVideo.animacion)
+    expect(video.getAttribute('poster')).toBe(conVideo.imagen)
+    expect(video.muted).toBe(true)
+    expect(video.loop).toBe(true)
+    expect(video.hasAttribute('playsinline')).toBe(true)
+    expect(video.className).toBe('hoja__imagen hoja__imagen--movimiento')
+    expect(play).toHaveBeenCalled()
+  })
+
+  it('si el vídeo no carga (sin conexión) vuelve a la foto fija', () => {
+    movimientoReducido(false)
+    conPlay()
+    const { container } = render(<ImagenConMovimiento ejercicio={conVideo} className="hoja__imagen" />)
+    fireEvent.error(container.querySelector('video')!)
+    expect(container.querySelector('video')).toBeNull()
+    expect(src(container)).toBe(conVideo.imagen)
+  })
+
+  it('con «reducir movimiento» no arranca solo: foto y botón «Ver movimiento»', () => {
+    movimientoReducido(true)
+    conPlay()
+    const { container } = render(<ImagenConMovimiento ejercicio={conVideo} className="hoja__imagen" />)
+    expect(container.querySelector('video')).toBeNull()
+    expect(src(container)).toBe(conVideo.imagen)
+    fireEvent.click(screen.getByRole('button', { name: 'Ver movimiento' }))
+    expect(container.querySelector('video')!.getAttribute('src')).toBe(conVideo.animacion)
+  })
+})

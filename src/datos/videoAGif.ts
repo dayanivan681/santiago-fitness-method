@@ -96,6 +96,32 @@ export async function abrirVideo(archivo: Blob): Promise<{ video: HTMLVideoEleme
   return { video, cerrar: () => { video.removeAttribute('src'); video.load(); URL.revokeObjectURL(url) } }
 }
 
+/** Un MP4 ya preparado se sube tal cual si dura como mucho esto. */
+export const MP4_DURACION_MAX_S = 6
+
+/**
+ * Duración de un MP4 y su primer cuadro como JPEG (la foto fija de listas y
+ * miniaturas), sin convertirlo: el vídeo se sube tal cual.
+ */
+export async function leerMp4Preparado(archivo: Blob): Promise<{ duracion: number; fija: Blob }> {
+  const { video, cerrar } = await abrirVideo(archivo)
+  try {
+    if (!video.videoWidth || !video.duration) throw new ErrorVideo('No pudimos leer ese vídeo.')
+    await irA(video, 0)
+    const lienzo = document.createElement('canvas')
+    lienzo.width = video.videoWidth
+    lienzo.height = video.videoHeight
+    const ctx = lienzo.getContext('2d')
+    if (!ctx) throw new ErrorVideo('No pudimos sacar una imagen del vídeo.')
+    ctx.drawImage(video, 0, 0)
+    const fija = await new Promise<Blob | null>((r) => lienzo.toBlob(r, 'image/jpeg', 0.85))
+    if (!fija) throw new ErrorVideo('No pudimos sacar una imagen del vídeo.')
+    return { duracion: video.duration, fija }
+  } finally {
+    cerrar()
+  }
+}
+
 async function codificar(
   video: HTMLVideoElement,
   tiempos: readonly number[],

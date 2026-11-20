@@ -56,12 +56,20 @@ export async function leerFotoValidada(
   if (!mime) throw new ErrorApi("Usa una fotografía JPEG, PNG o WebP.");
   return { bytes, mime };
 }
-/** Animación de un ejercicio: sólo GIF (firma GIF87a o GIF89a), con el mismo tope de 5 MB. */
-export async function leerAnimacionValidada(request: Request): Promise<{ bytes: ArrayBuffer; mime: "image/gif" }> {
+/**
+ * Animación de un ejercicio: GIF (firma GIF87a o GIF89a) o vídeo MP4 (caja
+ * `ftyp` en los bytes 4–7), con el mismo tope de 5 MB.
+ */
+export async function leerAnimacionValidada(
+  request: Request,
+): Promise<{ bytes: ArrayBuffer; mime: "image/gif" | "video/mp4" }> {
   const bytes = await leerCuerpoAcotado(request, "Animación vacía.");
-  const cabecera = new TextDecoder("latin1").decode(new Uint8Array(bytes, 0, Math.min(6, bytes.byteLength)));
-  if (cabecera !== "GIF87a" && cabecera !== "GIF89a") throw new ErrorApi("La animación tiene que ser un GIF.");
-  return { bytes, mime: "image/gif" };
+  const latin1 = (desde: number, hasta: number) =>
+    new TextDecoder("latin1").decode(new Uint8Array(bytes, desde, Math.max(0, Math.min(hasta, bytes.byteLength) - desde)));
+  const cabecera = latin1(0, 6);
+  if (cabecera === "GIF87a" || cabecera === "GIF89a") return { bytes, mime: "image/gif" };
+  if (bytes.byteLength >= 8 && latin1(4, 8) === "ftyp") return { bytes, mime: "video/mp4" };
+  throw new ErrorApi("La animación tiene que ser un GIF o un vídeo MP4.");
 }
 export async function medios(
   request: Request,

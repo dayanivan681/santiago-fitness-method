@@ -1,5 +1,14 @@
 # Build log — Santiago Fitness Method
 
+
+## 2026-11-20 — Animaciones de ejercicios en MP4 además de GIF — claude-code
+
+- Servidor: `leerAnimacionValidada` acepta GIF o MP4 (caja `ftyp` en los bytes 4–7), mismo tope de 5 MB. Sin migración: el formato va en la clave de R2 (`animacion` = GIF, como siempre; `animacion.mp4` = vídeo) y la fila expone `formatoAnimacion`. Sustituir un GIF por un MP4 (o al revés) borra el objeto anterior; quitar borra la clave guardada.
+- Rangos: `GET /biblioteca/<id>/animacion` responde `206` con `Content-Range` a `Range` (Safari de iOS lo exige para vídeo) y siempre `Accept-Ranges: bytes`.
+- Ficha (`ImagenConMovimiento`): MP4 en `<video>` mudo, en bucle, `playsInline`, con la foto como póster; `muted` y `play()` por ref. Sin conexión vuelve a la foto; «reducir movimiento» igual que con GIF.
+- Editor: un MP4 de ≤ 6 s y ≤ 5 MB se sube tal cual, con su primer cuadro como foto fija (`leerMp4Preparado`); uno largo sigue por el recorte a GIF; uno corto de más de 5 MB pide recortarlo. Vista previa en `<video>`; insignia «Vídeo» en la biblioteca.
+- Nota de novedades para el coach (pendiente de aprobación del dueño).
+- Verificado: 1104 pruebas (11 nuevas), lint, tsc, build. `RecorridosDemo` falló una vez por tiempo bajo carga y pasa aislado y en la repetición completa. Pendiente: prueba manual en iPhone (Safari e instalada) y Android con el preview.
 ## 2026-11-13 — Anatomía y mecánica obligatorias para aceptar GIF — codex
 
 - El dueño fijó ambas como no negociables, además del acabado visual. Registrado
