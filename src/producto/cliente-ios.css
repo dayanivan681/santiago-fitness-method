@@ -232,6 +232,10 @@
 .sfm-main--client .paso { min-width: 0; gap: 0; }
 .sfm-main--client .paso__boton { width: 44px; min-width: 44px; min-height: 48px; height: 48px; border-radius: 10px; }
 .sfm-main--client .campo input.valor { min-height: 48px; }
+/* Cuatro cifras o más no caben a 34 px en la caja de 375 px: se encoge la letra. */
+.sfm-main--client .campo .valor { min-width: 0; overflow: hidden; }
+.sfm-main--client .campo .valor.valor--largo { font-size: 24px; letter-spacing: -0.5px; }
+.sfm-main--client .campo .valor.valor--muy-largo { font-size: 18px; letter-spacing: -0.5px; }
 .sfm-main--client .campo--rir { border-top: 1px solid var(--sfm-line); padding-top: 10px; }
 .sfm-main--client .sfm-rir-help { font: 400 12px/1.4 var(--sfm-ui-font); color: var(--sfm-muted); max-width: none; margin: 0; }
 .sfm-main--client .sfm-rir-segments { margin-top: 8px; gap: 4px; }

@@ -109,6 +109,12 @@ async function abrirUpperA() {
   await screen.findByText(PRESS)
 }
 
+/** Con series pendientes, «Terminar sesión» pide confirmación (QA 20-nov, fallo 4). */
+async function terminarSesion() {
+  await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
+  await userEvent.click(await screen.findByRole('button', { name: 'Terminar igualmente' }))
+}
+
 /** El resumen del día, sin entrar a entrenar. */
 async function abrirResumen() {
   render(<Pantalla />)
@@ -129,7 +135,7 @@ describe('el entrenamiento ya viene cargado (§3)', () => {
     expect(screen.getByText('0 de 4 sesiones')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Comenzar entrenamiento' }))
     await userEvent.click(await screen.findByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
+    await terminarSesion()
     await screen.findByRole('heading', { name: 'Sesión completada' })
     await userEvent.click(screen.getByRole('button', { name: 'Volver a Hoy' }))
     expect(await screen.findByText('1 de 4 sesiones')).toBeInTheDocument()
@@ -675,7 +681,7 @@ describe('entrada rápida — tocar el valor para escribirlo directo (reduce pul
     await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
 
     // Assert: sigue siendo texto fijo, no aparece un campo de escritura
-    expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox', { name: `Peso de la serie 1 de ${PRESS}` })).not.toBeInTheDocument()
   })
 
   test('escribir un peso negativo se recorta a cero', async () => {
@@ -1063,7 +1069,7 @@ describe('barra de progreso de la sesión', () => {
     await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
     // Act
-    await userEvent.click(screen.getByRole('button', { name: 'Terminar sesión' }))
+    await terminarSesion()
 
     // Assert
     await waitFor(() =>
@@ -1468,7 +1474,7 @@ describe('cierre de sesión (Phase 1B)', () => {
     await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
     // Act
-    await userEvent.click(screen.getByRole('button', { name: 'Terminar sesión' }))
+    await terminarSesion()
 
     // Assert: la barra se retira y la pantalla confirma
     expect(
@@ -1484,7 +1490,7 @@ describe('cierre de sesión (Phase 1B)', () => {
     await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
     // Act
-    await userEvent.click(screen.getByRole('button', { name: 'Terminar sesión' }))
+    await terminarSesion()
 
     // Assert
     await waitFor(async () => {
@@ -1706,5 +1712,33 @@ describe('las series pendientes muestran el objetivo, no un valor que parezca he
       expect(p).toHaveTextContent('1–5 reps')
       expect(p).not.toHaveTextContent(/0 lb/)
     }
+  })
+})
+
+describe('terminar con series pendientes pide confirmación (QA 20-nov, fallo 4)', () => {
+  test('con 1 de 16 series no cierra al primer toque y se puede seguir entrenando', async () => {
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
+    const dialogo = await screen.findByRole('dialog', { name: 'Terminar la sesión' })
+    expect(dialogo).toHaveTextContent('Te quedan 15 series por hacer')
+
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Seguir entrenando' }))
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Terminar la sesión' })).not.toBeInTheDocument())
+    const sesiones = await repositorio.listarSesiones(participanteId)
+    expect(sesiones.find((s) => s.fecha === fechaDeHoy())?.completadaEn).toBeUndefined()
+    expect(screen.getByRole('progressbar', { name: 'Progreso de la sesión' })).toBeInTheDocument()
+  })
+
+  test('«Terminar igualmente» cierra la sesión con lo registrado', async () => {
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await terminarSesion()
+
+    await waitFor(async () => {
+      const sesiones = await repositorio.listarSesiones(participanteId)
+      expect(sesiones.find((s) => s.fecha === fechaDeHoy())?.completadaEn).toBeDefined()
+    })
   })
 })

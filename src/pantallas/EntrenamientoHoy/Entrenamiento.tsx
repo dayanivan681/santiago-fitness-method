@@ -36,6 +36,7 @@ import { ResumenSesion } from './ResumenSesion'
 import { pasoPendiente, posicionEnGrupo, siguienteTrasGuardar } from '../../../shared/superseries'
 import { conTransicion } from '../../aplicacion/transiciones'
 import { useDeslizarHorizontal } from '../../aplicacion/gestos'
+import { segunCantidad } from '../../logica/plural'
 
 /** La clave sin `numeroSerie`: cada fila añade el suyo. */
 type ClaveDelDia = Omit<ClaveDeBorrador, 'numeroSerie'>
@@ -77,6 +78,9 @@ export function Entrenamiento({
   const [identidadVisible,setIdentidadVisible]=useState(true)
   const [errorCierre,setErrorCierre]=useState('')
   const [cerrando,setCerrando]=useState(false)
+  // Terminar con series pendientes se confirma: el botón está junto al
+  // cronómetro y un toque sin querer cerraba la sesión en la serie 1 de 16.
+  const [confirmarCierre, setConfirmarCierre] = useState(false)
   const { arrancar: arrancarDescanso, terminar: terminarDescanso, declararBarraDeSesion } = useControlDescanso()
 
   /**
@@ -206,6 +210,18 @@ export function Entrenamiento({
       conTransicion(paso.indice > indice ? 'adelante' : 'atras', () =>
         setActual((valor) => (valor === indice ? paso.indice : valor)),
       )
+  }
+
+  function cerrarSesion() {
+    setCerrando(true)
+    setErrorCierre('')
+    void terminarSesion()
+      .then(() => {
+        terminarDescanso()
+        setResumenAbierto(true)
+      })
+      .catch((e) => setErrorCierre(e.message))
+      .finally(() => setCerrando(false))
   }
 
   return (
@@ -347,10 +363,43 @@ export function Entrenamiento({
               {seriesHechas} de {seriesObjetivo} series
             </span>
           </div>
-          <button type="button" data-tour="terminar" className="progreso-sesion__terminar" disabled={cerrando} onClick={()=>{setCerrando(true);setErrorCierre('');void terminarSesion().then(()=>{terminarDescanso();setResumenAbierto(true);}).catch(e=>setErrorCierre(e.message)).finally(()=>setCerrando(false))}}>
+          <button
+            type="button"
+            data-tour="terminar"
+            className="progreso-sesion__terminar"
+            disabled={cerrando}
+            onClick={() => (seriesHechas < seriesObjetivo ? setConfirmarCierre(true) : cerrarSesion())}
+          >
             Terminar sesión
           </button>
         </div>
+      )}
+
+      {confirmarCierre && (
+        <HojaCapa etiqueta="Terminar la sesión" titulo="¿Terminar la sesión?" onCerrar={() => setConfirmarCierre(false)}>
+          {(cerrar) => (
+            <div className="confirmar-cierre">
+              <p className="nota">
+                Te {segunCantidad(seriesObjetivo - seriesHechas, 'queda', 'quedan')}{' '}
+                {seriesObjetivo - seriesHechas} {segunCantidad(seriesObjetivo - seriesHechas, 'serie', 'series')}{' '}
+                por hacer. Lo que ya registraste se guarda igualmente.
+              </p>
+              <button type="button" className="boton-guardar" onClick={cerrar}>
+                Seguir entrenando
+              </button>
+              <button
+                type="button"
+                className="boton-guardar boton-guardar--secundario"
+                onClick={() => {
+                  cerrar()
+                  cerrarSesion()
+                }}
+              >
+                Terminar igualmente
+              </button>
+            </div>
+          )}
+        </HojaCapa>
       )}
 
       <ErrorVisible error={errorCierre}/>

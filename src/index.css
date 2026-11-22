@@ -3559,3 +3559,16 @@ html[data-transicion='lateral']::view-transition-new(root) {
     transition: none;
   }
 }
+
+/* Confirmación de «Terminar sesión» con series pendientes (QA 20-nov, fallo 4). */
+.confirmar-cierre {
+  display: grid;
+  gap: 10px;
+  padding: 4px 0 8px;
+}
+.confirmar-cierre .nota {
+  margin: 0 0 6px;
+}
+.confirmar-cierre .boton-guardar {
+  width: 100%;
+}

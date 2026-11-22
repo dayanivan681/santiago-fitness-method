@@ -1900,6 +1900,18 @@ a.sfm-primary:active {
   color: #ff938b;
   margin: 10px 0;
 }
+.serie__aviso {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border: 1px solid #ffb02e55;
+  border-radius: 10px;
+  background: #ffb02e12;
+  color: var(--sfm-white, #fff);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.serie__aviso p { margin: 0 0 10px; }
+.serie__aviso-acciones { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .sfm-recovery-banner {
   width: 100%;
   padding: 12px 14px;

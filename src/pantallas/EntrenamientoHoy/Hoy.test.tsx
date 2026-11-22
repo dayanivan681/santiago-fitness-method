@@ -159,7 +159,7 @@ describe('teclado: peso → reps → guardar', () => {
     await entrar()
 
     await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
-    const peso = await screen.findByRole('spinbutton', { name: `Peso de la serie 1 de ${PRESS}` })
+    const peso = await screen.findByRole('textbox', { name: `Peso de la serie 1 de ${PRESS}` })
     // «Siguiente» y no «Hecho»: después del peso vienen las reps.
     expect(peso).toHaveAttribute('enterkeyhint', 'next')
     expect(peso).toHaveAttribute('inputmode', 'decimal')
@@ -171,7 +171,7 @@ describe('teclado: peso → reps → guardar', () => {
     await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
     await userEvent.keyboard('{Enter}')
 
-    const reps = await screen.findByRole('spinbutton', { name: `Reps de la serie 1 de ${PRESS}` })
+    const reps = await screen.findByRole('textbox', { name: `Reps de la serie 1 de ${PRESS}` })
     expect(reps).toHaveAttribute('enterkeyhint', 'done')
     expect(reps).toHaveFocus()
   })
