@@ -16,6 +16,7 @@ import { RecortarVideo } from "./RecortarVideo";
 import { useBiblioteca } from "./contextoBiblioteca";
 import { ETIQUETA_EQUIPO, ETIQUETA_MUSCULO, OPCION_CARGA } from "./etiquetasBiblioteca";
 import { ErrorVisible, Hoja } from "./ui";
+import { coincideTexto, normalizarBusqueda } from "../logica/busqueda";
 
 const INCREMENTO_INICIAL = "5";
 const MAX_RESULTADOS_CATALOGO = 60;
@@ -135,7 +136,9 @@ export function HojaEjercicio({ editando, cerrar }: { editando?: EjercicioCoach;
 
 function Catalogo({ elegir, volver }: { elegir: (f: FichaCatalogoPdf) => void; volver: () => void }) {
   const [q, setQ] = useState("");
-  const coincidencias = CATALOGO_PDF.filter((f) => sinAcentos(f.nombre).includes(sinAcentos(q)));
+  // Bilingüe como la biblioteca: «squat» encuentra la ficha «Sentadilla…».
+  const termino = normalizarBusqueda(q);
+  const coincidencias = CATALOGO_PDF.filter((f) => coincideTexto(f.nombre, termino));
   return (
     <>
       <input

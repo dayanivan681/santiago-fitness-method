@@ -31,6 +31,16 @@ export function Onboarding({
   const ultima = useRef("");
   const publicando = useRef(false);
   const editor = useRef<HTMLDivElement>(null);
+  // Cambiar de paso vuelve arriba: si no, la página seguía a media altura
+  // (scrollY 442 en la QA del 20-nov) y no se veía el título del paso nuevo.
+  const pasoActual = alta?.paso;
+  const pasoAnterior = useRef<number | undefined>(undefined);
+  useEffect(() => {
+    if (pasoActual === undefined) return;
+    if (pasoAnterior.current !== undefined && pasoAnterior.current !== pasoActual)
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    pasoAnterior.current = pasoActual;
+  }, [pasoActual]);
   useEffect(() => {
     let vivo = true;
     void (async () => {
