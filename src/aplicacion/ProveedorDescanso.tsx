@@ -46,6 +46,7 @@ export function ProveedorDescanso({ children, clavePersistencia }: Props) {
   })
   const [restantes, setRestantes] = useState(0)
   const [barraDeSesion, setBarraDeSesion] = useState(false)
+  const [progresoSesion, setProgresoSesion] = useState<string | null>(null)
   const intervalo = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => { if(clavePersistencia) {try{localStorage.setItem(clavePersistencia,JSON.stringify(estado))}catch{/* El cronómetro sigue en memoria si el sistema bloquea storage. */}} },[estado,clavePersistencia])
@@ -93,8 +94,10 @@ export function ProveedorDescanso({ children, clavePersistencia }: Props) {
       terminar: () => setEstado(DESCANSO_INACTIVO),
       barraDeSesion,
       declararBarraDeSesion: setBarraDeSesion,
+      progresoSesion,
+      declararProgresoSesion: setProgresoSesion,
     }),
-    [estado, restantes, barraDeSesion],
+    [estado, restantes, barraDeSesion, progresoSesion],
   )
 
   return <ContextoDescanso.Provider value={control}>{children}</ContextoDescanso.Provider>
