@@ -483,11 +483,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-22T14:15:36.271Z
+- **Última sincronización:** 2026-11-22T14:27:02.396Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1635,6 +1635,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-22T14:27:02.397Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #19 fusionado en main (de36fa4) con el sí del dueño, confirmado también en la sesión Build: buscador bilingüe ES/EN, alta que vuelve arriba al cambiar de paso, recorrido del coach real solo desde Ayuda. Nota de coach «Tu panel, más ágil» aprobada; nota de cliente del buscador retirada. Cloudflare Pages producción: success (82a4daaa); verificado que producción sirve la nota de coach y los sinónimos. PR #18 recortado, en borrador: revertido el fallo 3 (barras, 389137a), nota de cliente de 2 puntos pendiente de aprobación (40a6eb1), al día con main (a71fa60).
+- **Verificación:** PR #19 antes de fusionar: npm test 1112/1112, lint, tsc -b, build. PR #18 tras ponerlo al día: npm test 1129/1129, lint, tsc -b, build
+- **Siguiente:** El dueño prueba el PR #18 en su iPhone con la vista previa de la rama y aprueba la nota de cliente antes de fusionarlo.
+
 
 ### 2026-11-22T14:15:36.272Z | claude-code | CLAIM
 - **Estado:** active
