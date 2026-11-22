@@ -1,5 +1,6 @@
 import { NOMBRE_MUSCULO, etiquetaEquipo } from '../dominio/etiquetas'
 import type { Ejercicio } from '../dominio/tipos'
+import { conceptosDeBusqueda, contieneConcepto } from './sinonimos'
 
 /**
  * Normalizar un texto para buscarlo.
@@ -27,12 +28,33 @@ export function normalizarBusqueda(valor: string): string {
  * Mira el nombre y también el músculo principal y el equipo: muchos nombres de
  * la Biblioteca Maestra están en inglés y «hombro» o «polea» tienen que
  * encontrar «Cable Machine Shoulder Press».
+ *
+ * Si el término entero no aparece, se busca por partes y en los dos idiomas:
+ * cada palabra (o frase conocida) tiene que estar, ella o su traducción, en
+ * algún sitio. Así «lateral raise» encuentra «Elevación lateral con
+ * mancuernas» y «sentadilla» encuentra «Goblet Squat» (QA 20-nov).
  */
 export function coincide(
   ejercicio: Pick<Ejercicio, 'nombre' | 'musculoPrimario' | 'equipo'>,
   termino: string,
 ): boolean {
-  return [ejercicio.nombre, NOMBRE_MUSCULO[ejercicio.musculoPrimario], etiquetaEquipo(ejercicio.equipo)].some(
-    (texto) => normalizarBusqueda(texto).includes(termino),
+  const textos = [ejercicio.nombre, NOMBRE_MUSCULO[ejercicio.musculoPrimario], etiquetaEquipo(ejercicio.equipo)].map(
+    normalizarBusqueda,
   )
+  if (textos.some((texto) => texto.includes(termino))) return true
+  return coincidePorPartes(textos.join(' | '), termino)
+}
+
+/**
+ * La misma búsqueda bilingüe sobre un texto suelto, como el nombre de una ficha
+ * del catálogo. `termino` ya normalizado; vacío lo encuentra todo.
+ */
+export function coincideTexto(texto: string, termino: string): boolean {
+  const normalizado = normalizarBusqueda(texto)
+  return normalizado.includes(termino) || coincidePorPartes(normalizado, termino)
+}
+
+function coincidePorPartes(texto: string, termino: string): boolean {
+  const conceptos = conceptosDeBusqueda(termino)
+  return conceptos.length > 0 && conceptos.every((concepto) => contieneConcepto(texto, concepto))
 }
