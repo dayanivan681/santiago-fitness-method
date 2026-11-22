@@ -675,7 +675,7 @@ describe('entrada rápida — tocar el valor para escribirlo directo (reduce pul
     await userEvent.click(screen.getByLabelText(`Peso de la serie 1 de ${PRESS}`))
 
     // Assert: sigue siendo texto fijo, no aparece un campo de escritura
-    expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox', { name: `Peso de la serie 1 de ${PRESS}` })).not.toBeInTheDocument()
   })
 
   test('escribir un peso negativo se recorta a cero', async () => {

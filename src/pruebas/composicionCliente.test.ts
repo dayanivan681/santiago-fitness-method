@@ -103,8 +103,9 @@ describe('el teclado encadena el registro', () => {
 
   it('los campos numéricos piden el teclado que corresponde', () => {
     // Decimal para el peso —2.5 lb por lado— y numérico para las reps.
-    expect(FILA).toContain('inputMode="decimal"')
-    expect(FILA).toContain('inputMode="numeric"')
+    expect(FILA).toContain("inputMode={decimales ? 'decimal' : 'numeric'}")
+    expect(FILA).toMatch(/valor=\{peso\}\s+decimales\s/)
+    expect(FILA).toContain('decimales={false}')
   })
 
   it('el campo que se teclea no baja de 16px, o iOS hace zoom al enfocarlo', () => {

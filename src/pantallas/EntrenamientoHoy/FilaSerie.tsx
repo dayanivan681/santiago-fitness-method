@@ -30,6 +30,7 @@ import { puedeDeshacerse } from '../../logica/correccion'
 import type { Repositorio } from '../../datos/repositorio'
 import type { NuevaSerie } from '../../aplicacion/useEntrenamiento'
 import { Icono } from '../../producto/ui'
+import { anomaliaDePeso, anomaliaDeReps, esTecleoValido, leerNumero } from '../../logica/valorAnomalo'
 
 /** Pausa sin tocar la serie antes de guardar su borrador. */
 export const ESPERA_BORRADOR_MS = 2000
@@ -219,8 +220,44 @@ export function FilaSerie({
 
   // Escritura del borrador que espera a que el cliente deje de tocar.
   const borradorPendiente = useRef<(() => void) | null>(null)
-  async function guardar() {
+  // Un valor improbable se guarda sólo tras confirmarlo. El aviso vale para los
+  // números con que se pidió: cambiarlos lo retira sin más.
+  const [aviso, setAviso] = useState<{ peso: number; reps: number; campo: 'peso' | 'reps'; texto: string } | null>(null)
+  const avisoVigente = aviso && aviso.peso === peso && aviso.reps === reps ? aviso.texto : ''
+  const conUnidad = (valor: number) => `${valor} lb${porLado ? '/lado' : ''}`
+  async function guardar(confirmado = false) {
     if (guardandoRef.current) return
+    // Se normaliza aquí y no sólo al salir del campo: con Enter se guarda antes
+    // de que el redondeo del blur llegue al estado.
+    const pesoFinal = Math.max(0, redondear(peso))
+    const repsFinal = Math.max(1, Math.round(reps))
+    const pesoAnterior = registrada?.pesoRegistradoLb ?? pesoDePartida
+    const anomaliaPeso = anomaliaDePeso(pesoFinal, { partida: pesoAnterior, porLado })
+    const anomaliaReps = anomaliaDeReps(repsFinal, repMax)
+    if (anomaliaPeso === 'tope' || anomaliaReps === 'tope') {
+      setAviso(null)
+      setError(
+        anomaliaPeso === 'tope'
+          ? `${conUnidad(pesoFinal)} parece un error. Revisa el peso antes de guardar.`
+          : `${repsFinal} reps parece un error. Revisa las reps antes de guardar.`,
+      )
+      return
+    }
+    if (!confirmado && (anomaliaPeso || anomaliaReps)) {
+      setError('')
+      setAviso({
+        peso,
+        reps,
+        campo: anomaliaPeso ? 'peso' : 'reps',
+        texto: anomaliaPeso
+          ? pesoAnterior > 0
+            ? `${conUnidad(pesoFinal)} es más del doble de ${conUnidad(pesoAnterior)}. ¿Es correcto?`
+            : `${conUnidad(pesoFinal)} es mucho peso. ¿Es correcto?`
+          : `${repsFinal} reps son muchas más de las previstas. ¿Es correcto?`,
+      })
+      return
+    }
+    setAviso(null)
     altoAntesDeGuardar.current = filaRef.current?.getBoundingClientRect().height ?? 0
     guardandoRef.current=true
     // El borrador pendiente ya no debe escribirse: lo que se registra ahora lo
@@ -233,8 +270,8 @@ export function FilaSerie({
     setGuardando(true)
     try {
       const valores = {
-        pesoRegistradoLb: peso,
-        repsRealizadas: reps,
+        pesoRegistradoLb: pesoFinal,
+        repsRealizadas: repsFinal,
         rir,
         tecnica,
         esCalentamiento,
@@ -436,31 +473,22 @@ export function FilaSerie({
               {registrada.pesoRegistradoLb}
             </output>
           ) : editandoPeso ? (
-            <input
-              type="number"
-              inputMode="decimal"
-              step="any"
-              min="0"
-              className="valor valor--edicion"
-              aria-label={`Peso de la ${etiqueta}`}
-              autoFocus
+            <EntradaNumero
+              valor={peso}
+              decimales
+              etiqueta={`Peso de la ${etiqueta}`}
               /* La tecla de retorno dice «siguiente», no «hecho»: después del
                  peso vienen las reps, y hasta ahora Enter sólo cerraba el campo
                  y dejaba al participante volviendo a tocar la pantalla. */
               enterKeyHint="next"
-              value={peso}
-              onChange={(e) => cambiarPeso(Number(e.target.value))}
-              onBlur={() => {
+              onCambiar={(valor) => cambiarPeso(valor)}
+              onCerrar={() => {
                 cambiarPeso((p) => Math.max(0, redondear(p)))
                 setEditandoPeso(false)
-
               }}
-              onKeyDown={(e) => {
-                if (e.key !== 'Enter') return
-                e.preventDefault()
-                e.currentTarget.blur()
-                // El campo de reps entra con `autoFocus`, así que abrirlo es
-                // encadenar el foco sin tocar nada.
+              onEnter={() => {
+                // El campo de reps entra con foco, así que abrirlo es encadenar
+                // el foco sin tocar nada.
                 setEditandoReps(true)
               }}
             />
@@ -502,29 +530,19 @@ export function FilaSerie({
               {registrada.repsRealizadas}
             </output>
           ) : editandoReps ? (
-            <input
-              type="number"
-              inputMode="numeric"
-              min="1"
-              className="valor valor--edicion"
-              aria-label={`Reps de la ${etiqueta}`}
-              autoFocus
+            <EntradaNumero
+              valor={reps}
+              decimales={false}
+              etiqueta={`Reps de la ${etiqueta}`}
               /* Aquí sí se termina: peso → reps → guardar, sin cerrar y volver
                  a abrir el teclado entre medias. */
               enterKeyHint="done"
-              value={reps}
-              onChange={(e) => cambiarReps(Number(e.target.value))}
-              onBlur={() => {
+              onCambiar={(valor) => cambiarReps(valor)}
+              onCerrar={() => {
                 cambiarReps((r) => Math.max(1, Math.round(r)))
                 setEditandoReps(false)
-
               }}
-              onKeyDown={(e) => {
-                if (e.key !== 'Enter') return
-                e.preventDefault()
-                e.currentTarget.blur()
-                void guardar()
-              }}
+              onEnter={() => void guardar()}
             />
           ) : (
             <div className="paso">
@@ -573,6 +591,27 @@ export function FilaSerie({
       </div>
 
       {error&&<p className="sfm-set-error" role="alert">{error}</p>}
+      {!hecha && avisoVigente && (
+        <div className="serie__aviso" role="alert">
+          <p>{avisoVigente}</p>
+          <div className="serie__aviso-acciones">
+            <button
+              type="button"
+              className="boton-guardar boton-guardar--secundario"
+              onClick={() => {
+                setAviso(null)
+                if (aviso?.campo === 'reps') setEditandoReps(true)
+                else setEditandoPeso(true)
+              }}
+            >
+              Corregir
+            </button>
+            <button type="button" className="boton-guardar" onClick={() => void guardar(true)}>
+              Sí, guardar
+            </button>
+          </div>
+        </div>
+      )}
       <div className="serie__pie">
         <span className="serie__anterior">
           {referencia
@@ -606,7 +645,7 @@ export function FilaSerie({
             type="button"
             data-tour="guardar-serie"
             className={guardando ? 'boton-guardar boton-guardar--guardando' : 'boton-guardar'}
-            onClick={guardar}
+            onClick={() => void guardar()}
             disabled={guardando}
             aria-busy={guardando}
             aria-label={`Guardar la ${etiqueta}`}
@@ -618,6 +657,83 @@ export function FilaSerie({
         )}
       </div>
     </div>
+  )
+}
+
+/**
+ * El número que se teclea en una serie.
+ *
+ * Guarda el texto y no el número: con el número, borrar dejaba un 0 que se
+ * quedaba delante de lo siguiente («01080»). Vacío no cambia nada; al salir
+ * vuelve el valor anterior.
+ *
+ * Al entrar se selecciona todo, así lo que se escribe sustituye el valor en vez
+ * de ir detrás («5» → «5135»). Es `type="text"` con teclado numérico porque iOS
+ * Safari no deja seleccionar dentro de un `type="number"`, y además así se
+ * acepta la coma del teclado en español.
+ */
+function EntradaNumero({
+  valor,
+  decimales,
+  etiqueta,
+  enterKeyHint,
+  onCambiar,
+  onCerrar,
+  onEnter,
+}: {
+  readonly valor: number
+  readonly decimales: boolean
+  readonly etiqueta: string
+  readonly enterKeyHint: 'next' | 'done'
+  readonly onCambiar: (valor: number) => void
+  readonly onCerrar: () => void
+  readonly onEnter: () => void
+}) {
+  const [texto, setTexto] = useState(() => String(valor))
+  const campo = useRef<HTMLInputElement>(null)
+  const tecleado = useRef(false)
+  const inicial = useRef(valor)
+  useEffect(() => {
+    const nodo = campo.current
+    if (!nodo) return
+    nodo.focus()
+    nodo.select()
+    // iOS a veces pierde la selección hecha antes de que abra el teclado.
+    const cuadro = requestAnimationFrame(() => {
+      if (document.activeElement === nodo && !tecleado.current) nodo.setSelectionRange(0, nodo.value.length)
+    })
+    return () => cancelAnimationFrame(cuadro)
+  }, [])
+  return (
+    <input
+      ref={campo}
+      type="text"
+      inputMode={decimales ? 'decimal' : 'numeric'}
+      autoComplete="off"
+      className="valor valor--edicion"
+      aria-label={etiqueta}
+      enterKeyHint={enterKeyHint}
+      value={texto}
+      onFocus={(e) => e.currentTarget.select()}
+      onChange={(e) => {
+        const nuevo = e.target.value
+        if (!esTecleoValido(nuevo, decimales)) return
+        tecleado.current = true
+        setTexto(nuevo)
+        const numero = leerNumero(nuevo)
+        if (numero !== null) onCambiar(numero)
+      }}
+      onBlur={() => {
+        if (leerNumero(texto) === null) onCambiar(inicial.current)
+        onCerrar()
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter') return
+        e.preventDefault()
+        e.currentTarget.blur()
+        onEnter()
+      }}
+    />
   )
 }
 
