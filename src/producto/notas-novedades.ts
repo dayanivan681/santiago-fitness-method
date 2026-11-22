@@ -24,13 +24,14 @@ export interface Novedad {
 export const NOVEDADES: readonly Novedad[] = [
   {
     // Pendiente de aprobación del dueño (texto y fecha de publicación).
-    id: "2026-11-22-coach-buscador-alta",
+    id: "2026-11-22-coach-panel-agil",
     fecha: "2026-11-22",
     audiencia: "coach",
-    titulo: "Busca en español o en inglés",
+    titulo: "Tu panel, más ágil",
     puntos: [
-      "En la biblioteca, «squat» encuentra «Sentadilla con barra» y «elevación lateral» encuentra «Dumbbell Lateral Raise».",
+      "En la biblioteca puedes buscar en español o en inglés: «squat» encuentra «Sentadilla con barra».",
       "Al crear un cliente, cada paso empieza arriba, con su título a la vista.",
+      "La guía de inicio ya no aparece cada vez que entras; la tienes siempre en Ayuda.",
     ],
   },
   {
