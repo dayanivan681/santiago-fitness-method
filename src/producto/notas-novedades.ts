@@ -30,7 +30,6 @@ export const NOVEDADES: readonly Novedad[] = [
     titulo: "Registrar tus series, más fácil",
     puntos: [
       "Al tocar el peso o las reps, lo que escribes sustituye al número anterior. Si un peso parece un error, te preguntamos antes de guardarlo.",
-      "Mientras descansas verás una sola barra, con el tiempo y las series que llevas.",
       "Si terminas la sesión con series pendientes, te pedimos que lo confirmes.",
     ],
   },
