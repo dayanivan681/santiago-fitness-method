@@ -23,6 +23,27 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
+    // Pendiente de aprobación del dueño (texto y fecha de publicación).
+    id: "2026-11-22-coach-buscador-alta",
+    fecha: "2026-11-22",
+    audiencia: "coach",
+    titulo: "Busca en español o en inglés",
+    puntos: [
+      "En la biblioteca, «squat» encuentra «Sentadilla con barra» y «elevación lateral» encuentra «Dumbbell Lateral Raise».",
+      "Al crear un cliente, cada paso empieza arriba, con su título a la vista.",
+    ],
+  },
+  {
+    // Pendiente de aprobación del dueño (texto y fecha de publicación).
+    id: "2026-11-22-cliente-buscador-bilingue",
+    fecha: "2026-11-22",
+    audiencia: "cliente",
+    titulo: "Busca ejercicios en español o en inglés",
+    puntos: [
+      "En la biblioteca puedes escribir el nombre en cualquiera de los dos idiomas: «squat» encuentra la sentadilla.",
+    ],
+  },
+  {
     id: "2026-11-20-coach-animacion-video",
     fecha: "2026-11-20",
     audiencia: "coach",
