@@ -23,6 +23,18 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
+    // Pendiente de aprobación del dueño (texto y fecha de publicación).
+    id: "2026-11-22-cliente-registro-series",
+    fecha: "2026-11-22",
+    audiencia: "cliente",
+    titulo: "Registrar tus series, más fácil",
+    puntos: [
+      "Al tocar el peso o las reps, lo que escribes sustituye al número anterior. Si un peso parece un error, te preguntamos antes de guardarlo.",
+      "Mientras descansas verás una sola barra, con el tiempo y las series que llevas.",
+      "Si terminas la sesión con series pendientes, te pedimos que lo confirmes.",
+    ],
+  },
+  {
     id: "2026-11-20-coach-animacion-video",
     fecha: "2026-11-20",
     audiencia: "coach",
