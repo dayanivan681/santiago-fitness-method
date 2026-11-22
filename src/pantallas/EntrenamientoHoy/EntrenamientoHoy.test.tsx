@@ -117,9 +117,11 @@ async function omitirDescanso() {
   await userEvent.click(await screen.findByRole('button', { name: 'Omitir' }))
 }
 
+/** Con series pendientes, «Terminar sesión» pide confirmación (fallo 4). */
 async function terminarSesion() {
   if (screen.queryByRole('button', { name: 'Omitir' })) await omitirDescanso()
   await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
+  await userEvent.click(await screen.findByRole('button', { name: 'Terminar igualmente' }))
 }
 
 /** El resumen del día, sin entrar a entrenar. */
@@ -1729,5 +1731,35 @@ describe('las series pendientes muestran el objetivo, no un valor que parezca he
       expect(p).toHaveTextContent('1–5 reps')
       expect(p).not.toHaveTextContent(/0 lb/)
     }
+  })
+})
+
+describe('terminar con series pendientes pide confirmación (QA 20-nov, fallo 4)', () => {
+  test('con 1 de 16 series no cierra al primer toque y se puede seguir entrenando', async () => {
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await omitirDescanso()
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
+    const dialogo = await screen.findByRole('dialog', { name: 'Terminar la sesión' })
+    expect(dialogo).toHaveTextContent('Te quedan 15 series por hacer')
+
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Seguir entrenando' }))
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Terminar la sesión' })).not.toBeInTheDocument())
+    const sesiones = await repositorio.listarSesiones(participanteId)
+    expect(sesiones.find((s) => s.fecha === fechaDeHoy())?.completadaEn).toBeUndefined()
+    expect(screen.getByRole('progressbar', { name: 'Progreso de la sesión' })).toBeInTheDocument()
+  })
+
+  test('«Terminar igualmente» cierra la sesión con lo registrado', async () => {
+    await abrirUpperA()
+    await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await omitirDescanso()
+    await terminarSesion()
+
+    await waitFor(async () => {
+      const sesiones = await repositorio.listarSesiones(participanteId)
+      expect(sesiones.find((s) => s.fecha === fechaDeHoy())?.completadaEn).toBeDefined()
+    })
   })
 })
