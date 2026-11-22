@@ -487,7 +487,7 @@ trabaja y lo publica antes de que el otro continúe.
 - **Status:** active
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-22T13:35:25.568Z
+- **Última sincronización:** 2026-11-22T14:15:36.271Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1635,6 +1635,38 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-22T14:15:36.272Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Fusionar PR #19 (sin nota de cliente) y recortar PR #18
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
+
+### 2026-11-22T14:12:52.213Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #19 (claude/qa-alta-buscador), commit c868bbc: el recorrido de 4 pasos del coach real ya no sale solo al entrar en /admin; se abre desde Ayuda › Ver recorrido (decisión del dueño 2026-11-22). Demo y bienvenida del cliente sin cambios. Nota de coach actualizada a «Tu panel, más ágil» (3 puntos), pendiente de aprobación. Sin fusionar ni desplegar.
+- **Verificación:** npm test (1112/1112); npm run lint; npx tsc -b; npm run build
+- **Siguiente:** Orquestador repite la QA del PR #19; el dueño aprueba notas y fusión de #18 y #19.
+
+
+### 2026-11-22T14:11:04.962Z | claude-code | CLAIM
+- **Estado:** active
+- **Tarea:** Quitar recorrido automático del coach real en /admin (PR #19)
+- **Cambios:** Pendientes.
+- **Verificación:** Árbol limpio y origin/main sincronizado antes de reclamar.
+- **Siguiente:** Implementar la tarea y ejecutar las comprobaciones del contrato.
+
+
+### 2026-11-22T13:54:40.435Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** QA 20-nov del orquestador: PR en borrador, pendientes de QA. PR #18 (claude/qa-entrenar): fallos 1-4 de Entrenar (peso/reps seleccionan al tocar, sin 0 delante, aviso y tope de valores anómalos; número de 4 cifras cabe; una sola barra durante el descanso; confirmar Terminar sesión con series pendientes). PR #19 (claude/qa-alta-buscador): alta de cliente vuelve arriba al cambiar de paso; buscador bilingüe ES/EN en biblioteca de cliente, coach y fichas del catálogo. Notas de novedades pendientes de aprobación del dueño.
+- **Verificación:** npm test (PR18 1121/1121, PR19 1112/1112); npm run lint; npx tsc -b; npm run build
+- **Siguiente:** Orquestador hace QA sobre las vistas previas; el dueño aprueba umbrales de peso/reps, que Terminar sesión se oculte durante el descanso y las notas; luego fusionar #18 y #19 (conflicto trivial en notas-novedades.ts).
+
 
 ### 2026-11-22T13:35:25.568Z | claude-code | CLAIM
 - **Estado:** active
