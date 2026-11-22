@@ -23,7 +23,6 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
-    // Pendiente de aprobación del dueño (texto y fecha de publicación).
     id: "2026-11-22-coach-panel-agil",
     fecha: "2026-11-22",
     audiencia: "coach",
@@ -32,16 +31,6 @@ export const NOVEDADES: readonly Novedad[] = [
       "En la biblioteca puedes buscar en español o en inglés: «squat» encuentra «Sentadilla con barra».",
       "Al crear un cliente, cada paso empieza arriba, con su título a la vista.",
       "La guía de inicio ya no aparece cada vez que entras; la tienes siempre en Ayuda.",
-    ],
-  },
-  {
-    // Pendiente de aprobación del dueño (texto y fecha de publicación).
-    id: "2026-11-22-cliente-buscador-bilingue",
-    fecha: "2026-11-22",
-    audiencia: "cliente",
-    titulo: "Busca ejercicios en español o en inglés",
-    puntos: [
-      "En la biblioteca puedes escribir el nombre en cualquiera de los dos idiomas: «squat» encuentra la sentadilla.",
     ],
   },
   {
