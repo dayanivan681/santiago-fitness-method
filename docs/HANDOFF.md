@@ -483,11 +483,11 @@ trabaja y lo publica antes de que el otro continúe.
 
 ## Estado actual
 
-- **Owner:** claude-code
-- **Status:** active
+- **Owner:** unassigned
+- **Status:** complete
 - **Rama coordinada:** `main`
 - **Repositorio:** https://github.com/dayanivan681/santiago-fitness-method
-- **Última sincronización:** 2026-11-22T14:11:04.961Z
+- **Última sincronización:** 2026-11-22T14:12:52.212Z
 
 **Liberación del turno (claude-code, 2026-10-20):** codex reclamó «Investigar
 destello residual B7 y completar QA pendiente en simulador» (`2f2358f`) y agotó
@@ -1635,6 +1635,14 @@ los nombres supuestos del borrador: primero se completaron las correcciones y QA
   queda pendiente recapturarlas. No se declara READY FOR SANTIAGO.
 
 <!-- HANDOFF-ENTRIES -->
+
+### 2026-11-22T14:12:52.213Z | claude-code | PUBLISH
+- **Estado:** complete
+- **Tarea:** Turno reclamado anteriormente.
+- **Cambios:** PR #19 (claude/qa-alta-buscador), commit c868bbc: el recorrido de 4 pasos del coach real ya no sale solo al entrar en /admin; se abre desde Ayuda › Ver recorrido (decisión del dueño 2026-11-22). Demo y bienvenida del cliente sin cambios. Nota de coach actualizada a «Tu panel, más ágil» (3 puntos), pendiente de aprobación. Sin fusionar ni desplegar.
+- **Verificación:** npm test (1112/1112); npm run lint; npx tsc -b; npm run build
+- **Siguiente:** Orquestador repite la QA del PR #19; el dueño aprueba notas y fusión de #18 y #19.
+
 
 ### 2026-11-22T14:11:04.962Z | claude-code | CLAIM
 - **Estado:** active
