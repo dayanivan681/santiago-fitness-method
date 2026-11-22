@@ -26,28 +26,35 @@ function montar(ruta = '/admin') {
   );
 }
 
-it('el coach con clientes ve el recorrido al abrir el panel, aunque antes lo cerrara', () => {
+const abrirDesdeAyuda = () => {
+  fireEvent.click(screen.getByRole('button', { name: 'Abrir ayuda' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Ver recorrido' }));
+};
+
+it('al entrar en /admin el recorrido ya no sale solo (decisión del dueño, 2026-11-22)', () => {
   montar();
-  expect(screen.getByRole('dialog', { name: 'Tus clientes' })).toBeInTheDocument();
-  expect(screen.getByText(/Ya tienes 3 clientes/)).toBeInTheDocument();
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(screen.getByText('Panel')).toBeInTheDocument();
 });
 
-it('«Saltar» lo cierra en esta visita y Ayuda lo vuelve a abrir', () => {
+it('desde Ayuda se abre el recorrido, y «Saltar» lo cierra', () => {
   montar();
+  abrirDesdeAyuda();
+  expect(screen.getByRole('dialog', { name: 'Tus clientes' })).toBeInTheDocument();
+  expect(screen.getByText(/Ya tienes 3 clientes/)).toBeInTheDocument();
+
   fireEvent.click(screen.getByRole('button', { name: 'Saltar' }));
   expect(screen.queryByRole('dialog', { name: 'Tus clientes' })).not.toBeInTheDocument();
 
-  fireEvent.click(screen.getByRole('button', { name: 'Abrir ayuda' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Ver recorrido' }));
+  abrirDesdeAyuda();
   expect(screen.getByRole('dialog', { name: 'Tus clientes' })).toBeInTheDocument();
 });
 
-it('una nueva visita lo vuelve a enseñar', () => {
+it('una nueva visita tampoco lo enseña', () => {
   const { unmount } = montar();
-  fireEvent.click(screen.getByRole('button', { name: 'Saltar' }));
   unmount();
   montar();
-  expect(screen.getByRole('dialog', { name: 'Tus clientes' })).toBeInTheDocument();
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });
 
 it('no interrumpe una entrada directa a otra pantalla', () => {
@@ -66,7 +73,7 @@ function PanelConNovedades() {
   </>;
 }
 
-it('tras una actualización, las novedades salen antes que el recorrido y no se apilan', () => {
+it('tras una actualización salen las novedades y, al cerrarlas, no aparece el recorrido', () => {
   localStorage.clear();
   render(
     <ContextoAyuda value={ayudaCoachReal}>
@@ -78,6 +85,5 @@ it('tras una actualización, las novedades salen antes que el recorrido y no se 
   expect(screen.getAllByRole('dialog')).toHaveLength(1);
   expect(screen.getByRole('dialog', { name: 'Novedades' })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Entendido' }));
-  expect(screen.getAllByRole('dialog')).toHaveLength(1);
-  expect(screen.getByRole('dialog', { name: 'Tus clientes' })).toBeInTheDocument();
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });

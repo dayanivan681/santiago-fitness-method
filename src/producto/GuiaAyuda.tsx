@@ -66,9 +66,6 @@ export function GuiaAyuda({ base, permitirBienvenida = true, clientes = 0 }: { b
   const clave = cliente ? `bienvenida:${ayuda?.clienteId}` : "bienvenida:coach";
   const [abierta, setAbierta] = useState(false);
   const [repetir, setRepetir] = useState(false);
-  // El coach real ve el recorrido cada vez que abre el panel; «Saltar» lo
-  // cierra hasta la próxima visita (petición del dueño, 2026-09-27).
-  const [recorridoVisto, setRecorridoVisto] = useState(false);
   // Las entradas profundas no interrumpen una tarea con una bienvenida.
   if (!ayuda) return null;
   const coachReal = !cliente && !ayuda.demo;
@@ -78,11 +75,12 @@ export function GuiaAyuda({ base, permitirBienvenida = true, clientes = 0 }: { b
     ayuda.cerrar(clave);
     setRepetir(false);
   };
-  const recorrido = coachReal && (repetir || (entrada && permitirBienvenida && !recorridoVisto));
-  const cerrarRecorrido = () => {
-    setRecorridoVisto(true);
-    setRepetir(false);
-  };
+  // El recorrido del coach real ya no sale solo al entrar: se abre desde
+  // Ayuda › «Ver recorrido». Antes salía en cada visita (petición del dueño del
+  // 2026-09-27); el dueño pidió quitarlo el 2026-11-22. La demo y la bienvenida
+  // del cliente no cambian.
+  const recorrido = coachReal && repetir;
+  const cerrarRecorrido = () => setRepetir(false);
   const titulo = cliente ? (ayuda.demo ? "Prueba tu primera serie" : "Tu entrenamiento, a mano") : ayuda.demo ? "Crea un cliente de prueba" : "Crea tu primer cliente";
   return (
     <>
