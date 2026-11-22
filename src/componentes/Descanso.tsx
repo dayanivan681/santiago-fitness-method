@@ -23,7 +23,7 @@ import { useControlDescanso } from '../aplicacion/contextoDescanso'
 export const VARIABLE_ALTO = '--alto-cronometro'
 
 export function Descanso() {
-  const { estado, restantes, prorrogar, terminar, barraDeSesion, progresoSesion } = useControlDescanso()
+  const { estado, restantes, prorrogar, terminar, barraDeSesion } = useControlDescanso()
   const barra = useRef<HTMLDivElement>(null)
 
   const inactivo = estado.estado === 'inactivo'
@@ -64,7 +64,7 @@ export function Descanso() {
       observador?.disconnect()
       raiz.style.removeProperty(VARIABLE_ALTO)
     }
-  }, [inactivo, terminado, barraDeSesion, progresoSesion])
+  }, [inactivo, terminado, barraDeSesion])
 
   if (inactivo) return null
 
@@ -89,10 +89,7 @@ export function Descanso() {
       aria-label="Temporizador de descanso"
     >
       <span className="descanso__progreso" aria-hidden="true"><span style={{ transform: `scaleX(${terminado ? 0 : Math.min(1, restantes / Math.max(1, total))})` }} /></span>
-      <span className="descanso__rotulo">
-        {terminado ? 'Descanso terminado' : 'Descanso'}
-        {progresoSesion && <span className="descanso__sesion">{progresoSesion}</span>}
-      </span>
+      <span className="descanso__rotulo">{terminado ? 'Descanso terminado' : 'Descanso'}</span>
       {!terminado && <span className="descanso__tiempo">{formatearSegundos(restantes)}</span>}
       <button type="button" className="descanso__boton" aria-label={`Añadir ${PRORROGA_SEGUNDOS} segundos`} onClick={prorrogar}>
         +{PRORROGA_SEGUNDOS}s

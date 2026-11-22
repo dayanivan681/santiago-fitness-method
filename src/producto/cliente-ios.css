@@ -299,7 +299,6 @@
 .sfm-main--client .progreso-sesion__terminar { font: 500 13px/1.3 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; min-height: 44px; }
 .sfm-shell--client .descanso { width: min(calc(100% - 24px), 696px); border: 1px solid var(--sfm-line); border-radius: 16px; padding: 6px 12px; bottom: calc(80px + env(safe-area-inset-bottom)); }
 .sfm-shell--client .descanso__rotulo { font: 600 12px/1.3 var(--sfm-ui-font); letter-spacing: 0; text-transform: none; }
-.sfm-shell--client .descanso__sesion { font: 400 11px/1.3 var(--sfm-ui-font); color: #dedee3; }
 .sfm-shell--client .descanso__tiempo { font: 650 22px/1 var(--sfm-ui-font); font-variant-numeric: tabular-nums; }
 .sfm-shell--client .descanso__boton { font: 500 13px/1.3 var(--sfm-ui-font); border-radius: 10px; text-transform: none; letter-spacing: 0; }
 

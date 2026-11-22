@@ -25,15 +25,6 @@ export interface ControlDescanso {
    */
   readonly barraDeSesion: boolean
   readonly declararBarraDeSesion: (visible: boolean) => void
-  /**
-   * El progreso de la sesión abierta («1 de 16 series»), o `null` sin sesión.
-   *
-   * Mientras se descansa, la barra de progreso se esconde y el cronómetro lo
-   * muestra: tres barras flotantes ocupaban un cuarto de la pantalla y tapaban
-   * «Completar serie» (QA 20-nov, fallo 3).
-   */
-  readonly progresoSesion: string | null
-  readonly declararProgresoSesion: (texto: string | null) => void
 }
 
 /**
@@ -50,8 +41,6 @@ export const CONTROL_INERTE: ControlDescanso = {
   terminar: () => {},
   barraDeSesion: false,
   declararBarraDeSesion: () => {},
-  progresoSesion: null,
-  declararProgresoSesion: () => {},
 }
 
 export const ContextoDescanso = createContext<ControlDescanso>(CONTROL_INERTE)

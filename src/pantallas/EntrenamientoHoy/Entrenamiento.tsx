@@ -81,36 +81,17 @@ export function Entrenamiento({
   // Terminar con series pendientes se confirma: el botón está junto al
   // cronómetro y un toque sin querer cerraba la sesión en la serie 1 de 16.
   const [confirmarCierre, setConfirmarCierre] = useState(false)
-  const {
-    estado: estadoDescanso,
-    arrancar: arrancarDescanso,
-    terminar: terminarDescanso,
-    declararBarraDeSesion,
-    declararProgresoSesion,
-  } = useControlDescanso()
+  const { arrancar: arrancarDescanso, terminar: terminarDescanso, declararBarraDeSesion } = useControlDescanso()
 
   /**
    * El cronómetro vive en App y no sabe si hay una sesión abierta, pero los dos
    * son fijos al fondo. Sin este aviso se solaparían: ya pasó una vez, 22 px.
    */
-  const sesionAbierta = Boolean(datos?.sesionDeHoy && !datos.sesionDeHoy.completadaEn)
-  /**
-   * Durante el descanso la barra de progreso se esconde y su cuenta pasa al
-   * cronómetro. Con las dos, más las pestañas, eran tres barras flotantes: un
-   * cuarto de la pantalla que tapaba «Completar serie» (QA 20-nov, fallo 3).
-   * Las pestañas se quedan: ir a la Biblioteca mientras se descansa es real.
-   */
-  const descansando = estadoDescanso.estado !== 'inactivo'
-  const barraDeSesionVisible = sesionAbierta && !descansando
+  const barraDeSesionVisible = Boolean(datos?.sesionDeHoy && !datos.sesionDeHoy.completadaEn)
   useEffect(() => {
     declararBarraDeSesion(barraDeSesionVisible)
     return () => declararBarraDeSesion(false)
   }, [barraDeSesionVisible, declararBarraDeSesion])
-  const textoProgreso = sesionAbierta && datos ? `${datos.seriesHechas} de ${datos.seriesObjetivo} series` : null
-  useEffect(() => {
-    declararProgresoSesion(textoProgreso)
-    return () => declararProgresoSesion(null)
-  }, [textoProgreso, declararProgresoSesion])
 
   /**
    * La identidad de la clave del borrador tiene que sobrevivir al repintado.
@@ -284,7 +265,9 @@ export function Entrenamiento({
         anterior={anterior}
         siguiente={siguienteEjercicio}
         conPista={ejerciciosDelDia.length > 1}
-        className={barraDeSesionVisible ? 'contenido contenido--con-barra' : 'contenido'}
+        className={
+          sesionDeHoy && !sesionDeHoy.completadaEn ? 'contenido contenido--con-barra' : 'contenido'
+        }
       >
         {grupo && (
           <nav className="entreno__superserie" aria-label={`${grupo.nombre} ${grupo.grupo}`}>
@@ -361,7 +344,7 @@ export function Entrenamiento({
        * Antes había que bajar hasta el final de la lista —hasta ocho ejercicios—
        * para ver cuánto llevabas y para poder cerrar la sesión.
        */}
-      {barraDeSesionVisible && (
+      {sesionDeHoy && !sesionDeHoy.completadaEn && (
         <div className="progreso-sesion" role="group" aria-label="Progreso de la sesión y cierre">
           <div
             className="progreso-sesion__medidor"

@@ -109,17 +109,8 @@ async function abrirUpperA() {
   await screen.findByText(PRESS)
 }
 
-/**
- * Guardar una serie arranca el descanso, y mientras se descansa la barra de la
- * sesión cede su sitio al cronómetro (QA 20-nov, fallo 3). Omitirlo la trae.
- */
-async function omitirDescanso() {
-  await userEvent.click(await screen.findByRole('button', { name: 'Omitir' }))
-}
-
-/** Con series pendientes, «Terminar sesión» pide confirmación (fallo 4). */
+/** Con series pendientes, «Terminar sesión» pide confirmación (QA 20-nov, fallo 4). */
 async function terminarSesion() {
-  if (screen.queryByRole('button', { name: 'Omitir' })) await omitirDescanso()
   await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
   await userEvent.click(await screen.findByRole('button', { name: 'Terminar igualmente' }))
 }
@@ -144,7 +135,6 @@ describe('el entrenamiento ya viene cargado (§3)', () => {
     expect(screen.getByText('0 de 4 sesiones')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Comenzar entrenamiento' }))
     await userEvent.click(await screen.findByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
     await terminarSesion()
     await screen.findByRole('heading', { name: 'Sesión completada' })
     await userEvent.click(screen.getByRole('button', { name: 'Volver a Hoy' }))
@@ -1048,7 +1038,6 @@ describe('barra de progreso de la sesión', () => {
 
     // Act
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
 
     // Assert
     const barra = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
@@ -1060,7 +1049,6 @@ describe('barra de progreso de la sesión', () => {
     // lista de ocho ejercicios para encontrar el botón.
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
 
     await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
     expect(screen.getByRole('button', { name: 'Terminar sesión' })).toBeInTheDocument()
@@ -1078,7 +1066,6 @@ describe('barra de progreso de la sesión', () => {
     // Arrange
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
     await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
     // Act
@@ -1096,21 +1083,19 @@ describe('barra de progreso de la sesión', () => {
 })
 
 describe('el cronómetro convive con la barra de sesión', () => {
-  test('con sesión abierta, el descanso ocupa el sitio de la barra y lleva su cuenta', async () => {
-    // QA 20-nov, fallo 3: progreso, descanso y pestañas apilados tapaban
-    // «Completar serie». Mientras se descansa queda una sola barra.
+  test('con sesión abierta se aparta para no taparla', async () => {
+    // Los dos son fijos al fondo: sin esto el cronómetro se comía la barra.
+    // Arrange
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
+    await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
+    // Act
+    await userEvent.click(screen.getAllByRole('button', { name: 'Descanso' })[0])
+
+    // Assert
     const cronometro = await screen.findByRole('status', { name: 'Temporizador de descanso' })
-    expect(cronometro).toHaveClass('descanso--sin-barra')
-    await waitFor(() => expect(cronometro).toHaveTextContent('1 de 16 series'))
-    expect(screen.queryByRole('progressbar', { name: 'Progreso de la sesión' })).not.toBeInTheDocument()
-
-    // Al terminar el descanso vuelve la barra con «Terminar sesión».
-    await omitirDescanso()
-    expect(await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })).toBeInTheDocument()
-    expect(screen.queryByRole('status', { name: 'Temporizador de descanso' })).not.toBeInTheDocument()
+    expect(cronometro).not.toHaveClass('descanso--sin-barra')
   })
 
   test('sin sesión empezada ocupa el sitio de la barra', async () => {
@@ -1461,7 +1446,6 @@ describe('cierre de sesión (Phase 1B)', () => {
     expect(barra()).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
 
     const progreso = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
     // Crear la sesión y registrar su primera serie son dos escrituras. La
@@ -1487,7 +1471,6 @@ describe('cierre de sesión (Phase 1B)', () => {
     // Arrange
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
     await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
     // Act
@@ -1504,7 +1487,6 @@ describe('cierre de sesión (Phase 1B)', () => {
     // Arrange
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
     await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
 
     // Act
@@ -1567,7 +1549,6 @@ describe('cierre de sesión (Phase 1B)', () => {
       screen.getByLabelText(`Marcar la serie 1 de ${PRESS} como calentamiento`),
     )
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
 
     const progreso = await screen.findByRole('progressbar', { name: 'Progreso de la sesión' })
     expect(progreso).toBeInTheDocument()
@@ -1738,7 +1719,6 @@ describe('terminar con series pendientes pide confirmación (QA 20-nov, fallo 4)
   test('con 1 de 16 series no cierra al primer toque y se puede seguir entrenando', async () => {
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
 
     await userEvent.click(await screen.findByRole('button', { name: 'Terminar sesión' }))
     const dialogo = await screen.findByRole('dialog', { name: 'Terminar la sesión' })
@@ -1754,7 +1734,6 @@ describe('terminar con series pendientes pide confirmación (QA 20-nov, fallo 4)
   test('«Terminar igualmente» cierra la sesión con lo registrado', async () => {
     await abrirUpperA()
     await userEvent.click(screen.getByLabelText(`Guardar la serie 1 de ${PRESS}`))
-    await omitirDescanso()
     await terminarSesion()
 
     await waitFor(async () => {
