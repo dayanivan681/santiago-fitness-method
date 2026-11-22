@@ -23,7 +23,6 @@ export interface Novedad {
 /** De la más reciente a la más antigua. */
 export const NOVEDADES: readonly Novedad[] = [
   {
-    // Pendiente de aprobación del dueño (texto y fecha de publicación).
     id: "2026-11-22-cliente-registro-series",
     fecha: "2026-11-22",
     audiencia: "cliente",
