@@ -4,6 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { FilaSerie } from './FilaSerie'
 import { BIBLIOTECA_INICIAL } from '../../datos/semilla/biblioteca'
 import type { NuevaSerie } from '../../aplicacion/useEntrenamiento'
+import { claseDeLongitud } from '../../logica/longitudNumero'
 
 /**
  * QA del 20 de noviembre, fallo 1: lo tecleado iba detrás del valor («5» →
@@ -141,4 +142,15 @@ it('las reps también se seleccionan al abrirlas y avisan si se salen mucho del 
   expect(onGuardar).not.toHaveBeenCalled()
   await userEvent.click(screen.getByRole('button', { name: 'Sí, guardar' }))
   await waitFor(() => expect(onGuardar).toHaveBeenCalledWith(expect.objectContaining({ repsRealizadas: 80 })))
+})
+
+it('con cuatro cifras o más el número se encoge para no pisar los botones − y +', async () => {
+  expect(claseDeLongitud(135)).toBe('')
+  expect(claseDeLongitud(1080)).toBe(' valor--largo')
+  expect(claseDeLongitud(102.5)).toBe(' valor--largo')
+  expect(claseDeLongitud('1012,5')).toBe(' valor--muy-largo')
+
+  montar(1080)
+  expect(screen.getByRole('button', { name: `Peso de la ${etiqueta}` })).toHaveClass('valor--largo')
+  expect(screen.getByRole('button', { name: `Reps de la ${etiqueta}` })).not.toHaveClass('valor--largo')
 })

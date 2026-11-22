@@ -31,6 +31,7 @@ import type { Repositorio } from '../../datos/repositorio'
 import type { NuevaSerie } from '../../aplicacion/useEntrenamiento'
 import { Icono } from '../../producto/ui'
 import { anomaliaDePeso, anomaliaDeReps, esTecleoValido, leerNumero } from '../../logica/valorAnomalo'
+import { claseDeLongitud } from '../../logica/longitudNumero'
 
 /** Pausa sin tocar la serie antes de guardar su borrador. */
 export const ESPERA_BORRADOR_MS = 2000
@@ -505,7 +506,7 @@ export function FilaSerie({
               </button>
               <button
                 type="button"
-                className="valor valor--tocable"
+                className={`valor valor--tocable${claseDeLongitud(peso)}`}
                 aria-label={`Peso de la ${etiqueta}`}
                 onClick={() => setEditandoPeso(true)}
               >
@@ -557,7 +558,7 @@ export function FilaSerie({
               </button>
               <button
                 type="button"
-                className="valor valor--tocable"
+                className={`valor valor--tocable${claseDeLongitud(reps)}`}
                 aria-label={`Reps de la ${etiqueta}`}
                 onClick={() => setEditandoReps(true)}
               >
@@ -710,7 +711,7 @@ function EntradaNumero({
       type="text"
       inputMode={decimales ? 'decimal' : 'numeric'}
       autoComplete="off"
-      className="valor valor--edicion"
+      className={`valor valor--edicion${claseDeLongitud(texto)}`}
       aria-label={etiqueta}
       enterKeyHint={enterKeyHint}
       value={texto}
