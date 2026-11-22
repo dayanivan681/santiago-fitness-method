@@ -34,6 +34,17 @@ export const NOVEDADES: readonly Novedad[] = [
     ],
   },
   {
+    id: "2026-11-22-coach-panel-agil",
+    fecha: "2026-11-22",
+    audiencia: "coach",
+    titulo: "Tu panel, más ágil",
+    puntos: [
+      "En la biblioteca puedes buscar en español o en inglés: «squat» encuentra «Sentadilla con barra».",
+      "Al crear un cliente, cada paso empieza arriba, con su título a la vista.",
+      "La guía de inicio ya no aparece cada vez que entras; la tienes siempre en Ayuda.",
+    ],
+  },
+  {
     id: "2026-11-20-coach-animacion-video",
     fecha: "2026-11-20",
     audiencia: "coach",
